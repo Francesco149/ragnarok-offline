@@ -63,6 +63,10 @@ Turtle Island (2003-12-16).
 default.
 **Look:** euRO news 2004-01-08/18 (forum t=1791), the euRO closed-beta
 forum, iRO 2003-12 notices.
+**Clue:** Athena 659 (2004-01-01) has only simple 2-1 guild NPCs ("Change
+a Job into a Knight", job level 40, no test). 817 (2004-02-19) adds the
+Priest and Hunter quests. The emulator authors followed the official
+servers, so this agrees with euRO's "quests came with New Comodo".
 
 ### 6. The novice training ground on this client
 The client has `new_zone01-04` under older names; 817's `new_1-1..4`
@@ -85,11 +89,12 @@ Arrow, First Aid…) on iRO/euRO by Jan 2004?
 **Look:** iRO guide skill pages (2004-03/04), kRO notices.
 
 ### 8. Wizard (and other 2-1) job quests
-817's wizard.txt uses a later dialect (`case`, `break`, two-argument menus
-without labels), so 817 itself couldn't run parts of it. 659's version was
-a stub.
-**Impact:** whether Wizards can change job by quest; a hand-port is needed.
-**Look:** eathena-v0.5.2 (2004-05) `npc/jobs/wizard.txt`; period
+817's wizard.txt is an unfinished conversion that 817 couldn't run (later
+dialect, `Job_Magician`, missing gotos). We use 659's simple guild NPC:
+job change at job level 40, no test. That is like 817's own Knight,
+Blacksmith and Assassin. 817's Priest and Hunter do have quests.
+**Impact:** whether the 2-1 jobs should have their tests; see #5.
+**Look:** eathena-v0.5.2 (2004-05) `npc/jobs/*.txt`; period
 walkthroughs (#2).
 
 ### 9. Refining details

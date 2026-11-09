@@ -105,7 +105,8 @@ eAthena 817 (2004-02-19), bugs included. The translator is
   * `save` is the later alias of `savepoint` (the Prontera inns);
   * `else(cond) goto L` (Thief quest) is read as `if`.
 
-  The Wizard quest's `case`/`break` dialect is not translated
+  817's Wizard quest is an unfinished conversion it couldn't run; we use
+  Athena 659's simple Wizard guild NPC (job level 40, no test) instead
   (THREADS.md #8).
 * **First job needs Basic Skill 9** (`scripts/npc/jobs.lua`). The client's
   skill description says so; 817's guild NPCs checked only the job level, so
