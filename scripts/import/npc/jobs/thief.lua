@@ -137,8 +137,7 @@ npc {
   end,
 }
 
--- warning (jobs/thief.txt:128): unknown command else at line 219
--- warning (jobs/thief.txt:128): label L031a0 used as a value
+-- warning (jobs/thief.txt:128): 'else' at line 219 (not in 817) translated as 'if'
 npc {
   map = "moc_prydb1", x = 39, y = 129, dir = 5, sprite = 69, name = "Thief Guide",
   src = "817:jobs/thief.txt:128",
@@ -237,7 +236,7 @@ npc {
     goto L0TEST
     ::L0TEST::
     if player.job_level < 10 then goto L031a0Neg end
-    athena_unknown("else", (v.job_thief_q == 0 and 1 or 0), v["goto"], "L031a0")
+    if v.job_thief_q == 0 then goto L031a0 end
     ::L031a0::
     mes "[Thief Guide]"
     mes "Your name is..... Umm..... Where is it...."
@@ -408,7 +407,6 @@ npc {
   end,
 }
 
--- warning (jobs/thief.txt:390): unknown command releaseall at line 480
 npc {
   map = "moc_prydb1", x = 42, y = 133, dir = 2, sprite = 118, name = "Comrade",
   src = "817:jobs/thief.txt:390",
@@ -494,7 +492,7 @@ npc {
     v.Total_Mushroom = 0
     take_item(1069, 99)
     take_item(1070, 99)
-    athena_unknown("releaseall")
+    unequip_all()
     job_change(6)
     next()
     mes "[Brad]"

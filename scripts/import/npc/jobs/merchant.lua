@@ -4,7 +4,6 @@
 -- Don't edit: override in scripts/npc/ (replace_npc) and list the change in docs/DEVIATIONS.md.
 
 -- warning (jobs/merchant.txt:3): goto M0jobmercE9NZ: no such label (Athena ends the script here)
--- warning (jobs/merchant.txt:3): unknown command releaseall at line 263
 npc {
   map = "alberta_in", x = 53, y = 43, dir = 6, sprite = 86, name = "Merchant",
   src = "817:jobs/merchant.txt:3",
@@ -261,7 +260,7 @@ npc {
     next()
     mes "[Chief Mahnsoo]"
     mes "Congratulations!"
-    athena_unknown("releaseall")
+    unequip_all()
     job_change(5)
     mes "I am so Pleased that you join the Merchant Guild and I hope you will play an Active Part in Rune Midgard Economy."
     next()

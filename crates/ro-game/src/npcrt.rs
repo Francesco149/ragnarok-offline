@@ -91,12 +91,11 @@ fn map_name(a: &[Value], i: usize) -> String {
 impl Game {
     // ------------------------------------------------------------ events
 
-    /// Queue "Npc::Label" to run (with `player` attached, 0 = none).
+    /// Queue "Npc::Label" to run (with `player` attached, 0 = none). A bare
+    /// "Npc" is an event NPC (sprite -1), run from the top; for a monster's
+    /// death event without one, Athena tries "Npc::OnMyMobDead" (npc.c npc_event).
     pub(crate) fn queue_event(&mut self, event: &str, player: u32) -> bool {
-        let Some((npc, label)) = event.split_once("::") else {
-            self.notice(format!("event {event:?}: expected \"Npc::Label\""));
-            return false;
-        };
+        let (npc, label) = event.split_once("::").unwrap_or((event, ""));
         self.npcrt.queue.push_back((npc.to_string(), label.to_string(), player));
         true
     }
@@ -143,18 +142,31 @@ impl Game {
             return;
         };
         let d = &engine.defs.npcs[def];
-        if !d.events.iter().any(|e| e == label) {
+        let label = if label.is_empty() {
+            match (d.sprite, d.events.iter().any(|e| e == "OnMyMobDead")) {
+                (None, _) => "",
+                (Some(_), true) => "OnMyMobDead",
+                _ => {
+                    self.notice(format!("event {npc}: not an event NPC"));
+                    return;
+                }
+            }
+        } else {
+            label
+        };
+        if !label.is_empty() && !d.events.iter().any(|e| e == label) {
             self.notice(format!("event {npc}::{label}: the NPC has no such label"));
             return;
         }
         let Some(f) = d.on_click.clone() else { return };
+        let at = (!label.is_empty()).then_some(label);
         let unit = self.unit_of_def(def).unwrap_or(0);
         if player != 0 {
-            self.start_dialog(player, unit, def, &f, CtxKind::Event, Some(label));
+            self.start_dialog(player, unit, def, &f, CtxKind::Event, at);
             return;
         }
         let ctx = Ctx { player: 0, npc: unit, kind: CtxKind::Event, def: def as u32 };
-        match engine.start(self, ctx, &f, Some(label)) {
+        match engine.start(self, ctx, &f, at) {
             Ok((_, Outcome::Done(_))) => {}
             Ok((_, Outcome::Suspended(_))) => self.notice(format!("event {npc}::{label}: waits for a player but has none")),
             Err(e) => self.notice(format!("event {npc}::{label}: {e:#}")),
@@ -624,6 +636,17 @@ impl Game {
             }),
             "skill_level" => player().map(|u| json!(self.skill_level(u, int(a, 0) as u16))),
             "give_skill" => player().and_then(|u| self.give_skill(u, int(a, 0) as u16, int(a, 1).clamp(0, 10) as u8).map(|_| Value::Null)),
+            "unequip_all" => player().map(|u| {
+                // Athena releaseall: take off everything worn
+                let worn: Vec<u16> = self
+                    .char_of_unit(u)
+                    .map(|c| c.inventory.iter().enumerate().filter(|(_, it)| it.equip != 0).map(|(i, _)| i as u16 + packets::INV_OFFSET).collect())
+                    .unwrap_or_default();
+                for idx in worn {
+                    self.unequip(u, idx);
+                }
+                Value::Null
+            }),
             "open_storage" => player().map(|u| {
                 self.open_storage(u);
                 Value::Null

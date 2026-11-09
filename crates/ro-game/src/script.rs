@@ -169,7 +169,14 @@ pub struct ScriptEngine {
     pub defs: Defs,
     dir: PathBuf,
     item_fns: RefCell<HashMap<u32, Function>>,
+    /// Instructions run since the script was last entered, in thousands.
+    budget: Rc<std::cell::Cell<u32>>,
 }
+
+/// A script that runs this many thousand Lua instructions without waiting
+/// for the player is stopped (an endless goto loop would freeze the server;
+/// Athena had no guard and hung).
+const BUDGET_KILO_INSTRUCTIONS: u32 = 5_000;
 
 fn source_of(lua: &Lua) -> String {
     // level 2 = the script line that called npc{}/warp{}/...
@@ -252,7 +259,7 @@ impl ScriptEngine {
             let gone: std::collections::HashSet<String> = defs.removed.iter().map(|(s, _)| s.clone()).collect();
             defs.npcs.retain(|n| !n.src.as_ref().is_some_and(|s| gone.contains(s)));
         }
-        Ok(ScriptEngine { lua, defs, dir: dir.to_path_buf(), item_fns: RefCell::new(HashMap::new()) })
+        Ok(ScriptEngine { lua, defs, dir: dir.to_path_buf(), item_fns: RefCell::new(HashMap::new()), budget: Default::default() })
     }
 
     pub fn dir(&self) -> &Path {
@@ -405,6 +412,29 @@ impl ScriptEngine {
         Ok(())
     }
 
+    fn guard_hook(&self) -> impl Fn(&Lua, mlua::Debug) -> mlua::Result<mlua::VmState> + 'static {
+        let budget = self.budget.clone();
+        move |_, _| {
+            let n = budget.get() + 1;
+            budget.set(n);
+            if n > BUDGET_KILO_INSTRUCTIONS {
+                return Err(mlua::Error::runtime("script ran too long without waiting for the player (endless loop?)"));
+            }
+            Ok(mlua::VmState::Continue)
+        }
+    }
+
+    /// Arm the loop guard for `thread` (mlua hooks one thread at a time).
+    fn guard_thread(&self, thread: &Thread) {
+        self.budget.set(0);
+        thread.set_hook(mlua::HookTriggers::new().every_nth_instruction(1000), self.guard_hook());
+    }
+
+    fn guard_main(&self) {
+        self.budget.set(0);
+        self.lua.set_hook(mlua::HookTriggers::new().every_nth_instruction(1000), self.guard_hook());
+    }
+
     /// Run `body` with `_rt` bound to `host` for `ctx`.
     fn with_host<R>(&self, host: &mut dyn Host, ctx: Ctx, body: impl FnOnce(&Lua) -> mlua::Result<R>) -> mlua::Result<R> {
         let host = RefCell::new(host);
@@ -450,6 +480,7 @@ impl ScriptEngine {
     /// Start `f` as a coroutine (NPC click/touch); `at` = event label to enter at.
     pub fn start(&self, host: &mut dyn Host, ctx: Ctx, f: &Function, at: Option<&str>) -> Result<(Thread, Outcome)> {
         let thread = self.lua.create_thread(f.clone()).ah()?;
+        self.guard_thread(&thread);
         let ret = self
             .with_host(host, ctx, |_| match at {
                 Some(label) => thread.resume::<mlua::MultiValue>(label),
@@ -462,6 +493,7 @@ impl ScriptEngine {
 
     /// Resume a suspended dialog with the client's answer.
     pub fn resume(&self, host: &mut dyn Host, ctx: Ctx, thread: &Thread, answer: Value) -> Result<Outcome> {
+        self.guard_thread(thread);
         let ret = self
             .with_host(host, ctx, |lua| thread.resume::<mlua::MultiValue>(lua.to_value(&answer)?))
             .map_err(|e| anyhow!("{e}"))?;
@@ -470,6 +502,7 @@ impl ScriptEngine {
 
     /// Call a function to completion (commands, events, item scripts). Yields are errors.
     pub fn call(&self, host: &mut dyn Host, ctx: Ctx, f: &Function, args: Vec<Value>) -> Result<Value> {
+        self.guard_main();
         let r = self
             .with_host(host, ctx, |lua| {
                 let mut lv = Vec::new();
@@ -523,6 +556,7 @@ impl ScriptEngine {
         let Some(rules) = rules else { return Ok(None) };
         let f: Option<Function> = rules.get(name).ah()?;
         let Some(f) = f else { return Ok(None) };
+        self.guard_main();
         let v: LuaValue = f.call(self.lua.to_value(arg).ah()?).map_err(|e| anyhow!("rules.{name}: {e}"))?;
         Ok(Some(self.lua.from_value(v).ah()?))
     }

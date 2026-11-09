@@ -467,7 +467,6 @@ npc {
   end,
 }
 
--- warning (cities/prontera.txt:393): unknown command save at line 402
 npc {
   map = "prt_in", x = 61, y = 141, dir = 5, sprite = 94, name = "Ahlma",
   src = "817:cities/prontera.txt:393",
@@ -481,7 +480,7 @@ npc {
     ::M0::
     mes "[Ahlma]"
     mes "Ok, Saved. Thank you ~ See you soon~"
-    athena_unknown("save", "prt_in.gat", 64, 136)
+    save_point("prt_in", 64, 136)
     close()
     do return end
     ::MEnd::
@@ -695,7 +694,6 @@ npc {
   end,
 }
 
--- warning (cities/prontera.txt:586): unknown command save at line 595
 npc {
   map = "prt_in", x = 244, y = 135, dir = 5, sprite = 53, name = "Inn Maid",
   src = "817:cities/prontera.txt:586",
@@ -709,7 +707,7 @@ npc {
     ::M0::
     mes "[Sammy]"
     mes "Ok, Saved. I think we could meet again soon."
-    athena_unknown("save", "prt_in.gat", 238, 130)
+    save_point("prt_in", 238, 130)
     close()
     do return end
     ::MEnd::

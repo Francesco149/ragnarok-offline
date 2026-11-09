@@ -184,6 +184,7 @@ function set_cart() return _rt("set_cart") end
 function set_falcon() return _rt("set_falcon") end
 function set_riding() return _rt("set_riding") end
 function open_storage() _rt("open_storage") end
+function unequip_all() _rt("unequip_all") end
 function item_skill(id, lv, name) _rt("unimplemented", "itemskill") end
 function produce(kind) _rt("unimplemented", "produce") end
 

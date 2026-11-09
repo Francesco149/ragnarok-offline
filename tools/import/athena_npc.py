@@ -201,6 +201,15 @@ BUILTINS = {
     "mobcount": ("mob_count", "i"), "getequipcardcnt": ("equip_card_count", "i"),
     "successremovecards": ("remove_cards", "n"), "failedremovecards": ("remove_cards_failed", "n"),
 }
+# Commands 817 lacked but its scripts used, with an unmistakable meaning. 817
+# failed at runtime on them; we run them (docs/DEVIATIONS.md).
+BUILTINS["save"] = ("save_point", "n")  # later eAthena alias of savepoint (Prontera inns)
+BUILTINS["releaseall"] = ("unequip_all", "n")  # later eAthena; right before jobchange in the
+                                               # Merchant and Thief quests, so 817 never changed the job
+NOOP_COMMANDS = {"scriptlabel"}  # jAthena label marker: every 817 town guide began with it
+# Map-name typos in the sources (not client naming differences: those are maps.py).
+MAP_TYPOS = {"morroc": "morocc"}
+
 ITEM_ARG = {"getitem", "delitem", "countitem", "checkweight"}
 # handled by the statement translator
 SPECIAL = {"mes", "next", "close", "menu", "goto", "if", "set", "input", "end"}
@@ -550,19 +559,20 @@ class Tr:
             parts = [self.item_arg(args[0])] + [self.arg(a) for a in args[1:]]
         else:
             parts = [self.arg(a) for a in args]
-        if lw in ("warp", "savepoint", "areawarp", "mapwarp", "monster", "areamonster", "killmonster", "mapannounce",
+        if lw in ("warp", "savepoint", "save", "areawarp", "mapwarp", "monster", "areamonster", "killmonster", "mapannounce",
                   "areaannounce", "getmapusers", "getareausers", "mobcount", "setmapflagnosave", "setmapflag",
                   "removemapflag", "pvpon", "pvpoff", "gvgon", "gvgoff", "maprespawnguildid", "warpwaitingpc"):
             parts = [self.map_arg(a, p) for a, p in zip(args, parts)]
         return f"{name}({', '.join(parts)})"
 
     def map_arg(self, a, code):
-        if a[0] == "str" and a[1].lower().endswith(".gat"):
-            m = a[1][:-4]
-            return lua_str(MAP_ALIAS.get(m, m))
-        if a[0] == "str" and a[1] in MAP_ALIAS:
-            return lua_str(MAP_ALIAS[a[1]])
-        return code
+        if a[0] != "str":
+            return code
+        m = a[1][:-4] if a[1].lower().endswith(".gat") else a[1]
+        if m in MAP_TYPOS:
+            self.warn(f"map name {m} is a typo in the source; using {MAP_TYPOS[m]}")
+            m = MAP_TYPOS[m]
+        return lua_str(MAP_ALIAS.get(m, m))
 
     def arg(self, e):
         if e[0] == "next":
@@ -701,6 +711,11 @@ class Tr:
                 s = "if " + " elseif ".join(f"c == {i} then {g}" for i, g in conds) + " end"
                 out.append(s)
             return out
+        if lw == "else":
+            # thief.txt: `if(JobLevel < 10) goto A; else(q==0) goto B;` with B on the next line;
+            # a later dialect's else, which 817 stopped at. As an if, it means what was meant.
+            self.warn(f"'else' at line {line} (not in 817) translated as 'if'")
+            lw = "if"
         if lw == "if":
             if len(args) < 2:
                 self.warn(f"bad if at line {line}")
@@ -716,6 +731,8 @@ class Tr:
             return [f"if {cond} then " + " ".join(inner) + " end"]
         if lw in BUILTINS:
             return [self.call(name, args)]
+        if lw in NOOP_COMMANDS:
+            return [f"-- {name} (jAthena label marker; 817 stopped here, we don't)"]
         self.unknown.setdefault(lw, []).append(f"{self.npc.file}:{line}")
         self.warn(f"unknown command {name} at line {line}")
         return [f"athena_unknown({lua_str(name)}{''.join(', ' + self.arg(a) for a in args)})"]

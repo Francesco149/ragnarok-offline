@@ -98,6 +98,10 @@ npc { map = "testmap", x = 30, y = 30, sprite = 97, name = "Old", src = "test:ol
 npc { map = "testmap", x = 30, y = 30, sprite = 97, name = "New", replaces = "test:old",
   on_click = function() mes "new" close() end }
 
+-- an endless loop must not freeze the server
+npc { map = "testmap", x = 20, y = 20, sprite = 97, name = "Loop",
+  on_click = function() ::again:: v.n = 1 goto again end }
+
 -- invisible touch area (Athena sprite -1): runs on_click when stepped on
 npc { map = "testmap", x = 40, y = 25, sprite = -1, name = "Trap", touch = { 1, 1 },
   on_click = function() g.trapped = g.trapped + 1 end }
@@ -228,6 +232,15 @@ fn npc_runtime() {
     assert_eq!(g.console_eval("v.pinged", me), "1");
     assert_eq!(g.console_eval("g.timer", me), "1");
 
+    // the loop guard ends a runaway script; the server goes on
+    let looper = npc_named(&g, "Loop").expect("loop npc");
+    click(&mut g, looper);
+    assert!(g.notices.iter().any(|n| n.contains("ran too long")), "{:?}", g.notices);
+    cap.take(3);
+    click(&mut g, tester);
+    assert!(find(&cap.take(3), 0x00b7).is_some(), "still talking after the runaway script");
+    close_dialog(&mut g, tester);
+
     // overrides by src, invisible touch NPCs
     let new = npc_named(&g, "New").expect("override placed");
     assert!(npc_named(&g, "Old").is_none(), "replaced NPC is gone");
@@ -292,6 +305,6 @@ fn npc_runtime() {
     // server-wide variables persist
     g.save_all();
     let world = std::fs::read_to_string(base.join("saves/world.json")).unwrap();
-    assert!(world.contains("\"count\": 4"), "{world}");
+    assert!(world.contains("\"count\": 5"), "{world}");
     let _ = std::fs::remove_dir_all(Path::new(&base));
 }

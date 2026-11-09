@@ -96,12 +96,29 @@ eAthena 817 (2004-02-19), bugs included. The translator is
 * **Removed outright:** 817's Kafra-points exchange in Al De Baran. Its menu
   never worked: labels starting with digits parse as numbers in 817. Whether
   Kafra points existed in Dec 2003 is THREADS.md #4.
+* **Commands 817's scripts used but its engine lacked**, where the meaning
+  is unmistakable. 817 stopped the script at each of them; we run them:
+  * `releaseall` (unequip everything) comes right before `jobchange` in the
+    Merchant and Thief quests, so in 817 neither job change ever happened;
+  * `scriptlabel` opens every town guide (a jAthena label marker), so no
+    817 guide ever spoke. It is a no-op here;
+  * `save` is the later alias of `savepoint` (the Prontera inns);
+  * `else(cond) goto L` (Thief quest) is read as `if`.
+
+  The Wizard quest's `case`/`break` dialect is not translated
+  (THREADS.md #8).
+* **"morroc"** in the Juno Kafras is a typo for `morocc`.
+* **Shop names** come from 817 by cell (mod0631's are Japanese). "Shop" is
+  used where 817 has none within 3 cells, or only a Japanese one.
 * **Menus whose target label is missing** end the dialog. 817 jumped to the
   start of the script, which restarted the conversation on "Cancel".
 * **`end;` with a message showing** gets a close button, so the window
   doesn't hang.
 
 ## Engine behaviour relative to Athena 817
+
+* **Runaway scripts** are stopped after 5 million Lua instructions without
+  waiting for the player. 817 hung the whole server on an endless loop.
 
 * **Quest skills** (First Aid, Play Dead, the 2-1 quest skills…) can't be
   bought with skill points, only from their NPCs. This matches the official

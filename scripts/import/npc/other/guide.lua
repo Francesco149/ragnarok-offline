@@ -3,13 +3,12 @@
 -- the emulator authors' (often fan-translated), not Gravity's. GPL, like its source.
 -- Don't edit: override in scripts/npc/ (replace_npc) and list the change in docs/DEVIATIONS.md.
 
--- warning (other/guide.txt:7): unknown command scriptlabel at line 8
 npc {
   map = "prontera", x = 154, y = 187, dir = 4, sprite = 105, name = "Guide",
   src = "817:other/guide.txt:7",
   on_click = function()
     local c
-    athena_unknown("scriptlabel", v.GuideProntera)
+    -- scriptlabel (jAthena label marker; 817 stopped here, we don't)
     cutin("prt_soldier", 2)
     mes "[Prontera Squad]"
     mes "Welcome to Prontera,the Capital City of Rune-Midgard Kingdom."
@@ -821,13 +820,12 @@ npc {
   end,
 }
 
--- warning (other/guide.txt:778): unknown command scriptlabel at line 779
 npc {
   map = "geffen", x = 203, y = 116, dir = 0, sprite = 705, name = "Guide",
   src = "817:other/guide.txt:778",
   on_click = function()
     local c
-    athena_unknown("scriptlabel", v.GuideGeffen)
+    -- scriptlabel (jAthena label marker; 817 stopped here, we don't)
     cutin("gef_soldier", 2)
     mes "[Geffen Squad]"
     mes "Welcome to Geffen, the City of Magic."
@@ -1011,13 +1009,12 @@ npc {
   end,
 }
 
--- warning (other/guide.txt:954): unknown command scriptlabel at line 955
 npc {
   map = "payon", x = 82, y = 116, dir = 4, sprite = 708, name = "Guide",
   src = "817:other/guide.txt:954",
   on_click = function()
     local c
-    athena_unknown("scriptlabel", v.GuidePayon1)
+    -- scriptlabel (jAthena label marker; 817 stopped here, we don't)
     cutin("pay_soldier", 2)
     mes "[Payon Squad]"
     mes "Welcome to Payon, the uplander village."
@@ -1345,13 +1342,12 @@ npc {
   end,
 }
 
--- warning (other/guide.txt:1263): unknown command scriptlabel at line 1264
 npc {
   map = "morocc", x = 153, y = 286, dir = 6, sprite = 707, name = "Guide",
   src = "817:other/guide.txt:1263",
   on_click = function()
     local c
-    athena_unknown("scriptlabel", v.GuideMorocc)
+    -- scriptlabel (jAthena label marker; 817 stopped here, we don't)
     cutin("moc_soldier", 2)
     mes "[Morocc Squad]"
     mes "Welcome to Morroc,the Frontier."

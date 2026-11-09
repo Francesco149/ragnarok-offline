@@ -2820,11 +2820,11 @@ npc {
 }
 
 -- warning (other/kafra.txt:2781): menu target ('name', 'Linfo') is not a label
--- warning (other/kafra.txt:2781): unknown command save at line 2797
 -- warning (other/kafra.txt:2781): goto NoCartSkill: no such label (Athena ends the script here)
 -- warning (other/kafra.txt:2781): goto cantTeleport: no such label (Athena ends the script here)
 -- warning (other/kafra.txt:2781): goto cantTeleport: no such label (Athena ends the script here)
 -- warning (other/kafra.txt:2781): goto cantTeleport: no such label (Athena ends the script here)
+-- warning (other/kafra.txt:2781): map name morroc is a typo in the source; using morocc
 -- warning (other/kafra.txt:2781): goto cantTeleport: no such label (Athena ends the script here)
 npc {
   map = "yuno", x = 328, y = 108, dir = 6, sprite = 117, name = "Kafra",
@@ -2838,7 +2838,7 @@ npc {
     c = menu("Save", "Use Storage", "Use Teleport Service", "Rent a Cart", "Use Kafra Pass", "Other Information Check", "Cancel")
     if c == 1 then goto Lsave elseif c == 2 then goto Lstorage elseif c == 3 then goto Lteleport elseif c == 4 then goto Lcart elseif c == 5 then goto Lpass elseif c == 6 then do return end elseif c == 7 then goto Lcancel end
     ::Lsave::
-    athena_unknown("save", "yuno.gat", 332, 107)
+    save_point("yuno", 332, 107)
     mes "[Kafra]"
     mes "Your respawn point has saved. Thank you."
     cutin("kafra_02", 255)
@@ -2941,7 +2941,7 @@ npc {
     ::Morroc::
     if player.zeny < 2100 then do return end --[[ goto cantTeleport: no such label in the source (Athena ends the script) ]] end
     player.zeny = player.zeny - 2100
-    warp("morroc", 156, 46)
+    warp("morocc", 156, 46)
     cutin("kafra_03", 255)
     close()
     do return end
@@ -2969,11 +2969,11 @@ npc {
 }
 
 -- warning (other/kafra.txt:3033): menu target ('name', 'Linfo') is not a label
--- warning (other/kafra.txt:3033): unknown command save at line 3049
 -- warning (other/kafra.txt:3033): goto NoCartSkill: no such label (Athena ends the script here)
 -- warning (other/kafra.txt:3033): goto cantTeleport: no such label (Athena ends the script here)
 -- warning (other/kafra.txt:3033): goto cantTeleport: no such label (Athena ends the script here)
 -- warning (other/kafra.txt:3033): goto cantTeleport: no such label (Athena ends the script here)
+-- warning (other/kafra.txt:3033): map name morroc is a typo in the source; using morocc
 -- warning (other/kafra.txt:3033): goto cantTeleport: no such label (Athena ends the script here)
 npc {
   map = "yuno", x = 151, y = 87, dir = 4, sprite = 115, name = "Kafra",
@@ -2987,7 +2987,7 @@ npc {
     c = menu("Save", "Use Storage", "Use Teleport Service", "Rent a Cart", "Use Kafra Pass", "Other Information Check", "Cancel")
     if c == 1 then goto Lsave elseif c == 2 then goto Lstorage elseif c == 3 then goto Lteleport elseif c == 4 then goto Lcart elseif c == 5 then goto Lpass elseif c == 6 then do return end elseif c == 7 then goto Lcancel end
     ::Lsave::
-    athena_unknown("save", "yuno.gat", 154, 75)
+    save_point("yuno", 154, 75)
     mes "[Kafra]"
     mes "Your respawn point has saved. Thank you."
     cutin("kafra_02", 255)
@@ -3090,7 +3090,7 @@ npc {
     ::Morroc::
     if player.zeny < 2100 then do return end --[[ goto cantTeleport: no such label in the source (Athena ends the script) ]] end
     player.zeny = player.zeny - 2100
-    warp("morroc", 156, 46)
+    warp("morocc", 156, 46)
     cutin("kafra_03", 255)
     close()
     do return end
@@ -3118,11 +3118,11 @@ npc {
 }
 
 -- warning (other/kafra.txt:3285): menu target ('name', 'Linfo') is not a label
--- warning (other/kafra.txt:3285): unknown command save at line 3301
 -- warning (other/kafra.txt:3285): goto NoCartSkill: no such label (Athena ends the script here)
 -- warning (other/kafra.txt:3285): goto cantTeleport: no such label (Athena ends the script here)
 -- warning (other/kafra.txt:3285): goto cantTeleport: no such label (Athena ends the script here)
 -- warning (other/kafra.txt:3285): goto cantTeleport: no such label (Athena ends the script here)
+-- warning (other/kafra.txt:3285): map name morroc is a typo in the source; using morocc
 -- warning (other/kafra.txt:3285): goto cantTeleport: no such label (Athena ends the script here)
 npc {
   map = "yuno", x = 278, y = 221, dir = 6, sprite = 117, name = "Kafra",
@@ -3136,7 +3136,7 @@ npc {
     c = menu("Save", "Use Storage", "Use Teleport Service", "Rent a Cart", "Use Kafra Pass", "Other Information Check", "Cancel")
     if c == 1 then goto Lsave elseif c == 2 then goto Lstorage elseif c == 3 then goto Lteleport elseif c == 4 then goto Lcart elseif c == 5 then goto Lpass elseif c == 6 then do return end elseif c == 7 then goto Lcancel end
     ::Lsave::
-    athena_unknown("save", "yuno.gat", 332, 107)
+    save_point("yuno", 332, 107)
     mes "[Kafra]"
     mes "Your respawn point has saved. Thank you."
     cutin("kafra_02", 255)
@@ -3239,7 +3239,7 @@ npc {
     ::Morroc::
     if player.zeny < 2100 then do return end --[[ goto cantTeleport: no such label in the source (Athena ends the script) ]] end
     player.zeny = player.zeny - 2100
-    warp("morroc", 156, 46)
+    warp("morocc", 156, 46)
     cutin("kafra_03", 255)
     close()
     do return end
@@ -3267,11 +3267,11 @@ npc {
 }
 
 -- warning (other/kafra.txt:3536): menu target ('name', 'Linfo') is not a label
--- warning (other/kafra.txt:3536): unknown command save at line 3544
 -- warning (other/kafra.txt:3536): goto NoCartSkill: no such label (Athena ends the script here)
 -- warning (other/kafra.txt:3536): goto cantTeleport: no such label (Athena ends the script here)
 -- warning (other/kafra.txt:3536): goto cantTeleport: no such label (Athena ends the script here)
 -- warning (other/kafra.txt:3536): goto cantTeleport: no such label (Athena ends the script here)
+-- warning (other/kafra.txt:3536): map name morroc is a typo in the source; using morocc
 -- warning (other/kafra.txt:3536): goto cantTeleport: no such label (Athena ends the script here)
 npc {
   map = "umbala", x = 128, y = 133, dir = 4, sprite = 115, name = "Kafra",
@@ -3285,7 +3285,7 @@ npc {
     c = menu("Save", "Use Storage", "Use Teleport Service", "Rent a Cart", "Use Kafra Pass", "Other Information Check", "Cancel")
     if c == 1 then goto Lsave elseif c == 2 then goto Lstorage elseif c == 3 then goto Lteleport elseif c == 4 then goto Lcart elseif c == 5 then goto Lpass elseif c == 6 then do return end elseif c == 7 then goto Lcancel end
     ::Lsave::
-    athena_unknown("save", "umbala.gat", 126, 131)
+    save_point("umbala", 126, 131)
     mes "[Kafra]"
     mes "Your respawn point has saved. Thank you."
     cutin("kafra_02", 255)
@@ -3388,7 +3388,7 @@ npc {
     ::Morroc::
     if player.zeny < 2100 then do return end --[[ goto cantTeleport: no such label in the source (Athena ends the script) ]] end
     player.zeny = player.zeny - 2100
-    warp("morroc", 156, 46)
+    warp("morocc", 156, 46)
     cutin("kafra_03", 255)
     close()
     do return end
