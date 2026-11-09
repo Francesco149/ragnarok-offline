@@ -9,7 +9,8 @@
 //!   data.grf  ->  data.grf.original   (kept once, never overwritten)
 //!   data.grf.original + *.gpf (date order) + clientinfo.xml  ->  data.grf
 //!
-//! and writes `Play Offline.bat` (`Ragexe.exe 1rag1`, skipping the dead patcher).
+//! The CLI also writes `Play Offline.bat` (`Ragexe.exe 1rag1`, skipping the
+//! dead patcher); the Windows launcher does the same job itself.
 
 use std::path::{Path, PathBuf};
 
@@ -19,6 +20,8 @@ use sha2::{Digest, Sha256};
 
 /// Ragexe.exe from the 2003 euRO CD (docs/CLIENT.md).
 pub const KNOWN_RAGEXE_SHA256: &str = "a25b7efae4200919e9d12bb12bc61fb447b7f34e89348c4086d5b7c415210eca";
+
+pub const CLIENTINFO: &str = "data\\clientinfo.xml";
 
 pub fn clientinfo_xml(address: &str, port: u16, name: &str) -> String {
     format!(
@@ -65,42 +68,93 @@ fn gpf_files(dir: &Path) -> Result<Vec<PathBuf>> {
     Ok(v)
 }
 
-pub fn run(dir: &Path, address: &str, port: u16, name: &str) -> Result<()> {
+/// sha256 of the client's Ragexe.exe, if there is one.
+pub fn ragexe_sha256(dir: &Path) -> Option<String> {
+    std::fs::read(dir.join("Ragexe.exe")).ok().map(|b| hex(&Sha256::digest(b)))
+}
+
+/// Does `dir`'s data.grf already point at `address:port`?
+pub fn is_prepared(dir: &Path, address: &str, port: u16) -> bool {
+    if !dir.join("data.grf.original").exists() {
+        return false;
+    }
+    let Ok(g) = Grf::open(dir.join("data.grf")) else { return false };
+    let Ok(xml) = g.read(CLIENTINFO) else { return false };
+    let xml = String::from_utf8_lossy(&xml);
+    xml.contains(&format!("<address>{address}</address>")) && xml.contains(&format!("<port>{port}</port>"))
+}
+
+/// What [`prepare`] did.
+pub struct Prepared {
+    pub entries: usize,
+    pub layers: Vec<String>,
+}
+
+/// Merge the patches and our clientinfo.xml into `dir`'s data.grf (see the
+/// module docs). Idempotent: the CD's data.grf is kept once as
+/// data.grf.original and every run rebuilds data.grf from it.
+pub fn prepare(dir: &Path, address: &str, port: u16, name: &str, progress: &mut dyn FnMut(usize, usize)) -> Result<Prepared> {
     let data = dir.join("data.grf");
     let original = dir.join("data.grf.original");
-    if !data.exists() {
-        bail!("{} not found - point --client at the folder with data.grf and Ragexe.exe", data.display());
-    }
-    let exe = dir.join("Ragexe.exe");
-    if exe.exists() {
-        let h = hex(&Sha256::digest(std::fs::read(&exe)?));
-        if h == KNOWN_RAGEXE_SHA256 {
-            println!("Ragexe.exe: the 2003-12-18 euRO client (known hash)");
-        } else {
-            println!("warning: Ragexe.exe sha256 {h} is not the 2003-12-18 euRO client this server targets");
-        }
+    if !data.exists() && !original.exists() {
+        bail!("{} not found - this is not a Ragnarok Online folder (it needs data.grf and Ragexe.exe)", data.display());
     }
     if !original.exists() {
-        println!("keeping the CD's data.grf as {}", original.display());
-        std::fs::rename(&data, &original)?;
+        std::fs::rename(&data, &original).with_context(|| format!("renaming {} to data.grf.original", data.display()))?;
     }
     let mut vfs = Vfs::new();
     vfs.push(Grf::open(&original)?);
-    let gpfs = gpf_files(dir)?;
-    for g in &gpfs {
-        println!("patch layer: {}", g.file_name().unwrap().to_string_lossy());
-        vfs.push(Grf::open(g)?);
+    let mut layers = Vec::new();
+    for g in gpf_files(dir)? {
+        layers.push(g.file_name().unwrap().to_string_lossy().into_owned());
+        vfs.push(Grf::open(&g)?);
     }
-    let xml = clientinfo_xml(address, port, name);
-    vfs.add_memory_file("data\\clientinfo.xml", xml.into_bytes());
+    vfs.add_memory_file(CLIENTINFO, clientinfo_xml(address, port, name).into_bytes());
     let tmp = dir.join("data.grf.tmp");
-    println!("writing merged data.grf (this copies ~550 MB) ...");
-    let n = ro_grf::write_grf_0x200(&vfs, &tmp)?;
+    let entries = ro_grf::write_grf_0x200_with_progress(&vfs, &tmp, progress)
+        .with_context(|| format!("writing {}", tmp.display()))?;
+    drop(vfs); // close data.grf.original before touching data.grf
     if data.exists() {
         std::fs::remove_file(&data)?;
     }
     std::fs::rename(&tmp, &data)?;
-    println!("data.grf: {n} files, clientinfo.xml -> {address}:{port}");
+    Ok(Prepared { entries, layers })
+}
+
+/// Undo [`prepare`]: put the CD's data.grf back.
+pub fn unprepare(dir: &Path) -> Result<bool> {
+    let original = dir.join("data.grf.original");
+    if !original.exists() {
+        return Ok(false);
+    }
+    let data = dir.join("data.grf");
+    if data.exists() {
+        std::fs::remove_file(&data)?;
+    }
+    let _ = std::fs::remove_file(dir.join("data.grf.tmp"));
+    std::fs::rename(&original, &data)?;
+    Ok(true)
+}
+
+/// The CLI `setup` command.
+pub fn run(dir: &Path, address: &str, port: u16, name: &str) -> Result<()> {
+    if !dir.join("data.grf").exists() && !dir.join("data.grf.original").exists() {
+        bail!("{} not found - point --client at the folder with data.grf and Ragexe.exe", dir.join("data.grf").display());
+    }
+    match ragexe_sha256(dir) {
+        Some(h) if h == KNOWN_RAGEXE_SHA256 => println!("Ragexe.exe: the 2003-12-18 euRO client (known hash)"),
+        Some(h) => println!("warning: Ragexe.exe sha256 {h} is not the 2003-12-18 euRO client this server targets"),
+        None => {}
+    }
+    if !dir.join("data.grf.original").exists() {
+        println!("keeping the CD's data.grf as {}", dir.join("data.grf.original").display());
+    }
+    println!("writing merged data.grf (this copies ~550 MB) ...");
+    let p = prepare(dir, address, port, name, &mut |_, _| {})?;
+    for l in &p.layers {
+        println!("patch layer: {l}");
+    }
+    println!("data.grf: {} files, clientinfo.xml -> {address}:{port}", p.entries);
     let bat = dir.join("Play Offline.bat");
     std::fs::write(&bat, "@echo off\r\ncd /d \"%~dp0\"\r\nstart \"\" Ragexe.exe 1rag1\r\n")?;
     println!("wrote {} (starts Ragexe.exe 1rag1, skipping the old patcher)", bat.display());
@@ -108,6 +162,6 @@ pub fn run(dir: &Path, address: &str, port: u16, name: &str) -> Result<()> {
     Ok(())
 }
 
-fn hex(b: &[u8]) -> String {
+pub fn hex(b: &[u8]) -> String {
     b.iter().map(|x| format!("{x:02x}")).collect()
 }

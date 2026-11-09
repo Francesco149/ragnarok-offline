@@ -4,6 +4,9 @@ description = "ragnarok-offline: single-player server for the 2003-12-18 euRO cl
 version.workspace = true
 edition.workspace = true
 
+[lib]
+path = "src/lib.rs"
+
 [[bin]]
 name = "ragnarok-offline"
 path = "src/main.rs"

@@ -1,22 +1,15 @@
 //! ragnarok-offline: single-player server for the 2003-12-18 euRO client.
 
-mod config;
-mod net;
-mod setup;
-
 use std::io::{BufRead, Read, Write};
-use std::net::SocketAddr;
 use std::path::{Path, PathBuf};
-use std::sync::{Arc, mpsc};
-use std::time::{Duration, Instant, SystemTime};
 
 use anyhow::{Context, Result};
 use clap::{Parser, Subcommand};
-use ro_game::{Game, Resources, ServerKind};
-use tracing::{error, info};
-
-use crate::config::Config;
-use crate::net::{Event, NetOutbox};
+use ro_game::Game;
+use ro_server::config::{self, Config};
+use ro_server::net::NetOutbox;
+use ro_server::{server, setup};
+use tracing::info;
 
 #[derive(Parser)]
 #[command(version, about = "Single-player Ragnarok Online server for the 2003-12-18 euRO client")]
@@ -122,24 +115,14 @@ fn dispatch(cli: Cli) -> Result<()> {
     }
 }
 
-fn load_resources(cfg: &Config) -> Result<Resources> {
-    let vfs = setup::client_vfs(&cfg.client_dir)
-        .with_context(|| format!("client_dir = {} (see ragnarok-offline.toml)", cfg.client_dir.display()))?;
-    let res = Resources::new(vfs);
-    info!("client data: {} archives, {} maps", res.vfs.layers().len(), res.maps.len());
-    Ok(res)
-}
-
 fn check(path: &Path) -> Result<()> {
     let cfg = Config::load(path)?;
-    let res = load_resources(&cfg)?;
+    let res = server::load_resources(&cfg)?;
     let game = Game::new(cfg.game.clone(), res, Box::new(NetOutbox::default()))?;
     let mut missing = std::collections::BTreeMap::<String, usize>::new();
-    if let Some(defs) = game_defs(&game) {
-        for m in defs {
-            if !game.res.maps.contains(&m) {
-                *missing.entry(m).or_default() += 1;
-            }
+    for m in game.script_maps() {
+        if !game.res.maps.contains(&m) {
+            *missing.entry(m).or_default() += 1;
         }
     }
     if !missing.is_empty() {
@@ -155,158 +138,14 @@ fn check(path: &Path) -> Result<()> {
     Ok(())
 }
 
-fn game_defs(game: &Game) -> Option<Vec<String>> {
-    Some(game.script_maps())
-}
-
 fn run(path: &Path) -> Result<()> {
     let cfg = Config::load(path)?;
     if !path.exists() {
         info!("no {} found; using defaults (run `ragnarok-offline init`)", path.display());
     }
-    let res = load_resources(&cfg)?;
-    let log = if cfg.packet_log {
-        Some(Arc::new(net::PacketLog::open(&path.parent().unwrap_or(Path::new(".")).join("logs/packets.log"))?))
-    } else {
-        None
-    };
-    let out = NetOutbox::new(log);
-    let (tx, rx) = mpsc::channel::<Event>();
-
-    // network on a tokio runtime in the background
-    let rt = tokio::runtime::Builder::new_multi_thread().worker_threads(2).enable_all().build()?;
-    let ip: std::net::IpAddr = cfg.bind.parse().context("bind address")?;
-    for (port, kind) in [(cfg.login_port, ServerKind::Login), (cfg.game.char_port, ServerKind::Char), (cfg.game.map_port, ServerKind::Map)] {
-        let (tx, out) = (tx.clone(), out.clone());
-        rt.spawn(async move {
-            if let Err(e) = net::listen(SocketAddr::new(ip, port), kind, tx, out).await {
-                error!("{kind:?} server on port {port}: {e:#}");
-                std::process::exit(1);
-            }
-        });
-    }
-    if cfg.console_port != 0 {
-        let tx = tx.clone();
-        let port = cfg.console_port;
-        rt.spawn(async move {
-            if let Err(e) = net::console(port, tx).await {
-                error!("console: {e:#}");
-            }
-        });
-    }
-    if cfg.watch_scripts {
-        let tx = tx.clone();
-        let dir = cfg.game.script_dir.clone();
-        std::thread::spawn(move || watch(&dir, tx));
-    }
-    {
-        let tx = tx.clone();
-        rt.spawn(async move {
-            let _ = tokio::signal::ctrl_c().await;
-            let (rtx, _rrx) = mpsc::channel();
-            let _ = tx.send(Event::Console { line: ":shutdown".into(), reply: rtx });
-        });
-    }
-
-    // the game lives on this thread (Lua is single-threaded)
-    let mut game = Game::new(cfg.game.clone(), res, Box::new(out))?;
-    info!("ready: point the client at {}:{} (ragnarok-offline setup)", cfg.bind, cfg.login_port);
-    let tick = Duration::from_millis(20);
-    let mut last = Instant::now();
-    loop {
-        match rx.recv_timeout(tick) {
-            Ok(Event::Net(ev)) => game.handle(ev),
-            Ok(Event::ReloadScripts) => match game.reload_scripts() {
-                Ok(s) => info!("auto-reload: {s}"),
-                Err(e) => error!("auto-reload: {e:#}"),
-            },
-            Ok(Event::Console { line, reply }) => {
-                if line == ":shutdown" {
-                    info!("saving and shutting down");
-                    game.save_all();
-                    let _ = reply.send("bye".into());
-                    break;
-                }
-                let r = console_command(&mut game, &line);
-                let _ = reply.send(r);
-            }
-            Err(mpsc::RecvTimeoutError::Timeout) => {}
-            Err(mpsc::RecvTimeoutError::Disconnected) => break,
-        }
-        if last.elapsed() >= tick {
-            last = Instant::now();
-            game.tick();
-        }
-    }
-    rt.shutdown_timeout(Duration::from_millis(200));
+    let log_dir = path.parent().unwrap_or(Path::new(".")).join("logs");
+    server::start(cfg, server::Options { ctrl_c: true, log_dir })?.wait();
     Ok(())
-}
-
-fn console_command(game: &mut Game, line: &str) -> String {
-    match line.trim() {
-        ":help" => ":players  :reload  :save  :notices  :shutdown  - anything else is Lua, run as the first online player (player.*, warp(), give_item(), spawn_mob(), ...)".into(),
-        ":players" => {
-            let v: Vec<String> = game
-                .world
-                .units
-                .values()
-                .filter(|u| u.is_player())
-                .map(|u| format!("{} id={} {} {},{}", u.name, u.id, u.map, u.x, u.y))
-                .collect();
-            if v.is_empty() { "(nobody online)".into() } else { v.join("\n") }
-        }
-        ":reload" => match game.reload_scripts() {
-            Ok(s) => s,
-            Err(e) => format!("error: {e:#}"),
-        },
-        ":save" => {
-            game.save_all();
-            "saved".into()
-        }
-        ":notices" => {
-            let n = game.notices.join("\n");
-            game.notices.clear();
-            if n.is_empty() { "(none)".into() } else { n }
-        }
-        code => {
-            let p = game.first_player();
-            game.console_eval(code, p)
-        }
-    }
-}
-
-/// Poll the script tree's newest mtime; reload when it changes.
-fn watch(dir: &Path, tx: mpsc::Sender<Event>) {
-    fn newest(dir: &Path) -> SystemTime {
-        let mut best = SystemTime::UNIX_EPOCH;
-        let mut stack = vec![dir.to_path_buf()];
-        while let Some(d) = stack.pop() {
-            let Ok(rd) = std::fs::read_dir(&d) else { continue };
-            for e in rd.flatten() {
-                let p = e.path();
-                if p.is_dir() {
-                    stack.push(p);
-                } else if p.extension().is_some_and(|x| x == "lua") {
-                    if let Ok(m) = e.metadata().and_then(|m| m.modified()) {
-                        best = best.max(m);
-                    }
-                }
-            }
-        }
-        best
-    }
-    let mut last = newest(dir);
-    loop {
-        std::thread::sleep(Duration::from_millis(700));
-        let now = newest(dir);
-        if now != last {
-            last = now;
-            std::thread::sleep(Duration::from_millis(300)); // let editors finish writing
-            if tx.send(Event::ReloadScripts).is_err() {
-                return;
-            }
-        }
-    }
 }
 
 fn console(path: &Path, one: Option<String>) -> Result<()> {

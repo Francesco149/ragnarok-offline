@@ -28,6 +28,7 @@ ro-proto = { path = "crates/ro-proto" }
 ro-data = { path = "crates/ro-data" }
 
 ro-game = { path = "crates/ro-game" }
+ro-server = { path = "crates/ro-server" }
 
 [profile.dev]
 debug = "line-tables-only"   # keeps rustc/link memory well under the 2 GiB workbench cap

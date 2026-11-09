@@ -2,7 +2,6 @@
 
 use std::collections::HashMap;
 use std::io::Write as _;
-use std::net::SocketAddr;
 use std::sync::atomic::{AtomicU32, Ordering};
 use std::sync::{Arc, Mutex, mpsc};
 
@@ -73,9 +72,10 @@ impl Outbox for NetOutbox {
 
 static NEXT_SID: AtomicU32 = AtomicU32::new(1);
 
-pub async fn listen(addr: SocketAddr, kind: ServerKind, events: mpsc::Sender<Event>, out: NetOutbox) -> Result<()> {
-    let listener = TcpListener::bind(addr).await?;
-    info!("{kind:?} server listening on {addr}");
+/// Serve one of the three game ports on an already-bound (non-blocking) socket.
+pub async fn listen(listener: std::net::TcpListener, kind: ServerKind, events: mpsc::Sender<Event>, out: NetOutbox) -> Result<()> {
+    let listener = TcpListener::from_std(listener)?;
+    info!("{kind:?} server listening on {}", listener.local_addr()?);
     loop {
         let (sock, peer) = listener.accept().await?;
         let _ = sock.set_nodelay(true);
@@ -135,9 +135,9 @@ pub async fn listen(addr: SocketAddr, kind: ServerKind, events: mpsc::Sender<Eve
 }
 
 /// Line-based admin console on 127.0.0.1: each line is Lua (or a `:command`).
-pub async fn console(port: u16, events: mpsc::Sender<Event>) -> Result<()> {
-    let listener = TcpListener::bind(("127.0.0.1", port)).await?;
-    info!("admin console on 127.0.0.1:{port} (ragnarok-offline console)");
+pub async fn console(listener: std::net::TcpListener, events: mpsc::Sender<Event>) -> Result<()> {
+    let listener = TcpListener::from_std(listener)?;
+    info!("admin console on {} (ragnarok-offline console)", listener.local_addr()?);
     loop {
         let (sock, _) = listener.accept().await?;
         let events = events.clone();
