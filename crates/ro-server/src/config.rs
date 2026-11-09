@@ -22,6 +22,26 @@ pub struct Config {
     /// Hex-dump all traffic to logs/packets.log.
     pub packet_log: bool,
     pub game: GameConfig,
+    /// Stand-in for euRO's patch servers, for the CD's patcher (patchsrv.rs).
+    pub patch_server: PatchServerConfig,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(default)]
+pub struct PatchServerConfig {
+    pub enabled: bool,
+    /// HTTP (the patcher's `wpatch` host; any port, it is part of the URL).
+    pub http_port: u16,
+    /// FTP (the patcher's `fpatch` host; the patcher always dials 21).
+    pub ftp_port: u16,
+    /// Served directory: HTTP and FTP `/patch/x` are `dir/patch/x`.
+    pub dir: PathBuf,
+}
+
+impl Default for PatchServerConfig {
+    fn default() -> Self {
+        PatchServerConfig { enabled: false, http_port: 6950, ftp_port: 21, dir: "patchsrv".into() }
+    }
 }
 
 impl Default for Config {
@@ -34,6 +54,7 @@ impl Default for Config {
             watch_scripts: true,
             packet_log: false,
             game: GameConfig::default(),
+            patch_server: PatchServerConfig::default(),
         }
     }
 }
@@ -56,6 +77,7 @@ impl Config {
         fix(&mut cfg.game.save_dir);
         fix(&mut cfg.game.script_dir);
         fix(&mut cfg.game.db_dir);
+        fix(&mut cfg.patch_server.dir);
         Ok(cfg)
     }
 }
@@ -89,4 +111,12 @@ base_exp_rate = 100   # percent; 100 = official 1x
 job_exp_rate = 100
 drop_rate = 100
 autosave_secs = 120
+
+# A stand-in for euRO's patch servers so the CD's own patcher (Ragnarok.exe)
+# runs offline; RagnarokOffline.exe turns it on (docs/WINDOWS.md).
+[patch_server]
+enabled = false
+http_port = 6950
+ftp_port = 21            # the patcher always dials 21
+dir = "patchsrv"         # serves dir/patch/* over HTTP and FTP
 "#;

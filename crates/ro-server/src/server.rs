@@ -28,6 +28,8 @@ pub struct Options {
 pub struct Handle {
     tx: mpsc::Sender<Event>,
     thread: Option<std::thread::JoinHandle<()>>,
+    /// The patch server is enabled and both of its ports are bound.
+    pub patch_server: bool,
 }
 
 impl Handle {
@@ -77,15 +79,32 @@ pub fn start(cfg: Config, opts: Options) -> Result<Handle> {
     } else {
         None
     };
+    // optional, and not worth failing over: without it the client is started directly
+    let patch = if cfg.patch_server.enabled {
+        let ps = &cfg.patch_server;
+        match (bind([127, 0, 0, 1].into(), ps.http_port, "patch server HTTP"), bind([127, 0, 0, 1].into(), ps.ftp_port, "patch server FTP")) {
+            (Ok(h), Ok(f)) => Some((h, f, ps.dir.clone())),
+            (h, f) => {
+                for e in [h.err(), f.err()].into_iter().flatten() {
+                    tracing::warn!("{e:#}");
+                }
+                None
+            }
+        }
+    } else {
+        None
+    };
+    let patch_server = patch.is_some();
+    let bound = Bound { listeners, console, patch };
 
     let (tx, rx) = mpsc::channel::<Event>();
     let (ready_tx, ready_rx) = mpsc::channel::<Result<()>>();
     let tx2 = tx.clone();
     let thread = std::thread::Builder::new()
         .name("game".into())
-        .spawn(move || game_thread(cfg, opts, listeners, console, tx2, rx, ready_tx))?;
+        .spawn(move || game_thread(cfg, opts, bound, tx2, rx, ready_tx))?;
     match ready_rx.recv() {
-        Ok(Ok(())) => Ok(Handle { tx, thread: Some(thread) }),
+        Ok(Ok(())) => Ok(Handle { tx, thread: Some(thread), patch_server }),
         Ok(Err(e)) => {
             let _ = thread.join();
             Err(e)
@@ -97,11 +116,18 @@ pub fn start(cfg: Config, opts: Options) -> Result<Handle> {
     }
 }
 
+/// Sockets bound by [`start`] before the game thread exists.
+struct Bound {
+    listeners: Vec<(std::net::TcpListener, ServerKind)>,
+    console: Option<std::net::TcpListener>,
+    /// patch server: HTTP, FTP, served directory
+    patch: Option<(std::net::TcpListener, std::net::TcpListener, PathBuf)>,
+}
+
 fn game_thread(
     cfg: Config,
     opts: Options,
-    listeners: Vec<(std::net::TcpListener, ServerKind)>,
-    console: Option<std::net::TcpListener>,
+    Bound { listeners, console, patch }: Bound,
     tx: mpsc::Sender<Event>,
     rx: mpsc::Receiver<Event>,
     ready: mpsc::Sender<Result<()>>,
@@ -139,6 +165,19 @@ fn game_thread(
         rt.spawn(async move {
             if let Err(e) = net::console(l, tx).await {
                 error!("console: {e:#}");
+            }
+        });
+    }
+    if let Some((h, f, dir)) = patch {
+        let d2 = dir.clone();
+        rt.spawn(async move {
+            if let Err(e) = crate::patchsrv::http(h, d2).await {
+                error!("patch server HTTP: {e:#}");
+            }
+        });
+        rt.spawn(async move {
+            if let Err(e) = crate::patchsrv::ftp(f, dir).await {
+                error!("patch server FTP: {e:#}");
             }
         });
     }

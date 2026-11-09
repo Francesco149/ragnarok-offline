@@ -3,5 +3,6 @@
 
 pub mod config;
 pub mod net;
+pub mod patchsrv;
 pub mod server;
 pub mod setup;
