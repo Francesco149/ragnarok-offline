@@ -37,6 +37,8 @@ period source). Research behind the tiers: `research/notes/mechanics-sources.md`
 | Monster AI | simplified Athena behaviour (aggressive pick-up, chase, random walk) | guess |
 | Guide/Kafra/Counter Boy NPCs | written for this project | guess |
 | `@go` coordinates | rAthena | later |
+| Client first-run settings written by `RagnarokOffline.exe` (registry) | the value set the client's own `Setup.exe` writes (observed on Windows 11); 800×600×16 fullscreen picked by us | client / guess |
+| DDrawCompat settings (`DDrawCompat.ini`) | chosen for this client, reasons in docs/WINDOWS.md | guess |
 
 ## Known period disagreements (don't "fix" these silently)
 

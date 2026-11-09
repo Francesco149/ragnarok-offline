@@ -27,5 +27,11 @@ Single-player server for the 2003-12-18 euRO client (see README.md).
 
 `crates/` (Rust), `scripts/` (Lua: rules, commands, NPCs, imports),
 `data/db/` (TOML game data), `data/client/packet_lengths.tsv` (from the exe),
-`research/` (tools + notes), `tools/` (workbench, client rig, importer,
-packaging), `docs/`.
+`research/` (tools + notes), `tools/` (workbench, client rig, real-Windows
+rig `win-test/`, all-in-one installer `aio/`, importer, packaging),
+`third_party/` (pinned downloads, git-ignored), `docs/`.
+
+- The Windows rig (`tools/win-test`) drives someone's real desktop: no
+  native fullscreen mode switches, keep files under its `WIN_DIR`, uninstall
+  what you install. The all-in-one installer output contains Gravity's files:
+  never commit or publish it.

@@ -52,6 +52,46 @@ Notes: the client needs press-and-hold clicks and an activated window
 `SOUNDMODE=0`; Escape opens the client's exit menu. `logs/packets.log` has
 every packet both ways.
 
+## A real Windows machine
+
+`tools/win-test/win.sh` drives a Windows 10/11 box over ssh (Windows' own
+OpenSSH, PowerShell as the default shell). ssh sessions run in session 0 and
+cannot see the desktop, so `up` starts two PowerShell agents inside the
+logged-in desktop session (scheduled tasks; one medium integrity, one
+elevated, because UIPI stops a medium process from driving elevated windows
+such as msiexec's UI). Everything it creates lives under `WIN_DIR` (default
+`F:\ro-test`); `WIN_HOST` (default `win-wifi`) is the ssh alias.
+
+```sh
+W=tools/win-test/win.sh
+$W up                                   # copy agent.ps1, start both agents
+$W push ~/data/ragnarok-cd/RAGNAROK.iso 'F:\ro-test\RAGNAROK.iso'
+$W ps  'Mount-DiskImage F:\ro-test\RAGNAROK.iso'        # ssh session (elevated, no desktop)
+$W do  'Launch D:\setup.exe'                             # desktop session, like a double-click
+$W doa 'Windows "msiexec"; Click 1055 708'               # elevated desktop agent
+$W shot name [admin]                    # -> ~/data/ragnarok-cd/shots/win11/name.png
+$W down
+```
+
+Snippet helpers (agent.ps1): `Shot`, `Click`/`DClick`/`RClick`, `MoveTo`,
+`Key`, `Send`, `Run`, `Launch` (starts a program from the foreground, as
+Explorer does), `Windows [regex over "title class process"]`, `Focus`,
+`Restore`, and `GameClick X Y` (clicks inside a DDrawCompat fullscreen game
+at game coordinates). Gotchas: fullscreen games minimize when anything else
+takes the foreground (restarting the agents does); the elevated agent's
+hidden console can own the foreground, so restore from `doa`; use Shift, not
+Alt, to unlock SetForegroundWindow (Alt sends windows into menu mode).
+
+## Windows launcher and all-in-one installer
+
+`crates/ro-launcher` builds `RagnarokOffline.exe` (GUI subsystem; manifest and
+version info via mingw `windres`). It embeds `scripts/`, `data/db/` and, when
+`tools/fetch-third-party.sh` has fetched it, DDrawCompat's `ddraw.dll`
+(pinned, sha256-checked, into the git-ignored `third_party/`). `tools/package.sh`
+runs the fetch. `tools/aio/build.sh` turns a CD (default `/data/iso`) into the
+all-in-one installer folder and ISO under `/data/aio/`: Gravity's files plus
+ours, never committed. See WINDOWS.md for what both do and why.
+
 ## Reverse engineering
 
 `research/extract_packet_lengths.py` (capstone) produced the length table;

@@ -64,6 +64,6 @@ reset NPCs; party/guild/trade/vending only matter for multiplayer.
 
 ## 9. Robustness
 
-Auto-detect client install from the registry on Windows; a small GUI or
-`.bat` wizard for `setup`; packet fuzz tests against the length table;
+Done: `RagnarokOffline.exe` (drop-in launcher) and the all-in-one installer
+(docs/WINDOWS.md); open items there under "Not verified yet". Next: packet fuzz tests against the length table;
 `check` validating that every item/mob id referenced by scripts exists.

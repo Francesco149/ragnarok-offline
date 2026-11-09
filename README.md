@@ -19,34 +19,55 @@ can edit while the server runs.
 | Where every number comes from | [docs/PROVENANCE.md](docs/PROVENANCE.md) |
 | What is missing / next | [docs/ROADMAP.md](docs/ROADMAP.md) |
 | Building, testing, the headless client rig | [docs/DEVELOPMENT.md](docs/DEVELOPMENT.md) |
+| Modern Windows: launcher, all-in-one installer, what the 2003 CD does on Win11 | [docs/WINDOWS.md](docs/WINDOWS.md) |
 
-## Play (Windows)
+## Play (Windows 10/11)
 
 1. Install the client from the CD (or copy an installed `RagnarokOnline` folder).
-2. Unzip `ragnarok-offline-<version>-windows-x86_64.zip` anywhere, e.g. `C:\ragnarok-offline`.
-3. In that folder, open a terminal and run once:
-   ```bat
-   ragnarok-offline.exe setup --client "C:\Program Files\Gravity\RagnarokOnline"
-   ragnarok-offline.exe init --client "C:\Program Files\Gravity\RagnarokOnline"
-   ```
-   `setup` keeps the CD's `data.grf` as `data.grf.original`, writes a new
-   `data.grf` with the CD's Turtle Island/Juno patches merged (what euRO's
-   patcher would have done) and a `clientinfo.xml` pointing at 127.0.0.1, and
-   adds `Play Offline.bat`. `init` writes `ragnarok-offline.toml`.
-4. Start the server: double-click `ragnarok-offline.exe` (or `ragnarok-offline.exe run`).
-5. Start the game with `Play Offline.bat` in the client folder.
-6. Log in with **any new ID and password** (4+ characters): the account is
+2. Put **`RagnarokOffline.exe`** into that folder (next to `Ragexe.exe`) and
+   double-click it. That's all: the first start prepares the folder once
+   (UAC prompt only if it is under Program Files), later starts go straight
+   to the login screen.
+3. Log in with **any new ID and password** (4+ characters): the account is
    created on first login. Add `_F` to the ID once to make a female account
    (`myname_F`), `_M` for male (default).
 
-The server needs Windows 10 or newer (or Windows 7/8 with the Universal C
-Runtime update installed). The client needs DirectX 7-era 3D; on modern
-Windows it may need a wrapper such as dgVoodoo2.
+`RagnarokOffline.exe` contains the server, its scripts and database, and
+[DDrawCompat](https://github.com/narzoul/DDrawCompat) (DirectX 7 fixes for
+modern Windows, XP-style text). Fullscreen is emulated (no display mode
+change, 4:3 with black bars); the client's own `Setup.exe` still changes
+resolution, sound and so on. Your saves, scripts and `ragnarok-offline.toml`
+end up in `<game>\offline\` (or `%LOCALAPPDATA%\Ragnarok Offline\` if the
+game folder is read-only).
+
+Own the CD? `tools/aio/build.sh` turns it into an **all-in-one installer**:
+the original setup wizard, plus all of the above, prepared at install time.
+Details, and what the 2003 installer and client do on Windows 11:
+[docs/WINDOWS.md](docs/WINDOWS.md).
+
+### By hand (server CLI)
+
+Unzip `ragnarok-offline-<version>-windows-x86_64.zip` anywhere, then in a terminal:
+
+```bat
+ragnarok-offline.exe setup --client "C:\Program Files (x86)\Gravity\RagnarokOnline"
+ragnarok-offline.exe init --client "C:\Program Files (x86)\Gravity\RagnarokOnline"
+ragnarok-offline.exe run
+```
+
+`setup` keeps the CD's `data.grf` as `data.grf.original`, writes a new
+`data.grf` with the CD's Turtle Island/Juno patches merged (what euRO's
+patcher would have done) and a `clientinfo.xml` pointing at 127.0.0.1, and
+adds `Play Offline.bat`; `init` writes `ragnarok-offline.toml`. Start the game
+with `Play Offline.bat`. The server needs Windows 10 or newer (or 7/8 with the
+Universal C Runtime update); the client needs DDrawCompat or a similar
+wrapper for fullscreen on modern Windows (`RagnarokOffline.exe` installs it).
 
 ## Play (Linux)
 
-Same steps with `ragnarok-offline` from `ragnarok-offline-<version>-linux-x86_64.tar.gz` (a
-static binary). Run the client with Wine:
+Put `RagnarokOffline` from `ragnarok-offline-<version>-linux-x86_64.tar.gz` into the
+client folder and run it (server + `wine Ragexe.exe 1rag1`; configure the client
+with `wine Setup.exe` first). Or by hand, with the static `ragnarok-offline` binary:
 
 ```sh
 ./ragnarok-offline setup --client ~/RagnarokOnline
