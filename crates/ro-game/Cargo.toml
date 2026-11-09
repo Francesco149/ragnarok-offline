@@ -3,6 +3,7 @@ name = "ro-game"
 description = "Game simulation: sessions (login/char/map), world, movement, NPC/Lua scripting, persistence model"
 version.workspace = true
 edition.workspace = true
+license.workspace = true
 
 [dependencies]
 ro-proto.workspace = true

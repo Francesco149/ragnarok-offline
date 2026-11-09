@@ -3,6 +3,7 @@ name = "ro-proto"
 description = "Wire protocol of the 2003-12-18 euRO client: length table (extracted from Ragexe.exe), framing, packet readers/writers"
 version.workspace = true
 edition.workspace = true
+license.workspace = true
 
 [dependencies]
 thiserror.workspace = true

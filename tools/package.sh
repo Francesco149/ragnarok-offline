@@ -14,7 +14,7 @@ rm -rf dist && mkdir -p dist
 for os in linux windows; do
   d="dist/ragnarok-offline-$ver-$os-x86_64"
   mkdir -p "$d/data"
-  cp -r scripts "$d/"; cp -r data/db "$d/data/"; cp -r docs README.md "$d/"
+  cp -r scripts "$d/"; cp -r data/db "$d/data/"; cp -r docs README.md "$d/"; cp LICENSE "$d/LICENSE.txt"
   if [ $os = linux ]; then
     cp target/x86_64-unknown-linux-musl/release/{ragnarok-offline,RagnarokOffline} "$d/"
     (cd dist && tar czf "$(basename "$d").tar.gz" "$(basename "$d")")

@@ -98,8 +98,11 @@ with simple AI, melee combat, EXP and levels, drops, regen, death/respawn,
 saving. Not yet: skills, status effects, element/size/card modifiers, parties,
 storage, trading, guilds, pets — see [docs/ROADMAP.md](docs/ROADMAP.md).
 
-## Licensing note
+## License
 
-`data/db/*.toml` and `scripts/import/*.lua` are generated from Athena-family
-emulator data (GPL-2.0-or-later); keep that in mind before publishing. The
-client and its data are Gravity's and are never in this repository.
+GPL-3.0-or-later ([LICENSE](LICENSE)). `data/db/*.toml` and
+`scripts/import/**` are generated from, and the NPC scripts are ported from,
+the GPL-licensed Athena-family emulators of 2003–04 (Athena, AppleMod,
+eAthena); the project as a whole is GPL so they can live in it. Bundled
+DDrawCompat is 0BSD (its licence ships next to it). The client and its data
+are Gravity's and are never in this repository.

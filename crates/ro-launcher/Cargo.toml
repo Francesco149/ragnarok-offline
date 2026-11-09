@@ -3,6 +3,7 @@ name = "ro-launcher"
 description = "RagnarokOffline.exe: drop it into a Ragnarok Online folder, double-click, play"
 version.workspace = true
 edition.workspace = true
+license.workspace = true
 
 [[bin]]
 name = "RagnarokOffline"

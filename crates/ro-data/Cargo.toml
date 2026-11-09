@@ -3,6 +3,7 @@ name = "ro-data"
 description = "Client file formats (.gat, # tables) and the server game database (TOML with provenance)"
 version.workspace = true
 edition.workspace = true
+license.workspace = true
 
 [dependencies]
 ro-grf.workspace = true

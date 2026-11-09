@@ -3,6 +3,7 @@ name = "ro-server"
 description = "ragnarok-offline: single-player server for the 2003-12-18 euRO client"
 version.workspace = true
 edition.workspace = true
+license.workspace = true
 
 [lib]
 path = "src/lib.rs"
