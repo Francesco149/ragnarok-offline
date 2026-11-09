@@ -31,7 +31,7 @@ pub const EQUIP_SLOTS: [u32; 10] = [0x0100, 0x0010, 0x0020, 0x0002, 0x0004, 0x00
 pub const OPT_CART: u32 = 0x0008;
 pub const OPT_FALCON: u32 = 0x0010;
 pub const OPT_RIDING: u32 = 0x0020;
-const CART_BITS: u32 = 0x0008 | 0x0080 | 0x0100 | 0x0200 | 0x0400;
+pub const CART_BITS: u32 = 0x0008 | 0x0080 | 0x0100 | 0x0200 | 0x0400;
 const MC_PUSHCART: u16 = 39;
 const HT_FALCON: u16 = 127;
 const KN_RIDING: u16 = 63;
@@ -376,18 +376,14 @@ impl Game {
 
     // ------------------------------------------------------------ options
 
-    fn set_option(&mut self, unit: u32, option: u32) {
+    pub(crate) fn set_option(&mut self, unit: u32, option: u32) {
         let Some(c) = self.char_of_unit_mut(unit) else { return };
         let had_cart = c.option & CART_BITS != 0;
         c.option = option;
         let (opt, karma) = (option as u16, c.karma as u8);
         self.area_send(unit, packets::state_change(unit, 0, 0, opt, karma), true);
         if option & CART_BITS != 0 && !had_cart {
-            // the cart's contents: empty until carts are implemented (docs/ROADMAP.md)
-            if let Some(sid) = self.sid_of(unit) {
-                let mw = 80_000;
-                self.send(sid, packets::cart_info(0, 100, 0, mw));
-            }
+            self.send_cart(unit);
         }
     }
 

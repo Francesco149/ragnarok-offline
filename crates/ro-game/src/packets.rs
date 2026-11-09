@@ -477,6 +477,43 @@ pub fn cart_info(num: u16, max: u16, weight: u32, max_weight: u32) -> Vec<u8> {
     Writer::new(ZC_NOTIFY_CARTITEM_COUNTINFO).u16(num).u16(max).u32(weight).u32(max_weight).finish()
 }
 
+/// 0x0123: stackable cart items (10 bytes each, as 0x00a3).
+pub fn cart_items(items: &[(u16, &InvItem, u8)]) -> Vec<u8> {
+    let mut w = Writer::new(ZC_CART_NORMAL_ITEMLIST);
+    for &(idx, it, kind) in items {
+        w.u16(idx).u16(it.nameid as u16).u8(kind).u8(it.identify as u8).u16(it.amount.min(30000) as u16).u16(0);
+    }
+    w.finish()
+}
+
+/// 0x0122: cart equipment (20 bytes each, as 0x00a4).
+pub fn cart_equips(items: &[(u16, &InvItem, u8, u32)]) -> Vec<u8> {
+    let mut w = Writer::new(ZC_CART_EQUIPMENT_ITEMLIST);
+    for &(idx, it, kind, loc) in items {
+        w.u16(idx).u16(it.nameid as u16).u8(kind).u8(it.identify as u8).u16(loc as u16).u16(0);
+        w.u8(it.attribute).u8(it.refine);
+        for c in it.cards {
+            w.u16(c);
+        }
+    }
+    w.finish()
+}
+
+/// 0x0124: item put into the cart.
+pub fn cart_add(idx: u16, amount: u32, it: &InvItem) -> Vec<u8> {
+    let mut w = Writer::new(ZC_ADD_ITEM_TO_CART);
+    w.u16(idx).u32(amount).u16(it.nameid as u16).u8(it.identify as u8).u8(it.attribute).u8(it.refine);
+    for c in it.cards {
+        w.u16(c);
+    }
+    w.finish()
+}
+
+/// 0x0125: item taken out of the cart.
+pub fn cart_remove(idx: u16, amount: u32) -> Vec<u8> {
+    Writer::new(ZC_DELETE_ITEM_FROM_CART).u16(idx).u32(amount).finish()
+}
+
 /// 0x00f2: storage counts.
 pub fn storage_info(num: u16, max: u16) -> Vec<u8> {
     Writer::new(ZC_NOTIFY_STOREITEM_COUNTINFO).u16(num).u16(max).finish()

@@ -346,6 +346,25 @@ fn npc_runtime() {
     assert!(find(&cap.take(3), 0x0189).is_some(), "the client's 'unable to teleport' message");
     assert_eq!(g.console_eval("count_item(601)", me), "1", "the wing is not used up");
 
+    // pushcart: renting needs the Pushcart skill; potions go in and out
+    assert_eq!(g.console_eval("set_cart()", me), "false", "no cart without Pushcart");
+    g.console_eval("give_skill(39, 1); give_item(501, 10)", me);
+    assert_eq!(g.console_eval("set_cart()", me), "true");
+    assert!(find(&cap.take(3), 0x0121).is_some(), "cart counts sent");
+    let slot = g.store.chars.values().next().unwrap().inventory.iter().position(|i| i.nameid == 501).unwrap() as u16;
+    let mut w = Writer::new(0x0126);
+    w.u16(slot + 2).u32(4);
+    send(&mut g, 3, w);
+    assert!(find(&cap.take(3), 0x0124).is_some());
+    assert_eq!(g.store.chars.values().next().unwrap().cart.iter().map(|i| i.amount).sum::<u32>(), 4);
+    let mut w = Writer::new(0x0127);
+    w.u16(2).u32(4);
+    send(&mut g, 3, w);
+    assert!(find(&cap.take(3), 0x0125).is_some());
+    assert!(g.store.chars.values().next().unwrap().cart.is_empty());
+    send(&mut g, 3, Writer::new(0x012a));
+    assert_eq!(g.console_eval("check_option(8)", me), "0", "cart taken off");
+
     // server-wide variables persist
     g.save_all();
     let world = std::fs::read_to_string(base.join("saves/world.json")).unwrap();

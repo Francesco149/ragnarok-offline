@@ -190,6 +190,20 @@ impl Game {
                 self.storage_take(unit, idx, amount);
             }
             CZ_CLOSE_STORE => self.storage_close(unit),
+            CZ_MOVE_ITEM_FROM_BODY_TO_CART => {
+                let idx = r.u16()?;
+                let amount = r.u32()?;
+                self.cart_put(unit, idx, amount);
+            }
+            CZ_MOVE_ITEM_FROM_CART_TO_BODY => {
+                let idx = r.u16()?;
+                let amount = r.u32()?;
+                self.cart_take(unit, idx, amount);
+            }
+            CZ_REQ_CARTOFF => {
+                // Athena clif_parse_RemoveOption: cart, falcon and peco all go
+                self.set_option(unit, 0);
+            }
             0x0113 | 0x0116 | 0x0190 => {
                 // skills: server-side behaviour not reconstructed yet
                 self.send(sid, ro_proto::Writer::new(ZC_ACK_TOUSESKILL).u16(0).u16(0).u16(0).u8(0).u8(0).finish());
@@ -250,6 +264,13 @@ impl Game {
         self.send_skill_list(unit);
         self.send_full_status(unit);
         self.send_inventory(unit);
+        // Athena clif_parse_LoadEndAck: your own cart/falcon/peco
+        if let Some((opt, karma)) = self.char_of_unit(unit).filter(|c| c.option != 0).map(|c| (c.option as u16, c.karma as u8)) {
+            self.send(sid, packets::state_change(unit, 0, 0, opt, karma));
+        }
+        if self.char_of_unit(unit).is_some_and(|c| c.option & crate::npcrt::CART_BITS != 0) {
+            self.send_cart(unit);
+        }
         self.send(sid, packets::attack_range(1));
         self.refresh_view(unit, true);
         if first {

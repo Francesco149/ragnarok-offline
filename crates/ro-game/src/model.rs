@@ -82,6 +82,8 @@ pub struct Character {
     pub last_point: Point,
     pub save_point: Point,
     pub inventory: Vec<InvItem>,
+    /// Pushcart contents (kept when the cart is taken off).
+    pub cart: Vec<InvItem>,
     pub skills: BTreeMap<u16, u8>,
     /// Persistent script variables (quest progress etc.), set from Lua.
     pub vars: BTreeMap<String, serde_json::Value>,
@@ -114,6 +116,7 @@ impl Default for Character {
             last_point: Point::new("prontera", 156, 191),
             save_point: Point::new("prontera", 156, 191),
             inventory: Vec::new(),
+            cart: Vec::new(),
             skills: BTreeMap::new(),
             vars: BTreeMap::new(),
         }

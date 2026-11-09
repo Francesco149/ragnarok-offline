@@ -66,8 +66,7 @@ monsters, refining, storage), a hand-written Kafra service. Next, in order:
 
 ## 8. Systems
 
-Done: Kafra storage. Next: cart inventory (0x0121-0x0127; renting already
-sets the cart option), pets (egg/taming/hunger; `catch_pet` is a stub),
+Done: Kafra storage, pushcart contents. Next: pets (egg/taming/hunger; `catch_pet` is a stub),
 item identification, status changes (`sc_start`). Party/guild/trade/vending
 only matter for multiplayer (DEVIATIONS.md).
 

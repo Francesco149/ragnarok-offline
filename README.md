@@ -99,7 +99,7 @@ ground, job quests, guides, Kafras, refiners, quests), shops,
 inventory/equipment, items with use effects, Kafra storage, the skill tree
 and skill points, monsters (2,001 era spawn groups) with simple AI, melee
 combat, EXP and levels, drops, regen, death/respawn, saving. Not yet: using
-skills, status effects, element/size/card modifiers, carts' contents, pets;
+skills, status effects, element/size/card modifiers, pets;
 parties, trading and guilds need other players — see
 [docs/ROADMAP.md](docs/ROADMAP.md) and [docs/DEVIATIONS.md](docs/DEVIATIONS.md).
 
