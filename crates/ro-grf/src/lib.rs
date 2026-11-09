@@ -21,7 +21,7 @@ use std::io::{self, Read, Seek, SeekFrom};
 use std::path::{Path, PathBuf};
 use std::sync::Mutex;
 
-pub use writer::write_grf_0x200;
+pub use writer::{write_grf_0x200, write_grf_0x200_with_progress};
 
 
 pub const HEADER_LEN: u64 = 46;

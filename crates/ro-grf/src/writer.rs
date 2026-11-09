@@ -12,13 +12,22 @@ use crate::{HEADER_LEN, Result, Source, Vfs};
 /// Returns the number of entries written. Streams one entry at a time, so
 /// memory use is bounded by the largest single entry.
 pub fn write_grf_0x200(vfs: &Vfs, out: &Path) -> Result<usize> {
+    write_grf_0x200_with_progress(vfs, out, &mut |_, _| {})
+}
+
+/// [`write_grf_0x200`], calling `progress(done, total)` (entries) as it goes.
+pub fn write_grf_0x200_with_progress(vfs: &Vfs, out: &Path, progress: &mut dyn FnMut(usize, usize)) -> Result<usize> {
     let merged = vfs.merged();
+    let total = merged.len();
     let f = File::create(out)?;
     let mut w = BufWriter::with_capacity(1 << 20, f);
     w.write_all(&[0u8; HEADER_LEN as usize])?;
     let mut table = Vec::with_capacity(merged.len() * 64);
     let mut pos: u64 = 0; // relative to end of header
-    for src in &merged {
+    for (i, src) in merged.iter().enumerate() {
+        if i % 256 == 0 {
+            progress(i, total);
+        }
         let (data, real_len) = match src {
             Source::Archive { layer, entry } => {
                 let mut d = vfs.layers()[*layer].read_compressed(entry)?;
@@ -61,5 +70,6 @@ pub fn write_grf_0x200(vfs: &Vfs, out: &Path) -> Result<usize> {
     w.seek(SeekFrom::Start(0))?;
     w.write_all(&hdr)?;
     w.flush()?;
+    progress(total, total);
     Ok(merged.len())
 }
