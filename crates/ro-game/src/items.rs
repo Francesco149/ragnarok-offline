@@ -158,10 +158,18 @@ impl Game {
         let Some(engine) = self.scripts.clone() else { return };
         let ctx = Ctx::new(unit, 0, CtxKind::Item);
         let r = engine.run_item(self, ctx, d.id, &d.use_script);
-        if let Err(e) = r {
-            self.notice(format!("item {}: {e:#}", d.id));
-            self.send(sid, packets::use_item_ack(idx, it.amount as u16, false));
-            return;
+        match r {
+            Ok(true) => {}
+            Ok(false) => {
+                // refused (e.g. a Fly Wing on a noteleport map): kept
+                self.send(sid, packets::use_item_ack(idx, it.amount as u16, false));
+                return;
+            }
+            Err(e) => {
+                self.notice(format!("item {}: {e:#}", d.id));
+                self.send(sid, packets::use_item_ack(idx, it.amount as u16, false));
+                return;
+            }
         }
         let left = it.amount - 1;
         if let Some(c) = self.char_of_unit_mut(unit) {

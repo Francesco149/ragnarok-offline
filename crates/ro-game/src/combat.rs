@@ -409,8 +409,10 @@ impl Game {
         }
         self.dialogs.remove(&unit);
         self.area_send(unit, packets::vanish(unit, 1), true);
-        // death EXP penalty from rules (Athena: 1% of next level, not novices)
-        let penalty = self.char_of_unit(unit).cloned().and_then(|c| {
+        // death EXP penalty from rules (Athena: 1% of next level, not novices); none on nopenalty maps
+        let here = self.world.units.get(&unit).map(|u| u.map.clone()).unwrap_or_default();
+        let free = self.db.map_flag(&here, "nopenalty");
+        let penalty = self.char_of_unit(unit).cloned().filter(|_| !free).and_then(|c| {
             let (nb, nj) = self.exp_next(&c);
             self.scripts.as_ref().and_then(|e| {
                 e.rule("death_penalty", &json!({"class": c.class, "next_base": nb, "next_job": nj})).ok().flatten()

@@ -126,6 +126,7 @@ fn setup() -> (Game, Cap, PathBuf) {
     std::fs::write(scripts.join("test.lua"), TEST_NPCS).unwrap();
     let mut vfs = Vfs::new();
     vfs.add_memory_file("data\\testmap.gat", gat(50, 50));
+    vfs.add_memory_file("data\\job_sword1.gat", gat(50, 50)); // noteleport in data/db/mapflags.toml
     let cfg = GameConfig {
         save_dir: base.join("saves"),
         script_dir: scripts,
@@ -336,6 +337,14 @@ fn npc_runtime() {
     use_item(&mut g, &cap, 602); // Butterfly Wing
     let u = g.world.units.get(&me).unwrap();
     assert_eq!((u.x, u.y), (10, 10), "back at the save point");
+
+    // map flags: no Fly Wing on the Swordsman course, and the wing is kept
+    g.console_eval("warp('job_sword1', 20, 20)", me);
+    use_item(&mut g, &cap, 601); // Fly Wing
+    let u = g.world.units.get(&me).unwrap();
+    assert_eq!((u.map.as_str(), u.x, u.y), ("job_sword1", 20, 20), "no teleport here");
+    assert!(find(&cap.take(3), 0x0189).is_some(), "the client's 'unable to teleport' message");
+    assert_eq!(g.console_eval("count_item(601)", me), "1", "the wing is not used up");
 
     // server-wide variables persist
     g.save_all();

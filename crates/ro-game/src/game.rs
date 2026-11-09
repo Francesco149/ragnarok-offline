@@ -685,10 +685,25 @@ impl Game {
         Ok(())
     }
 
+    /// Where a character on `pt` comes back next login: a nosave map sends it
+    /// to its point (Athena pc_makesavestatus).
+    fn storable_point(&self, char_id: u32, pt: Point) -> Point {
+        let Some(to) = self.db.mapflags.get(&pt.map).filter(|m| m.has("nosave")).and_then(|m| m.nosave.clone()) else { return pt };
+        if to.eq_ignore_ascii_case("SavePoint") {
+            return self.store.chars.get(&char_id).map(|c| c.save_point.clone()).unwrap_or(pt);
+        }
+        let p: Vec<&str> = to.split(',').collect();
+        match (p.first(), p.get(1).and_then(|x| x.parse().ok()), p.get(2).and_then(|x| x.parse().ok())) {
+            (Some(m), Some(x), Some(y)) => Point::new(m, x, y),
+            _ => pt,
+        }
+    }
+
     pub(crate) fn leave_world(&mut self, unit: u32, char_id: u32, vanish_kind: u8) {
-        if let Some(u) = self.world.units.get(&unit) {
+        if let Some(pt) = self.world.units.get(&unit).map(|u| Point::new(&u.map, u.x, u.y)) {
+            let pt = self.storable_point(char_id, pt);
             if let Some(c) = self.store.chars.get_mut(&char_id) {
-                c.last_point = Point::new(&u.map, u.x, u.y);
+                c.last_point = pt;
             }
         }
         self.dialogs.remove(&unit);
@@ -725,8 +740,8 @@ impl Game {
             .filter_map(|u| u.player().map(|p| (u.id, p.char_id)))
             .collect();
         for (unit, cid) in players {
-            if let Some(u) = self.world.units.get(&unit) {
-                let pt = Point::new(&u.map, u.x, u.y);
+            if let Some(pt) = self.world.units.get(&unit).map(|u| Point::new(&u.map, u.x, u.y)) {
+                let pt = self.storable_point(cid, pt);
                 if let Some(c) = self.store.chars.get_mut(&cid) {
                     c.last_point = pt;
                 }

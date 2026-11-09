@@ -586,7 +586,15 @@ impl Game {
             }
             "warp" => player().and_then(|u| {
                 let map = text(a, 0);
-                if self.script_warp(u, &map, int(a, 1), int(a, 2)) { Ok(Value::Null) } else { Err(format!("cannot warp to {map}")) }
+                // Fly Wing & co: not on noteleport maps (Athena pc_randomwarp); false = refused
+                let here = self.world.units.get(&u).map(|x| x.map.clone()).unwrap_or_default();
+                if map.eq_ignore_ascii_case("Random") && self.db.map_flag(&here, "noteleport") {
+                    if let Some(sid) = self.sid_of(u) {
+                        self.send(sid, packets::map_info(0));
+                    }
+                    return Ok(json!(false));
+                }
+                if self.script_warp(u, &map, int(a, 1), int(a, 2)) { Ok(json!(true)) } else { Err(format!("cannot warp to {map}")) }
             }),
             "viewpoint" => player().map(|u| {
                 if let Some(sid) = self.sid_of(u) {
@@ -671,6 +679,10 @@ impl Game {
                 }
             }),
             "dead_branch" => player().and_then(|u| {
+                let here = self.world.units.get(&u).map(|x| x.map.clone()).unwrap_or_default();
+                if self.db.map_flag(&here, "nobranch") {
+                    return Ok(json!(false));
+                }
                 // mod0631 mob_once_spawn class 0: random 1000..1999 on the branch list
                 // whose level is not above the player's, else a Poring
                 let lv = self.char_of_unit(u).map(|c| c.base_level).unwrap_or(1);

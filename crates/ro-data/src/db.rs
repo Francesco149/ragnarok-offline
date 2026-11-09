@@ -6,7 +6,7 @@
 //!
 //! Files (all optional; missing ones load empty with a warning):
 //!   data/db/items.toml  data/db/mobs.toml  data/db/exp.toml  data/db/jobs.toml
-//!   data/db/skills.toml  data/db/random.toml
+//!   data/db/skills.toml  data/db/random.toml  data/db/mapflags.toml
 
 use std::collections::HashMap;
 use std::path::Path;
@@ -215,6 +215,31 @@ pub struct Branch {
     pub mobs: Vec<u32>,
 }
 
+/// Per-map rules (Athena map flags).
+#[derive(Debug, Clone, Default, Serialize, Deserialize)]
+#[serde(default)]
+pub struct MapFlags {
+    pub name: String,
+    /// noteleport, nobranch, nopenalty, nosave, nomemo, pvp
+    pub flags: Vec<String>,
+    /// For nosave: "map,x,y", or "SavePoint".
+    pub nosave: Option<String>,
+}
+
+impl MapFlags {
+    pub fn has(&self, flag: &str) -> bool {
+        self.flags.iter().any(|f| f == flag)
+    }
+}
+
+#[derive(Debug, Default, Serialize, Deserialize)]
+struct MapFlagFile {
+    #[serde(default)]
+    meta: Meta,
+    #[serde(default)]
+    map: Vec<MapFlags>,
+}
+
 #[derive(Debug, Default, Serialize, Deserialize)]
 struct RandomFile {
     #[serde(default)]
@@ -275,6 +300,7 @@ pub struct Database {
     pub skills_meta: Meta,
     pub boxes: Vec<ItemBox>,
     pub branch: Branch,
+    pub mapflags: HashMap<String, MapFlags>,
     pub warnings: Vec<String>,
 }
 
@@ -321,7 +347,14 @@ impl Database {
         let random: RandomFile = read_toml(&dir.join("random.toml"), &mut db.warnings)?;
         db.boxes = random.r#box;
         db.branch = random.branch;
+        let flags: MapFlagFile = read_toml(&dir.join("mapflags.toml"), &mut db.warnings)?;
+        db.mapflags = flags.map.into_iter().map(|m| (m.name.clone(), m)).collect();
         Ok(db)
+    }
+
+    /// Does `map` have Athena map flag `flag`?
+    pub fn map_flag(&self, map: &str, flag: &str) -> bool {
+        self.mapflags.get(map).is_some_and(|m| m.has(flag))
     }
 
     pub fn skill(&self, id: u16) -> Option<&Skill> {

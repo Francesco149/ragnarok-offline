@@ -43,6 +43,7 @@ period source). Research behind the tiers: `research/notes/mechanics-sources.md`
 | Basic Skill unlocks (sit 3, emote 2, storage 6...) | the client's `skilldesctable.txt` | client |
 | Refine success chances | mod0631 `db/refine_db.txt` (`scripts/rules/refine.lua`) | athena2003 |
 | Kafra storage size (100) and layout | 817 `common/mmo.h`, `map/storage.c` | athena2003 |
+| Map flags (noteleport, nobranch, nopenalty, nosave; nomemo and pvp recorded) | mod0631 `conf/mapflag.txt` and the mapflag lines of its NPC files (`data/db/mapflags.toml`) | athena2003 |
 | Old Blue/Violet Box, Card Album, Gift Box contents; Dead Branch monsters | mod0631 `db/item_*box.txt`, `item_cardalbum.txt`, `mob_branch.txt` (`data/db/random.toml`); picking as mod0631 `itemdb_searchrandomid` / `mob_once_spawn` (branch monster not above your level) | athena2003 |
 | `@go` coordinates | rAthena | later |
 | Client first-run settings written by `RagnarokOffline.exe` (registry) | the value set the client's own `Setup.exe` writes (observed on Windows 11); 800×600×16 fullscreen picked by us | client / guess |

@@ -115,9 +115,10 @@ names at the same cells.
 (2004) for prices.
 
 ### 12. Map flags
-nosave, nomemo, noteleport, nopenalty, pvp/gvg per map are not applied
-yet.
-**Impact:** dungeon teleport rules, save behaviour.
+mod0631's flags are applied (noteleport, nobranch, nopenalty, nosave).
+817 adds about 170 more (nopenalty indoors, castle flags) that mod0631
+lacks. Which did the official servers have? Unknown.
+**Impact:** dungeon teleport rules, death penalty in towns.
 **Look:** 817 `conf/mapflag/*.txt`, mod0631 `conf/mapflag.txt`; check
 what the client's own `mapnametable`/indoor tables imply.
 

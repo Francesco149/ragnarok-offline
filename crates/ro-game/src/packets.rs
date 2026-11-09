@@ -456,6 +456,11 @@ pub fn viewpoint(npc: u32, kind: u32, x: u32, y: u32, id: u8, color: u32) -> Vec
     Writer::new(ZC_COMPASS).u32(npc).u32(kind).u32(x).u32(y).u8(id).u32(color).finish()
 }
 
+/// 0x0189: "Unable to Teleport in this area" (kind 0); 1 = can't memo here.
+pub fn map_info(kind: u16) -> Vec<u8> {
+    Writer::new(0x0189).u16(kind).finish()
+}
+
 /// 0x0188: refine result (0 success, 1 failure).
 pub fn refine_result(result: u16, idx: u16, refine: u16) -> Vec<u8> {
     Writer::new(ZC_ACK_ITEMREFINING).u16(result).u16(idx).u16(refine).finish()

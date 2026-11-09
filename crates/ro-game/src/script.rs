@@ -537,8 +537,9 @@ impl ScriptEngine {
         Ok(self.lua.from_value(r).unwrap_or(Value::Null))
     }
 
-    /// Run an item's use script (compiled once per item).
-    pub fn run_item(&self, host: &mut dyn Host, ctx: Ctx, item_id: u32, code: &str) -> Result<()> {
+    /// Run an item's use script (compiled once per item). It returns false
+    /// when the item could not be used (it is then not used up).
+    pub fn run_item(&self, host: &mut dyn Host, ctx: Ctx, item_id: u32, code: &str) -> Result<bool> {
         let f = {
             let mut cache = self.item_fns.borrow_mut();
             match cache.get(&item_id) {
@@ -555,7 +556,7 @@ impl ScriptEngine {
                 }
             }
         };
-        self.call(host, ctx, &f, vec![]).map(|_| ())
+        self.call(host, ctx, &f, vec![]).map(|v| v != Value::Bool(false))
     }
 
     /// Evaluate arbitrary Lua (admin console). Returns the printed result.

@@ -46,9 +46,10 @@ function percent_heal(hp, sp) _rt("percent_heal", hp or 0, sp or 0) end
 function sc_end(name) _rt("sc_end", name) end
 -- warp{map=,x=,y=,to={...}} declares a portal; warp("map", x, y) teleports the player.
 local declare_warp = warp
+-- Returns false when refused (Fly Wing on a noteleport map).
 function warp(map, x, y)
   if type(map) == "table" then return declare_warp(map) end
-  _rt("warp", map, x or 0, y or 0)
+  return _rt("warp", map, x or 0, y or 0)
 end
 function save_point(map, x, y) _rt("save_point", map, x, y) end
 function job_change(job) _rt("job_change", job) end

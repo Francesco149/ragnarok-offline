@@ -576,7 +576,7 @@ buy = 60
 weight = 50
 jobs = 2088959
 gender = 2
-use_script = "warp(\"Random\", 0, 0)"
+use_script = "return warp(\"Random\", 0, 0)"
 
 [[item]]
 id = 602
@@ -587,7 +587,7 @@ buy = 300
 weight = 50
 jobs = 2088959
 gender = 2
-use_script = "warp(\"SavePoint\", 0, 0)"
+use_script = "return warp(\"SavePoint\", 0, 0)"
 
 [[item]]
 id = 603
@@ -609,7 +609,7 @@ buy = 50
 weight = 50
 jobs = 2088959
 gender = 2
-use_script = "dead_branch()"
+use_script = "return dead_branch()"
 
 [[item]]
 id = 605
