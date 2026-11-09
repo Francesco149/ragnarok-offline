@@ -35,7 +35,14 @@ period source). Research behind the tiers: `research/notes/mechanics-sources.md`
 | Death penalty 1%, respawn 1 HP | mod0631 `conf/battle_athena.conf` | athena2003 |
 | Start point `new_zone01 53,111` | Athena's `new_1-1 53,111` on this client's older training map (cell verified walkable) | guess |
 | Monster AI | simplified Athena behaviour (aggressive pick-up, chase, random walk) | guess |
-| Guide/Kafra/Counter Boy NPCs | written for this project | guess |
+| NPC scripts (611 NPCs: towns, job quests, training ground, guides, refiners, quests) | eAthena 817 `npc/` (2004-02-19), translated by `tools/import/athena_npc.py`; each NPC's `src` gives file:line; source bugs kept, fixes in `scripts/npc/` (DEVIATIONS.md) | athena2003 |
+| Kafra service (`scripts/npc/kafra.lua`) | 817 places/sprites/save cells/destinations; fares as 817's menus showed them; storage rule from the client's Basic Skill description | athena2003 / client |
+| Map names of the training ground and test maps | NPC/warp cells of the scripts checked against the client's `.gat` (`tools/import/maps.py`) | client |
+| Skill tree, max levels, targets | mod0631 `db/skill_db.txt`, `db/skill_tree.txt` (quest flag from 817) | athena2003 |
+| Skill SP per level | the client's `leveluseskillspamount.txt` (read from the GRF at start); skills.toml as fallback | client |
+| Basic Skill unlocks (sit 3, emote 2, storage 6...) | the client's `skilldesctable.txt` | client |
+| Refine success chances | mod0631 `db/refine_db.txt` (`scripts/rules/refine.lua`) | athena2003 |
+| Kafra storage size (100) and layout | 817 `common/mmo.h`, `map/storage.c` | athena2003 |
 | `@go` coordinates | rAthena | later |
 | Client first-run settings written by `RagnarokOffline.exe` (registry) | the value set the client's own `Setup.exe` writes (observed on Windows 11); 800×600×16 fullscreen picked by us | client / guess |
 | DDrawCompat settings (`DDrawCompat.ini`) | chosen for this client, reasons in docs/WINDOWS.md | guess |

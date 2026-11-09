@@ -17,6 +17,8 @@ can edit while the server runs.
 | Wire protocol, and what is confirmed from the exe | [docs/PROTOCOL.md](docs/PROTOCOL.md) |
 | Writing NPCs, rules, commands (Lua) | [docs/SCRIPTING.md](docs/SCRIPTING.md) |
 | Where every number comes from | [docs/PROVENANCE.md](docs/PROVENANCE.md) |
+| What we do differently from 2003, on purpose | [docs/DEVIATIONS.md](docs/DEVIATIONS.md) |
+| Open research questions | [research/THREADS.md](research/THREADS.md) |
 | What is missing / next | [docs/ROADMAP.md](docs/ROADMAP.md) |
 | Building, testing, the headless client rig | [docs/DEVELOPMENT.md](docs/DEVELOPMENT.md) |
 | Modern Windows: launcher, all-in-one installer, what the 2003 CD does on Win11 | [docs/WINDOWS.md](docs/WINDOWS.md) |
@@ -92,11 +94,14 @@ auto-registered account is GM level 99 by default).
 
 Working with the real client: login, character create/delete/select, all
 maps of the client incl. Juno and Turtle Island, walking, warps (2,038 era
-portals), NPC dialogs (Lua coroutines: mes/next/menu/close/input), shops,
-inventory/equipment, items with use effects, monsters (2,001 era spawn groups)
-with simple AI, melee combat, EXP and levels, drops, regen, death/respawn,
-saving. Not yet: skills, status effects, element/size/card modifiers, parties,
-storage, trading, guilds, pets — see [docs/ROADMAP.md](docs/ROADMAP.md).
+portals), the era's NPCs (611 from eAthena 817: towns, the novice training
+ground, job quests, guides, Kafras, refiners, quests), shops,
+inventory/equipment, items with use effects, Kafra storage, the skill tree
+and skill points, monsters (2,001 era spawn groups) with simple AI, melee
+combat, EXP and levels, drops, regen, death/respawn, saving. Not yet: using
+skills, status effects, element/size/card modifiers, carts' contents, pets;
+parties, trading and guilds need other players — see
+[docs/ROADMAP.md](docs/ROADMAP.md) and [docs/DEVIATIONS.md](docs/DEVIATIONS.md).
 
 ## License
 

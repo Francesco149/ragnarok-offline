@@ -34,9 +34,10 @@ MDEF/magic damage. Monster element/race/size are already in mobs.toml.
 
 ## 4. Skills
 
-`db/skill_db.txt`, `skill_tree.txt`, `cast_db.txt` → TOML; packets 0x010f
-(list), 0x0112 (level up), 0x0113/0x0116/0x0190 (use), 0x0114/0x011a/0x0117
-(results), 0x013e (casting). Skill effects in Lua (`rules/skills/*.lua`).
+Done: tree, points, skill window (0x010f/0x010e/0x0112), quest skills from
+NPCs, reset, Basic Skill gating. Next: using skills — `cast_db.txt` → TOML;
+packets 0x0113/0x0116/0x0190 (use), 0x0114/0x011a/0x0117 (results), 0x013e
+(casting). Skill effects in Lua (`rules/skills/*.lua`).
 
 ## 5. Status effects
 
@@ -51,16 +52,25 @@ assist, cast sensor; monster skills (`db/mob_skill_db.txt`); MVP rewards;
 
 ## 7. NPC content
 
-Translate the era Athena NPC scripts (`conf/npc_*.txt`) into Lua: Kafra
-(save/storage/teleport with pre-2004-02-24 fares), job-change quests,
-refiners, healers, quest NPCs. A converter for the common subset (mes/next/
-menu/close/warp/set/if/goto) would do most of the work; English text from
-AppleMod 641 / Athena 659.
+Done: eAthena 817's NPCs translated (`tools/import/athena_npc.py`,
+611 NPCs), the runtime they need (events, timers, variables, script
+monsters, refining, storage), a hand-written Kafra service. Next, in order:
+
+* play through each 1st-job quest and the training ground in the client;
+  fix what breaks in `scripts/npc/` (one file per fix, listed in
+  DEVIATIONS.md);
+* hand-port the Wizard quest (817's is in a later dialect; THREADS.md #8);
+* NPC waiting rooms (0x00d7 chat bubbles over arena/PvP NPCs);
+* a period dyer (THREADS.md #13); English shop names from 817 by cell (#11);
+* map flags from 817 `conf/mapflag` (#12);
+* better dialogue where period sources exist (THREADS.md #2).
 
 ## 8. Systems
 
-Kafra storage, carts, pets (egg/taming/hunger), item identification, skill
-reset NPCs; party/guild/trade/vending only matter for multiplayer.
+Done: Kafra storage. Next: cart inventory (0x0121-0x0127; renting already
+sets the cart option), pets (egg/taming/hunger; `catch_pet` is a stub),
+item identification, status changes (`sc_start`). Party/guild/trade/vending
+only matter for multiplayer (DEVIATIONS.md).
 
 ## 9. Robustness
 

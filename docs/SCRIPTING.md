@@ -10,20 +10,30 @@ the error (`:notices` in the console shows it).
 scripts/
   rules/status.lua    derived stats (HP/SP/ATK/hit/flee/ASPD/weight)
   rules/combat.lua    melee damage, death penalty, respawn HP, regen
+  rules/refine.lua    refine success chances
   commands.lua        @commands
-  npc/*.lua           hand-written NPCs
   import/*.lua        generated from era data: warps, monster spawns, shops
+  import/npc/**.lua   the era's NPC scripts, translated (tools/import/athena_npc.py)
+  npc/*.lua           hand-written NPCs; they can replace imported ones
 ```
+
+Generated files are never edited by hand: fix an imported NPC by writing a
+replacement in `scripts/npc/` and listing the change in DEVIATIONS.md.
 
 ## Declarations
 
 ```lua
 npc {
   map = "prontera", x = 152, y = 187, dir = 4,   -- dir 0 N, 2 W, 4 S, 6 E
-  sprite = 117, name = "Guide",                  -- sprite = client NPC job id
+  sprite = 117, name = "Guide",                  -- sprite = client NPC job id; -1 = invisible
   on_click = function() ... end,                 -- dialog coroutine
-  touch = { 1, 1 }, on_touch = function() ... end, -- optional: step-on area
+  touch = { 1, 1 }, on_touch = function() ... end, -- optional: step-on area (default: on_click)
+  id = "guide_prt",                              -- optional: name for events/enable (default: name)
+  events = { "OnInit" },                         -- optional: labels on_click(label) accepts
+  src = "817:cities/prontera.txt:2",             -- where it comes from (imports set this)
+  replaces = "817:other/kafra.txt:2474",         -- optional: drop the imported NPC with this src
 }
+remove_npc("817:other/kafra.txt:995")            -- drop an imported NPC outright
 
 warp { map = "prontera", x = 156, y = 22, span = { 2, 2 }, to = { "prt_fild08", 170, 375 } }
 
@@ -39,7 +49,11 @@ on("login", function() notify("Welcome back!") end)              -- also "map_en
 ```
 
 Entries on maps the client does not have are skipped (`ragnarok-offline
-check` lists them).
+check` lists them). Map `"-"` is a floating NPC: no unit, only events.
+
+`content("juno")` reads the `[game.content]` switches (juno, jobs2_2, pvp,
+events); an imported file for later content starts with
+`if not content("juno") then return end`.
 
 ## Dialog functions (inside `on_click` / `on_touch`)
 
@@ -77,10 +91,56 @@ walkable(map, x, y)       map_size(map)          item_name(id)   mob_name(id)
 online()                  log(text)              rand(a, b)
 ```
 
+## Variables
+
+```lua
+v.quest = 2        -- per character, saved          (Athena: quest)
+tmp.step = 1       -- per character, until logout   (Athena: @step, l0..)
+g.event_on = 1     -- server-wide, saved            (Athena: $event_on)
+acct.bonus = 1     -- per account, saved            (Athena: #bonus)
+```
+
+Unset variables read as 0 (or "" if the name ends in `$`); setting 0
+deletes. `var("x")` (nil when unset) still works.
+
+## Events and timers
+
+An NPC's `on_click(at)` gets the event label when started by an event:
+
+```lua
+npc { map = "-", name = "Bells", events = { "OnInit", "OnTimer60000" },
+  on_click = function(at)
+    if at == "OnInit" then npc_timer_start() end   -- OnTimer<ms> labels fire in order
+    if at == "OnTimer60000" then announce("The bells ring.", 0) end
+  end }
+do_event("Bells::OnInit")                 -- run an NPC's label (player attached)
+add_timer(5000, "Bells::OnTimer60000")    -- run it in 5 s for this player
+monster("prt_fild08", 0, 0, "--ja--", 1002, 3, "Bells::OnMyMobDead") -- event on each death
+```
+
+`OnInit` runs after every (re)load. Imported scripts use the same scheme:
+the translator turns each Athena `On...` label into an entry point.
+
+## Athena builtins
+
+The translated NPCs call snake_case versions of the Athena commands, all
+available to hand-written scripts too: `job_change`, `warp` (also
+"SavePoint"/"Random"), `area_warp`, `map_warp`, `set_look`, `check_weight`,
+`viewpoint`, `item_heal`, `read_param`, `char_info`, `equip(num)` and
+`equip_name/worn/refinable/refine/weapon_level/refine_chance`,
+`refine_success`, `refine_fail`, `give_skill`, `skill_level`,
+`check_option`, `set_option`, `set_cart`, `set_falcon`, `set_riding`,
+`open_storage`, `monster`, `area_monster`, `kill_monster`, `mob_count`,
+`map_announce`, `area_announce`, `get_users`, `map_users`, `area_users`,
+`enable_npc`, `disable_npc`, `npc_emotion`, `reset_stats`, `reset_skills`.
+The mapping is the `BUILTINS` table in `tools/import/athena_npc.py`; ones
+not implemented yet log a notice once (`:notices`).
+
 ## Rules (formulas)
 
 `rules.status(c)`, `rules.attack{attacker, defender}`,
-`rules.death_penalty(t)`, `rules.respawn_hp(t)` and `rules.regen(t)` are
+`rules.death_penalty(t)`, `rules.respawn_hp(t)`, `rules.regen(t)` and
+`rules.refine_chance(weapon_level, refine)` are
 plain functions called by the server; their inputs and outputs are documented
 at the top of `scripts/rules/*.lua`. Change a number, save, and the next hit
 uses it. Cite where a formula comes from in a comment (see PROVENANCE.md).

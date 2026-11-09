@@ -18,6 +18,11 @@ Single-player server for the 2003-12-18 euRO client (see README.md).
   without saying so.
 - Keep confirmed behaviour in Rust and reconstructed behaviour in Lua/TOML
   (docs/ARCHITECTURE.md).
+- Every deliberate difference from the period game (single-player
+  reworks, fixes to emulator scripts) goes in docs/DEVIATIONS.md; every
+  open question worth chasing goes in research/THREADS.md.
+- Don't edit generated files (`scripts/import/**`, `data/db/*.toml`):
+  regenerate them, or override in `scripts/npc/`.
 - Every packet goes through `ro_proto::Writer`; don't bypass the length check.
 - Test with `cargo test --workspace`; for client-visible changes also run the
   headless client (docs/DEVELOPMENT.md) and look at a screenshot.
