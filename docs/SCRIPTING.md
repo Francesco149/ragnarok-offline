@@ -34,6 +34,9 @@ npc {
   replaces = "817:other/kafra.txt:2474",         -- optional: drop the imported NPC with this src
 }
 remove_npc("817:other/kafra.txt:995")            -- drop an imported NPC outright
+wrap_npc("817:jobs/archer.txt:4", function(orig)  -- run your code around an imported NPC
+  return function(at) if player.job_level < 10 then mes "Not yet." close() return end return orig(at) end
+end)
 
 warp { map = "prontera", x = 156, y = 22, span = { 2, 2 }, to = { "prt_fild08", 170, 375 } }
 

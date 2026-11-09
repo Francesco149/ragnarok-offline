@@ -98,6 +98,13 @@ npc { map = "testmap", x = 30, y = 30, sprite = 97, name = "Old", src = "test:ol
 npc { map = "testmap", x = 30, y = 30, sprite = 97, name = "New", replaces = "test:old",
   on_click = function() mes "new" close() end }
 
+-- code around an imported NPC, like scripts/npc/jobs.lua
+npc { map = "testmap", x = 32, y = 30, sprite = 97, name = "Wrapped", src = "test:wrapped",
+  on_click = function() mes "inner" close() end }
+wrap_npc("test:wrapped", function(orig)
+  return function(at) mes "outer" return orig(at) end
+end)
+
 -- an endless loop must not freeze the server
 npc { map = "testmap", x = 20, y = 20, sprite = 97, name = "Loop",
   on_click = function() ::again:: v.n = 1 goto again end }
@@ -231,6 +238,12 @@ fn npc_runtime() {
     pump(&mut g, 300);
     assert_eq!(g.console_eval("v.pinged", me), "1");
     assert_eq!(g.console_eval("g.timer", me), "1");
+
+    // wrap_npc runs hand-written code first, then the original
+    let wrapped = npc_named(&g, "Wrapped").expect("wrapped npc");
+    click(&mut g, wrapped);
+    assert!(texts(&cap.take(3)).ends_with(&["outer".to_string(), "inner".to_string()]));
+    close_dialog(&mut g, wrapped);
 
     // the loop guard ends a runaway script; the server goes on
     let looper = npc_named(&g, "Loop").expect("loop npc");

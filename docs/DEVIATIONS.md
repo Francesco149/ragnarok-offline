@@ -107,6 +107,10 @@ eAthena 817 (2004-02-19), bugs included. The translator is
 
   The Wizard quest's `case`/`break` dialect is not translated
   (THREADS.md #8).
+* **First job needs Basic Skill 9** (`scripts/npc/jobs.lua`). The client's
+  skill description says so; 817's guild NPCs checked only the job level, so
+  a Novice could carry 9 unspent points into the new job. The refusal line is
+  ours (official wording: THREADS.md #2).
 * **"morroc"** in the Juno Kafras is a typo for `morocc`.
 * **Shop names** come from 817 by cell (mod0631's are Japanese). "Shop" is
   used where 817 has none within 3 cells, or only a Japanese one.

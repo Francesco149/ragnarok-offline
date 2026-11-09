@@ -139,6 +139,8 @@ pub struct Defs {
     pub npcs: Vec<NpcDef>,
     /// `src` tags hand-written scripts replaced or removed (npc{replaces=}, remove_npc()).
     pub removed: Vec<(String, String)>,
+    /// wrap_npc(src, wrapper): (src, wrapper, where it was declared).
+    pub wraps: Vec<(String, Function, String)>,
     pub warps: Vec<WarpDef>,
     pub shops: Vec<ShopDef>,
     pub spawns: Vec<SpawnDef>,
@@ -258,6 +260,18 @@ impl ScriptEngine {
             }
             let gone: std::collections::HashSet<String> = defs.removed.iter().map(|(s, _)| s.clone()).collect();
             defs.npcs.retain(|n| !n.src.as_ref().is_some_and(|s| gone.contains(s)));
+        }
+        // hand-written code around imported NPCs: on_click = wrapper(on_click)
+        for (src, wrapper, by) in std::mem::take(&mut defs.wraps) {
+            let Some(n) = defs.npcs.iter_mut().find(|n| n.src.as_deref() == Some(src.as_str())) else {
+                return Err(anyhow!("{by}: wrap_npc {src:?}, but no NPC has that src (regenerated import?)"));
+            };
+            let orig = n.on_click.clone().ok_or_else(|| anyhow!("{by}: {src} has no on_click"))?;
+            let new: Function = wrapper.call(orig.clone()).map_err(|e| anyhow!("{by}: wrap_npc {src}: {e}"))?;
+            if n.on_touch.as_ref() == Some(&orig) {
+                n.on_touch = Some(new.clone());
+            }
+            n.on_click = Some(new);
         }
         Ok(ScriptEngine { lua, defs, dir: dir.to_path_buf(), item_fns: RefCell::new(HashMap::new()), budget: Default::default() })
     }
@@ -390,6 +404,14 @@ impl ScriptEngine {
             "command",
             lua.create_function(move |_, (name, f): (String, Function)| {
                 d.borrow_mut().commands.insert(name.to_ascii_lowercase(), f);
+                Ok(())
+            })?,
+        )?;
+        let d = defs.clone();
+        g.set(
+            "wrap_npc",
+            lua.create_function(move |lua, (src, f): (String, Function)| {
+                d.borrow_mut().wraps.push((src, f, source_of(lua)));
                 Ok(())
             })?,
         )?;
