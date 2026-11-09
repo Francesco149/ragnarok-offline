@@ -1,0 +1,127 @@
+//! Packet ids used by the server. Names follow the Aegis convention
+//! (CA = client->account, AC = account->client, CH/HC = char, CZ/ZC = zone)
+//! as documented by OpenKore/Hercules; layouts are noted where we write them.
+#![allow(missing_docs)]
+
+// ---- login (account) server ----
+pub const CA_LOGIN: u16 = 0x0064; // u32 version, char[24] id, char[24] pass, u8 clienttype
+pub const CA_REQ_HASH: u16 = 0x01db; // (passwordencrypt) -> AC_ACK_HASH
+pub const AC_ACK_HASH: u16 = 0x01dc; // u16 len, u8[] key
+pub const CA_LOGIN2: u16 = 0x01dd; // u32 version, char[24] id, u8[16] md5, u8 clienttype
+pub const AC_ACCEPT_LOGIN: u16 = 0x0069;
+pub const AC_REFUSE_LOGIN: u16 = 0x006a;
+pub const SC_NOTIFY_BAN: u16 = 0x0081;
+
+// ---- char server ----
+pub const CH_ENTER: u16 = 0x0065; // u32 aid, u32 login1, u32 login2, u16 ?, u8 sex
+pub const CH_SELECT_CHAR: u16 = 0x0066; // u8 slot
+pub const CH_MAKE_CHAR: u16 = 0x0067; // char[24], 6×u8 stats, u8 slot, u16 hair color, u16 hair style
+pub const CH_DELETE_CHAR: u16 = 0x0068; // u32 cid, char[40] email
+pub const HC_ACCEPT_ENTER: u16 = 0x006b;
+pub const HC_REFUSE_ENTER: u16 = 0x006c;
+pub const HC_ACCEPT_MAKECHAR: u16 = 0x006d;
+pub const HC_REFUSE_MAKECHAR: u16 = 0x006e;
+pub const HC_ACCEPT_DELETECHAR: u16 = 0x006f;
+pub const HC_REFUSE_DELETECHAR: u16 = 0x0070;
+pub const HC_NOTIFY_ZONESVR: u16 = 0x0071;
+pub const CZ_PING: u16 = 0x0187; // keepalive (char & map)
+
+// ---- zone (map) server ----
+pub const CZ_ENTER: u16 = 0x0072; // u32 aid, u32 cid, u32 login1, u32 tick, u8 sex
+pub const ZC_ACCEPT_ENTER: u16 = 0x0073; // u32 tick, pos3, u8 5, u8 5
+pub const ZC_REFUSE_ENTER: u16 = 0x0074;
+pub const CZ_NOTIFY_ACTORINIT: u16 = 0x007d; // map loaded
+pub const CZ_REQUEST_TIME: u16 = 0x007e;
+pub const ZC_NOTIFY_TIME: u16 = 0x007f;
+pub const ZC_NOTIFY_STANDENTRY: u16 = 0x0078;
+pub const ZC_NOTIFY_NEWENTRY: u16 = 0x0079;
+pub const ZC_NOTIFY_ACTENTRY: u16 = 0x007a;
+pub const ZC_NOTIFY_MOVEENTRY: u16 = 0x007b;
+pub const ZC_NOTIFY_STANDENTRY_NPC: u16 = 0x007c;
+pub const ZC_NOTIFY_VANISH: u16 = 0x0080;
+pub const CZ_REQUEST_MOVE: u16 = 0x0085; // pos3
+pub const ZC_NOTIFY_MOVE: u16 = 0x0086; // u32 id, move6, u32 tick
+pub const ZC_NOTIFY_PLAYERMOVE: u16 = 0x0087; // u32 tick, move6, u8 ?
+pub const ZC_STOPMOVE: u16 = 0x0088; // u32 id, u16 x, u16 y
+pub const CZ_REQUEST_ACT: u16 = 0x0089; // u32 target, u8 action
+pub const ZC_NOTIFY_ACT: u16 = 0x008a;
+pub const CZ_REQUEST_CHAT: u16 = 0x008c; // u16 len, "name : msg"
+pub const ZC_NOTIFY_CHAT: u16 = 0x008d; // u16 len, u32 id, msg
+pub const ZC_NOTIFY_PLAYERCHAT: u16 = 0x008e; // u16 len, msg
+pub const CZ_CONTACTNPC: u16 = 0x0090; // u32 npc, u8 type
+pub const ZC_NPCACK_MAPMOVE: u16 = 0x0091; // char[16] map, u16 x, u16 y
+pub const ZC_NPCACK_SERVERMOVE: u16 = 0x0092;
+pub const CZ_REQNAME: u16 = 0x0094; // u32 id
+pub const ZC_ACK_REQNAME: u16 = 0x0095; // u32 id, char[24]
+pub const CZ_WHISPER: u16 = 0x0096;
+pub const ZC_WHISPER: u16 = 0x0097;
+pub const ZC_ACK_WHISPER: u16 = 0x0098;
+pub const CZ_BROADCAST: u16 = 0x0099;
+pub const ZC_BROADCAST: u16 = 0x009a;
+pub const CZ_CHANGE_DIRECTION: u16 = 0x009b; // u16 head, u8 body
+pub const ZC_CHANGE_DIRECTION: u16 = 0x009c; // u32 id, u16 head, u8 body
+pub const ZC_ITEM_ENTRY: u16 = 0x009d;
+pub const ZC_ITEM_FALL_ENTRY: u16 = 0x009e;
+pub const CZ_ITEM_PICKUP: u16 = 0x009f;
+pub const ZC_ITEM_PICKUP_ACK: u16 = 0x00a0;
+pub const ZC_ITEM_DISAPPEAR: u16 = 0x00a1;
+pub const CZ_ITEM_THROW: u16 = 0x00a2;
+pub const ZC_NORMAL_ITEMLIST: u16 = 0x00a3;
+pub const ZC_EQUIPMENT_ITEMLIST: u16 = 0x00a4;
+pub const CZ_USE_ITEM: u16 = 0x00a7;
+pub const ZC_USE_ITEM_ACK: u16 = 0x00a8;
+pub const CZ_REQ_WEAR_EQUIP: u16 = 0x00a9;
+pub const ZC_REQ_WEAR_EQUIP_ACK: u16 = 0x00aa;
+pub const CZ_REQ_TAKEOFF_EQUIP: u16 = 0x00ab;
+pub const ZC_REQ_TAKEOFF_EQUIP_ACK: u16 = 0x00ac;
+pub const ZC_ITEM_THROW_ACK: u16 = 0x00af;
+pub const ZC_PAR_CHANGE: u16 = 0x00b0; // u16 type, u32 value
+pub const ZC_LONGPAR_CHANGE: u16 = 0x00b1;
+pub const CZ_RESTART: u16 = 0x00b2; // u8 type
+pub const ZC_RESTART_ACK: u16 = 0x00b3;
+pub const ZC_SAY_DIALOG: u16 = 0x00b4; // u16 len, u32 npc, text
+pub const ZC_WAIT_DIALOG: u16 = 0x00b5; // u32 npc  ("next")
+pub const ZC_CLOSE_DIALOG: u16 = 0x00b6; // u32 npc  ("close")
+pub const ZC_MENU_LIST: u16 = 0x00b7; // u16 len, u32 npc, "a:b:c"
+pub const CZ_CHOOSE_MENU: u16 = 0x00b8; // u32 npc, u8 choice (1-based, 0xff = cancel)
+pub const CZ_REQ_NEXT_SCRIPT: u16 = 0x00b9; // u32 npc
+pub const CZ_STATUS_CHANGE: u16 = 0x00bb; // u16 type, u8 amount
+pub const ZC_STATUS_CHANGE_ACK: u16 = 0x00bc;
+pub const ZC_STATUS: u16 = 0x00bd;
+pub const ZC_STATUS_CHANGE: u16 = 0x00be;
+pub const CZ_REQ_EMOTION: u16 = 0x00bf;
+pub const ZC_EMOTION: u16 = 0x00c0;
+pub const CZ_REQ_USER_COUNT: u16 = 0x00c1;
+pub const ZC_USER_COUNT: u16 = 0x00c2;
+pub const ZC_SPRITE_CHANGE: u16 = 0x00c3;
+pub const ZC_SELECT_DEALTYPE: u16 = 0x00c4; // u32 npc
+pub const CZ_ACK_SELECT_DEALTYPE: u16 = 0x00c5; // u32 npc, u8 0 buy / 1 sell
+pub const ZC_PC_PURCHASE_ITEMLIST: u16 = 0x00c6;
+pub const ZC_PC_SELL_ITEMLIST: u16 = 0x00c7;
+pub const CZ_PC_PURCHASE_ITEMLIST: u16 = 0x00c8;
+pub const CZ_PC_SELL_ITEMLIST: u16 = 0x00c9;
+pub const ZC_PC_PURCHASE_RESULT: u16 = 0x00ca;
+pub const ZC_PC_SELL_RESULT: u16 = 0x00cb;
+pub const ZC_SKILLINFO_LIST: u16 = 0x010f;
+pub const ZC_ACK_TOUSESKILL: u16 = 0x0110;
+pub const ZC_NOTIFY_SKILL: u16 = 0x0114;
+pub const ZC_STATE_CHANGE: u16 = 0x0119; // u32 id, u16 opt1, u16 opt2, u16 option, u8 karma
+pub const ZC_NOTIFY_ACT_POSITION: u16 = 0x0139;
+pub const ZC_ATTACK_RANGE: u16 = 0x013a;
+pub const ZC_COUPLESTATUS: u16 = 0x0141; // u32 type, u32 base, u32 bonus
+pub const ZC_OPEN_EDITDLG: u16 = 0x0142; // u32 npc (number input)
+pub const CZ_INPUT_EDITDLG: u16 = 0x0143; // u32 npc, u32 value
+pub const ZC_SHOW_IMAGE: u16 = 0x0145; // char[16], u8
+pub const CZ_CLOSE_DIALOG: u16 = 0x0146; // u32 npc
+pub const ZC_NOTIFY_MAPPROPERTY: u16 = 0x0199;
+pub const CZ_REQ_QUIT: u16 = 0x018a; // u16
+pub const ZC_ACK_REQ_DISCONNECT: u16 = 0x018b; // u16 result
+pub const ZC_ACK_REQNAME_TITLE: u16 = 0x0195;
+pub const ZC_SHOW_IMAGE2: u16 = 0x01b3; // char[64], u8
+pub const ZC_OPEN_EDITDLGSTR: u16 = 0x01d4; // u32 npc (text input)
+pub const CZ_INPUT_EDITDLGSTR: u16 = 0x01d5; // u16 len, u32 npc, text
+pub const ZC_NOTIFY_MAPPROPERTY2: u16 = 0x01d6;
+pub const ZC_SPRITE_CHANGE2: u16 = 0x01d7; // u32 id, u8 type, u16 v1, u16 v2
+pub const ZC_NOTIFY_STANDENTRY2: u16 = 0x01d8;
+pub const ZC_NOTIFY_NEWENTRY2: u16 = 0x01d9;
+pub const ZC_NOTIFY_MOVEENTRY2: u16 = 0x01da;

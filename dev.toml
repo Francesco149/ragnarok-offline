@@ -1,0 +1,14 @@
+# Development config for the workbench container (tools/wb): the client copy
+# and saves live under /data (= ~/data/ragnarok-cd on the host), scripts and
+# the database come from this repo. Players use `ragnarok-offline init`.
+client_dir = "/data/play/RagnarokOnline"
+bind = "127.0.0.1"
+login_port = 6900
+console_port = 6123
+watch_scripts = true
+packet_log = true
+
+[game]
+save_dir = "/data/saves"
+script_dir = "scripts"
+db_dir = "data/db"

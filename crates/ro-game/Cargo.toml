@@ -1,0 +1,17 @@
+[package]
+name = "ro-game"
+description = "Game simulation: sessions (login/char/map), world, movement, NPC/Lua scripting, persistence model"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+ro-proto.workspace = true
+ro-data.workspace = true
+ro-grf.workspace = true
+anyhow.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+tracing.workspace = true
+mlua.workspace = true
+rand.workspace = true
+md-5.workspace = true

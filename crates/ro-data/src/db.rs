@@ -1,0 +1,249 @@
+//! Server-side game database: everything the client does NOT contain.
+//!
+//! Every file has a `[meta]` table with a provenance [`Tier`] and a free-text
+//! `source`; records may override the tier (`tier = "..."`) when a value has
+//! been checked against something better. See docs/PROVENANCE.md.
+//!
+//! Files (all optional; missing ones load empty with a warning):
+//!   data/db/items.toml  data/db/mobs.toml  data/db/exp.toml  data/db/jobs.toml
+
+use std::collections::HashMap;
+use std::path::Path;
+
+use anyhow::{Context, Result};
+use serde::{Deserialize, Serialize};
+
+/// How much a value can be trusted, best first.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize, Default)]
+#[serde(rename_all = "kebab-case")]
+pub enum Tier {
+    /// Read from the client's own files or binary: confirmed.
+    Client,
+    /// Gravity / publisher material from the period (patch notes, guides).
+    Official,
+    /// Community measurements and documents written 2002-2004.
+    Period,
+    /// Athena-family emulator data contemporary with the client (2003-12 .. 2004-05).
+    Athena2003,
+    /// Later reconstructions (rAthena pre-renewal, wikis written after 2004).
+    Later,
+    /// Placeholder / our own estimate.
+    #[default]
+    Guess,
+}
+
+#[derive(Debug, Clone, Default, Serialize, Deserialize)]
+pub struct Meta {
+    #[serde(default)]
+    pub tier: Tier,
+    #[serde(default)]
+    pub source: String,
+    #[serde(default)]
+    pub note: String,
+}
+
+#[derive(Debug, Clone, Default, Serialize, Deserialize)]
+#[serde(default)]
+pub struct Item {
+    pub id: u32,
+    /// Server/script name (Aegis-style, e.g. "Red_Potion").
+    pub name: String,
+    /// Display name for server messages (the client shows its own table).
+    pub display: String,
+    /// Athena item type: 0 healing, 2 usable, 3 etc, 4 weapon, 5 armor, 6 card,
+    /// 7 pet egg, 8 pet equip, 10 ammo, 11 delayed-consume usable.
+    #[serde(rename = "type")]
+    pub kind: u8,
+    pub buy: u32,
+    pub sell: Option<u32>,
+    /// In tenths, as everywhere in RO (70 = 7.0 weight).
+    pub weight: u32,
+    pub atk: u32,
+    pub def: u32,
+    pub range: u32,
+    pub slots: u8,
+    pub jobs: u32,
+    /// 0 female, 1 male, 2 both.
+    pub gender: u8,
+    /// Equip location bitmask (0 = not equippable).
+    pub loc: u32,
+    pub weapon_level: u8,
+    pub equip_level: u8,
+    pub view: u32,
+    /// Lua run when used (translated from `athena_use` where possible).
+    pub use_script: String,
+    /// Original Athena script, kept for reference / later translation.
+    pub athena_use: String,
+    pub athena_equip: String,
+    pub tier: Option<Tier>,
+}
+
+impl Item {
+    pub fn sell_price(&self) -> u32 {
+        self.sell.unwrap_or(self.buy / 2)
+    }
+    pub fn is_equip(&self) -> bool {
+        self.loc != 0 && matches!(self.kind, 4 | 5 | 8 | 10)
+    }
+}
+
+#[derive(Debug, Clone, Default, Serialize, Deserialize)]
+#[serde(default)]
+pub struct Drop {
+    pub item: u32,
+    /// Chance in 1/10000.
+    pub rate: u32,
+}
+
+#[derive(Debug, Clone, Default, Serialize, Deserialize)]
+#[serde(default)]
+pub struct Mob {
+    pub id: u32,
+    pub name: String,
+    pub display: String,
+    pub level: u16,
+    pub hp: u32,
+    pub sp: u32,
+    pub base_exp: u32,
+    pub job_exp: u32,
+    pub range: u16,
+    pub atk1: u32,
+    pub atk2: u32,
+    pub def: u32,
+    pub mdef: u32,
+    pub str: u16,
+    pub agi: u16,
+    pub vit: u16,
+    pub int: u16,
+    pub dex: u16,
+    pub luk: u16,
+    pub view_range: u16,
+    pub chase_range: u16,
+    /// 0 small, 1 medium, 2 large.
+    pub size: u8,
+    pub race: u8,
+    /// element*10 + level, Athena style (21 = water 1... see docs).
+    pub element: u8,
+    /// Athena mode bitmask (0x01 can move, 0x02 looter, 0x04 aggressive, 0x08 assist,
+    /// 0x10 cast-sensor, 0x20 boss, 0x40 plant, 0x80 can attack).
+    pub mode: u32,
+    /// ms per cell.
+    pub speed: u32,
+    pub attack_delay: u32,
+    pub attack_motion: u32,
+    pub damage_motion: u32,
+    pub drops: Vec<Drop>,
+    pub mvp_exp: u32,
+    pub mvp_drops: Vec<Drop>,
+    pub tier: Option<Tier>,
+}
+
+#[derive(Debug, Clone, Default, Serialize, Deserialize)]
+#[serde(default)]
+pub struct ExpTables {
+    pub meta: Meta,
+    /// Base EXP to reach level n+2 from n+1 (index 0 = 1 -> 2).
+    pub base: Vec<u64>,
+    pub job_novice: Vec<u64>,
+    pub job_first: Vec<u64>,
+    pub job_second: Vec<u64>,
+}
+
+#[derive(Debug, Clone, Default, Serialize, Deserialize)]
+#[serde(default)]
+pub struct Job {
+    pub id: u16,
+    pub name: String,
+    /// Weight limit base, in tenths (Athena job_db1 col 1).
+    pub weight: u32,
+    pub hp_coef: f64,
+    pub sp_coef: u32,
+    /// Base attack delay per weapon type (ms * 2? see docs), Athena job_db1.
+    pub aspd_base: Vec<u32>,
+    /// Stat bonus gained at each job level: 1 str .. 6 luk, 0 none.
+    pub job_bonus: Vec<u8>,
+}
+
+#[derive(Debug, Default, Serialize, Deserialize)]
+struct ItemFile {
+    #[serde(default)]
+    meta: Meta,
+    #[serde(default)]
+    item: Vec<Item>,
+}
+#[derive(Debug, Default, Serialize, Deserialize)]
+struct MobFile {
+    #[serde(default)]
+    meta: Meta,
+    #[serde(default)]
+    mob: Vec<Mob>,
+}
+#[derive(Debug, Default, Serialize, Deserialize)]
+struct JobFile {
+    #[serde(default)]
+    meta: Meta,
+    #[serde(default)]
+    job: Vec<Job>,
+}
+
+#[derive(Default)]
+pub struct Database {
+    pub items: HashMap<u32, Item>,
+    pub items_by_name: HashMap<String, u32>,
+    pub items_meta: Meta,
+    pub mobs: HashMap<u32, Mob>,
+    pub mobs_by_name: HashMap<String, u32>,
+    pub mobs_meta: Meta,
+    pub exp: ExpTables,
+    pub jobs: HashMap<u16, Job>,
+    pub jobs_meta: Meta,
+    pub warnings: Vec<String>,
+}
+
+fn read_toml<T: for<'de> Deserialize<'de> + Default>(path: &Path, warnings: &mut Vec<String>) -> Result<T> {
+    match std::fs::read_to_string(path) {
+        Ok(s) => toml::from_str(&s).with_context(|| format!("parsing {}", path.display())),
+        Err(_) => {
+            warnings.push(format!("{} missing; using empty table", path.display()));
+            Ok(T::default())
+        }
+    }
+}
+
+impl Database {
+    pub fn load(dir: &Path) -> Result<Self> {
+        let mut db = Database::default();
+        let items: ItemFile = read_toml(&dir.join("items.toml"), &mut db.warnings)?;
+        db.items_meta = items.meta;
+        for it in items.item {
+            db.items_by_name.insert(it.name.to_ascii_lowercase(), it.id);
+            db.items.insert(it.id, it);
+        }
+        let mobs: MobFile = read_toml(&dir.join("mobs.toml"), &mut db.warnings)?;
+        db.mobs_meta = mobs.meta;
+        for m in mobs.mob {
+            db.mobs_by_name.insert(m.name.to_ascii_lowercase(), m.id);
+            db.mobs.insert(m.id, m);
+        }
+        db.exp = read_toml(&dir.join("exp.toml"), &mut db.warnings)?;
+        let jobs: JobFile = read_toml(&dir.join("jobs.toml"), &mut db.warnings)?;
+        db.jobs_meta = jobs.meta;
+        for j in jobs.job {
+            db.jobs.insert(j.id, j);
+        }
+        Ok(db)
+    }
+
+    pub fn item(&self, id: u32) -> Option<&Item> {
+        self.items.get(&id)
+    }
+    pub fn item_by_name(&self, name: &str) -> Option<&Item> {
+        self.items_by_name.get(&name.to_ascii_lowercase()).and_then(|id| self.items.get(id))
+    }
+    pub fn mob(&self, id: u32) -> Option<&Mob> {
+        self.mobs.get(&id)
+    }
+    pub fn mob_by_name(&self, name: &str) -> Option<&Mob> {
+        self.mobs_by_name.get(&name.to_ascii_lowercase()).and_then(|id| self.mobs.get(id))
+    }
+}

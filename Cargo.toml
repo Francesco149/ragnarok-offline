@@ -19,16 +19,15 @@ tokio = { version = "1", features = ["rt", "rt-multi-thread", "net", "io-util", 
 tracing = "0.1"
 tracing-subscriber = { version = "0.3", features = ["env-filter", "fmt"] }
 clap = { version = "4", features = ["derive"] }
-mlua = { version = "0.10", features = ["lua54", "vendored"] }
-notify = { version = "6", default-features = false }
+mlua = { version = "0.10", features = ["lua54", "vendored", "serialize"] }
 rand = "0.8"
 md-5 = "0.10"
 
 ro-grf = { path = "crates/ro-grf" }
 ro-proto = { path = "crates/ro-proto" }
 ro-data = { path = "crates/ro-data" }
-ro-script = { path = "crates/ro-script" }
-ro-world = { path = "crates/ro-world" }
+
+ro-game = { path = "crates/ro-game" }
 
 [profile.dev]
 debug = "line-tables-only"   # keeps rustc/link memory well under the 2 GiB workbench cap

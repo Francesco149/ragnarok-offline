@@ -1,0 +1,12 @@
+[package]
+name = "ro-data"
+description = "Client file formats (.gat, # tables) and the server game database (TOML with provenance)"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+ro-grf.workspace = true
+anyhow.workspace = true
+serde.workspace = true
+toml.workspace = true
+encoding_rs.workspace = true
