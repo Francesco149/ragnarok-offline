@@ -67,8 +67,11 @@ forum, iRO 2003-12 notices.
 ### 6. The novice training ground on this client
 The client has `new_zone01-04` under older names; 817's `new_1-1..4`
 scripts fit them (30 of 32 cells). Two NPCs stand on blocked cells: the
-Bulletin Board at `new_1-1 66,114` and a Helper at `new_1-4 100,29`. Our
-start cell (`new_zone01 53,111`) is Athena's.
+Bulletin Board at `new_1-1 66,114` and a Helper at `new_1-4 100,29`. In the
+real client (Windows, 2026-11-09) the gate Guard at `117,107` is drawn
+behind the castle tower: its cell is walkable but the older map's walls
+sit differently. Our start cell (`new_zone01 53,111`) is Athena's; from
+there a new character crosses the long bridge east to the castle.
 **Impact:** start point, first impressions, novice rewards.
 **Look:** OpenKore `tables/npcs.txt` history for new_zone; period novice
 guides (2003); which training-ground NPCs iRO had in Dec 2003.

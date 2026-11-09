@@ -355,15 +355,50 @@ fn default_settings() -> Vec<(&'static str, RegValue)> {
     ]
 }
 
-/// Unpack the server's scripts and database into `data`. Scripts are yours
-/// to edit: only missing files are written. The database is generated data
-/// and is refreshed whenever the launcher version changes.
+/// Hand-written scripts this launcher used to ship and no longer does:
+/// removed if still exactly as shipped (FNV-1a 64 of the content), kept if
+/// edited. scripts/npc/prontera.lua: the demo NPCs, replaced by the era's.
+const RETIRED: &[(&str, u64)] = &[("npc/prontera.lua", 0x1de3_4432_4139_97e5)];
+
+fn fnv1a(h: u64, data: &[u8]) -> u64 {
+    data.iter().fold(h, |h, &b| (h ^ b as u64).wrapping_mul(0x100_0000_01b3))
+}
+
+fn dir_hash(dir: &Dir, h: u64) -> u64 {
+    let h = dir.files().fold(h, |h, f| fnv1a(fnv1a(h, f.path().to_string_lossy().as_bytes()), f.contents()));
+    dir.dirs().fold(h, |h, d| dir_hash(d, h))
+}
+
+/// Unpack the server's scripts and database into `data`. Hand-written
+/// scripts are yours to edit: only missing files are written. Generated data
+/// (data/db and scripts/import, translated from the era's emulators) is
+/// replaced whenever what this launcher carries changes; override imported
+/// NPCs from scripts/npc instead of editing them.
 fn unpack(data: &Path) -> Result<()> {
     std::fs::create_dir_all(data).with_context(|| format!("creating {}", data.display()))?;
     let stamp = data.join("data").join("db").join(".version");
-    let fresh_db = std::fs::read_to_string(&stamp).map(|v| v.trim() != VERSION).unwrap_or(true);
+    let import = SCRIPTS.get_dir("import");
+    let content = format!("{VERSION} {:016x}", import.map(|d| dir_hash(d, dir_hash(&DB, 0xcbf2_9ce4_8422_2325))).unwrap_or(0));
+    let fresh = std::fs::read_to_string(&stamp).map(|v| v.trim() != content).unwrap_or(true);
+    if fresh {
+        let old = data.join("scripts").join("import");
+        if old.exists() {
+            std::fs::remove_dir_all(&old).with_context(|| format!("replacing {}", old.display()))?;
+        }
+        for (rel, hash) in RETIRED {
+            let p = data.join("scripts").join(rel);
+            match std::fs::read(&p) {
+                Ok(b) if fnv1a(0xcbf2_9ce4_8422_2325, &b) == *hash => {
+                    let _ = std::fs::remove_file(&p);
+                    info!("removed {} (no longer shipped)", p.display());
+                }
+                Ok(_) => warn!("{} is no longer shipped but you edited it: kept", p.display()),
+                Err(_) => {}
+            }
+        }
+    }
     extract(&SCRIPTS, &data.join("scripts"), false)?;
-    extract(&DB, &data.join("data").join("db"), fresh_db)?;
+    extract(&DB, &data.join("data").join("db"), fresh)?;
     if let Some(index) = EURO_WEB_INDEX {
         let p = data.join("patchsrv").join("index.html");
         if !p.exists() {
@@ -388,7 +423,7 @@ fn unpack(data: &Path) -> Result<()> {
             }
         }
     }
-    std::fs::write(&stamp, VERSION)?;
+    std::fs::write(&stamp, content)?;
     let cfg = data.join("ragnarok-offline.toml");
     if !cfg.exists() {
         let t = TEMPLATE.replace(

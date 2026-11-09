@@ -42,8 +42,10 @@ Every run:
 
 - **Unpacks the server's `scripts/` and `data/db/`** into a data folder:
   `<game>\offline\` if the game folder is writable, otherwise
-  `%LOCALAPPDATA%\Ragnarok Offline\`. Scripts you have edited are never
-  overwritten. The folder also holds `ragnarok-offline.toml` (rates, start
+  `%LOCALAPPDATA%\Ragnarok Offline\`. Hand-written scripts you have edited
+  are never overwritten; the generated ones (`scripts\import\`, translated
+  from the era's emulators) and `data\db\` are replaced when a new launcher
+  brings different ones, so override imported NPCs from `scripts\npc\`. The folder also holds `ragnarok-offline.toml` (rates, start
   items...), `saves\` and `logs\`.
 - **Starts the server in-process, then starts the game the way the CD did:
   through its patcher, `Ragnarok.exe`.** The patcher shows euRO's notice,
