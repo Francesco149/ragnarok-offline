@@ -33,7 +33,9 @@ Identification of what is *on* it lives in [CLIENT.md](CLIENT.md).
 | `iso-files.sha256` | hashes of the 9 files on the disc | |
 | `installed-files.sha256` | hashes of the 508 files the MSI installs | |
 | `msi-tables/` | every MSI table exported as `.idt` (`msiinfo export`) | |
-| `SHA256SUMS` | hashes of everything above | |
+| `CLIENT.md` | identification of the client (copy of docs/CLIENT.md) | |
+| `packet_lengths.tsv` | the 386 packet lengths extracted from Ragexe.exe | |
+| `SHA256SUMS` | hashes of everything above except the two .md files | |
 
 Other hashes of `RAGNAROK.iso`: md5 `7baf518ac29a797b528885705156014f`,
 sha1 `3d3b23207b2bb74df0a92d5b1ab3d2670f0f890a`, crc32 `22564766`.
