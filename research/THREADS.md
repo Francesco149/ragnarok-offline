@@ -9,6 +9,10 @@ Tags: **impact** = what changes if we learn the answer. **look** = where to
 dig first. Background research: `research/notes/` (euro-history.md,
 mechanics-sources.md, emulators.md).
 
+Research rounds: round 1 (Antigravity, then a Claude pass to confirm) is
+briefed in `research/agy-threads/HANDOFF.md`; its report lands in the same
+directory.
+
 Ruled out as a source: leaked Gravity server packages (Aegis binaries and
 scripts). They are not ours to use or redistribute, and nothing here may be
 derived from them.
@@ -68,17 +72,27 @@ a Job into a Knight", job level 40, no test). 817 (2004-02-19) adds the
 Priest and Hunter quests. The emulator authors followed the official
 servers, so this agrees with euRO's "quests came with New Comodo".
 
-### 6. The novice training ground on this client
+### 6. The start cell and the novice training ground on this client
 The client has `new_zone01-04` under older names; 817's `new_1-1..4`
 scripts fit them (30 of 32 cells). Two NPCs stand on blocked cells: the
 Bulletin Board at `new_1-1 66,114` and a Helper at `new_1-4 100,29`. In the
 real client (Windows, 2026-11-09) the gate Guard at `117,107` is drawn
 behind the castle tower: its cell is walkable but the older map's walls
-sit differently. Our start cell (`new_zone01 53,111`) is Athena's; from
-there a new character crosses the long bridge east to the castle.
+sit differently.
+
+Our start cell `new_zone01 53,111` is Athena's. Every Athena config of
+2003–04 has `start_point: new_1-1.gat,53,111`. The Athena changelog dates
+it: `//0305` moved new characters to the training ground, `//0307` made the
+cell configurable. Where 53,111 itself came from is unknown. From there a new
+character crosses a long bridge east to the castle.
+
+**Goal (owner, 2026-11-09):** find the period-accurate start position and
+document it. Failing that, pick the best-supported cell and list it as a
+possible deviation.
 **Impact:** start point, first impressions, novice rewards.
-**Look:** OpenKore `tables/npcs.txt` history for new_zone; period novice
-guides (2003); which training-ground NPCs iRO had in Dec 2003.
+**Look:** period first-screen reports and screenshots, OpenKore 2004 logs,
+kRO/jRO notices on the training ground (초보자 수련장), the iRO guide's
+beginner pages. Round 1: research/agy-threads/HANDOFF.md.
 
 ### 7. Quest skills and their NPCs in iRO, Dec 2003
 817 places the Thief quests (Back Slide, Pick Stone) at morocc 165,124,
@@ -113,8 +127,8 @@ happened in 2003 (Lutie toy factory 2003-04-08).
 Rune-Midgarts Library (monster locations).
 
 ### 11. Shop NPC names and stock
-mod0631's shops have Japanese names (we show "Shop"); 659/817 have English
-names at the same cells.
+Done in part: shops are named from 817 by cell. 18 of 80 have no English
+name in 817 (none nearby, or only a Japanese one) and show "Shop".
 **Impact:** shop names over NPC heads; stock lists vs iRO 2004.
 **Look:** match 817 `npc/shops/shop.txt` by cell; the iRO item library
 (2004) for prices.
@@ -129,7 +143,8 @@ what the client's own `mapnametable`/indoor tables imply.
 
 ### 13. Dyes and palettes
 817's dyer needs a 77-palette client patch. Which clothes dyes existed in
-Dec 2003, and how many palettes does this client ship?
+Dec 2003? This client ships 5 clothing palettes per job and sex (the default
+plus 4) and 9 hair colours per hairstyle (`data\palette\`, tier client).
 **Impact:** a hand-written dyer (`scripts/npc/dye.lua`, not written yet).
 **Look:** the client GRF's `data\palette\` (tier client); 659's
 `npc_dye.txt`; kRO 2003 notices.
@@ -153,12 +168,24 @@ carry euRO's own data).
 **Impact:** whether to link them in.
 **Look:** what kRO used them for in 2003 (a labyrinth? a job test?).
 
-### 17. A single-player stand-in for guild castles
-WoE needs opponents. Options: castles stay empty; or a solo "conquest" of
-a castle's guardians that unlocks its guild dungeon for the player. The
-second is an invention and would be listed in DEVIATIONS.md.
-**Impact:** guild dungeons (gld_dun01-04) are otherwise unreachable.
-**Look:** owner's call, not research. Recorded here so it isn't forgotten.
+### 17. WoE and guild castles in single player
+WoE needs guilds and opponents. Today the castles are empty and walkable,
+and the guild dungeons (`gld_dun01-04`) are unreachable: no warp leads in,
+yet they hold mini-bosses and an Eddga.
+
+**Goal (owner, 2026-11-09), in three parts:**
+1. Find out what WoE and castle ownership gated in 2003–04: treasure rooms
+   and Treasure Chest drops (Yggdrasil items, Freyja's Jewel, Angel
+   Helm...), guild dungeon access, castle Kafra, investment, guild skills.
+2. Decide whether it can be repurposed into a single-player activity.
+3. Otherwise, give access to that content another way.
+
+Whatever we build gets a DEVIATIONS.md entry saying what is period
+behaviour and what is invented.
+**Impact:** castle treasure, guild dungeons, guild-only drops.
+**Look:** kRO notices on WoE rules; the iRO guide's guild/WoE pages; euRO
+WoE news (Apr and Sep 2004: "treasure boxes and guild dungeons disabled");
+period guides. Round 1: research/agy-threads/HANDOFF.md.
 
 ### 18. Izlude Arena (time attack) in iRO 2003
 817 ships the Izlude arena NPCs. Did iRO have it in Dec 2003?
