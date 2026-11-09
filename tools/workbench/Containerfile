@@ -8,6 +8,7 @@
 #   wine (WoW64) + Xvfb + xdotool + imagemagick    -> run the 2003 client headless
 #   rizin + python capstone/pefile                 -> client exe analysis
 #   cdrdao                                         -> raw (2352) disc read
+#   python-olefile + xorriso (libisoburn)          -> all-in-one installer MSI fix-up + ISO
 FROM docker.io/library/archlinux:latest
 
 RUN pacman -Syu --noconfirm --needed \
@@ -37,6 +38,6 @@ ENV CARGO_BUILD_JOBS=6 \
 WORKDIR /work
 
 # Static Linux release builds (no glibc version dependency).
-RUN pacman -S --noconfirm --needed musl zip && pacman -Scc --noconfirm \
+RUN pacman -S --noconfirm --needed musl zip python-olefile libisoburn && pacman -Scc --noconfirm \
  && rustup target add x86_64-unknown-linux-musl && chmod -R a+rwX /opt/rustup /opt/cargo
 ENV CC_x86_64_unknown_linux_musl=musl-gcc
