@@ -78,7 +78,28 @@ fn main() -> Result<()> {
         .with_env_filter(tracing_subscriber::EnvFilter::try_from_default_env().unwrap_or_else(|_| "info".into()))
         .with_target(false)
         .init();
-    let cli = Cli::parse();
+    let mut cli = Cli::parse();
+    // Double-clicked on Windows: the working dir may not be the exe's folder.
+    if !cli.config.exists() && cli.config.is_relative() {
+        if let Some(dir) = std::env::current_exe().ok().and_then(|e| e.parent().map(Path::to_path_buf)) {
+            let beside = dir.join(&cli.config);
+            if beside.exists() {
+                cli.config = beside;
+            }
+        }
+    }
+    let interactive = cli.cmd.is_none();
+    let r = dispatch(cli);
+    if let (Err(e), true) = (&r, interactive) {
+        // keep a double-clicked console window open long enough to read the error
+        eprintln!("error: {e:#}");
+        eprintln!("press Enter to close");
+        let _ = std::io::stdin().read_line(&mut String::new());
+    }
+    r
+}
+
+fn dispatch(cli: Cli) -> Result<()> {
     match cli.cmd.unwrap_or(Cmd::Run) {
         Cmd::Run => run(&cli.config),
         Cmd::Init { client } => {

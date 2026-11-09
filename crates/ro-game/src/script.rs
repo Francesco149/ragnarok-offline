@@ -106,7 +106,9 @@ pub struct SpawnDef {
     pub y: u16,
     pub xs: u16,
     pub ys: u16,
+    /// Monster id; 0 when given by name (`mob_name`), resolved at spawn time.
     pub mob: u32,
+    pub mob_name: Option<String>,
     pub count: u32,
     /// Respawn delay in ms (Athena delay1; 0 = default).
     pub delay: u32,
@@ -288,13 +290,20 @@ impl ScriptEngine {
         g.set(
             "spawn",
             lua.create_function(move |lua, t: Table| {
+                let (mob, mob_name) = match t.get::<LuaValue>("mob")? {
+                    LuaValue::Integer(i) => (i as u32, None),
+                    LuaValue::Number(n) => (n as u32, None),
+                    LuaValue::String(s) => (0, Some(s.to_str()?.to_string())),
+                    other => return Err(mlua::Error::external(format!("field `mob`: expected id or name, got {other:?}"))),
+                };
                 d.borrow_mut().spawns.push(SpawnDef {
+                    mob,
+                    mob_name,
                     map: get(&t, "map")?,
                     x: opt(&t, "x")?.unwrap_or(0),
                     y: opt(&t, "y")?.unwrap_or(0),
                     xs: opt(&t, "xs")?.unwrap_or(0),
                     ys: opt(&t, "ys")?.unwrap_or(0),
-                    mob: get(&t, "mob")?,
                     count: opt(&t, "count")?.unwrap_or(1),
                     delay: opt(&t, "delay")?.unwrap_or(0),
                     delay2: opt(&t, "delay2")?.unwrap_or(0),

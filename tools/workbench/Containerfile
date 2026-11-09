@@ -35,3 +35,8 @@ ENV CARGO_BUILD_JOBS=6 \
     WINEDEBUG=-all
 
 WORKDIR /work
+
+# Static Linux release builds (no glibc version dependency).
+RUN pacman -S --noconfirm --needed musl zip && pacman -Scc --noconfirm \
+ && rustup target add x86_64-unknown-linux-musl && chmod -R a+rwX /opt/rustup /opt/cargo
+ENV CC_x86_64_unknown_linux_musl=musl-gcc

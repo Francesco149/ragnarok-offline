@@ -25,7 +25,7 @@ case "$cmd" in
   client-start)
     xvfb
     [ -f /data/wine/system.reg ] || wineboot -i >/dev/null 2>&1
-    wine regedit /S 'Z:\work\tools\client-test\ragnarok-settings.reg' 2>/dev/null; wineserver -w
+    wine regedit /S 'Z:\work\tools\client-test\ragnarok-settings.reg' 2>/dev/null  # synchronous; no wineserver -w (a Wine server.exe may be running)
     cd "$CLIENT" && (wine Ragexe.exe 1rag1 >/tmp/ragexe.log 2>&1 &)
     for _ in $(seq 60); do xdotool search --name '^Ragnarok$' >/dev/null 2>&1 && break; sleep 0.5; done
     sleep 6; echo "client up" ;;

@@ -1,0 +1,31 @@
+# Agent guide
+
+Single-player server for the 2003-12-18 euRO client (see README.md).
+
+## Rules
+
+- **Run everything in the workbench** (`tools/wb exec ...`): 2 GiB cap, no
+  swap, self-destructing container. Never build, run Wine or the server on the
+  host. maximus has no swap and has frozen from uncapped jobs before.
+- `pkill -f PATTERN` inside `tools/wb exec bash -c '...'` matches its own shell;
+  use the bracket trick (`pkill -f "[s]erver"`).
+- **Client files are Gravity's**: never commit anything from the CD or the
+  unpacked client. They live in `~/data/ragnarok-cd` (`/data` in the
+  workbench); the disc image is archived on cold (docs/PRESERVATION.md).
+- **Tag provenance.** Every server-side value has a source and a tier
+  (docs/PROVENANCE.md). Prefer `client` evidence; cite file:line for formulas
+  taken from period emulators; never replace a period value with a later one
+  without saying so.
+- Keep confirmed behaviour in Rust and reconstructed behaviour in Lua/TOML
+  (docs/ARCHITECTURE.md).
+- Every packet goes through `ro_proto::Writer`; don't bypass the length check.
+- Test with `cargo test --workspace`; for client-visible changes also run the
+  headless client (docs/DEVELOPMENT.md) and look at a screenshot.
+- Commits: small, logical, with `Co-Authored-By:` naming your model.
+
+## Map
+
+`crates/` (Rust), `scripts/` (Lua: rules, commands, NPCs, imports),
+`data/db/` (TOML game data), `data/client/packet_lengths.tsv` (from the exe),
+`research/` (tools + notes), `tools/` (workbench, client rig, importer,
+packaging), `docs/`.

@@ -21,10 +21,10 @@ pub enum Tier {
     Client,
     /// Gravity / publisher material from the period (patch notes, guides).
     Official,
-    /// Community measurements and documents written 2002-2004.
-    Period,
     /// Athena-family emulator data contemporary with the client (2003-12 .. 2004-05).
     Athena2003,
+    /// Community measurements and documents written 2002-2004.
+    Period,
     /// Later reconstructions (rAthena pre-renewal, wikis written after 2004).
     Later,
     /// Placeholder / our own estimate.

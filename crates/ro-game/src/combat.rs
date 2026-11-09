@@ -68,7 +68,11 @@ impl Game {
         if !ok {
             (x, y) = crate::mapsrv::random_cell(&grid)?;
         }
-        self.spawn_mob(&s.map, x, y, s.mob, Some(i))
+        let mob = match &s.mob_name {
+            Some(n) => self.db.mob_by_name(n).map(|m| m.id)?,
+            None => s.mob,
+        };
+        self.spawn_mob(&s.map, x, y, mob, Some(i))
     }
 
     pub(crate) fn spawn_mob(&mut self, map: &str, x: u16, y: u16, mob_id: u32, spawn: Option<usize>) -> Option<u32> {
