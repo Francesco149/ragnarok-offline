@@ -11,10 +11,14 @@
 //!
 //! Every run: unpacks the server's scripts/database into a data folder
 //! (`<game>\offline` if the game folder is writable, else
-//! `%LOCALAPPDATA%\Ragnarok Offline`), starts the server in-process, runs
-//! `Ragexe.exe 1rag1` and saves + stops the server when the client exits.
+//! `%LOCALAPPDATA%\Ragnarok Offline`), starts the server in-process, then
+//! starts the game the way the CD did: through its patcher, `Ragnarok.exe`,
+//! which fetches euRO's notice and patch list - now from our local patch
+//! server (an archived snapshot, ro_server::patchsrv) - and offers
+//! "Start Game". Saves + stops the server when the client exits.
 //!
 //!   RagnarokOffline.exe               play
+//!   RagnarokOffline.exe --direct      skip the patcher, start Ragexe.exe 1rag1
 //!   RagnarokOffline.exe --settings    the client's own Setup.exe
 //!   RagnarokOffline.exe --prepare     prepare only (elevated relaunch, installers)
 //!   RagnarokOffline.exe --unprepare   put the CD's data.grf back (uninstallers)
@@ -48,6 +52,37 @@ static DDRAWCOMPAT: Option<&[u8]> = Some(include_bytes!(env!("DDRAWCOMPAT_DLL"))
 #[cfg(not(ddrawcompat))]
 static DDRAWCOMPAT: Option<&[u8]> = None;
 const DDRAWCOMPAT_INI: &str = include_str!("../assets/DDrawCompat.ini");
+
+/// What euRO's wpatch.euro-ro.net/patch/ served, as the Wayback Machine has it
+/// (fetched by tools/fetch-third-party.sh; docs/WINDOWS.md "The patcher").
+/// (file name, contents); patch2.txt is the archived list, served through
+/// patchsrv::patch_list_for_level.
+#[cfg(euro_patch)]
+static EURO_PATCH: Option<[(&str, &[u8]); 4]> = Some([
+    ("patch_allow.txt", include_bytes!(env!("EURO_PATCH_ALLOW"))),
+    ("notice_patch.txt", include_bytes!(env!("EURO_PATCH_NOTICE"))),
+    ("notice_close.txt", include_bytes!(env!("EURO_PATCH_CLOSE"))),
+    ("patch2.txt", include_bytes!(env!("EURO_PATCH_LIST"))),
+]);
+#[cfg(not(euro_patch))]
+static EURO_PATCH: Option<[(&str, &[u8]); 4]> = None;
+/// euRO's front page (2004-02-21), served at / for the client's registrationweb.
+#[cfg(euro_patch)]
+static EURO_WEB_INDEX: Option<&[u8]> = Some(include_bytes!(env!("EURO_WEB_INDEX")));
+#[cfg(not(euro_patch))]
+static EURO_WEB_INDEX: Option<&[u8]> = None;
+
+/// The CD's patcher, Ragnarok.exe 2003-12-12 (installed-files.sha256).
+const KNOWN_PATCHER_SHA256: &str = "91eafb955fcbdf61a18bc1acfbd1e5aa2e127c25127072ddfe3f6e7b191c63c2";
+/// Its host name slots in .data (64-byte fields; fixed image base 0x400000,
+/// no relocations), read by the HTTP ("http://%s%s/%s") and FTP
+/// (InternetConnectA, port 21) code.
+const PATCHER_WPATCH: (usize, &[u8]) = (0x41d210, b"wpatch.euro-ro.net\0");
+const PATCHER_FPATCH: (usize, &[u8]) = (0x41d250, b"fpatch.euro-ro.net\0");
+/// The CD's patch.inf: the last patch number the disc already contains.
+const CD_PATCH_LEVEL: u32 = 303;
+const PATCH_LIST_HEADER: &str = "// ragnarok-offline: euRO's list as archived on 2004-02-21 (web.archive.org); \
+entries after this CD's level (303) are commented out, their files were not archived";
 
 const ADDRESS: &str = "127.0.0.1";
 const LOGIN_PORT: u16 = 6900;
@@ -112,10 +147,10 @@ fn run(args: &[String]) -> Result<i32> {
         std::process::Command::new(dir.join("Setup.exe")).current_dir(&dir).status().context("starting Setup.exe")?;
         return Ok(0);
     }
-    play(&dir)
+    play(&dir, has("--direct"))
 }
 
-fn play(dir: &Path) -> Result<i32> {
+fn play(dir: &Path, direct: bool) -> Result<i32> {
     match setup::ragexe_sha256(dir) {
         Some(h) if h == setup::KNOWN_RAGEXE_SHA256 => {}
         _ => {
@@ -130,6 +165,10 @@ fn play(dir: &Path) -> Result<i32> {
         }
     }
     let writable = dir_writable(dir);
+    let data = if writable { dir.join("offline") } else { plat::local_appdata().join("Ragnarok Offline") };
+    unpack(&data)?;
+    log_to(&data.join("logs").join("launcher.log"));
+    info!("RagnarokOffline {VERSION}: game {} data {}", dir.display(), data.display());
     if needs_prepare(dir) {
         if writable {
             prepare(dir)?;
@@ -146,14 +185,15 @@ fn play(dir: &Path) -> Result<i32> {
         info!("wrote first-run client settings ({wher})");
     }
 
-    let data = if writable { dir.join("offline") } else { plat::local_appdata().join("Ragnarok Offline") };
-    unpack(&data)?;
-    log_to(&data.join("logs").join("launcher.log"));
-    info!("RagnarokOffline {VERSION}: game {} data {}", dir.display(), data.display());
-
     let cfg_path = data.join("ragnarok-offline.toml");
     let mut cfg = Config::load(&cfg_path)?;
     cfg.client_dir = dir.to_path_buf();
+    let use_patcher = cfg!(windows) && EURO_PATCH.is_some() && !direct && patcher_ok(dir);
+    if use_patcher {
+        cfg.patch_server.enabled = true;
+        cfg.patch_server.dir = data.join("patchsrv");
+    }
+    let http_port = cfg.patch_server.http_port;
     let opts = server::Options { ctrl_c: false, log_dir: data.join("logs") };
     let started = plat::starting("Starting Ragnarok Offline...", move || server::start(cfg, opts));
     let handle = match started {
@@ -165,16 +205,48 @@ fn play(dir: &Path) -> Result<i32> {
         Err(e) => return Err(e),
     };
     let started = std::time::Instant::now();
-    let status = spawn_client(dir).and_then(|mut c| {
-        plat::allow_foreground(c.id());
-        c.wait().context("waiting for Ragexe.exe")
-    });
-    info!("client exited after {:?}: {status:?}", started.elapsed());
+    let via_patcher = use_patcher && handle.as_ref().is_some_and(|h| h.patch_server);
+    let status = if via_patcher {
+        match run_patcher(dir, http_port) {
+            Ok(()) => Ok(()),
+            Err(e) => {
+                warn!("patcher: {e:#}; starting the client directly");
+                run_client(dir)
+            }
+        }
+    } else {
+        run_client(dir)
+    };
+    info!("game exited after {:?}: {status:?}", started.elapsed());
     if let Some(h) = handle {
         h.shutdown();
     }
     status?;
     Ok(0)
+}
+
+fn run_client(dir: &Path) -> Result<()> {
+    let mut c = spawn_client(dir)?;
+    plat::allow_foreground(c.id());
+    c.wait().context("waiting for Ragexe.exe")?;
+    Ok(())
+}
+
+/// Is the CD's patcher there, unmodified?
+fn patcher_ok(dir: &Path) -> bool {
+    std::fs::read(dir.join("Ragnarok.exe")).is_ok_and(|b| setup::hex(&Sha256::digest(b)) == KNOWN_PATCHER_SHA256)
+}
+
+/// The CD's patcher, pointed at our patch server: its two host names are
+/// replaced in memory before it runs (the exe on disk stays as it is), so it
+/// fetches euRO's notice and list from 127.0.0.1, finds nothing missing and
+/// starts Ragexe.exe 1rag1 when you click "Start Game". Returns when the
+/// patcher and the game it started have both exited.
+fn run_patcher(dir: &Path, http_port: u16) -> Result<()> {
+    let web = format!("127.0.0.1:{http_port}").into_bytes(); // the port rides in the URL
+    let ftp = b"127.0.0.1".to_vec(); // InternetConnectA always uses port 21
+    info!("starting the CD's patcher (wpatch -> {}, fpatch -> 127.0.0.1:21)", String::from_utf8_lossy(&web));
+    plat::run_patched(&dir.join("Ragnarok.exe"), dir, &[(PATCHER_WPATCH.0, PATCHER_WPATCH.1, web), (PATCHER_FPATCH.0, PATCHER_FPATCH.1, ftp)])
 }
 
 fn spawn_client(dir: &Path) -> Result<std::process::Child> {
@@ -208,14 +280,14 @@ fn wants_ddrawcompat() -> bool {
 }
 
 fn needs_prepare(dir: &Path) -> bool {
-    !setup::is_prepared(dir, ADDRESS, LOGIN_PORT)
+    !setup::is_prepared(dir, ADDRESS, LOGIN_PORT, "Offline")
         || (wants_ddrawcompat() && (!dir.join("ddraw.dll").exists() || !dir.join("DDrawCompat.ini").exists()))
 }
 
 /// Everything that needs write access to the game folder.
 fn prepare(dir: &Path) -> Result<()> {
     info!("preparing {}", dir.display());
-    if !setup::is_prepared(dir, ADDRESS, LOGIN_PORT) {
+    if !setup::is_prepared(dir, ADDRESS, LOGIN_PORT, "Offline") {
         let work = |report: &(dyn Fn(usize, usize) + Sync)| {
             setup::prepare(dir, ADDRESS, LOGIN_PORT, "Offline", &mut |d, t| report(d, t))
         };
@@ -292,6 +364,30 @@ fn unpack(data: &Path) -> Result<()> {
     let fresh_db = std::fs::read_to_string(&stamp).map(|v| v.trim() != VERSION).unwrap_or(true);
     extract(&SCRIPTS, &data.join("scripts"), false)?;
     extract(&DB, &data.join("data").join("db"), fresh_db)?;
+    if let Some(index) = EURO_WEB_INDEX {
+        let p = data.join("patchsrv").join("index.html");
+        if !p.exists() {
+            std::fs::create_dir_all(data.join("patchsrv"))?;
+            std::fs::write(&p, index)?;
+        }
+    }
+    if let Some(files) = &EURO_PATCH {
+        // the patch server's files; yours to edit (e.g. your own notice): written once
+        let d = data.join("patchsrv").join("patch");
+        std::fs::create_dir_all(&d)?;
+        for (name, bytes) in files {
+            let p = d.join(name);
+            if p.exists() {
+                continue;
+            }
+            if *name == "patch2.txt" {
+                let list = ro_server::patchsrv::patch_list_for_level(&String::from_utf8_lossy(bytes), CD_PATCH_LEVEL, PATCH_LIST_HEADER);
+                std::fs::write(&p, list)?;
+            } else {
+                std::fs::write(&p, bytes)?;
+            }
+        }
+    }
     std::fs::write(&stamp, VERSION)?;
     let cfg = data.join("ragnarok-offline.toml");
     if !cfg.exists() {

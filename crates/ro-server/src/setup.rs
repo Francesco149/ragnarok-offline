@@ -23,21 +23,22 @@ pub const KNOWN_RAGEXE_SHA256: &str = "a25b7efae4200919e9d12bb12bc61fb447b7f34e8
 
 pub const CLIENTINFO: &str = "data\\clientinfo.xml";
 
+/// Where the client's `registrationweb` points: the local patch server's
+/// HTTP port, which serves euRO's archived front page (patchsrv.rs). Nothing
+/// listening there (CLI without a patch server) just means a local error
+/// page, never a request to the internet.
+pub const REGISTRATION_WEB_PORT: u16 = 6950;
+
+/// The CD's own clientinfo.xml (in data.grf.original) with only the server,
+/// its display name and the registration web page changed.
 pub fn clientinfo_xml(address: &str, port: u16, name: &str) -> String {
+    let web = format!("http://{address}:{REGISTRATION_WEB_PORT}/");
     format!(
-        r#"<?xml version="1.0" encoding="euc-kr" ?>
-<clientinfo>
-	<servicetype>germany</servicetype>
-	<servertype>primary</servertype>
-	<connection>
-		<display>{name}</display>
-		<desc>ragnarok-offline</desc>
-		<address>{address}</address>
-		<port>{port}</port>
-		<version>1</version>
-	</connection>
-</clientinfo>
-"#
+        "<?xml version=\"1.0\" encoding=\"euc-kr\" ?>\r\n\r\n<clientinfo>\r\n\r\n\t<servicetype>germany</servicetype>\r\n\
+         \t<servertype>primary</servertype>\r\n\t<hideaccountlist></hideaccountlist>\r\n\r\n\t<connection>\r\n\
+         \t\t<display>{name}</display>\r\n\t\t<desc>None</desc>\r\n\t\t<address>{address}</address>\r\n\
+         \t\t<port>{port}</port>\r\n\t\t<version>1</version>\r\n\t\t<registrationweb>{web}</registrationweb>\r\n\
+         \t</connection>\r\n\r\n</clientinfo>\r\n"
     )
 }
 
@@ -73,15 +74,14 @@ pub fn ragexe_sha256(dir: &Path) -> Option<String> {
     std::fs::read(dir.join("Ragexe.exe")).ok().map(|b| hex(&Sha256::digest(b)))
 }
 
-/// Does `dir`'s data.grf already point at `address:port`?
-pub fn is_prepared(dir: &Path, address: &str, port: u16) -> bool {
+/// Does `dir`'s data.grf already carry our clientinfo.xml for `address:port`
+/// (exactly: a changed template means the folder is prepared again)?
+pub fn is_prepared(dir: &Path, address: &str, port: u16, name: &str) -> bool {
     if !dir.join("data.grf.original").exists() {
         return false;
     }
     let Ok(g) = Grf::open(dir.join("data.grf")) else { return false };
-    let Ok(xml) = g.read(CLIENTINFO) else { return false };
-    let xml = String::from_utf8_lossy(&xml);
-    xml.contains(&format!("<address>{address}</address>")) && xml.contains(&format!("<port>{port}</port>"))
+    g.read(CLIENTINFO).is_ok_and(|xml| xml == clientinfo_xml(address, port, name).as_bytes())
 }
 
 /// What [`prepare`] did.

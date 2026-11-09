@@ -29,13 +29,13 @@ fn prepare_merges_patches_and_unprepare_restores() {
     grf_with(&dir.join("2003-12-11gdata_test.gpf"), &[("data\\shared.txt", b"new"), ("data\\patch.txt", b"patch")]);
     let original = std::fs::read(dir.join("data.grf")).unwrap();
 
-    assert!(!setup::is_prepared(&dir, "127.0.0.1", 6900));
+    assert!(!setup::is_prepared(&dir, "127.0.0.1", 6900, "Offline"));
     let mut calls = 0;
     let p = setup::prepare(&dir, "127.0.0.1", 6900, "Offline", &mut |_, _| calls += 1).unwrap();
     assert!(calls > 0);
     assert_eq!(p.layers, vec!["2003-12-11gdata_test.gpf".to_string()]);
-    assert!(setup::is_prepared(&dir, "127.0.0.1", 6900));
-    assert!(!setup::is_prepared(&dir, "127.0.0.1", 7000));
+    assert!(setup::is_prepared(&dir, "127.0.0.1", 6900, "Offline"));
+    assert!(!setup::is_prepared(&dir, "127.0.0.1", 7000, "Offline"));
     assert_eq!(std::fs::read(dir.join("data.grf.original")).unwrap(), original);
 
     let g = Grf::open(dir.join("data.grf")).unwrap();
@@ -44,6 +44,8 @@ fn prepare_merges_patches_and_unprepare_restores() {
     assert_eq!(g.read("data\\patch.txt").unwrap(), b"patch");
     let xml = String::from_utf8(g.read(setup::CLIENTINFO).unwrap()).unwrap();
     assert!(xml.contains("<address>127.0.0.1</address>") && xml.contains("<port>6900</port>"));
+    assert!(xml.contains("<registrationweb>http://127.0.0.1:6950/</registrationweb>"), "never the internet");
+    assert!(xml.contains("<servicetype>germany</servicetype>") && xml.contains("<hideaccountlist></hideaccountlist>"));
     drop(g);
 
     // idempotent: a second run rebuilds from data.grf.original

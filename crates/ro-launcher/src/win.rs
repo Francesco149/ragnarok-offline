@@ -1,7 +1,7 @@
 //! Win32 side of the launcher: message boxes, a progress window, elevation,
 //! Wine detection and the client's registry settings.
 
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 use std::sync::atomic::{AtomicIsize, Ordering};
 
 use anyhow::{Result, bail};
@@ -56,6 +56,83 @@ pub fn allow_foreground(pid: u32) {
     unsafe {
         windows_sys::Win32::UI::WindowsAndMessaging::AllowSetForegroundWindow(pid);
     }
+}
+
+/// Start `exe` suspended, replace bytes in its memory, resume it, and wait
+/// until it and everything it started have exited.
+///
+/// Each patch is (address, the bytes expected there, the replacement); the
+/// replacement is zero-padded to the expected length. If any expected bytes
+/// do not match, the process is killed before it ran a single instruction
+/// and nothing is changed. The file on disk is never touched.
+pub fn run_patched(exe: &Path, dir: &Path, patches: &[(usize, &[u8], Vec<u8>)]) -> Result<()> {
+    use windows_sys::Win32::System::Diagnostics::Debug::{ReadProcessMemory, WriteProcessMemory};
+    use windows_sys::Win32::System::JobObjects::{
+        AssignProcessToJobObject, CreateJobObjectW, JOBOBJECT_BASIC_ACCOUNTING_INFORMATION, JobObjectBasicAccountingInformation,
+        QueryInformationJobObject,
+    };
+    use windows_sys::Win32::System::Threading::{
+        CREATE_SUSPENDED, CreateProcessW, PROCESS_INFORMATION, ResumeThread, STARTUPINFOW, TerminateProcess,
+    };
+    let app = wide(&exe.to_string_lossy());
+    let mut cmdline = wide(&format!("\"{}\"", exe.display()));
+    let cwd = wide(&dir.to_string_lossy());
+    unsafe {
+        let job = CreateJobObjectW(std::ptr::null(), std::ptr::null());
+        if job.is_null() {
+            bail!("CreateJobObject failed");
+        }
+        let mut si: STARTUPINFOW = std::mem::zeroed();
+        si.cb = size_of::<STARTUPINFOW>() as u32;
+        let mut pi: PROCESS_INFORMATION = std::mem::zeroed();
+        let ok = CreateProcessW(app.as_ptr(), cmdline.as_mut_ptr(), std::ptr::null(), std::ptr::null(), 0, CREATE_SUSPENDED, std::ptr::null(), cwd.as_ptr(), &si, &mut pi);
+        if ok == 0 {
+            CloseHandle(job);
+            bail!("starting {}: {}", exe.display(), std::io::Error::last_os_error());
+        }
+        let fail = |msg: String| -> Result<()> {
+            TerminateProcess(pi.hProcess, 1);
+            CloseHandle(pi.hThread);
+            CloseHandle(pi.hProcess);
+            CloseHandle(job);
+            bail!(msg)
+        };
+        if AssignProcessToJobObject(job, pi.hProcess) == 0 {
+            return fail(format!("AssignProcessToJobObject: {}", std::io::Error::last_os_error()));
+        }
+        for (addr, expected, replacement) in patches {
+            let mut got = vec![0u8; expected.len()];
+            let mut n = 0usize;
+            if ReadProcessMemory(pi.hProcess, *addr as *const _, got.as_mut_ptr().cast(), got.len(), &mut n) == 0 || got != *expected {
+                return fail(format!("{} is not the expected build (bytes at {addr:#x} differ)", exe.display()));
+            }
+            let mut bytes = replacement.clone();
+            bytes.resize(expected.len().max(replacement.len() + 1), 0);
+            if WriteProcessMemory(pi.hProcess, *addr as *const _, bytes.as_ptr().cast(), bytes.len(), &mut n) == 0 {
+                return fail(format!("WriteProcessMemory at {addr:#x}: {}", std::io::Error::last_os_error()));
+            }
+        }
+        allow_foreground(pi.dwProcessId);
+        ResumeThread(pi.hThread);
+        CloseHandle(pi.hThread);
+        CloseHandle(pi.hProcess);
+        loop {
+            let mut info: JOBOBJECT_BASIC_ACCOUNTING_INFORMATION = std::mem::zeroed();
+            let ok = QueryInformationJobObject(
+                job,
+                JobObjectBasicAccountingInformation,
+                (&mut info as *mut JOBOBJECT_BASIC_ACCOUNTING_INFORMATION).cast(),
+                size_of::<JOBOBJECT_BASIC_ACCOUNTING_INFORMATION>() as u32,
+                std::ptr::null_mut(),
+            );
+            if ok == 0 || info.ActiveProcesses == 0 {
+                break;
+            }
+            std::thread::sleep(std::time::Duration::from_millis(500));
+        }
+        CloseHandle(job);
+    }
+    Ok(())
 }
 
 pub fn local_appdata() -> PathBuf {
