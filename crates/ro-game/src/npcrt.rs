@@ -251,9 +251,18 @@ impl Game {
 
     // ------------------------------------------------------------ monsters
 
-    /// Athena mob_once_spawn: x/y <= 0 = random cell; name "--ja--"/"--en--" = db name.
+    /// Athena mob_once_spawn (mod0631): map "this" = the player's map; x/y <= 0 =
+    /// the player's cell (random cell without a player); name "--ja--"/"--en--" =
+    /// db name.
     #[allow(clippy::too_many_arguments)]
-    fn script_monster(&mut self, map: &str, x0: i64, y0: i64, x1: i64, y1: i64, name: &str, mob: &Value, count: i64, event: &str) -> Result<Value, String> {
+    fn script_monster(&mut self, player: u32, map: &str, x0: i64, y0: i64, x1: i64, y1: i64, name: &str, mob: &Value, count: i64, event: &str) -> Result<Value, String> {
+        let here = self.world.units.get(&player).map(|u| (u.map.clone(), u.x as i64, u.y as i64));
+        let map = if map == "this" { here.as_ref().map(|h| h.0.clone()).unwrap_or_default() } else { map.to_string() };
+        let map = map.as_str();
+        let (x0, y0) = match &here {
+            Some((m, px, py)) if m == map && x1 <= x0 && y1 <= y0 => (if x0 <= 0 { *px } else { x0 }, if y0 <= 0 { *py } else { y0 }),
+            _ => (x0, y0),
+        };
         if !self.ensure_map(map) {
             return Err(format!("unknown map {map}"));
         }
@@ -482,11 +491,11 @@ impl Game {
             // ---- monsters
             "monster" => {
                 let event = text(a, 6);
-                self.script_monster(&map_name(a, 0), int(a, 1), int(a, 2), 0, 0, &text(a, 3), arg(a, 4), int(a, 5), &event)
+                self.script_monster(ctx.player, &map_name(a, 0), int(a, 1), int(a, 2), 0, 0, &text(a, 3), arg(a, 4), int(a, 5), &event)
             }
             "area_monster" => {
                 let event = text(a, 8);
-                self.script_monster(&map_name(a, 0), int(a, 1), int(a, 2), int(a, 3), int(a, 4), &text(a, 5), arg(a, 6), int(a, 7), &event)
+                self.script_monster(ctx.player, &map_name(a, 0), int(a, 1), int(a, 2), int(a, 3), int(a, 4), &text(a, 5), arg(a, 6), int(a, 7), &event)
             }
             "kill_monster" => {
                 for id in self.script_mobs(&map_name(a, 0), &text(a, 1)) {
@@ -636,6 +645,39 @@ impl Game {
             }),
             "skill_level" => player().map(|u| json!(self.skill_level(u, int(a, 0) as u16))),
             "give_skill" => player().and_then(|u| self.give_skill(u, int(a, 0) as u16, int(a, 1).clamp(0, 10) as u8).map(|_| Value::Null)),
+            "item_box" => player().map(|u| {
+                // Athena itemdb_searchrandomid: up to 2000 random picks, each kept with chance per/1e6
+                let flag = int(a, 0) as u8;
+                let pick = self.db.boxes.iter().find(|b| b.flag == flag).map(|b| {
+                    let mut got = b.default;
+                    for _ in 0..2000 {
+                        if b.items.is_empty() {
+                            break;
+                        }
+                        let (id, per) = b.items[rand::random::<usize>() % b.items.len()];
+                        if rand::random::<u32>() % 1_000_000 < per {
+                            got = id;
+                            break;
+                        }
+                    }
+                    got
+                });
+                match pick {
+                    Some(id) if id != 0 && self.db.item(id).is_some() => {
+                        self.add_item(u, crate::model::InvItem::new(id, 1));
+                        json!(id)
+                    }
+                    _ => json!(0),
+                }
+            }),
+            "dead_branch" => player().and_then(|u| {
+                // mod0631 mob_once_spawn class 0: random 1000..1999 on the branch list
+                // whose level is not above the player's, else a Poring
+                let lv = self.char_of_unit(u).map(|c| c.base_level).unwrap_or(1);
+                let list: Vec<u32> = self.db.branch.mobs.iter().copied().filter(|m| self.db.mob(*m).is_some_and(|d| d.level <= lv && d.hp > 0)).collect();
+                let mob = if list.is_empty() { 1002 } else { list[rand::random::<usize>() % list.len()] };
+                self.script_monster(u, "this", 0, 0, 0, 0, "--ja--", &json!(mob), 1, "")
+            }),
             "unequip_all" => player().map(|u| {
                 // Athena releaseall: take off everything worn
                 let worn: Vec<u16> = self

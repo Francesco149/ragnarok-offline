@@ -6,7 +6,7 @@
 //!
 //! Files (all optional; missing ones load empty with a warning):
 //!   data/db/items.toml  data/db/mobs.toml  data/db/exp.toml  data/db/jobs.toml
-//!   data/db/skills.toml
+//!   data/db/skills.toml  data/db/random.toml
 
 use std::collections::HashMap;
 use std::path::Path;
@@ -195,6 +195,36 @@ pub struct TreeEntry {
     pub need: Vec<(u16, u8)>,
 }
 
+/// A random item source (`getitem -flag`): Old Blue Box, Old Violet Box,
+/// Old Card Album, Gift Box, Old Scroll.
+#[derive(Debug, Clone, Default, Serialize, Deserialize)]
+#[serde(default)]
+pub struct ItemBox {
+    pub flag: u8,
+    pub name: String,
+    /// Given when the random pick fails (0 = nothing).
+    pub default: u32,
+    /// (item id, chance per 1,000,000 of keeping a pick)
+    pub items: Vec<(u32, u32)>,
+}
+
+#[derive(Debug, Clone, Default, Serialize, Deserialize)]
+#[serde(default)]
+pub struct Branch {
+    /// Monsters a Dead Branch may summon.
+    pub mobs: Vec<u32>,
+}
+
+#[derive(Debug, Default, Serialize, Deserialize)]
+struct RandomFile {
+    #[serde(default)]
+    meta: Meta,
+    #[serde(default)]
+    r#box: Vec<ItemBox>,
+    #[serde(default)]
+    branch: Branch,
+}
+
 #[derive(Debug, Default, Serialize, Deserialize)]
 struct SkillFile {
     #[serde(default)]
@@ -243,6 +273,8 @@ pub struct Database {
     /// Skill tree per job, in file order.
     pub skill_tree: HashMap<u16, Vec<TreeEntry>>,
     pub skills_meta: Meta,
+    pub boxes: Vec<ItemBox>,
+    pub branch: Branch,
     pub warnings: Vec<String>,
 }
 
@@ -286,6 +318,9 @@ impl Database {
         for t in skills.tree {
             db.skill_tree.entry(t.job).or_default().push(t);
         }
+        let random: RandomFile = read_toml(&dir.join("random.toml"), &mut db.warnings)?;
+        db.boxes = random.r#box;
+        db.branch = random.branch;
         Ok(db)
     }
 

@@ -185,7 +185,11 @@ function set_falcon() return _rt("set_falcon") end
 function set_riding() return _rt("set_riding") end
 function open_storage() _rt("open_storage") end
 function unequip_all() _rt("unequip_all") end
-function item_skill(id, lv, name) _rt("unimplemented", "itemskill") end
+function item_skill(id, lv, name) _rt("unimplemented", "itemskill " .. tostring(id)) end
+-- Old Blue Box (1), Old Violet Box (2), Old Card Album (3), Gift Box (4), Old Scroll (5)
+function item_box(flag) return _rt("item_box", flag) end
+-- Dead Branch: a random monster next to you (data/db/random.toml branch list)
+function dead_branch() return _rt("dead_branch") end
 function produce(kind) _rt("unimplemented", "produce") end
 
 function monster(map, x, y, name, mob, n, event) return _rt("monster", map, x, y, name, mob, n, event or "") end

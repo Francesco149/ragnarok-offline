@@ -576,7 +576,7 @@ buy = 60
 weight = 50
 jobs = 2088959
 gender = 2
-athena_use = "warp \"Random\",0,0;"
+use_script = "warp(\"Random\", 0, 0)"
 
 [[item]]
 id = 602
@@ -587,7 +587,7 @@ buy = 300
 weight = 50
 jobs = 2088959
 gender = 2
-athena_use = "warp \"SavePoint\",0,0;"
+use_script = "warp(\"SavePoint\", 0, 0)"
 
 [[item]]
 id = 603
@@ -598,7 +598,7 @@ buy = 10000
 weight = 200
 jobs = 2088959
 gender = 2
-athena_use = "getitem -1,1;"
+use_script = "item_box(1)"
 
 [[item]]
 id = 604
@@ -609,7 +609,7 @@ buy = 50
 weight = 50
 jobs = 2088959
 gender = 2
-athena_use = "monster \"this\",0,0,\"--ja--\",0,1,\"\";"
+use_script = "dead_branch()"
 
 [[item]]
 id = 605
@@ -620,7 +620,7 @@ buy = 2000
 weight = 100
 jobs = 2088959
 gender = 2
-athena_use = "itemskill 8,1,\"アンティペインメント\";"
+use_script = "item_skill(8, 1)"
 
 [[item]]
 id = 606
@@ -631,7 +631,7 @@ buy = 1500
 weight = 100
 jobs = 2088959
 gender = 2
-athena_use = "itemskill 6,1,\"アロエベラ\";"
+use_script = "item_skill(6, 1)"
 
 [[item]]
 id = 607
@@ -672,7 +672,7 @@ buy = 4000
 weight = 100
 jobs = 2088959
 gender = 2
-athena_use = "itemskill 54,1,\"イグドラシルの葉\";"
+use_script = "item_skill(54, 1)"
 
 [[item]]
 id = 611
@@ -683,7 +683,7 @@ buy = 40
 weight = 50
 jobs = 2088959
 gender = 2
-athena_use = "itemskill 40,1,\"拡大鏡\";"
+use_script = "item_skill(40, 1)"
 
 [[item]]
 id = 612
@@ -694,7 +694,7 @@ buy = 150
 weight = 200
 jobs = 2088959
 gender = 2
-athena_use = "produce 16;"
+use_script = "produce(16)"
 
 [[item]]
 id = 613
@@ -705,7 +705,7 @@ buy = 1000
 weight = 200
 jobs = 2088959
 gender = 2
-athena_use = "produce 1;"
+use_script = "produce(1)"
 
 [[item]]
 id = 614
@@ -716,7 +716,7 @@ buy = 3000
 weight = 300
 jobs = 2088959
 gender = 2
-athena_use = "produce 2;"
+use_script = "produce(2)"
 
 [[item]]
 id = 615
@@ -727,7 +727,7 @@ buy = 5000
 weight = 400
 jobs = 2088959
 gender = 2
-athena_use = "produce 3;"
+use_script = "produce(3)"
 
 [[item]]
 id = 616
@@ -738,7 +738,7 @@ buy = 10000
 weight = 50
 jobs = 2088959
 gender = 2
-athena_use = "getitem -3,1;"
+use_script = "item_box(3)"
 
 [[item]]
 id = 617
@@ -749,7 +749,7 @@ buy = 10000
 weight = 200
 jobs = 2088959
 gender = 2
-athena_use = "getitem -2,1;"
+use_script = "item_box(2)"
 
 [[item]]
 id = 618
@@ -760,7 +760,7 @@ buy = 50
 weight = 20
 jobs = 2088959
 gender = 2
-athena_use = "getitem -5,1;"
+use_script = "item_box(5)"
 
 [[item]]
 id = 619
@@ -771,7 +771,7 @@ buy = 1000
 weight = 50
 jobs = 2088959
 gender = 2
-athena_use = "pet 1002;"
+use_script = "catch_pet(1002)"
 
 [[item]]
 id = 620
@@ -782,7 +782,7 @@ buy = 1500
 weight = 50
 jobs = 2088959
 gender = 2
-athena_use = "pet 1113;"
+use_script = "catch_pet(1113)"
 
 [[item]]
 id = 621
@@ -793,7 +793,7 @@ buy = 20
 weight = 50
 jobs = 2088959
 gender = 2
-athena_use = "pet 1031;"
+use_script = "catch_pet(1031)"
 
 [[item]]
 id = 622
@@ -804,7 +804,7 @@ buy = 2500
 weight = 50
 jobs = 2088959
 gender = 2
-athena_use = "pet 1063;"
+use_script = "catch_pet(1063)"
 
 [[item]]
 id = 623
@@ -815,7 +815,7 @@ buy = 4000
 weight = 50
 jobs = 2088959
 gender = 2
-athena_use = "pet 1049;"
+use_script = "catch_pet(1049)"
 
 [[item]]
 id = 624
@@ -826,7 +826,7 @@ buy = 2500
 weight = 50
 jobs = 2088959
 gender = 2
-athena_use = "pet 1011;"
+use_script = "catch_pet(1011)"
 
 [[item]]
 id = 625
@@ -837,7 +837,7 @@ buy = 100
 weight = 50
 jobs = 2088959
 gender = 2
-athena_use = "pet 1042;"
+use_script = "catch_pet(1042)"
 
 [[item]]
 id = 626
@@ -848,7 +848,7 @@ buy = 1500
 weight = 50
 jobs = 2088959
 gender = 2
-athena_use = "pet 1035;"
+use_script = "catch_pet(1035)"
 
 [[item]]
 id = 627
@@ -859,7 +859,7 @@ buy = 7000
 weight = 50
 jobs = 2088959
 gender = 2
-athena_use = "pet 1067;"
+use_script = "catch_pet(1067)"
 
 [[item]]
 id = 628
@@ -870,7 +870,7 @@ buy = 10000
 weight = 50
 jobs = 2088959
 gender = 2
-athena_use = "pet 1107;"
+use_script = "catch_pet(1107)"
 
 [[item]]
 id = 629
@@ -881,7 +881,7 @@ buy = 300
 weight = 50
 jobs = 2088959
 gender = 2
-athena_use = "pet 1052;"
+use_script = "catch_pet(1052)"
 
 [[item]]
 id = 630
@@ -892,7 +892,7 @@ buy = 10
 weight = 50
 jobs = 2088959
 gender = 2
-athena_use = "pet 1014;"
+use_script = "catch_pet(1014)"
 
 [[item]]
 id = 631
@@ -903,7 +903,7 @@ buy = 20
 weight = 50
 jobs = 2088959
 gender = 2
-athena_use = "pet 1077;"
+use_script = "catch_pet(1077)"
 
 [[item]]
 id = 632
@@ -914,7 +914,7 @@ buy = 5000
 weight = 50
 jobs = 2088959
 gender = 2
-athena_use = "pet 1019;"
+use_script = "catch_pet(1019)"
 
 [[item]]
 id = 633
@@ -925,7 +925,7 @@ buy = 20
 weight = 50
 jobs = 2088959
 gender = 2
-athena_use = "pet 1056;"
+use_script = "catch_pet(1056)"
 
 [[item]]
 id = 634
@@ -936,7 +936,7 @@ buy = 20
 weight = 50
 jobs = 2088959
 gender = 2
-athena_use = "pet 1057;"
+use_script = "catch_pet(1057)"
 
 [[item]]
 id = 635
@@ -947,7 +947,7 @@ buy = 300
 weight = 50
 jobs = 2088959
 gender = 2
-athena_use = "pet 1023;"
+use_script = "catch_pet(1023)"
 
 [[item]]
 id = 636
@@ -958,7 +958,7 @@ buy = 100
 weight = 50
 jobs = 2088959
 gender = 2
-athena_use = "pet 1026;"
+use_script = "catch_pet(1026)"
 
 [[item]]
 id = 637
@@ -969,7 +969,7 @@ buy = 350
 weight = 50
 jobs = 2088959
 gender = 2
-athena_use = "pet 1110;"
+use_script = "catch_pet(1110)"
 
 [[item]]
 id = 638
@@ -980,7 +980,7 @@ buy = 12000
 weight = 50
 jobs = 2088959
 gender = 2
-athena_use = "pet 1170;"
+use_script = "catch_pet(1170)"
 
 [[item]]
 id = 639
@@ -991,7 +991,7 @@ buy = 18000
 weight = 50
 jobs = 2088959
 gender = 2
-athena_use = "pet 1029;"
+use_script = "catch_pet(1029)"
 
 [[item]]
 id = 640
@@ -1002,7 +1002,7 @@ buy = 3000
 weight = 50
 jobs = 2088959
 gender = 2
-athena_use = "pet 1155;"
+use_script = "catch_pet(1155)"
 
 [[item]]
 id = 641
@@ -1013,7 +1013,7 @@ buy = 100
 weight = 50
 jobs = 2088959
 gender = 2
-athena_use = "pet 1109;"
+use_script = "catch_pet(1109)"
 
 [[item]]
 id = 642
@@ -1024,7 +1024,7 @@ buy = 1800
 weight = 50
 jobs = 2088959
 gender = 2
-athena_use = "pet 1101;"
+use_script = "catch_pet(1101)"
 
 [[item]]
 id = 643
@@ -1035,7 +1035,7 @@ buy = 3000
 weight = 30
 jobs = 2088959
 gender = 2
-athena_use = "bpet;"
+use_script = "birth_pet()"
 
 [[item]]
 id = 644
@@ -1046,7 +1046,7 @@ buy = 2
 weight = 200
 jobs = 2088959
 gender = 2
-athena_use = "getitem -4,1;"
+use_script = "item_box(4)"
 
 [[item]]
 id = 645
@@ -1101,7 +1101,7 @@ buy = 500
 weight = 50
 jobs = 2088959
 gender = 2
-athena_use = "pet 1188;"
+use_script = "catch_pet(1188)"
 
 [[item]]
 id = 660
@@ -1111,7 +1111,7 @@ type = 2
 weight = 50
 jobs = 2088959
 gender = 2
-athena_use = "pet 1200;"
+use_script = "catch_pet(1200)"
 
 [[item]]
 id = 661
@@ -1121,7 +1121,7 @@ type = 2
 weight = 50
 jobs = 2088959
 gender = 2
-athena_use = "pet 1275;"
+use_script = "catch_pet(1275)"
 
 [[item]]
 id = 663
@@ -1141,7 +1141,7 @@ buy = 2
 weight = 200
 jobs = 10477567
 gender = 2
-athena_use = "getitem -4,1;"
+use_script = "item_box(4)"
 # record only in eAthena 0.5.2
 
 [[item]]
@@ -1153,7 +1153,7 @@ buy = 2
 weight = 200
 jobs = 10477567
 gender = 2
-athena_use = "getitem -4,1;"
+use_script = "item_box(4)"
 # record only in eAthena 0.5.2
 
 [[item]]
@@ -1165,7 +1165,7 @@ buy = 2
 weight = 200
 jobs = 10477567
 gender = 2
-athena_use = "getitem -4,1;"
+use_script = "item_box(4)"
 # record only in eAthena 0.5.2
 
 [[item]]
@@ -1177,7 +1177,7 @@ buy = 2
 weight = 200
 jobs = 10477567
 gender = 2
-athena_use = "getitem -4,1;"
+use_script = "item_box(4)"
 # record only in eAthena 0.5.2
 
 [[item]]

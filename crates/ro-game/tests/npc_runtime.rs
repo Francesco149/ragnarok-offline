@@ -315,6 +315,28 @@ fn npc_runtime() {
     send(&mut g, 3, Writer::new(0x00f7));
     assert!(find(&cap.take(3), 0x00f8).is_some());
 
+    // usable items translated from the era's item scripts
+    let use_item = |g: &mut Game, cap: &Cap, nameid: u32| {
+        g.console_eval(&format!("give_item({nameid}, 1)"), me);
+        cap.take(3);
+        let slot = g.store.chars.values().next().unwrap().inventory.iter().position(|i| i.nameid == nameid).unwrap() as u16;
+        let mut w = Writer::new(0x00a7);
+        w.u16(slot + 2).u32(me);
+        send(g, 3, w);
+    };
+    let items_before = g.store.chars.values().next().unwrap().inventory.len();
+    use_item(&mut g, &cap, 603); // Old Blue Box
+    let inv = &g.store.chars.values().next().unwrap().inventory;
+    assert!(inv.len() >= items_before && !inv.iter().any(|i| i.nameid == 603), "box opened into an item");
+    let mobs_near = |g: &Game| g.world.units.values().filter(|u| u.mob().is_some() && u.map == "testmap").count();
+    let before = mobs_near(&g);
+    use_item(&mut g, &cap, 604); // Dead Branch
+    assert_eq!(mobs_near(&g), before + 1, "a branch monster appeared");
+    g.console_eval("save_point('testmap', 10, 10); warp('testmap', 30, 40)", me);
+    use_item(&mut g, &cap, 602); // Butterfly Wing
+    let u = g.world.units.get(&me).unwrap();
+    assert_eq!((u.x, u.y), (10, 10), "back at the save point");
+
     // server-wide variables persist
     g.save_all();
     let world = std::fs::read_to_string(base.join("saves/world.json")).unwrap();
