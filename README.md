@@ -26,8 +26,9 @@ can edit while the server runs.
 1. Install the client from the CD (or copy an installed `RagnarokOnline` folder).
 2. Put **`RagnarokOffline.exe`** into that folder (next to `Ragexe.exe`) and
    double-click it. That's all: the first start prepares the folder once
-   (UAC prompt only if it is under Program Files), later starts go straight
-   to the login screen.
+   (UAC prompt only if it is under Program Files). Then, as in 2003, the
+   CD's patcher shows euRO's notice (an archived snapshot, served locally)
+   and you click **Start Game**.
 3. Log in with **any new ID and password** (4+ characters): the account is
    created on first login. Add `_F` to the ID once to make a female account
    (`myname_F`), `_M` for male (default).

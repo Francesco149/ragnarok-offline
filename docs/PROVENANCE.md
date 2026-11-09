@@ -39,6 +39,8 @@ period source). Research behind the tiers: `research/notes/mechanics-sources.md`
 | `@go` coordinates | rAthena | later |
 | Client first-run settings written by `RagnarokOffline.exe` (registry) | the value set the client's own `Setup.exe` writes (observed on Windows 11); 800×600×16 fullscreen picked by us | client / guess |
 | DDrawCompat settings (`DDrawCompat.ini`) | chosen for this client, reasons in docs/WINDOWS.md | guess |
+| Patch server files (notice, list, allow, front page) | euRO's `wpatch.euro-ro.net` as archived by the Wayback Machine: list 2004-02-21, notices 2004-07-18, front page 2004-02-21 (digests checked) | official |
+| Served patch list | the archived list with entries above the CD's `patch.inf` (303) commented out | official / ours |
 
 ## Known period disagreements (don't "fix" these silently)
 

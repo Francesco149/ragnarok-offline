@@ -92,6 +92,19 @@ runs the fetch. `tools/aio/build.sh` turns a CD (default `/data/iso`) into the
 all-in-one installer folder and ISO under `/data/aio/`: Gravity's files plus
 ours, never committed. See WINDOWS.md for what both do and why.
 
+### The patcher under Wine
+
+The launcher's patcher path works in the headless rig too, with the Windows
+build run in Wine. The patcher always dials FTP port 21, and a rootless
+container can't let a normal user bind it, so forward it as root and point
+the patch server at 2121 in `<game>\offline\ragnarok-offline.toml`:
+
+```sh
+podman exec -u 0 -d ro-wb socat TCP-LISTEN:21,bind=127.0.0.1,fork,reuseaddr TCP:127.0.0.1:2121
+```
+
+The patch server logs every HTTP request and FTP transfer to `launcher.log`.
+
 ## Reverse engineering
 
 `research/extract_packet_lengths.py` (capstone) produced the length table;

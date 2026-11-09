@@ -19,8 +19,8 @@ The test rig is `tools/win-test` (DEVELOPMENT.md).
 
 Copy `RagnarokOffline.exe` (from the Windows zip, or `dist/RagnarokOffline-<ver>.exe`)
 into the folder that has `Ragexe.exe` and `data.grf`, then double-click it.
-It is one 11 MB file with the server, its Lua scripts and game database, and
-DDrawCompat inside.
+It is one 11 MB file with the server, its Lua scripts and game database,
+DDrawCompat, and a snapshot of euRO's patch server inside.
 
 First run, once:
 
@@ -45,17 +45,23 @@ Every run:
   `%LOCALAPPDATA%\Ragnarok Offline\`. Scripts you have edited are never
   overwritten. The folder also holds `ragnarok-offline.toml` (rates, start
   items...), `saves\` and `logs\`.
-- **Starts the server in-process, then starts `Ragexe.exe 1rag1`.** When the
-  client exits it saves and stops. If port 6900 is already taken (a server
-  you started by hand), it only starts the client.
+- **Starts the server in-process, then starts the game the way the CD did:
+  through its patcher, `Ragnarok.exe`.** The patcher shows euRO's notice,
+  checks the patch list, reports "Patch process completed" and offers
+  **Start Game**, which runs `Ragexe.exe 1rag1`. Its requests now go to a
+  local stand-in for euRO's patch servers, which serves an archived snapshot
+  (see "The patcher" below). When the patcher and the game have both exited,
+  the launcher saves and stops the server. If port 6900 is already taken (a
+  server you started by hand), it only starts the game.
 
-Other switches: `--settings` runs the client's `Setup.exe`, `--prepare` /
+Other switches: `--direct` skips the patcher and starts `Ragexe.exe 1rag1`
+itself; `--settings` runs the client's `Setup.exe`; `--prepare` /
 `--unprepare` prepare the folder or put the CD's `data.grf` back, and
 `--quiet` suppresses dialogs (exit code 0 means success).
 
-Under Wine the same exe works but skips DDrawCompat, since Wine's own
-DirectDraw is fine. The Linux build (`RagnarokOffline` in the tarball) runs
-`wine Ragexe.exe 1rag1`.
+Under Wine the same exe works, patcher included, but skips DDrawCompat,
+since Wine's own DirectDraw is fine. The Linux build (`RagnarokOffline` in
+the tarball) runs `wine Ragexe.exe 1rag1` directly, without the patcher.
 
 ### All-in-one installer (from your own CD)
 
@@ -80,8 +86,9 @@ differ from the disc:
   the files are removed, and the folder disappears completely. Saves in
   `%LOCALAPPDATA%\Ragnarok Offline` are kept, as user data should be.
 - **Shortcuts.** The desktop and Start-menu "Ragnarok Online" shortcuts start
-  `RagnarokOffline.exe`, with the CD's `ragnarok.ico`. On the CD they
-  pointed at the 2003 patcher (see below). The "Setup" shortcut is unchanged.
+  `RagnarokOffline.exe`, with the CD's `ragnarok.ico`. On the CD they pointed
+  straight at the 2003 patcher; the launcher still shows that patcher, but
+  with its requests answered locally. The "Setup" shortcut is unchanged.
 - **Same product.** The PackageCode is new; ProductCode and UpgradeCode stay
   the CD's.
 
@@ -90,9 +97,16 @@ Unattended installs follow the CD's own rules: the wizard's "Typical" sets
 silent `msiexec /i "Ragnarok Online.msi" /qn` stays at the default level of
 100 (96 files, no skins), so pass `INSTALLLEVEL=200` to match "Typical".
 
-Tested on Windows 11: install through `setup.exe` with the original dialogs,
-then the shortcut, then the game in fullscreen with no UAC prompt, then
-uninstall with nothing left behind. `tools/aio/make_aio.py` documents each
+Tested on Windows 11, from the ISO mounted as a drive:
+
+1. Install through `setup.exe` with the original dialogs (about 15 s).
+2. The desktop shortcut, with no UAC prompt.
+3. The original patcher with euRO's notice, then **Start Game**.
+4. The game in fullscreen: login, a new character, the map.
+5. Uninstall with nothing left in Program Files.
+
+In VirtualStore the patcher leaves only its three small text files, as any
+2003 program would. `tools/aio/make_aio.py` documents each
 table change. Note: msitools appends rows unsorted, which Windows refuses
 (error 2211), so the script re-sorts the touched tables by primary key.
 
@@ -105,7 +119,7 @@ table change. Note: msitools appends rows unsorted, which Windows refuses
 | Wizard UI | MSI dialogs from `msiexec`: same bitmaps, text and layout | identical content and layout at 100% DPI. The window chrome follows the Win11 theme: title bar, rounded buttons, a smooth progress bar instead of XP's Luna (or Classic) blocks. Tahoma 8 is drawn with ClearType | tested |
 | Default folder | `C:\Program Files\Gravity\RagnarokOnline` | `C:\Program Files (x86)\...` (32-bit package on 64-bit Windows) | tested |
 | Files | 508 | all 508 byte-identical to `installed-files.sha256`, in about 12 s from a mounted ISO | tested |
-| Shortcuts | `Ragnarok.exe` (the patcher) | the patcher waits forever on "Attempt to connect patch server": `wpatch`/`fpatch.euro-ro.net` are NXDOMAIN and `euro-ro.net` has no A record. If anyone re-registers the domain, that patcher would download and merge whatever it serves | tested |
+| Shortcuts | `Ragnarok.exe` (the patcher) | the patcher waits forever on "Attempt to connect patch server": `wpatch`/`fpatch.euro-ro.net` are NXDOMAIN and `euro-ro.net` has no A record. The domain is still registered (since 2003-12-10, at Cloudflare, expiring 2026-12-10). If its owner ever points those names somewhere, that patcher would download and merge whatever it is served. The launcher redirects it locally instead (below) | tested |
 | Game folder writes | Users could write to Program Files | read-only for Users. The unmanifested client's writes (Chat\, ScreenShot\, its HKLM settings) are silently redirected to `%LOCALAPPDATA%\VirtualStore` and `HKCU\Software\Classes\VirtualStore` | tested |
 | Custom actions | – | none that run code (one property setter, one async "check for updates" that is allowed to fail) | MSI tables |
 | Uninstall | | clean | tested |
@@ -117,6 +131,84 @@ every themed app. Since Windows 8 there is no per-application switch back
 system theme for one installer is not acceptable. The only faithful
 reference would be the installer running on real XP. VMware Workstation is
 on the test box, so an XP VM would provide one, given XP install media.
+
+## The patcher and the local patch server
+
+**What the patcher does.** `Ragnarok.exe` is dated 2003-12-12 and is plain
+Win32 and WinINet. Its behaviour was observed under Wine against logging
+servers, then checked in its code:
+
+1. **HTTP:** `http://wpatch.euro-ro.net/patch/` + `patch_allow.txt`. That
+   file says "allow", "deny" (then it shows `notice_close.txt`) or "xmas"
+   (then it shows `notice_xmas.txt` and needs `2003-10-31gdata_xmas.gpf`).
+   Then `notice_patch.txt`, shown in the "RO Notice" box, and `patch2.txt`,
+   the patch list. Each response needs a Content-Length, and each file is
+   saved into the game folder.
+2. **FTP:** port 21 on `fpatch.euro-ro.net`, anonymous, passive mode:
+   `CWD /patch`, `TYPE A`, `PASV`, `LIST`. It does this even when there is
+   nothing to download. Then it fetches each patch above the level in
+   `patch.inf`.
+3. **The patch list.** Each line is `<number> <file>`; lines starting with
+   `//` are skipped, and a bare number counts as applied. When the patcher
+   raises `patch.inf` it also rewrites `data.grf`'s file table, which happens
+   even if nothing was merged, and it then needs exclusive write access to
+   `data.grf`.
+4. **Start Game** runs `ragexe.exe 1rag1`, and the patcher exits.
+
+The CD's `patch.inf` is 303. In the earliest archived list, entry 303 is
+`2003-12-19gdata_g_b.gpf`, dated the day the CD was mastered.
+
+**Redirect without changing the exe.** The two host names are 64-byte fields
+in the patcher's `.data` section, at `0x41d210` and `0x41d250`. The image
+base is fixed at 0x400000 and there are no relocations. The launcher:
+
+- starts `Ragnarok.exe` suspended, inside a job object;
+- checks that both fields still say `wpatch.euro-ro.net` / `fpatch.euro-ro.net`;
+- writes `127.0.0.1:6950` and `127.0.0.1` over them, then resumes it;
+- waits until the job is empty, which covers the game the patcher started.
+
+The exe on disk is never modified. The launcher uses this path only for the
+known patcher (by sha256), and falls back to starting `Ragexe.exe` directly
+if anything doesn't match or port 21/6950 can't be bound. The FTP port can't
+be moved: `InternetConnectA` is called with the constant 21, which Windows
+lets a normal user bind.
+
+**The snapshot** (`tools/fetch-third-party.sh` → `third_party/euro-patch/`,
+embedded in the launcher, unpacked to `<data>\patchsrv\`, where you can edit
+it). These are the Wayback Machine's captures of
+`http://wpatch.euro-ro.net/patch/`, the closest ones that exist. Each file's
+SHA-1 was checked against the archive's digest.
+
+| file | capture | |
+|---|---|---|
+| `patch2.txt` | 2004-02-21 (earliest; two weeks into open beta) | served at the CD's level, below |
+| `notice_patch.txt` | 2004-07-18 (earliest) | as archived: July 2004 news in four languages (Juno Kafra, "The_Paper") |
+| `notice_close.txt` | 2004-07-18 | as archived: weekly maintenance, Wednesdays 07:00–10:00 CET |
+| `patch_allow.txt` | 2004-07-18 | `allow` |
+| `/` (`index.html`) | 2004-02-21 | euRO's front page; the client's `registrationweb` now points at it |
+
+**Served at the CD's level.** The list is served as archived, except that
+every numbered line above 303 is commented out with the list's own `//`,
+plus a one-line note at the top. Their patch files (`.gpf`/`.rgz` over FTP)
+were never archived. Serving them as listed would also make the patcher
+raise `patch.inf` and rewrite `data.grf`. Under Program Files that rewrite
+means a 490 MB VirtualStore copy, and a clash with the server reading the
+same file. At the CD's level the patcher finds nothing to do and changes
+nothing.
+
+**`clientinfo.xml`** is now the CD's own file (servicetype `germany`, the
+empty `hideaccountlist`, `desc` None) with only the address, port, display
+name and `registrationweb` changed. As a result the client goes straight to
+LogOn, as with the untouched CD. The client only opens `registrationweb`
+from a UI button that euRO's login window doesn't have, but if it ever does,
+the URL is local.
+
+**Not archived, so not served:**
+
+- the patch files;
+- anything from the December 2003 closed beta;
+- the website's images and other pages, which the Wayback Machine has only
+  partly.
 
 ## The client on Windows 11
 
@@ -193,6 +285,9 @@ unaffected.
   therefore shows its "Starting..." window while the server starts, closes
   it, then spawns the client and calls `AllowSetForegroundWindow`. The window
   must be gone, and must not be topmost, by then, or the client deactivates.
+- **Waiting for the right process.** The launcher waits for the patcher's
+  job object to empty, not for one process: the game the patcher starts is
+  in the job too.
 - **No virtualization for ourselves.** The launcher's manifest
   (`asInvoker`) turns UAC virtualization off for it, so it sees the real
   permissions of Program Files. The client keeps virtualization, which is why
@@ -211,3 +306,5 @@ unaffected.
 - Windows 10, AMD/Intel GPUs, and sound output (sound init succeeds, but
   nobody listened on the test box).
 - A side-by-side with real Windows XP.
+- Port 21 or 6950 already in use on someone's machine: the launcher then
+  skips the patcher, which is tested under Wine but not on Windows.
