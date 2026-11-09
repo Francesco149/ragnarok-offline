@@ -1,0 +1,10 @@
+[package]
+name = "ro-grf"
+description = "Gravity GRF/GPF archives: v0x102/0x103 (DES-obfuscated) and v0x200, layered lookup, 0x200 writer"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+flate2.workspace = true
+thiserror.workspace = true
+encoding_rs.workspace = true

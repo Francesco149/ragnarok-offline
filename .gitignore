@@ -1,0 +1,9 @@
+/target
+# runtime state of a local server
+/saves/
+/logs/
+*.log
+# client files are copyrighted and live in ~/data/ragnarok-cd (mounted at /data)
+/client/
+*.grf
+*.gpf

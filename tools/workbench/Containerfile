@@ -1,0 +1,37 @@
+# ragnarok-offline workbench: every build, analysis and client test runs in here.
+#
+# Runs under tools/wb (2 GiB RAM, no swap, finite lifetime, --rm). Nothing in
+# this image is needed to *play* — the server is a single static binary.
+#
+#   rust (rustup) + x86_64-pc-windows-gnu target  -> Linux and Windows builds
+#   msitools / cabextract / 7zip                   -> unpack the original installer
+#   wine (WoW64) + Xvfb + xdotool + imagemagick    -> run the 2003 client headless
+#   rizin + python capstone/pefile                 -> client exe analysis
+#   cdrdao                                         -> raw (2352) disc read
+FROM docker.io/library/archlinux:latest
+
+RUN pacman -Syu --noconfirm --needed \
+      base-devel git curl jq ripgrep fd less vim \
+      rustup mold clang lld mingw-w64-gcc \
+      msitools cabextract 7zip unshield \
+      wine xorg-server-xvfb xdotool xorg-xwininfo xorg-xprop imagemagick mesa \
+      ttf-liberation ttf-dejavu \
+      rizin python python-pip python-capstone python-pefile python-pillow \
+      cdrdao socat tcpdump strace \
+ && pacman -Scc --noconfirm
+
+ENV RUSTUP_HOME=/opt/rustup CARGO_HOME=/opt/cargo PATH=/opt/cargo/bin:$PATH
+RUN mkdir -p /opt/rustup /opt/cargo/bin /opt/cargo/registry \
+ && rustup default stable \
+ && rustup target add x86_64-pc-windows-gnu \
+ && rustup component add clippy rustfmt \
+ && chmod -R a+rwX /opt/rustup /opt/cargo
+
+# Keep parallel rustc below the 2 GiB cap; mold for cheap links.
+ENV CARGO_BUILD_JOBS=6 \
+    CARGO_TARGET_X86_64_UNKNOWN_LINUX_GNU_LINKER=clang \
+    CARGO_TARGET_X86_64_UNKNOWN_LINUX_GNU_RUSTFLAGS="-C link-arg=-fuse-ld=mold" \
+    CARGO_TARGET_X86_64_PC_WINDOWS_GNU_LINKER=x86_64-w64-mingw32-gcc \
+    WINEDEBUG=-all
+
+WORKDIR /work

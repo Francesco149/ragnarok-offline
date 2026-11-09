@@ -1,0 +1,86 @@
+#!/usr/bin/env bash
+# wb — the ragnarok-offline workbench container (podman, rootless).
+#
+#   tools/wb build            build/refresh the image (memory-capped build)
+#   tools/wb exec <cmd…>      run a command in the workbench (starts it if needed)
+#   tools/wb sh               interactive shell
+#   tools/wb down             tear it down now (kills everything inside)
+#   tools/wb status           show state, age, memory use
+#
+# Every build, analysis and client test runs in here, never on the host:
+#   * hard cap: WB_MEM (default 2g) RAM, no swap, pids-limit 4096
+#     -> a runaway build/wine kills the container's cgroup, not the machine.
+#   * finite life: PID 1 is `sleep WB_LIFETIME` (default 6h) and the container
+#     is --rm, so it removes itself (and every stray process) even if nothing
+#     ever calls `down`. `exec` recycles it once it is older than WB_RECYCLE
+#     (default 4h) so long sessions keep getting fresh containers.
+#
+# Mounts: repo -> /work (rw), WB_DATA (default ~/data/ragnarok-cd: the disc
+# image and the unpacked client, never in git) -> /data (rw),
+# cargo registry cache -> named volume ro-wb-cargo.
+set -euo pipefail
+
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+NAME="${WB_NAME:-ro-wb}"
+IMAGE="${WB_IMAGE:-localhost/ro-wb:latest}"
+MEM="${WB_MEM:-2g}"
+LIFETIME="${WB_LIFETIME:-21600}"   # seconds PID 1 lives (6h)
+RECYCLE="${WB_RECYCLE:-14400}"     # recycle on exec when older (4h)
+DATA="${WB_DATA:-$HOME/data/ragnarok-cd}"
+
+log() { printf '[wb] %s\n' "$*" >&2; }
+
+state() { podman inspect -f '{{.State.Status}}' "$NAME" 2>/dev/null || true; }
+
+age() {
+  local s; s="$(podman inspect -f '{{.State.StartedAt}}' "$NAME" 2>/dev/null || true)"
+  [ -n "$s" ] || { echo 999999999; return; }
+  echo $(( $(date +%s) - $(date -d "${s%%.*}" +%s) ))
+}
+
+down() {
+  podman rm -f -t 2 "$NAME" >/dev/null 2>&1 || true
+  local ids; ids="$(podman ps -aq --filter label=ro-wb 2>/dev/null || true)"
+  # shellcheck disable=SC2086
+  [ -z "$ids" ] || podman rm -f -t 2 $ids >/dev/null 2>&1 || true
+}
+
+up() {
+  mkdir -p "$DATA"
+  log "starting $NAME (mem $MEM, lifetime ${LIFETIME}s)"
+  podman run -d --rm --name "$NAME" --label ro-wb=1 --init \
+    --memory "$MEM" --memory-swap "$MEM" --pids-limit 4096 \
+    --userns keep-id \
+    -e HOME=/tmp/home -e WINEPREFIX=/data/wine \
+    -v "$ROOT:/work:Z" -v "$DATA:/data:Z" \
+    -v ro-wb-cargo:/opt/cargo/registry \
+    -w /work "$IMAGE" sleep "$LIFETIME" >/dev/null
+  podman exec "$NAME" mkdir -p /tmp/home
+}
+
+ensure() {
+  local st; st="$(state)"
+  if [ -z "$st" ]; then up; return; fi
+  if [ "$st" != running ] || [ "$(age)" -gt "$RECYCLE" ]; then
+    log "recycling $NAME (state=$st age=$(age)s)"; down; up
+  fi
+}
+
+cmd="${1:-}"; shift || true
+case "$cmd" in
+  build)
+    podman build --memory "$MEM" --memory-swap "$MEM" -t "$IMAGE" \
+      -f "$ROOT/tools/workbench/Containerfile" "$ROOT/tools/workbench" ;;
+  exec)
+    [ $# -gt 0 ] || { echo "usage: wb exec <cmd…>" >&2; exit 2; }
+    ensure; exec podman exec -i "$NAME" "$@" ;;
+  sh)
+    ensure; exec podman exec -it "$NAME" bash ;;
+  down)
+    down; log "down" ;;
+  status)
+    st="$(state)"; echo "state=${st:-absent}"
+    [ -z "$st" ] || { echo "age=$(age)s"; podman stats --no-stream --format '{{.MemUsage}} pids={{.PIDs}}' "$NAME"; } ;;
+  *)
+    sed -n '2,8p' "${BASH_SOURCE[0]}"; exit 2 ;;
+esac

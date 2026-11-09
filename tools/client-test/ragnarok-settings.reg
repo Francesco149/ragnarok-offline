@@ -1,0 +1,49 @@
+REGEDIT4
+
+; Settings the client's Setup.exe writes (HKLM\Software\Gravity Soft\Ragnarok,
+; 32-bit view)
+; Both registry views: a 32-bit client on 64-bit Windows/Wine reads Wow6432Node.. Used by the headless Wine test rig: no sound device in the
+; container, 800x600 windowed so the whole window fits a 1024x768 Xvfb.
+[HKEY_LOCAL_MACHINE\Software\Gravity Soft\Ragnarok]
+"BITPERPIXEL"=dword:00000010
+"DEVICECNT"=dword:00000000
+"DEVICENAME"="Direct3D HAL"
+"FOG"=dword:00000001
+"GUIDDEVICE"=hex:e0,3d,e6,84,aa,46,cf,11,81,6f,00,00,c0,20,15,6e
+"GUIDDRIVER"=hex:00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00
+"WIDTH"=dword:00000320
+"HEIGHT"=dword:00000258
+"ISFULLSCREENMODE"=dword:00000000
+"ISLIGHTMAP"=dword:00000001
+"ISVOODOO"=dword:00000000
+"MODECNT"=dword:00000000
+"NUMSAMPLETYPE"=dword:00000002
+"PROVIDERNAME"="No Provider"
+"SOUNDMODE"=dword:00000000
+"SPEAKERTYPE"=dword:00000000
+"SPRITEMODE"=dword:00000002
+"TEXTUREMODE"=dword:00000002
+"DIGITALBITSTYPE"=dword:00000000
+"DIGITALRATETYPE"=dword:00000000
+
+[HKEY_LOCAL_MACHINE\Software\Wow6432Node\Gravity Soft\Ragnarok]
+"BITPERPIXEL"=dword:00000010
+"DEVICECNT"=dword:00000000
+"DEVICENAME"="Direct3D HAL"
+"FOG"=dword:00000001
+"GUIDDEVICE"=hex:e0,3d,e6,84,aa,46,cf,11,81,6f,00,00,c0,20,15,6e
+"GUIDDRIVER"=hex:00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00
+"WIDTH"=dword:00000320
+"HEIGHT"=dword:00000258
+"ISFULLSCREENMODE"=dword:00000000
+"ISLIGHTMAP"=dword:00000001
+"ISVOODOO"=dword:00000000
+"MODECNT"=dword:00000000
+"NUMSAMPLETYPE"=dword:00000002
+"PROVIDERNAME"="No Provider"
+"SOUNDMODE"=dword:00000000
+"SPEAKERTYPE"=dword:00000000
+"SPRITEMODE"=dword:00000002
+"TEXTUREMODE"=dword:00000002
+"DIGITALBITSTYPE"=dword:00000000
+"DIGITALRATETYPE"=dword:00000000

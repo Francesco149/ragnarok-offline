@@ -1,0 +1,42 @@
+[workspace]
+resolver = "2"
+members = ["crates/*"]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.85"
+
+[workspace.dependencies]
+anyhow = "1"
+thiserror = "2"
+flate2 = { version = "1", default-features = false, features = ["rust_backend"] }
+encoding_rs = "0.8"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+toml = "0.8"
+tokio = { version = "1", features = ["rt", "rt-multi-thread", "net", "io-util", "sync", "time", "macros", "signal"] }
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter", "fmt"] }
+clap = { version = "4", features = ["derive"] }
+mlua = { version = "0.10", features = ["lua54", "vendored"] }
+notify = { version = "6", default-features = false }
+rand = "0.8"
+md-5 = "0.10"
+
+ro-grf = { path = "crates/ro-grf" }
+ro-proto = { path = "crates/ro-proto" }
+ro-data = { path = "crates/ro-data" }
+ro-script = { path = "crates/ro-script" }
+ro-world = { path = "crates/ro-world" }
+
+[profile.dev]
+debug = "line-tables-only"   # keeps rustc/link memory well under the 2 GiB workbench cap
+
+[profile.dev.package."*"]
+opt-level = 2                 # zlib/lua speed in dev builds
+
+[profile.release]
+lto = "thin"
+codegen-units = 4
+strip = "debuginfo"
