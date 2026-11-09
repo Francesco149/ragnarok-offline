@@ -4,7 +4,8 @@
 --
 -- rules.status(c) gets: c.class, c.base_level, c.job_level, c.str .. c.luk,
 --   c.job = {weight, hp_coef, sp_coef, aspd_base[17]} (data/db/jobs.toml),
---   c.equip = {weight_atk, weapon_type, weapon_range, armor_def, refine_atk, items}
+--   c.equip = {weight_atk, weapon_type, weapon_range, armor_def, refine_atk, items},
+--   c.sc = {["37"] = {val1, val2}, ...} status changes in effect (status_change.lua)
 -- and returns the fields of the status window (see crates/ro-game/src/status.rs).
 
 local floor = math.floor
@@ -45,6 +46,10 @@ function rules.status(c)
   -- pc.c:927  aspd = base - (agi*4 + dex) * base / 1000, floor 100 (= ASPD 190)
   local base = job.aspd_base[(e.weapon_type or 0) + 1] or 2000
   local aspd = base - floor((c.agi * 4 + c.dex) * base / 1000)
+  -- pc.c:895  speed potions (SC 39, 38, 37, strongest first): aspd * val2 / 100
+  local sc = c.sc or {}
+  local pot = sc["39"] or sc["38"] or sc["37"]
+  if pot then aspd = floor(aspd * pot.val2 / 100) end
   s.amotion = math.max(100, aspd)
 
   -- pc.c:690  max_weight = job base + str*300 (tenths)

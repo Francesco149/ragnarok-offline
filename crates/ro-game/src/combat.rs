@@ -408,6 +408,7 @@ impl Game {
             }
         }
         self.dialogs.remove(&unit);
+        self.sc_clear(unit);
         self.area_send(unit, packets::vanish(unit, 1), true);
         // death EXP penalty from rules (Athena: 1% of next level, not novices); none on nopenalty maps
         let here = self.world.units.get(&unit).map(|u| u.map.clone()).unwrap_or_default();

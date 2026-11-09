@@ -67,8 +67,9 @@ monsters, refining, storage), a hand-written Kafra service. Next, in order:
 ## 8. Systems
 
 Done: Kafra storage, pushcart contents, pets (taming, eggs, hatching,
-following, hunger, intimacy, feeding, accessories, renaming). Next: item
-identification, status changes (`sc_start`). Party/guild/trade/vending
+following, hunger, intimacy, feeding, accessories, renaming), status
+changes with icons and expiry (the speed potions so far). Next: more SC
+types in `rules/status_change.lua` as skills arrive, item identification. Party/guild/trade/vending
 only matter for multiplayer (DEVIATIONS.md).
 
 ## 9. Robustness

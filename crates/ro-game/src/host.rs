@@ -83,6 +83,7 @@ impl Game {
             "gm_level" => json!(p.gm_level),
             "weight" => json!(self.weight_of(c)),
             "max_weight" => json!(d.max_weight),
+            "aspd_delay" => json!(d.amotion),
             "hair" => json!(c.hair),
             "hair_color" => json!(c.hair_color),
             "clothes_color" => json!(c.clothes_color),
@@ -260,7 +261,7 @@ impl Host for Game {
                 let d = self.derive(&c);
                 self.heal(unit, d.max_hp as i64 * int(&a, 0) / 100, d.max_sp as i64 * int(&a, 1) / 100);
             }
-            "sc_end" => {} // status effects: not implemented yet (docs/ROADMAP.md)
+
             "save_point" => {
                 let unit = self.need_player(ctx)?;
                 let map = text(&a, 0).to_ascii_lowercase();

@@ -44,6 +44,7 @@ period source). Research behind the tiers: `research/notes/mechanics-sources.md`
 | Refine success chances | mod0631 `db/refine_db.txt` (`scripts/rules/refine.lua`) | athena2003 |
 | Kafra storage size (100) and layout | 817 `common/mmo.h`, `map/storage.c` | athena2003 |
 | Pushcart: 100 entries, 8000 weight | 817 `common/mmo.h` MAX_CART, `battle_athena.conf` max_cart_weight ×10 (`battle.c:7837`); the client shows "0/8000" | athena2003 |
+| Status changes (so far: speed potions 30 min, attack delay 90/85/80%) | mod0631 `map/skill.c` skill_status_change_start, `map/pc.c:895` (`scripts/rules/status_change.lua`, `status.lua`) | athena2003 |
 | Pets: tameable monsters, taming items, eggs, food, accessories, hunger and intimacy numbers; catch chance and feeding rules | mod0631 `db/pet_db.txt` (`data/db/pets.toml`), `map/pet.c` | athena2003 |
 | Map flags (noteleport, nobranch, nopenalty, nosave; nomemo and pvp recorded) | mod0631 `conf/mapflag.txt` and the mapflag lines of its NPC files (`data/db/mapflags.toml`) | athena2003 |
 | Old Blue/Violet Box, Card Album, Gift Box contents; Dead Branch monsters | mod0631 `db/item_*box.txt`, `item_cardalbum.txt`, `mob_branch.txt` (`data/db/random.toml`); picking as mod0631 `itemdb_searchrandomid` / `mob_once_spawn` (branch monster not above your level) | athena2003 |

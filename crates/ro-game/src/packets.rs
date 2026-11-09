@@ -514,6 +514,11 @@ pub fn cart_remove(idx: u16, amount: u32) -> Vec<u8> {
     Writer::new(ZC_DELETE_ITEM_FROM_CART).u16(idx).u32(amount).finish()
 }
 
+/// 0x0196: status icon on/off (Athena clif_status_change).
+pub fn status_icon(kind: u16, id: u32, on: bool) -> Vec<u8> {
+    Writer::new(0x0196).u16(kind).u32(id).u8(on as u8).finish()
+}
+
 /// 0x019e: the client enters taming mode (pick a monster).
 pub fn catch_process() -> Vec<u8> {
     Writer::new(0x019e).finish()

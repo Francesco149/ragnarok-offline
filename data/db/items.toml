@@ -63,7 +63,7 @@ buy = 40
 weight = 70
 jobs = 2088959
 gender = 2
-use_script = "sc_end(\"poison\"); sc_end(\"silence\"); sc_end(\"blind\"); sc_end(\"confusion\")"
+use_script = "sc_end(68) --[[SC_Poison]]; sc_end(70) --[[SC_Silence]]; sc_end(72) --[[SC_Blind]]; sc_end(71) --[[SC_Confusion]]"
 
 [[item]]
 id = 507
@@ -113,7 +113,7 @@ buy = 10
 weight = 30
 jobs = 2088959
 gender = 2
-use_script = "sc_end(\"poison\")"
+use_script = "sc_end(68) --[[SC_Poison]]"
 
 [[item]]
 id = 512
@@ -233,7 +233,7 @@ buy = 20
 weight = 30
 jobs = 2088959
 gender = 2
-use_script = "sc_end(\"curse\")"
+use_script = "sc_end(69) --[[SC_Curse]]"
 
 [[item]]
 id = 525
@@ -243,7 +243,7 @@ buy = 500
 weight = 100
 jobs = 2088959
 gender = 2
-use_script = "sc_end(\"posion\"); sc_end(\"silence\"); sc_end(\"blind\"); sc_end(\"confusion\"); sc_end(\"curse\")"
+athena_use = "sc_end SC_Posion; sc_end SC_Silence; sc_end SC_Blind; sc_end SC_Confusion; sc_end SC_Curse;"
 
 [[item]]
 id = 526
@@ -253,7 +253,7 @@ buy = 7000
 weight = 100
 jobs = 2088959
 gender = 2
-use_script = "heal(rand(325, 404), rand(40, 59)); sc_end(\"posion\"); sc_end(\"silence\"); sc_end(\"blind\"); sc_end(\"confusion\"); sc_end(\"curse\")"
+athena_use = "itemheal rand(325,404),rand(40,59); sc_end SC_Posion; sc_end SC_Silence; sc_end SC_Blind; sc_end SC_Confusion; sc_end SC_Curse;"
 
 [[item]]
 id = 528
@@ -1057,7 +1057,7 @@ buy = 800
 weight = 100
 jobs = 2088959
 gender = 2
-athena_use = "sc_start SC_SpeedPot0,1800,0;"
+use_script = "sc_start(37, 1800, 0) --[[SC_SpeedPot0]]"
 
 [[item]]
 id = 656
@@ -1069,7 +1069,7 @@ weight = 150
 jobs = 515823
 gender = 2
 equip_level = 40
-athena_use = "sc_start SC_SpeedPot1,1800,0;"
+use_script = "sc_start(38, 1800, 0) --[[SC_SpeedPot1]]"
 
 [[item]]
 id = 657
@@ -1081,7 +1081,7 @@ weight = 200
 jobs = 411302
 gender = 2
 equip_level = 85
-athena_use = "sc_start SC_SpeedPot2,1800,0;"
+use_script = "sc_start(39, 1800, 0) --[[SC_SpeedPot2]]"
 
 [[item]]
 id = 658

@@ -125,6 +125,7 @@ impl Game {
             "job": job.map(|j| json!({"weight": j.weight, "hp_coef": j.hp_coef, "sp_coef": j.sp_coef,
                                        "aspd_base": j.aspd_base})).unwrap_or(Value::Null),
             "equip": self.equip_summary(c),
+            "sc": c.sc.iter().map(|(k, v)| (k.to_string(), json!({"val1": v.val1, "val2": v.val2}))).collect::<serde_json::Map<_, _>>(),
         })
     }
 

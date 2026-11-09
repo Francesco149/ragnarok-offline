@@ -86,6 +86,21 @@ def split_args(s):
     return [p.strip() for p in parts]
 
 
+_SC = None
+
+
+def sc_const(name):
+    """SC_* number from mod0631 db/const.txt (case-insensitive, as Athena)."""
+    global _SC
+    if _SC is None:
+        _SC = {}
+        for line in csv_records(M631 / "db/const.txt"):
+            m = re.match(r"(SC_\w+)[\s,]+(\d+)", line)
+            if m:
+                _SC[m.group(1).lower()] = int(m.group(2))
+    return _SC.get(name.lower())
+
+
 def translate_use(script):
     """Translate the common item-use statements; None if anything is unknown."""
     out = []
@@ -98,9 +113,13 @@ def translate_use(script):
             fn = "heal" if m.group(1) == "itemheal" else "percent_heal"
             out.append(f"{fn}({a}, {b})")
             continue
-        m = re.fullmatch(r"sc_end\s+SC_(\w+)", stmt)
-        if m:
-            out.append(f'sc_end("{m.group(1).lower()}")')
+        m = re.fullmatch(r"sc_end\s+(SC_\w+)", stmt)
+        if m and sc_const(m.group(1)) is not None:
+            out.append(f"sc_end({sc_const(m.group(1))}) --[[{m.group(1)}]]")
+            continue
+        m = re.fullmatch(r"sc_start\s+(SC_\w+)\s*,\s*(-?\d+)\s*,\s*(-?\d+)", stmt)
+        if m and sc_const(m.group(1)) is not None:
+            out.append(f"sc_start({sc_const(m.group(1))}, {m.group(2)}, {m.group(3)}) --[[{m.group(1)}]]")
             continue
         m = re.fullmatch(r'warp\s+"(\w+)"\s*,\s*(\d+)\s*,\s*(\d+)', stmt)  # Fly Wing, Butterfly Wing
         if m:

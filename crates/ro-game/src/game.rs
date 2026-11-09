@@ -726,6 +726,7 @@ impl Game {
         self.tick_respawns(now);
         self.tick_npc_timers(now);
         self.tick_pets(now);
+        self.tick_status_changes(now);
         self.run_events();
         if now - self.last_autosave >= self.cfg.autosave_secs * 1000 {
             self.last_autosave = now;

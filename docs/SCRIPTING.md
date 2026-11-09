@@ -132,7 +132,9 @@ available to hand-written scripts too: `job_change`, `warp` (also
 `viewpoint`, `item_heal`, `read_param`, `char_info`, `equip(num)` and
 `equip_name/worn/refinable/refine/weapon_level/refine_chance`,
 `refine_success`, `refine_fail`, `give_skill`, `skill_level`,
-`check_option`, `set_option`, `set_cart`, `set_falcon`, `set_riding`,
+`sc_start(type, val1, val2)` / `sc_end(type)` (Athena SC numbers; what
+each does is `rules.status_change`), `check_option`, `set_option`,
+`set_cart`, `set_falcon`, `set_riding`,
 `open_storage`, `monster`, `area_monster`, `kill_monster`, `mob_count`,
 `map_announce`, `area_announce`, `get_users`, `map_users`, `area_users`,
 `enable_npc`, `disable_npc`, `npc_emotion`, `reset_stats`, `reset_skills`.

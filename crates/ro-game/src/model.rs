@@ -91,6 +91,17 @@ pub struct Character {
     pub pets: BTreeMap<u32, Pet>,
     /// The pet out of its egg (0 = none).
     pub active_pet: u32,
+    /// Status changes in effect, by Athena SC type (not saved: lost on logout, as in Athena).
+    #[serde(skip)]
+    pub sc: BTreeMap<u16, StatusChange>,
+}
+
+/// One status change (Athena sc_data): until = server tick (ms).
+#[derive(Debug, Clone, Default, PartialEq)]
+pub struct StatusChange {
+    pub until: u64,
+    pub val1: i64,
+    pub val2: i64,
 }
 
 /// A tamed monster (Athena s_pet).
@@ -142,6 +153,7 @@ impl Default for Character {
             vars: BTreeMap::new(),
             pets: BTreeMap::new(),
             active_pet: 0,
+            sc: BTreeMap::new(),
         }
     }
 }

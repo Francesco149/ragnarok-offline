@@ -43,7 +43,10 @@ function take_item(id, amount) return _rt("take_item", id, amount or 1) end
 function count_item(id) return _rt("count_item", id) end
 function heal(hp, sp) _rt("heal", hp or 0, sp or 0) end
 function percent_heal(hp, sp) _rt("percent_heal", hp or 0, sp or 0) end
-function sc_end(name) _rt("sc_end", name) end
+-- Status changes by Athena SC number (SC_* constants, scripts/import/athena_const.lua);
+-- durations/values: rules.status_change (scripts/rules/status_change.lua)
+function sc_start(kind, val1, val2) return _rt("sc_start", kind, val1 or 0, val2 or 0) end
+function sc_end(kind) _rt("sc_end", kind) end
 -- warp{map=,x=,y=,to={...}} declares a portal; warp("map", x, y) teleports the player.
 local declare_warp = warp
 -- Returns false when refused (Fly Wing on a noteleport map).
@@ -218,7 +221,6 @@ function enable_npc(id) _rt("enable_npc", id) end
 function disable_npc(id) _rt("disable_npc", id) end
 function enable_arena() _rt("unimplemented", "enablearena") end
 function disable_arena() _rt("unimplemented", "disablearena") end
-function sc_start(kind, ms, val) _rt("unimplemented", "sc_start") end
 -- taming item: the client asks which monster (it must be `mob`)
 function catch_pet(mob) _rt("catch_pet", mob) end
 -- Pet Incubator: the client lists your eggs

@@ -406,6 +406,15 @@ fn npc_runtime() {
     assert!(!g.world.units.values().any(|u| matches!(u.kind, UnitKind::Pet(_))), "back in the egg");
     assert_eq!(g.console_eval("count_item(9001)", me), "1");
 
+    // status changes: a Concentration Potion speeds attacks for 30 min (mod0631)
+    let before: i64 = g.console_eval("player.aspd_delay", me).parse().unwrap_or(0);
+    use_item(&mut g, &cap, 645);
+    assert!(find(&cap.take(3), 0x0196).is_some(), "status icon");
+    let after: i64 = g.console_eval("player.aspd_delay", me).parse().unwrap_or(0);
+    assert!(after > 0 && after < before, "attack delay {before} -> {after}");
+    g.console_eval("sc_end(37)", me);
+    assert_eq!(g.console_eval("player.aspd_delay", me).parse::<i64>().unwrap_or(0), before);
+
     // server-wide variables persist
     g.save_all();
     let world = std::fs::read_to_string(base.join("saves/world.json")).unwrap();
