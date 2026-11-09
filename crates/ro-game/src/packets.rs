@@ -514,6 +514,52 @@ pub fn cart_remove(idx: u16, amount: u32) -> Vec<u8> {
     Writer::new(ZC_DELETE_ITEM_FROM_CART).u16(idx).u32(amount).finish()
 }
 
+/// 0x019e: the client enters taming mode (pick a monster).
+pub fn catch_process() -> Vec<u8> {
+    Writer::new(0x019e).finish()
+}
+
+/// 0x01a0: taming result.
+pub fn catch_result(ok: bool) -> Vec<u8> {
+    Writer::new(0x01a0).u8(ok as u8).finish()
+}
+
+/// 0x01a2: pet status window.
+pub fn pet_status(name: &str, renamed: bool, level: u16, hungry: i32, intimate: i32, equip: u32) -> Vec<u8> {
+    Writer::new(0x01a2)
+        .str_fixed(name, 24)
+        .u8(renamed as u8)
+        .u16(level)
+        .u16(hungry.clamp(0, 100) as u16)
+        .u16(intimate.clamp(0, 1000) as u16)
+        .u16(equip as u16)
+        .finish()
+}
+
+/// 0x01a3: feeding result.
+pub fn pet_food(ok: bool, food: u32) -> Vec<u8> {
+    Writer::new(0x01a3).u8(ok as u8).u16(food as u16).finish()
+}
+
+/// 0x01a4: a pet value (0 spawn, 1 intimacy, 2 hunger, 3 accessory, 4 performance, 5 0x14).
+pub fn pet_data(kind: u8, pet: u32, value: u32) -> Vec<u8> {
+    Writer::new(0x01a4).u8(kind).u32(pet).u32(value).finish()
+}
+
+/// 0x01a6: inventory indices of the eggs that can hatch.
+pub fn egg_list(idx: &[u16]) -> Vec<u8> {
+    let mut w = Writer::new(0x01a6);
+    for i in idx {
+        w.u16(*i);
+    }
+    w.finish()
+}
+
+/// 0x01aa: pet emote.
+pub fn pet_emotion(pet: u32, emotion: u32) -> Vec<u8> {
+    Writer::new(0x01aa).u32(pet).u32(emotion).finish()
+}
+
 /// 0x00f2: storage counts.
 pub fn storage_info(num: u16, max: u16) -> Vec<u8> {
     Writer::new(ZC_NOTIFY_STOREITEM_COUNTINFO).u16(num).u16(max).finish()

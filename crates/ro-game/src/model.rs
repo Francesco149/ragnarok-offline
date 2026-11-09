@@ -87,6 +87,27 @@ pub struct Character {
     pub skills: BTreeMap<u16, u8>,
     /// Persistent script variables (quest progress etc.), set from Lua.
     pub vars: BTreeMap<String, serde_json::Value>,
+    /// Pets this character owns, by pet id (in eggs or out).
+    pub pets: BTreeMap<u32, Pet>,
+    /// The pet out of its egg (0 = none).
+    pub active_pet: u32,
+}
+
+/// A tamed monster (Athena s_pet).
+#[derive(Debug, Clone, Serialize, Deserialize, Default, PartialEq)]
+#[serde(default)]
+pub struct Pet {
+    pub id: u32,
+    pub mob: u32,
+    pub name: String,
+    pub level: u16,
+    /// Accessory item id worn (0 = none).
+    pub equip: u32,
+    /// 0..=1000
+    pub intimate: i32,
+    /// 0..=100
+    pub hungry: i32,
+    pub renamed: bool,
 }
 
 impl Default for Character {
@@ -119,6 +140,8 @@ impl Default for Character {
             cart: Vec::new(),
             skills: BTreeMap::new(),
             vars: BTreeMap::new(),
+            pets: BTreeMap::new(),
+            active_pet: 0,
         }
     }
 }

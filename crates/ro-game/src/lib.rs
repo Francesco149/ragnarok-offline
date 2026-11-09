@@ -18,6 +18,7 @@ mod host;
 mod items;
 mod mapsrv;
 mod npcrt;
+mod pets;
 mod skills;
 mod status;
 mod storage;

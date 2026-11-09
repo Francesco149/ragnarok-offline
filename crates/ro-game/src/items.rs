@@ -192,6 +192,13 @@ impl Game {
         let Some(c) = self.char_of_unit(unit) else { return };
         let Some(it) = c.inventory.get(i).cloned() else { return };
         let Some(d) = self.db.item(it.nameid).cloned() else { return };
+        if d.kind == 8 {
+            // pet accessory: goes on the pet (mod0631 pet_equipitem)
+            let ok = self.pet_equip(unit, i);
+            self.send(sid, packets::equip_ack(idx, 0, ok));
+            return;
+        }
+        let Some(c) = self.char_of_unit(unit) else { return };
         let job_ok = d.jobs & (1u32 << c.class.min(31)) != 0 || d.jobs == 0;
         let sex = self.world.units.get(&unit).and_then(|u| u.player()).map(|p| p.sex).unwrap_or(1);
         if !d.is_equip() || c.base_level < d.equip_level as u16 || !job_ok || (d.gender != 2 && d.gender != sex) {

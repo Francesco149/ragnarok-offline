@@ -365,6 +365,47 @@ fn npc_runtime() {
     send(&mut g, 3, Writer::new(0x012a));
     assert_eq!(g.console_eval("check_option(8)", me), "0", "cart taken off");
 
+    // pets: tame a Poring with Unripe Apples (mod0631 rate ~20%), hatch, feed, egg again
+    g.console_eval("warp('testmap', 25, 25)", me);
+    let mut caught = false;
+    for _ in 0..60 {
+        let mob: u32 = g.console_eval("spawn_mob('testmap', 26, 25, 1002, 1)[1]", me).trim().parse().unwrap();
+        use_item(&mut g, &cap, 619); // Unripe Apple
+        assert!(find(&cap.take(3), 0x019e).is_some(), "taming mode");
+        let mut w = Writer::new(0x019f);
+        w.u32(mob);
+        send(&mut g, 3, w);
+        let r = cap.take(3);
+        if find(&r, 0x01a0).is_some_and(|p| p[2] == 1) {
+            caught = true;
+            break;
+        }
+        g.console_eval(&format!("kill_monster('testmap', 'All')"), me);
+        let _ = mob;
+    }
+    assert!(caught, "a Poring was tamed in 60 tries");
+    let egg = g.store.chars.values().next().unwrap().inventory.iter().position(|i| i.nameid == 9001).expect("Poring egg") as u16;
+    use_item(&mut g, &cap, 643); // Pet Incubator
+    let list = cap.take(3);
+    let eggs = find(&list, 0x01a6).expect("egg list");
+    assert_eq!(u16::from_le_bytes([eggs[4], eggs[5]]), egg + 2);
+    let mut w = Writer::new(0x01a7);
+    w.u16(egg + 2);
+    send(&mut g, 3, w);
+    assert!(find(&cap.take(3), 0x01a2).is_some(), "pet status after hatching");
+    assert!(g.world.units.values().any(|u| matches!(u.kind, UnitKind::Pet(_))), "pet out");
+    g.console_eval("give_item(531, 1)", me); // Apple Juice
+    cap.take(3);
+    let mut w = Writer::new(0x01a1);
+    w.u8(1);
+    send(&mut g, 3, w);
+    assert!(find(&cap.take(3), 0x01a3).is_some_and(|p| p[2] == 1), "fed");
+    let mut w = Writer::new(0x01a1);
+    w.u8(3);
+    send(&mut g, 3, w);
+    assert!(!g.world.units.values().any(|u| matches!(u.kind, UnitKind::Pet(_))), "back in the egg");
+    assert_eq!(g.console_eval("count_item(9001)", me), "1");
+
     // server-wide variables persist
     g.save_all();
     let world = std::fs::read_to_string(base.join("saves/world.json")).unwrap();

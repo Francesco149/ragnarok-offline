@@ -17,6 +17,8 @@ pub const FIRST_CHAR_ID: u32 = 150_000; // Athena START_CHAR_NUM
 struct Ids {
     next_account: u32,
     next_char: u32,
+    #[serde(default)]
+    next_pet: u32,
 }
 
 pub struct Store {
@@ -27,6 +29,7 @@ pub struct Store {
     pub globals: BTreeMap<String, serde_json::Value>,
     next_account: u32,
     next_char: u32,
+    next_pet: u32,
 }
 
 fn write_atomic(path: &Path, data: &[u8]) -> Result<()> {
@@ -65,6 +68,7 @@ impl Store {
             globals: BTreeMap::new(),
             next_account: FIRST_ACCOUNT_ID,
             next_char: FIRST_CHAR_ID,
+            next_pet: 1,
         };
         for a in load_dir::<Account>(&dir.join("accounts"))? {
             s.next_account = s.next_account.max(a.id + 1);
@@ -81,6 +85,7 @@ impl Store {
             if let Ok(ids) = serde_json::from_slice::<Ids>(&b) {
                 s.next_account = s.next_account.max(ids.next_account);
                 s.next_char = s.next_char.max(ids.next_char);
+                s.next_pet = s.next_pet.max(ids.next_pet);
             }
         }
         Ok(s)
@@ -91,8 +96,18 @@ impl Store {
     }
 
     fn save_ids(&self) -> Result<()> {
-        let ids = Ids { next_account: self.next_account, next_char: self.next_char };
+        let ids = Ids { next_account: self.next_account, next_char: self.next_char, next_pet: self.next_pet };
         write_atomic(&self.dir.join("ids.json"), &serde_json::to_vec_pretty(&ids)?)
+    }
+
+    /// A new pet id, unique on this server.
+    pub fn new_pet_id(&mut self) -> Result<u32> {
+        let max_owned = self.chars.values().flat_map(|c| c.pets.keys()).copied().max().unwrap_or(0);
+        self.next_pet = self.next_pet.max(max_owned + 1);
+        let id = self.next_pet;
+        self.next_pet += 1;
+        self.save_ids()?;
+        Ok(id)
     }
 
     pub fn account_by_userid(&self, userid: &str) -> Option<&Account> {

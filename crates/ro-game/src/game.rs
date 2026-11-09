@@ -707,6 +707,7 @@ impl Game {
             }
         }
         self.dialogs.remove(&unit);
+        self.pet_owner_left(unit);
         self.player_left(unit);
         self.despawn(unit, vanish_kind);
         if let Err(e) = self.store.save_char(char_id) {
@@ -724,6 +725,7 @@ impl Game {
         self.tick_items(now);
         self.tick_respawns(now);
         self.tick_npc_timers(now);
+        self.tick_pets(now);
         self.run_events();
         if now - self.last_autosave >= self.cfg.autosave_secs * 1000 {
             self.last_autosave = now;

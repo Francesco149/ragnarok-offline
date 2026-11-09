@@ -686,6 +686,14 @@ impl Game {
                 let mob = if list.is_empty() { 1002 } else { list[rand::random::<usize>() % list.len()] };
                 self.script_monster(u, "this", 0, 0, 0, 0, "--ja--", &json!(mob), 1, "")
             }),
+            "catch_pet" => player().map(|u| {
+                self.catch_pet_start(u, int(a, 0).max(0) as u32);
+                Value::Null
+            }),
+            "birth_pet" => player().map(|u| {
+                self.pet_egg_list(u);
+                Value::Null
+            }),
             "unequip_all" => player().map(|u| {
                 // Athena releaseall: take off everything worn
                 let worn: Vec<u16> = self

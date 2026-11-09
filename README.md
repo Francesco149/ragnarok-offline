@@ -96,10 +96,10 @@ Working with the real client: login, character create/delete/select, all
 maps of the client incl. Juno and Turtle Island, walking, warps (2,038 era
 portals), the era's NPCs (611 from eAthena 817: towns, the novice training
 ground, job quests, guides, Kafras, refiners, quests), shops,
-inventory/equipment, items with use effects, Kafra storage, the skill tree
+inventory/equipment, items with use effects, Kafra storage, pushcarts, pets, the skill tree
 and skill points, monsters (2,001 era spawn groups) with simple AI, melee
 combat, EXP and levels, drops, regen, death/respawn, saving. Not yet: using
-skills, status effects, element/size/card modifiers, pets;
+skills, status effects, element/size/card modifiers;
 parties, trading and guilds need other players — see
 [docs/ROADMAP.md](docs/ROADMAP.md) and [docs/DEVIATIONS.md](docs/DEVIATIONS.md).
 

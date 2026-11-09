@@ -379,6 +379,7 @@ impl Host for Game {
                         crate::world::UnitKind::Npc(_) => ("npc", json!(null)),
                         crate::world::UnitKind::Mob(m) => ("mob", json!({"mob_id": m.mob_id, "hp": m.hp, "max_hp": m.max_hp})),
                         crate::world::UnitKind::Item(fi) => ("item", json!({"item": fi.item.nameid, "amount": fi.item.amount})),
+                        crate::world::UnitKind::Pet(p) => ("pet", json!({"owner": p.owner, "pet_id": p.pet_id})),
                     };
                     out.push(json!({"id": id, "kind": kind, "name": u.name, "x": u.x, "y": u.y, "info": extra}));
                 }

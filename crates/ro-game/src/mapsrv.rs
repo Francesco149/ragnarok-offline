@@ -200,6 +200,26 @@ impl Game {
                 let amount = r.u32()?;
                 self.cart_take(unit, idx, amount);
             }
+            0x019f => {
+                let target = r.u32()?;
+                self.catch_pet_try(unit, target);
+            }
+            0x01a1 => {
+                let menu = r.u8()?;
+                self.pet_menu(unit, menu);
+            }
+            0x01a5 => {
+                let name = r.str_fixed(24)?;
+                self.pet_rename(unit, &name);
+            }
+            0x01a7 => {
+                let idx = r.u16()?;
+                self.pet_hatch(unit, idx);
+            }
+            0x01a9 => {
+                let e = r.u32()?;
+                self.pet_emotion(unit, e);
+            }
             CZ_REQ_CARTOFF => {
                 // Athena clif_parse_RemoveOption: cart, falcon and peco all go
                 self.set_option(unit, 0);
@@ -246,6 +266,8 @@ impl Game {
                 sp_acc: 0,
                 shop: None,
                 storage_open: false,
+                catch_class: None,
+                pet_unit: None,
                 gm_level: gm,
             })),
         };
@@ -273,6 +295,10 @@ impl Game {
         }
         self.send(sid, packets::attack_range(1));
         self.refresh_view(unit, true);
+        // the pet out of its egg comes along (login, every map change)
+        if self.char_of_unit(unit).is_some_and(|c| c.active_pet != 0) {
+            self.spawn_pet(unit);
+        }
         if first {
             self.fire_event("login", unit);
         }

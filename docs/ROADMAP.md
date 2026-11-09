@@ -66,8 +66,9 @@ monsters, refining, storage), a hand-written Kafra service. Next, in order:
 
 ## 8. Systems
 
-Done: Kafra storage, pushcart contents. Next: pets (egg/taming/hunger; `catch_pet` is a stub),
-item identification, status changes (`sc_start`). Party/guild/trade/vending
+Done: Kafra storage, pushcart contents, pets (taming, eggs, hatching,
+following, hunger, intimacy, feeding, accessories, renaming). Next: item
+identification, status changes (`sc_start`). Party/guild/trade/vending
 only matter for multiplayer (DEVIATIONS.md).
 
 ## 9. Robustness

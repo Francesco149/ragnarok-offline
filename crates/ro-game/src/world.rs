@@ -48,6 +48,10 @@ pub struct PlayerUnit {
     pub shop: Option<u32>,
     /// Kafra storage window is open.
     pub storage_open: bool,
+    /// Monster class a taming item was used for (waiting for the client's target).
+    pub catch_class: Option<u32>,
+    /// This player's pet unit, if out.
+    pub pet_unit: Option<u32>,
     pub gm_level: u8,
 }
 
@@ -95,9 +99,21 @@ pub struct FloorItemUnit {
     pub suby: u8,
 }
 
+/// A pet out of its egg, following its owner.
+#[derive(Debug, Clone)]
+pub struct PetUnit {
+    pub owner: u32,
+    pub pet_id: u32,
+    /// Accessory item id (drawn as the head-bottom slot).
+    pub equip: u32,
+    /// Next hunger tick (ms).
+    pub next_hunger: u64,
+}
+
 #[derive(Debug, Clone)]
 pub enum UnitKind {
     Player(Box<PlayerUnit>),
+    Pet(PetUnit),
     Npc(NpcUnit),
     Mob(Box<MobUnit>),
     Item(FloorItemUnit),
@@ -164,6 +180,11 @@ impl Unit {
             state: self.state,
             ..Default::default()
         };
+        if let UnitKind::Pet(p) = &self.kind {
+            // Athena clif_pet0078: hair 0x14 tells the client it is a pet
+            l.hair = 0x14;
+            l.head_bottom = p.equip as u16;
+        }
         if let (UnitKind::Player(p), Some((c, view))) = (&self.kind, extra) {
             l.sex = p.sex;
             l.hair = c.hair;

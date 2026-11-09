@@ -219,8 +219,10 @@ function disable_npc(id) _rt("disable_npc", id) end
 function enable_arena() _rt("unimplemented", "enablearena") end
 function disable_arena() _rt("unimplemented", "disablearena") end
 function sc_start(kind, ms, val) _rt("unimplemented", "sc_start") end
-function catch_pet(id) _rt("unimplemented", "pet (taming)") end
-function birth_pet() _rt("unimplemented", "bpet (pet hatching)") end
+-- taming item: the client asks which monster (it must be `mob`)
+function catch_pet(mob) _rt("catch_pet", mob) end
+-- Pet Incubator: the client lists your eggs
+function birth_pet() _rt("birth_pet") end
 function reset_stats() _rt("reset_stats") end
 function reset_skills() _rt("reset_skills") end
 function change_base(class) _rt("unimplemented", "changebase") end

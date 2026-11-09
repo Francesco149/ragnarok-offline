@@ -6,7 +6,7 @@
 //!
 //! Files (all optional; missing ones load empty with a warning):
 //!   data/db/items.toml  data/db/mobs.toml  data/db/exp.toml  data/db/jobs.toml
-//!   data/db/skills.toml  data/db/random.toml  data/db/mapflags.toml
+//!   data/db/skills.toml  data/db/random.toml  data/db/mapflags.toml  data/db/pets.toml
 
 use std::collections::HashMap;
 use std::path::Path;
@@ -215,6 +215,39 @@ pub struct Branch {
     pub mobs: Vec<u32>,
 }
 
+/// A tameable monster (Athena pet_db).
+#[derive(Debug, Clone, Default, Serialize, Deserialize)]
+#[serde(default)]
+pub struct PetDef {
+    pub mob: u32,
+    pub name: String,
+    /// Taming item, egg, accessory and food item ids.
+    pub item: u32,
+    pub egg: u32,
+    pub accessory: u32,
+    pub food: u32,
+    /// Hunger points (of 100) one feeding restores.
+    pub fullness: i32,
+    /// Seconds per hunger point lost.
+    pub hungry_delay: u32,
+    pub r_hungry: i32,
+    pub r_full: i32,
+    /// Intimacy (of 1000) when caught.
+    pub intimate: i32,
+    pub die: i32,
+    /// Base catch chance in 1/100 percent.
+    pub capture: i32,
+    pub speed: u16,
+}
+
+#[derive(Debug, Default, Serialize, Deserialize)]
+struct PetFile {
+    #[serde(default)]
+    meta: Meta,
+    #[serde(default)]
+    pet: Vec<PetDef>,
+}
+
 /// Per-map rules (Athena map flags).
 #[derive(Debug, Clone, Default, Serialize, Deserialize)]
 #[serde(default)]
@@ -301,6 +334,7 @@ pub struct Database {
     pub boxes: Vec<ItemBox>,
     pub branch: Branch,
     pub mapflags: HashMap<String, MapFlags>,
+    pub pets: Vec<PetDef>,
     pub warnings: Vec<String>,
 }
 
@@ -349,7 +383,12 @@ impl Database {
         db.branch = random.branch;
         let flags: MapFlagFile = read_toml(&dir.join("mapflags.toml"), &mut db.warnings)?;
         db.mapflags = flags.map.into_iter().map(|m| (m.name.clone(), m)).collect();
+        db.pets = read_toml::<PetFile>(&dir.join("pets.toml"), &mut db.warnings)?.pet;
         Ok(db)
+    }
+
+    pub fn pet_by_mob(&self, mob: u32) -> Option<&PetDef> {
+        self.pets.iter().find(|p| p.mob == mob)
     }
 
     /// Does `map` have Athena map flag `flag`?
