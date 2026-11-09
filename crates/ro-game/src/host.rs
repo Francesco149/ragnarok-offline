@@ -365,6 +365,27 @@ impl Host for Game {
                 let g = self.grid(&map).unwrap();
                 return Ok(json!([g.width, g.height]));
             }
+            "nearby" => {
+                // units around the player: [{id, kind, name, x, y, hp?}]
+                let unit = self.need_player(ctx)?;
+                let range = int(&a, 0).clamp(1, 30) as i32;
+                let me = self.world.units.get(&unit).ok_or("no unit")?;
+                let mut out = Vec::new();
+                for id in self.world.area_ids(&me.map, me.x, me.y) {
+                    let Some(u) = self.world.units.get(&id) else { continue };
+                    if id == unit || crate::path::distance(me.x as i32, me.y as i32, u.x as i32, u.y as i32) > range {
+                        continue;
+                    }
+                    let (kind, extra) = match &u.kind {
+                        crate::world::UnitKind::Player(_) => ("player", json!(null)),
+                        crate::world::UnitKind::Npc(_) => ("npc", json!(null)),
+                        crate::world::UnitKind::Mob(m) => ("mob", json!({"mob_id": m.mob_id, "hp": m.hp, "max_hp": m.max_hp})),
+                        crate::world::UnitKind::Item(fi) => ("item", json!({"item": fi.item.nameid, "amount": fi.item.amount})),
+                    };
+                    out.push(json!({"id": id, "kind": kind, "name": u.name, "x": u.x, "y": u.y, "info": extra}));
+                }
+                return Ok(Value::Array(out));
+            }
             "item_name" => {
                 let id = self.item_id(arg(&a, 0))?;
                 return Ok(self.db.item(id).map(|d| json!(d.display)).unwrap_or(Value::Null));

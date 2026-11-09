@@ -3,6 +3,7 @@
 
 use std::collections::{HashMap, HashSet};
 use std::path::PathBuf;
+use std::rc::Rc;
 use std::sync::Arc;
 use std::time::Instant;
 
@@ -116,7 +117,7 @@ impl Resources {
 pub(crate) enum State {
     Login,
     Char { account_id: Option<u32> },
-    Map { account_id: u32, char_id: u32, unit: u32 },
+    Map { #[allow(dead_code)] account_id: u32, char_id: u32, unit: u32 },
     Closed,
 }
 
@@ -146,7 +147,7 @@ pub struct Game {
     /// char id -> (account id, login1): char -> map hand-off
     map_tokens: HashMap<u32, (u32, u32)>,
     pub world: World,
-    pub(crate) scripts: Option<ScriptEngine>,
+    pub(crate) scripts: Option<Rc<ScriptEngine>>,
     pub(crate) dialogs: HashMap<u32, Dialog>,
     /// Per player: an NPC message is showing in the current script step.
     pub(crate) dialog_open: HashMap<u32, bool>,
@@ -298,7 +299,7 @@ impl Game {
             engine.defs.spawns.len(),
             engine.defs.commands.len()
         );
-        self.scripts = Some(engine);
+        self.scripts = Some(Rc::new(engine));
         // ... and put the new ones back on every loaded map
         let maps: Vec<String> = self.world.maps.keys().cloned().collect();
         for m in maps {
@@ -679,12 +680,9 @@ impl Game {
 
     /// Run Lua as the given player (admin console). `player` 0 = none.
     pub fn console_eval(&mut self, code: &str, player: u32) -> String {
-        let Some(engine) = self.scripts.take() else { return "no scripts loaded".into() };
+        let Some(engine) = self.scripts.clone() else { return "no scripts loaded".into() };
         let ctx = Ctx { player, npc: 0, kind: crate::script::CtxKind::Console };
         let r = engine.eval(self, ctx, code);
-        if self.scripts.is_none() {
-            self.scripts = Some(engine);
-        }
         match r {
             Ok(s) => s,
             Err(e) => format!("error: {e:#}"),

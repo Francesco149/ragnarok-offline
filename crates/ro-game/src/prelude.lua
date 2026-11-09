@@ -65,6 +65,8 @@ function spawn_mob(map, x, y, mob, count) return _rt("spawn_mob", map, x, y, mob
 -- Cell checks against the client's .gat (nil if the client lacks the map).
 function walkable(map, x, y) return _rt("walkable", map, x, y) end
 function map_size(map) return _rt("map_size", map) end
+-- Units within `range` cells of the player: { {id, kind, name, x, y, info}, ... }
+function nearby(range) return _rt("nearby", range or 14) end
 function item_name(id) return _rt("item_name", id) end
 function mob_name(id) return _rt("mob_name", id) end
 function online() return _rt("online") end

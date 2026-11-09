@@ -28,7 +28,6 @@ pub const SP_NEXTJOBEXP: u16 = 23;
 pub const SP_WEIGHT: u16 = 24;
 pub const SP_MAXWEIGHT: u16 = 25;
 pub const SP_USTR: u16 = 32;
-pub const SP_ATK1: u16 = 41;
 pub const SP_ASPD: u16 = 53;
 pub const SP_JOBLEVEL: u16 = 55;
 

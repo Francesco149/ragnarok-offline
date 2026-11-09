@@ -281,7 +281,7 @@ impl Game {
         let Some(u) = self.world.units.get(&id) else { return };
         let Some(m) = u.mob() else { return };
         let mdb = self.db.mob(m.mob_id).cloned().unwrap_or_default();
-        let mode = if mdb.mode == 0 { MD_CANMOVE | MD_CANATTACK } else { mdb.mode };
+        let mode = mdb.mode; // 0 = plant-like: never moves or attacks
         let (map, x, y) = (u.map.clone(), u.x, u.y);
         let mut target = m.target;
         // drop targets that are gone, dead, or too far

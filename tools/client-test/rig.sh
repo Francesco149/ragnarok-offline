@@ -30,6 +30,11 @@ case "$cmd" in
     for _ in $(seq 60); do xdotool search --name '^Ragnarok$' >/dev/null 2>&1 && break; sleep 0.5; done
     sleep 6; echo "client up" ;;
   client-stop) wineserver -k 2>/dev/null || true ;;
+  login) # from a fresh client to standing on the map: rig.sh login ID PASS
+    "$0" click 413 437; "$0" click 589 593; sleep 2
+    "$0" click 535 525; "$0" type "$1"; "$0" click 535 557; "$0" type "$2"; "$0" key Return; sleep 3
+    "$0" click 413 437; "$0" click 589 593; sleep 3
+    "$0" click 731 565; sleep 14; "$0" click 649 428; sleep 1 ;;
   shot) mkdir -p /data/shots; import -window root "/data/shots/${1:-shot}.png"; echo "/data/shots/${1:-shot}.png" ;;
   click) focus; xdotool mousemove "$1" "$2" sleep 0.3 mousedown 1 sleep 0.15 mouseup 1 ;;
   dclick) focus; xdotool mousemove "$1" "$2" sleep 0.3 mousedown 1 sleep 0.08 mouseup 1 sleep 0.08 mousedown 1 sleep 0.08 mouseup 1 ;;

@@ -155,12 +155,9 @@ impl Game {
             self.send(sid, packets::use_item_ack(idx, it.amount as u16, false));
             return;
         }
-        let Some(engine) = self.scripts.take() else { return };
+        let Some(engine) = self.scripts.clone() else { return };
         let ctx = Ctx { player: unit, npc: 0, kind: CtxKind::Item };
         let r = engine.run_item(self, ctx, d.id, &d.use_script);
-        if self.scripts.is_none() {
-            self.scripts = Some(engine);
-        }
         if let Err(e) = r {
             self.notice(format!("item {}: {e:#}", d.id));
             self.send(sid, packets::use_item_ack(idx, it.amount as u16, false));

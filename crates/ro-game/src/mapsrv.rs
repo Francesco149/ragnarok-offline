@@ -237,16 +237,13 @@ impl Game {
     }
 
     pub(crate) fn fire_event(&mut self, event: &str, unit: u32) {
-        let Some(engine) = self.scripts.take() else { return };
+        let Some(engine) = self.scripts.clone() else { return };
         let fns = engine.defs.events.get(event).cloned().unwrap_or_default();
         for f in fns {
             let ctx = Ctx { player: unit, npc: 0, kind: CtxKind::Event };
             if let Err(e) = engine.call(self, ctx, &f, vec![]) {
                 self.notice(format!("event {event}: {e:#}"));
             }
-        }
-        if self.scripts.is_none() {
-            self.scripts = Some(engine);
         }
     }
 
@@ -644,12 +641,9 @@ impl Game {
         let f = self.scripts.as_ref().and_then(|e| e.defs.commands.get(&name).cloned());
         match f {
             Some(f) if gm > 0 => {
-                let Some(engine) = self.scripts.take() else { return };
+                let Some(engine) = self.scripts.clone() else { return };
                 let ctx = Ctx { player: unit, npc: 0, kind: CtxKind::Command };
                 let r = engine.call(self, ctx, &f, vec![Value::from(args)]);
-                if self.scripts.is_none() {
-                    self.scripts = Some(engine);
-                }
                 match r {
                     Ok(Value::String(s)) => self.tell(unit, &s),
                     Ok(_) => {}
@@ -703,14 +697,11 @@ impl Game {
     }
 
     pub(crate) fn start_dialog(&mut self, unit: u32, npc: u32, f: &mlua::Function, kind: CtxKind) {
-        let Some(engine) = self.scripts.take() else { return };
+        let Some(engine) = self.scripts.clone() else { return };
         let ctx = Ctx { player: unit, npc, kind };
         self.dialogs.remove(&unit);
         self.dialog_open.insert(unit, false);
         let r = engine.start(self, ctx, f);
-        if self.scripts.is_none() {
-            self.scripts = Some(engine);
-        }
         match r {
             Ok((thread, outcome)) => self.after_resume(unit, npc, thread, outcome),
             Err(e) => self.script_failed(unit, npc, e),
@@ -739,13 +730,10 @@ impl Game {
             }
             return;
         }
-        let Some(engine) = self.scripts.take() else { return };
+        let Some(engine) = self.scripts.clone() else { return };
         let ctx = Ctx { player: unit, npc: d.npc, kind: CtxKind::Dialog };
         self.dialog_open.insert(unit, d.open && got != Wait::Close);
         let r = engine.resume(self, ctx, &d.thread, answer);
-        if self.scripts.is_none() {
-            self.scripts = Some(engine);
-        }
         match r {
             Ok(o) => self.after_resume(unit, d.npc, d.thread, o),
             Err(e) => self.script_failed(unit, d.npc, e),
