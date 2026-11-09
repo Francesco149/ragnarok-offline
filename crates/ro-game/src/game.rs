@@ -752,7 +752,7 @@ impl Game {
     pub fn script_maps(&self) -> Vec<String> {
         let Some(e) = &self.scripts else { return vec![] };
         let d = &e.defs;
-        d.npcs.iter().map(|n| n.map.clone())
+        d.npcs.iter().filter(|n| n.map != "-").map(|n| n.map.clone())
             .chain(d.warps.iter().flat_map(|w| [w.map.clone(), w.to.0.clone()]))
             .chain(d.shops.iter().map(|s| s.map.clone()))
             .chain(d.spawns.iter().map(|s| s.map.clone()))

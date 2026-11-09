@@ -1,0 +1,206 @@
+-- Kafra Corporation: one service for every town and dungeon Kafra.
+--
+-- Replaces the eathena-817 Kafras (other/kafra.txt) it lists by `src`. Places,
+-- sprites, cut-ins, save points, destinations and the wording are 817's
+-- (tier athena2003). What changed, and why (docs/DEVIATIONS.md, "Kafra"):
+--   * fares are the ones 817's menus showed; its code charged different ones
+--     in places (Prontera->Geffen showed 1400, took 1800);
+--   * a cart is charged only when one is given: 817 took 800z, then jumped to
+--     a label that didn't exist (merchants paid for nothing) - and took it twice;
+--   * storage needs Basic Skill 6, as the client's own skill description says
+--     (817 asked for Novice job level 6);
+--   * no "Use Kafra Pass" entry: kRO removed the Kafra voucher menu on
+--     2003-05-20, and 817's was "Under development";
+--   * "Cancel" and "Other Information Check" work (817 pointed them at
+--     missing labels); the location tip marks this town's Kafras.
+-- Pre-2004-02-24 fares are period-emulator values: research/THREADS.md.
+
+local STORAGE_FEE = 30 -- 817 kafra.txt; research/notes/mechanics-sources.md section 7
+local CART_FEE = 800 -- 817 kafra.txt
+
+local function bye(cut)
+  cutin(cut, 255)
+  close()
+end
+
+local function kafra(k)
+  return function()
+    local cut = k.cutin or "kafra_03"
+    cutin(cut, 2)
+    mes "[Kafra]"
+    mes "Welcome to Kafra Corp. We will stay with you wherever you go."
+    next()
+    local opts, acts = {}, {}
+    local function add(text, act) opts[#opts + 1] = text; acts[#acts + 1] = act end
+    if k.save then add("Save", "save") end
+    add("Use Storage", "storage")
+    if k.tele then add("Use Teleport Service", "tele") end
+    add("Rent a Cart", "cart")
+    add("Other Information Check", "info")
+    add("Cancel", "cancel")
+    local act = acts[menu(opts)]
+
+    if act == "save" then
+      local p = k.save
+      if k.save_out then -- gate Kafras (817): a field cell outside, or the town
+        p = menu("Save Outside City.", "Save inside City") == 1 and k.save_out or k.save
+      end
+      save_point(p[1], p[2], p[3])
+      mes "[Kafra]"
+      mes "Your respawn point has been saved. Thank you."
+      return bye(cut)
+
+    elseif act == "storage" then
+      if skill_level(1) < 6 then
+        mes "[Kafra]"
+        mes "I am sorry, but you need Basic Skill level 6 to use the storage."
+        return bye(cut)
+      end
+      if player.zeny < STORAGE_FEE then
+        mes "[Kafra]"
+        mes("Dear, you don't have enough money. The storage fee is " .. STORAGE_FEE .. " Zeny.")
+        return bye(cut)
+      end
+      player.zeny = player.zeny - STORAGE_FEE
+      open_storage()
+      return bye(cut)
+
+    elseif act == "tele" then
+      mes "[Kafra]"
+      mes "Please let me know your destination."
+      next()
+      local list = {}
+      for i, t in ipairs(k.tele) do list[i] = t[1] .. " -> " .. t[2] .. " z" end
+      list[#list + 1] = "Cancel"
+      local i = menu(list)
+      local t = k.tele[i]
+      if not t then return bye(cut) end
+      if player.zeny < t[2] then
+        mes "[Kafra]"
+        mes "Dear, you don't have enough money. Please check again."
+        return bye(cut)
+      end
+      player.zeny = player.zeny - t[2]
+      cutin(cut, 255)
+      warp(t[3], t[4], t[5])
+      return
+
+    elseif act == "cart" then
+      local c = player.class
+      if c ~= Job_Merchant and c ~= Job_Blacksmith and c ~= Job_Alchem then
+        mes "[Kafra]"
+        mes "I am sorry. The cart service is only provided for Merchants and Blacksmiths."
+        return bye(cut)
+      end
+      mes "[Kafra]"
+      mes("The cart fee is " .. CART_FEE .. " Zeny. Do you want to rent a cart?")
+      next()
+      if menu("Rent a Cart.", "Cancel.") ~= 1 then return bye(cut) end
+      if player.zeny < CART_FEE then
+        mes "[Kafra]"
+        mes("Dear, you don't have enough money. You need " .. CART_FEE .. " Zeny.")
+        return bye(cut)
+      end
+      if check_option(0x0008) == 1 then
+        mes "[Kafra]"
+        mes "You already have a cart."
+        return bye(cut)
+      end
+      if not set_cart() then
+        mes "[Kafra]"
+        mes "I am sorry. You need the Pushcart skill to use a cart."
+        return bye(cut)
+      end
+      player.zeny = player.zeny - CART_FEE
+      mes "[Kafra]"
+      mes "There you go."
+      return bye(cut)
+
+    elseif act == "info" then
+      -- 817: "Location Tip" marks the town's Kafras on the mini-map
+      local n = 0
+      for _, o in ipairs(KAFRA_LIST) do
+        if o.map == k.map then
+          n = n + 1
+          viewpoint(1, o.x, o.y, n, 0xFF00FF)
+        end
+      end
+      mes "[Kafra]"
+      mes "I have marked the Kafra employees of this area on your mini-map."
+      return bye(cut)
+    end
+    bye(cut)
+  end
+end
+
+-- src, place, sprite, cut-in, save point, destinations {name, fare, map, x, y}.
+KAFRA_LIST = {
+  -- Prontera (817's third Prontera Kafra, 29,207, was the 'FGM RO' server's own)
+  { src = "817:other/kafra.txt:2474", map = "prontera", x = 146, y = 89, dir = 6, sprite = 115, cutin = "kafra_03",
+    save = { "prontera", 117, 73 },
+    tele = { { "Izlude", 900, "izlude", 91, 105 }, { "Geffen", 1400, "geffen", 120, 39 }, { "Payon", 1700, "payon", 69, 100 },
+             { "Morroc", 1800, "morocc", 156, 46 }, { "Orc Dungeon", 1700, "gef_fild10", 52, 326 } } },
+  { src = "817:other/kafra.txt:2622", map = "prontera", x = 151, y = 29, dir = 8, sprite = 115, cutin = "kafra_03",
+    save_out = { "prt_fild08", 170, 369 }, save = { "prontera", 150, 33 },
+    tele = { { "Izlude", 900, "izlude", 91, 105 }, { "Geffen", 1400, "geffen", 120, 39 }, { "Payon", 1700, "payon", 69, 100 },
+             { "Morroc", 1800, "morocc", 156, 46 }, { "Orc Dungeon", 1700, "gef_fild10", 52, 326 } } },
+  -- Izlude: 817's "Save inside City" said so but saved nothing; the inside cell is
+  -- where every era Kafra teleport lands in Izlude (91,105 in 659, 715, 817, 0.5.2)
+  { src = "817:other/kafra.txt:1667", map = "izlude", x = 124, y = 115, dir = 6, sprite = 117, cutin = "kafra_01",
+    save_out = { "prt_fild08", 349, 202 }, save = { "izlude", 91, 105 },
+    tele = { { "Prontera", 900, "prontera", 116, 72 }, { "Payon", 1700, "payon", 69, 100 }, { "Geffen", 1800, "geffen", 120, 39 } } },
+  -- Geffen
+  { src = "817:other/kafra.txt:1381", map = "geffen", x = 120, y = 62, dir = 8, sprite = 115, cutin = "kafra_03",
+    save = { "geffen", 119, 40 },
+    tele = { { "Prontera", 1400, "prontera", 116, 72 }, { "Izlude", 1800, "izlude", 91, 105 },
+             { "Al De Baran", 2100, "aldebaran", 143, 110 }, { "Morroc", 2200, "morocc", 156, 46 } } },
+  { src = "817:other/kafra.txt:1519", map = "geffen", x = 203, y = 123, dir = 3, sprite = 114, cutin = "kafra_04",
+    save_out = { "gef_fild00", 51, 194 }, save = { "geffen", 200, 124 },
+    tele = { { "Prontera", 1400, "prontera", 116, 72 }, { "Izlude", 1800, "izlude", 91, 105 },
+             { "Al De Baran", 2100, "aldebaran", 143, 110 }, { "Morroc", 2200, "morocc", 156, 46 } } },
+  -- Payon
+  { src = "817:other/kafra.txt:2086", map = "payon", x = 99, y = 116, dir = 4, sprite = 113, cutin = "kafra_05",
+    save_out = { "pay_fild01", 340, 347 }, save = { "payon", 69, 100 },
+    tele = { { "Alberta", 1300, "alberta", 117, 56 }, { "Prontera", 1800, "prontera", 116, 72 }, { "Morroc", 1800, "morocc", 156, 46 } } },
+  -- Morroc
+  { src = "817:other/kafra.txt:1808", map = "morocc", x = 156, y = 97, dir = 4, sprite = 115, cutin = "kafra_03",
+    save = { "morocc", 156, 46 },
+    tele = { { "Prontera", 1800, "prontera", 116, 72 }, { "Payon", 1800, "payon", 69, 100 },
+             { "Alberta", 2200, "alberta", 117, 56 }, { "Geffen", 2200, "geffen", 120, 39 } } },
+  { src = "817:other/kafra.txt:1944", map = "morocc", x = 163, y = 260, dir = 4, sprite = 114, cutin = "kafra_04",
+    save_out = { "moc_fild07", 212, 30 }, save = { "morocc", 187, 281 },
+    tele = { { "Prontera", 1800, "prontera", 116, 72 }, { "Payon", 1800, "payon", 69, 100 },
+             { "Alberta", 2200, "alberta", 117, 56 }, { "Geffen", 2200, "geffen", 120, 39 } } },
+  -- Alberta (the two 817 Alberta Kafras showed 1800 and 2100 to Prontera and both took 2100)
+  { src = "817:other/kafra.txt:584", map = "alberta", x = 28, y = 229, dir = 8, sprite = 115, cutin = "kafra_02",
+    save_out = { "pay_fild03", 386, 76 }, save = { "alberta", 31, 231 },
+    tele = { { "Payon", 1300, "payon", 69, 100 }, { "Prontera", 2100, "prontera", 116, 72 }, { "Morroc", 2200, "morocc", 156, 46 } } },
+  { src = "817:other/kafra.txt:721", map = "alberta", x = 113, y = 60, dir = 5, sprite = 112, cutin = "kafra_06",
+    save = { "alberta", 117, 57 },
+    tele = { { "Payon", 1300, "payon", 69, 100 }, { "Prontera", 2100, "prontera", 116, 72 }, { "Morroc", 2200, "morocc", 156, 46 } } },
+  -- Al De Baran (817: no teleport service)
+  { src = "817:other/kafra.txt:1309", map = "aldebaran", x = 143, y = 119, dir = 4, sprite = 113, cutin = "kafra_05",
+    save = { "aldebaran", 143, 109 } },
+  { src = "817:other/kafra.txt:1197", map = "aldeba_in", x = 96, y = 181, dir = 4, sprite = 113, cutin = "kafra_05",
+    save = { "aldeba_in", 96, 179 } },
+  -- dungeons and fields
+  { src = "817:other/kafra.txt:2", map = "gef_fild10", x = 73, y = 340, dir = 4, sprite = 115, cutin = "kafra_02",
+    save = { "gef_fild10", 54, 232 } },
+  { src = "817:other/kafra.txt:284", map = "moc_ruins", x = 61, y = 156, dir = 5, sprite = 114, cutin = "kafra_04",
+    save = { "moc_ruins", 41, 141 } },
+  { src = "817:other/kafra.txt:375", map = "prt_fild01", x = 198, y = 47, dir = 8, sprite = 112, cutin = "kafra_06",
+    save = { "prt_fild01", 197, 50 } },
+  { src = "817:other/kafra.txt:481", map = "prt_fild05", x = 290, y = 224, dir = 1, sprite = 114, cutin = "kafra_04",
+    save = { "prt_fild05", 274, 243 } },
+  { src = "817:other/kafra.txt:853", map = "alb2trea", x = 59, y = 69, dir = 1, sprite = 117, cutin = "kafra_03",
+    save = { "alb2trea", 92, 64 } },
+  { src = "817:other/kafra.txt:2225", map = "pay_arche", x = 55, y = 123, dir = 8, sprite = 117, cutin = "kafra_01",
+    save = { "pay_arche", 49, 144 } },
+}
+
+for _, k in ipairs(KAFRA_LIST) do
+  npc {
+    map = k.map, x = k.x, y = k.y, dir = k.dir, sprite = k.sprite, name = "Kafra",
+    replaces = k.src, on_click = kafra(k),
+  }
+end

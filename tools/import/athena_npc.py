@@ -90,15 +90,11 @@ FILES = {
     "other/pvp.txt": ("other/pvp.lua", "pvp", "PvP needs other players; off by default (DEVIATIONS.md)"),
     "other/IceCream.txt": ("events/ice_cream.lua", "events", "seasonal event (Aug 2003)"),
     "other/MrSmile.txt": ("events/mr_smile.lua", "events", "national event"),
-    "other/event_valentine.txt": ("events/valentine.lua", "events", "seasonal event (Feb)"),
     "quests/headgearquest.txt": ("quests/headgear.lua", None, ""),
     "quests/bunnyband.txt": ("quests/bunny_band.lua", "events", "Bunny Band festival event"),
-    "quests/kahoquest.txt": ("quests/kaho.lua", None, ""),
     "quests/munak.txt": ("quests/munak.lua", None, ""),
     "quests/bongun.txt": ("quests/bongun.lua", None, ""),
     "quests/bongunsword.txt": ("quests/bongun_sword.lua", None, ""),
-    "quests/ironcane_quest.txt": ("quests/iron_cane.lua", None, ""),
-    "quests/magicalhatquest.txt": ("quests/magical_hat.lua", None, ""),
     "skillquests/arrowcraft.txt": ("skillquests/arrow_craft.lua", None, ""),
     "skillquests/arrowrepel.txt": ("skillquests/arrow_repel.lua", None, ""),
     "skillquests/autoberserk.txt": ("skillquests/auto_berserk.lua", None, ""),
@@ -132,6 +128,10 @@ SKIP = {
     "quests/fashion.txt": "emulator custom ('Daily Job Quest')",
     "quests/Event_ElvenEar.txt": "emulator custom ('Daily Job Quest')",
     "skillquests/Platinum_Skills.txt": "emulator convenience (all quest skills at once)",
+    "quests/kahoquest.txt": "emulator custom item quest ('Lord Kaho's Servant')",
+    "quests/ironcane_quest.txt": "emulator custom item quest ('Iron Cane Quest')",
+    "quests/magicalhatquest.txt": "emulator custom item quest ('Magic Pimp Hat Dude')",
+    "other/event_valentine.txt": "jRO Valentine event, Japanese text",
     "skillquests/skillquest.txt": "duplicate of the individual skill quest files (Japanese names)",
     "cities/amatsu.txt": "map not in this client",
     "cities/gonryun.txt": "map not in this client",
@@ -142,6 +142,13 @@ SKIP = {
     "warps/*": "imported from mod0631 by athena_import.py",
     "mobs/*": "imported from mod0631 by athena_import.py",
     "shops/*": "imported from mod0631 by athena_import.py",
+}
+
+# Single NPCs inside imported files that aren't period content.
+SKIP_NPC = {
+    "other/kafra.txt:2315": "'FGM Kafra', made for the 'FGM RO' private server",
+    "other/kafra.txt:995": "Kafra points exchange: its menu labels start with digits, which 817 parsed as numbers "
+                           "(the menu never worked); Kafra points in Dec 2003 are a research thread",
 }
 
 LUA_KEYWORDS = set("and break do else elseif end false for function goto if in local nil not or repeat return "
@@ -832,6 +839,10 @@ def convert_file(rel, out_rel, guard, note, unknown, stats):
     parts.append("")
     n_ok = 0
     for line, cols, body, body_line in split_npcs(text):
+        if f"{rel}:{line}" in SKIP_NPC:
+            parts.append(f"-- line {line}: skipped: {SKIP_NPC[f'{rel}:{line}']}")
+            parts.append("")
+            continue
         info = header_info(cols)
         npc = Npc(rel, line, cols)
         if info is None:
