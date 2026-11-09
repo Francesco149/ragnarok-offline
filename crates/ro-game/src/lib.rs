@@ -16,6 +16,9 @@ mod combat;
 mod host;
 mod items;
 mod mapsrv;
+mod npcrt;
+mod skills;
 mod status;
+mod storage;
 
 pub use game::{Game, GameConfig, NetEvent, Outbox, Resources, ServerKind};

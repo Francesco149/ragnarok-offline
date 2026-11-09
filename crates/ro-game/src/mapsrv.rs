@@ -62,14 +62,20 @@ impl Game {
             }
             CZ_REQ_EMOTION => {
                 let e = r.u8()?;
-                self.area_send(unit, packets::emotion(unit, e), true);
+                if self.basic_skill_ok(unit, 2, 1) {
+                    self.area_send(unit, packets::emotion(unit, e), true);
+                }
             }
             CZ_REQUEST_ACT => {
                 let target = r.u32()?;
                 let action = r.u8()?;
                 match action {
                     0 | 7 => self.start_attack(unit, AttackIntent { target, continuous: action == 7 }),
-                    2 => self.set_sit(unit, true),
+                    2 => {
+                        if self.basic_skill_ok(unit, 3, 2) {
+                            self.set_sit(unit, true)
+                        }
+                    }
                     3 => self.set_sit(unit, false),
                     _ => {}
                 }
@@ -169,7 +175,22 @@ impl Game {
                 // single player: nobody else to whisper to
                 self.send(sid, ro_proto::Writer::new(ZC_ACK_WHISPER).u8(1).finish());
             }
-            0x0112 | 0x0113 | 0x0116 | 0x0190 => {
+            CZ_UPGRADE_SKILLLEVEL => {
+                let skill = r.u16()?;
+                self.skill_up(unit, skill);
+            }
+            CZ_MOVE_ITEM_FROM_BODY_TO_STORE => {
+                let idx = r.u16()?;
+                let amount = r.u32()?;
+                self.storage_put(unit, idx, amount);
+            }
+            CZ_MOVE_ITEM_FROM_STORE_TO_BODY => {
+                let idx = r.u16()?;
+                let amount = r.u32()?;
+                self.storage_take(unit, idx, amount);
+            }
+            CZ_CLOSE_STORE => self.storage_close(unit),
+            0x0113 | 0x0116 | 0x0190 => {
                 // skills: server-side behaviour not reconstructed yet
                 self.send(sid, ro_proto::Writer::new(ZC_ACK_TOUSESKILL).u16(0).u16(0).u16(0).u8(0).u8(0).finish());
             }
@@ -210,6 +231,7 @@ impl Game {
                 hp_acc: 0,
                 sp_acc: 0,
                 shop: None,
+                storage_open: false,
                 gm_level: gm,
             })),
         };
@@ -225,7 +247,7 @@ impl Game {
             p.loaded = true;
         }
         let Some(sid) = self.sid_of(unit) else { return };
-        self.send(sid, packets::skill_list());
+        self.send_skill_list(unit);
         self.send_full_status(unit);
         self.send_inventory(unit);
         self.send(sid, packets::attack_range(1));
@@ -240,7 +262,7 @@ impl Game {
         let Some(engine) = self.scripts.clone() else { return };
         let fns = engine.defs.events.get(event).cloned().unwrap_or_default();
         for f in fns {
-            let ctx = Ctx { player: unit, npc: 0, kind: CtxKind::Event };
+            let ctx = Ctx::new(unit, 0, CtxKind::Event);
             if let Err(e) = engine.call(self, ctx, &f, vec![]) {
                 self.notice(format!("event {event}: {e:#}"));
             }
@@ -279,8 +301,12 @@ impl Game {
             return;
         }
         let sid = p.sid;
-        let now_ids: std::collections::HashSet<u32> =
-            self.world.area_ids(&u.map, u.x, u.y).into_iter().filter(|&i| i != unit).collect();
+        let now_ids: std::collections::HashSet<u32> = self
+            .world
+            .area_ids(&u.map, u.x, u.y)
+            .into_iter()
+            .filter(|&i| i != unit && self.world.units.get(&i).is_some_and(|o| o.shown()))
+            .collect();
         let before = p.visible.clone();
         let mut out = Vec::new();
         for id in &now_ids {
@@ -326,6 +352,9 @@ impl Game {
     /// After a non-player unit moved/appeared: update every player's view of it.
     pub(crate) fn update_watchers(&mut self, unit: u32, fresh: bool) {
         let Some(u) = self.world.units.get(&unit) else { return };
+        if !u.shown() {
+            return;
+        }
         let map = u.map.clone();
         let players = self.world.players_on(&map);
         for pid in players {
@@ -381,27 +410,56 @@ impl Game {
         }
     }
 
+    /// Put one NPC definition on its (loaded) map.
+    pub(crate) fn place_npc_def(&mut self, def: usize) {
+        let Some(n) = self.scripts.as_ref().and_then(|e| e.defs.npcs.get(def)).cloned() else { return };
+        let (sprite, hidden) = match n.sprite {
+            Some(s) => (s, false),
+            None => (111, true),
+        };
+        let id = self.world.new_npc_id();
+        self.world.add(Unit {
+            id,
+            map: n.map.clone(),
+            x: n.x,
+            y: n.y,
+            dir: n.dir,
+            head_dir: 0,
+            speed: DEFAULT_SPEED,
+            class: sprite,
+            name: n.name.clone(),
+            state: 0,
+            walk: None,
+            kind: UnitKind::Npc(NpcUnit { kind: NpcKind::Script { def }, touch: n.touch, hidden }),
+        });
+        self.update_watchers(id, false);
+    }
+
     /// NPCs, warps and shops declared for `map`.
     pub(crate) fn place_static_units(&mut self, map: &str) {
         let Some(engine) = self.scripts.as_ref() else { return };
         let mut new_units = Vec::new();
         for (i, n) in engine.defs.npcs.iter().enumerate() {
-            if n.map == map {
-                new_units.push((n.x, n.y, n.dir, n.sprite, n.name.clone(), NpcKind::Script { def: i }, n.touch));
+            if n.map == map && !self.npcrt.disabled.contains(&n.id) {
+                let (sprite, hidden) = match n.sprite {
+                    Some(s) => (s, false),
+                    None => (111, true),
+                };
+                new_units.push((n.x, n.y, n.dir, sprite, hidden, n.name.clone(), NpcKind::Script { def: i }, n.touch));
             }
         }
         for w in &engine.defs.warps {
             if w.map == map {
                 // 45 = warp portal sprite; touch area = span
-                new_units.push((w.x, w.y, 0, 45, String::new(), NpcKind::Warp { to: w.to.clone() }, Some(w.span)));
+                new_units.push((w.x, w.y, 0, 45, false, String::new(), NpcKind::Warp { to: w.to.clone() }, Some(w.span)));
             }
         }
         for (i, s) in engine.defs.shops.iter().enumerate() {
             if s.map == map {
-                new_units.push((s.x, s.y, s.dir, s.sprite, s.name.clone(), NpcKind::Shop { def: i }, None));
+                new_units.push((s.x, s.y, s.dir, s.sprite, false, s.name.clone(), NpcKind::Shop { def: i }, None));
             }
         }
-        for (x, y, dir, sprite, name, kind, touch) in new_units {
+        for (x, y, dir, sprite, hidden, name, kind, touch) in new_units {
             let id = self.world.new_npc_id();
             self.world.add(Unit {
                 id,
@@ -415,7 +473,7 @@ impl Game {
                 name,
                 state: 0,
                 walk: None,
-                kind: UnitKind::Npc(NpcUnit { kind, touch }),
+                kind: UnitKind::Npc(NpcUnit { kind, touch, hidden }),
             });
             self.update_watchers(id, false);
         }
@@ -501,7 +559,7 @@ impl Game {
         if is_player {
             self.refresh_view(id, false);
             if self.check_touch(id, &map, x, y) {
-                return false; // warped
+                return false; // warped, or stopped by a touch NPC
             }
         } else {
             self.update_watchers(id, false);
@@ -552,10 +610,16 @@ impl Game {
             }
             Some((npc, UnitKind::Npc(NpcUnit { kind: NpcKind::Script { def }, .. }))) => {
                 let f = self.scripts.as_ref().and_then(|e| e.defs.npcs.get(def)).and_then(|d| d.on_touch.clone());
-                if let Some(f) = f {
-                    self.start_dialog(unit, npc, &f, CtxKind::Touch);
+                // Athena: no new script while one runs (npc_click: npc_id != 0)
+                // Athena npc_touch_areanpc: the walk stops on the first cell of the area
+                if let Some(u) = self.world.units.get_mut(&unit) {
+                    u.walk = None;
                 }
-                !self.world.units.get(&unit).is_some_and(|u| u.map == map)
+                self.area_send(unit, packets::stop_move(unit, x, y), true);
+                if let (Some(f), false) = (f, self.dialogs.contains_key(&unit)) {
+                    self.start_dialog(unit, npc, def, &f, CtxKind::Touch, None);
+                }
+                true
             }
             _ => false,
         }
@@ -642,7 +706,7 @@ impl Game {
         match f {
             Some(f) if gm > 0 => {
                 let Some(engine) = self.scripts.clone() else { return };
-                let ctx = Ctx { player: unit, npc: 0, kind: CtxKind::Command };
+                let ctx = Ctx::new(unit, 0, CtxKind::Command);
                 let r = engine.call(self, ctx, &f, vec![Value::from(args)]);
                 match r {
                     Ok(Value::String(s)) => self.tell(unit, &s),
@@ -679,10 +743,11 @@ impl Game {
             return;
         }
         match &n.kind {
-            UnitKind::Npc(NpcUnit { kind: NpcKind::Script { def }, .. }) => {
-                let f = self.scripts.as_ref().and_then(|e| e.defs.npcs.get(*def)).and_then(|d| d.on_click.clone());
+            UnitKind::Npc(NpcUnit { kind: NpcKind::Script { def }, hidden: false, .. }) => {
+                let def = *def;
+                let f = self.scripts.as_ref().and_then(|e| e.defs.npcs.get(def)).and_then(|d| d.on_click.clone());
                 if let Some(f) = f {
-                    self.start_dialog(unit, npc, &f, CtxKind::Dialog);
+                    self.start_dialog(unit, npc, def, &f, CtxKind::Dialog, None);
                 }
             }
             UnitKind::Npc(NpcUnit { kind: NpcKind::Shop { .. }, .. }) => {
@@ -696,14 +761,15 @@ impl Game {
         }
     }
 
-    pub(crate) fn start_dialog(&mut self, unit: u32, npc: u32, f: &mlua::Function, kind: CtxKind) {
+    /// Run an NPC script for a player as a dialog; `at` = event label to enter at.
+    pub(crate) fn start_dialog(&mut self, unit: u32, npc: u32, def: usize, f: &mlua::Function, kind: CtxKind, at: Option<&str>) {
         let Some(engine) = self.scripts.clone() else { return };
-        let ctx = Ctx { player: unit, npc, kind };
+        let ctx = Ctx { player: unit, npc, kind, def: def as u32 };
         self.dialogs.remove(&unit);
         self.dialog_open.insert(unit, false);
-        let r = engine.start(self, ctx, f);
+        let r = engine.start(self, ctx, f, at);
         match r {
-            Ok((thread, outcome)) => self.after_resume(unit, npc, thread, outcome),
+            Ok((thread, outcome)) => self.after_resume(unit, npc, def as u32, thread, outcome),
             Err(e) => self.script_failed(unit, npc, e),
         }
     }
@@ -731,20 +797,20 @@ impl Game {
             return;
         }
         let Some(engine) = self.scripts.clone() else { return };
-        let ctx = Ctx { player: unit, npc: d.npc, kind: CtxKind::Dialog };
+        let ctx = Ctx { player: unit, npc: d.npc, kind: CtxKind::Dialog, def: d.def };
         self.dialog_open.insert(unit, d.open && got != Wait::Close);
         let r = engine.resume(self, ctx, &d.thread, answer);
         match r {
-            Ok(o) => self.after_resume(unit, d.npc, d.thread, o),
+            Ok(o) => self.after_resume(unit, d.npc, d.def, d.thread, o),
             Err(e) => self.script_failed(unit, d.npc, e),
         }
     }
 
-    fn after_resume(&mut self, unit: u32, npc: u32, thread: mlua::Thread, o: Outcome) {
+    fn after_resume(&mut self, unit: u32, npc: u32, def: u32, thread: mlua::Thread, o: Outcome) {
         let open = self.dialog_open.remove(&unit).unwrap_or(false);
         match o {
             Outcome::Suspended(wait) => {
-                self.dialogs.insert(unit, Dialog { thread, npc, wait, open: open && wait != Wait::Close });
+                self.dialogs.insert(unit, Dialog { thread, npc, def, wait, open: open && wait != Wait::Close });
             }
             Outcome::Done(_) => {
                 if open {

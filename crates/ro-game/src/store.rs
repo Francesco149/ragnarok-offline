@@ -23,6 +23,8 @@ pub struct Store {
     dir: PathBuf,
     pub accounts: BTreeMap<u32, Account>,
     pub chars: BTreeMap<u32, Character>,
+    /// Server-wide script variables (Athena `$name`), `saves/world.json`.
+    pub globals: BTreeMap<String, serde_json::Value>,
     next_account: u32,
     next_char: u32,
 }
@@ -60,6 +62,7 @@ impl Store {
             dir: dir.to_path_buf(),
             accounts: BTreeMap::new(),
             chars: BTreeMap::new(),
+            globals: BTreeMap::new(),
             next_account: FIRST_ACCOUNT_ID,
             next_char: FIRST_CHAR_ID,
         };
@@ -71,6 +74,9 @@ impl Store {
             s.next_char = s.next_char.max(c.id + 1);
             s.chars.insert(c.id, c);
         }
+        if let Ok(b) = std::fs::read(dir.join("world.json")) {
+            s.globals = serde_json::from_slice(&b).with_context(|| format!("{}", dir.join("world.json").display()))?;
+        }
         if let Ok(b) = std::fs::read(dir.join("ids.json")) {
             if let Ok(ids) = serde_json::from_slice::<Ids>(&b) {
                 s.next_account = s.next_account.max(ids.next_account);
@@ -78,6 +84,10 @@ impl Store {
             }
         }
         Ok(s)
+    }
+
+    pub fn save_globals(&self) -> Result<()> {
+        write_atomic(&self.dir.join("world.json"), &serde_json::to_vec_pretty(&self.globals)?)
     }
 
     fn save_ids(&self) -> Result<()> {

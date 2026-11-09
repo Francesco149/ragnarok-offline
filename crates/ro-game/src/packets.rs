@@ -417,9 +417,106 @@ pub fn floor_item_gone(id: u32) -> Vec<u8> {
     Writer::new(ZC_ITEM_DISAPPEAR).u32(id).finish()
 }
 
-/// 0x010f: skill list (empty for now: skills are server-side TODO).
-pub fn skill_list() -> Vec<u8> {
-    Writer::new(ZC_SKILLINFO_LIST).finish()
+/// One 0x010f entry.
+#[derive(Debug, Clone)]
+pub struct SkillEntry {
+    pub id: u16,
+    /// Target type (inf): 0 passive, 1 enemy, 2 place, 4 self, 16 friend.
+    pub inf: u16,
+    pub level: u16,
+    pub sp: u16,
+    pub range: u16,
+    /// Aegis name the client shows if it lacks its own (24 bytes).
+    pub name: String,
+    pub upgradable: bool,
+}
+
+/// 0x010f: skill list, 37 bytes per skill (Athena clif_skillinfoblock).
+pub fn skill_list(skills: &[SkillEntry]) -> Vec<u8> {
+    let mut w = Writer::new(ZC_SKILLINFO_LIST);
+    for s in skills {
+        w.u16(s.id).u16(s.inf).u16(0).u16(s.level).u16(s.sp).u16(s.range).str_fixed(&s.name, 24).u8(s.upgradable as u8);
+    }
+    w.finish()
+}
+
+/// 0x0110: skill failed. For skill 1 (Basic Skill), btype picks the message:
+/// 0 trade, 1 emotion, 2 sit, 3 chat room, 4 party (Athena clif_skill_fail).
+pub fn skill_fail(skill: u16, btype: u16, kind: u8) -> Vec<u8> {
+    Writer::new(ZC_ACK_TOUSESKILL).u16(skill).u16(btype).u16(0).u8(0).u8(kind).finish()
+}
+
+/// 0x010e: one skill changed (after a level-up).
+pub fn skill_update(id: u16, level: u16, sp: u16, range: u16, upgradable: bool) -> Vec<u8> {
+    Writer::new(ZC_SKILLINFO_UPDATE).u16(id).u16(level).u16(sp).u16(range).u8(upgradable as u8).finish()
+}
+
+/// 0x0144: mark on the mini-map (Athena clif_viewpoint). kind 1 show, 2 remove.
+pub fn viewpoint(npc: u32, kind: u32, x: u32, y: u32, id: u8, color: u32) -> Vec<u8> {
+    Writer::new(ZC_COMPASS).u32(npc).u32(kind).u32(x).u32(y).u8(id).u32(color).finish()
+}
+
+/// 0x0188: refine result (0 success, 1 failure).
+pub fn refine_result(result: u16, idx: u16, refine: u16) -> Vec<u8> {
+    Writer::new(ZC_ACK_ITEMREFINING).u16(result).u16(idx).u16(refine).finish()
+}
+
+/// 0x019b: misc effect on a unit (Athena clif_misceffect: 0 base level up, 1 job level up,
+/// 2 refine failure, 3 refine success).
+pub fn misc_effect(id: u32, effect: u32) -> Vec<u8> {
+    Writer::new(ZC_NOTIFY_EFFECT).u32(id).u32(effect).finish()
+}
+
+/// 0x0121: cart counts (items, max items, weight, max weight).
+pub fn cart_info(num: u16, max: u16, weight: u32, max_weight: u32) -> Vec<u8> {
+    Writer::new(ZC_NOTIFY_CARTITEM_COUNTINFO).u16(num).u16(max).u32(weight).u32(max_weight).finish()
+}
+
+/// 0x00f2: storage counts.
+pub fn storage_info(num: u16, max: u16) -> Vec<u8> {
+    Writer::new(ZC_NOTIFY_STOREITEM_COUNTINFO).u16(num).u16(max).finish()
+}
+
+/// 0x00a5: stackable storage items, 10 bytes each (same layout as 0x00a3).
+pub fn storage_items(items: &[(u16, &InvItem, u8)]) -> Vec<u8> {
+    let mut w = Writer::new(ZC_STORE_NORMAL_ITEMLIST);
+    for &(idx, it, kind) in items {
+        w.u16(idx).u16(it.nameid as u16).u8(kind).u8(it.identify as u8).u16(it.amount.min(30000) as u16).u16(0);
+    }
+    w.finish()
+}
+
+/// 0x00a6: storage equipment, 20 bytes each (same layout as 0x00a4).
+pub fn storage_equips(items: &[(u16, &InvItem, u8, u32)]) -> Vec<u8> {
+    let mut w = Writer::new(ZC_STORE_EQUIPMENT_ITEMLIST);
+    for &(idx, it, kind, loc) in items {
+        w.u16(idx).u16(it.nameid as u16).u8(kind).u8(it.identify as u8).u16(loc as u16).u16(0);
+        w.u8(it.attribute).u8(it.refine);
+        for c in it.cards {
+            w.u16(c);
+        }
+    }
+    w.finish()
+}
+
+/// 0x00f4: item put into storage.
+pub fn storage_add(idx: u16, amount: u32, it: &InvItem) -> Vec<u8> {
+    let mut w = Writer::new(ZC_ADD_ITEM_TO_STORE);
+    w.u16(idx).u32(amount).u16(it.nameid as u16).u8(it.identify as u8).u8(it.attribute).u8(it.refine);
+    for c in it.cards {
+        w.u16(c);
+    }
+    w.finish()
+}
+
+/// 0x00f6: item taken out of storage.
+pub fn storage_remove(idx: u16, amount: u32) -> Vec<u8> {
+    Writer::new(ZC_DELETE_ITEM_FROM_STORE).u16(idx).u32(amount).finish()
+}
+
+/// 0x00f8: storage window closed.
+pub fn storage_closed() -> Vec<u8> {
+    Writer::new(ZC_CLOSE_STORE).finish()
 }
 
 /// 0x00b3: back to character select.

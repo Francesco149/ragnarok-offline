@@ -13,3 +13,4 @@
 # `msiinfo export` dumps stream columns (Gravity's icons/bitmaps) into <Table>/ in the cwd
 /Icon/
 /Binary/
+__pycache__/

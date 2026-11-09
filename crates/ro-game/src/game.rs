@@ -65,6 +65,17 @@ pub struct GameConfig {
     pub drop_rate: u32,
     /// Autosave interval, seconds.
     pub autosave_secs: u64,
+    /// Content switches scripts test with `content("name")`. Defaults are
+    /// euRO's state in Jan-Feb 2004 (docs/DEVIATIONS.md): juno and jobs2_2
+    /// opened 2004-06-09; pvp needs other players; events are seasonal.
+    pub content: std::collections::BTreeMap<String, bool>,
+}
+
+pub fn default_content() -> std::collections::BTreeMap<String, bool> {
+    [("juno", false), ("jobs2_2", false), ("pvp", false), ("events", false)]
+        .into_iter()
+        .map(|(k, v)| (k.to_string(), v))
+        .collect()
 }
 
 impl Default for GameConfig {
@@ -87,6 +98,7 @@ impl Default for GameConfig {
             job_exp_rate: 100,
             drop_rate: 100,
             autosave_secs: 120,
+            content: default_content(),
         }
     }
 }
@@ -96,6 +108,9 @@ pub struct Resources {
     pub vfs: Vfs,
     /// Maps the client has a .gat for (lowercase, no extension).
     pub maps: HashSet<String>,
+    /// SP per level by Aegis skill name, from the client's
+    /// `data\leveluseskillspamount.txt` (tier client).
+    pub skill_sp: HashMap<String, Vec<u16>>,
 }
 
 impl Resources {
@@ -109,8 +124,36 @@ impl Resources {
                 }
             }
         }
-        Resources { vfs, maps }
+        let skill_sp = vfs.read("data\\leveluseskillspamount.txt").map(|b| parse_skill_sp(&b)).unwrap_or_default();
+        Resources { vfs, maps, skill_sp }
     }
+}
+
+/// `NAME#\nsp#\nsp#...\n@` blocks (the client's own format).
+pub fn parse_skill_sp(data: &[u8]) -> HashMap<String, Vec<u16>> {
+    let text = String::from_utf8_lossy(data);
+    let mut out = HashMap::new();
+    let mut cur: Option<(String, Vec<u16>)> = None;
+    for tok in text.split(['#', '\n', '\r']).map(str::trim).filter(|t| !t.is_empty()) {
+        if tok == "@" {
+            if let Some((name, v)) = cur.take() {
+                out.insert(name, v);
+            }
+        } else if let Ok(n) = tok.parse::<u16>() {
+            if let Some((_, v)) = &mut cur {
+                v.push(n);
+            }
+        } else {
+            if let Some((name, v)) = cur.take() {
+                out.insert(name, v);
+            }
+            cur = Some((tok.to_ascii_uppercase(), Vec::new()));
+        }
+    }
+    if let Some((name, v)) = cur {
+        out.insert(name, v);
+    }
+    out
 }
 
 #[derive(Debug, Clone)]
@@ -130,6 +173,8 @@ pub(crate) struct Session {
 pub(crate) struct Dialog {
     pub thread: mlua::Thread,
     pub npc: u32,
+    /// NPC definition index (script::NO_DEF if none).
+    pub def: u32,
     pub wait: Wait,
     /// A message is showing that still needs a close button.
     pub open: bool,
@@ -152,6 +197,8 @@ pub struct Game {
     /// Per player: an NPC message is showing in the current script step.
     pub(crate) dialog_open: HashMap<u32, bool>,
     pub(crate) respawns: Vec<(u64, usize)>,
+    /// NPC runtime state: events, timers, temp variables (npcrt.rs).
+    pub(crate) npcrt: crate::npcrt::NpcRuntime,
     start: Instant,
     last_autosave: u64,
     /// Messages for the admin console / logs (script errors etc.).
@@ -188,6 +235,7 @@ impl Game {
             dialogs: HashMap::new(),
             dialog_open: HashMap::new(),
             respawns: Vec::new(),
+            npcrt: Default::default(),
             start: Instant::now(),
             last_autosave: 0,
             notices: Vec::new(),
@@ -258,7 +306,8 @@ impl Game {
 
     /// (Re)load all scripts. On failure the previous scripts stay active.
     pub fn reload_scripts(&mut self) -> Result<String> {
-        let engine = match ScriptEngine::load(&self.cfg.script_dir) {
+        let opts = crate::script::LoadOptions { content: self.cfg.content.clone() };
+        let engine = match ScriptEngine::load_with(&self.cfg.script_dir, &opts) {
             Ok(e) => e,
             Err(e) => {
                 let msg = format!("script load failed (keeping previous scripts): {e:#}");
@@ -300,6 +349,12 @@ impl Game {
             engine.defs.commands.len()
         );
         self.scripts = Some(Rc::new(engine));
+        // fresh scripts, fresh runtime state (variables survive: they're saved data)
+        self.npcrt.disabled.clear();
+        self.npcrt.timers.clear();
+        self.npcrt.queue.clear();
+        self.queue_init_events();
+        self.run_events();
         // ... and put the new ones back on every loaded map
         let maps: Vec<String> = self.world.maps.keys().cloned().collect();
         for m in maps {
@@ -637,6 +692,7 @@ impl Game {
             }
         }
         self.dialogs.remove(&unit);
+        self.player_left(unit);
         self.despawn(unit, vanish_kind);
         if let Err(e) = self.store.save_char(char_id) {
             warn!("save {char_id}: {e:#}");
@@ -652,6 +708,8 @@ impl Game {
         self.tick_regen(now);
         self.tick_items(now);
         self.tick_respawns(now);
+        self.tick_npc_timers(now);
+        self.run_events();
         if now - self.last_autosave >= self.cfg.autosave_secs * 1000 {
             self.last_autosave = now;
             self.save_all();
@@ -659,6 +717,7 @@ impl Game {
     }
 
     pub fn save_all(&mut self) {
+        self.save_globals();
         let players: Vec<(u32, u32)> = self
             .world
             .units
@@ -681,7 +740,7 @@ impl Game {
     /// Run Lua as the given player (admin console). `player` 0 = none.
     pub fn console_eval(&mut self, code: &str, player: u32) -> String {
         let Some(engine) = self.scripts.clone() else { return "no scripts loaded".into() };
-        let ctx = Ctx { player, npc: 0, kind: crate::script::CtxKind::Console };
+        let ctx = Ctx::new(player, 0, crate::script::CtxKind::Console);
         let r = engine.eval(self, ctx, code);
         match r {
             Ok(s) => s,

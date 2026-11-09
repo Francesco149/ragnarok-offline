@@ -156,7 +156,7 @@ impl Game {
             return;
         }
         let Some(engine) = self.scripts.clone() else { return };
-        let ctx = Ctx { player: unit, npc: 0, kind: CtxKind::Item };
+        let ctx = Ctx::new(unit, 0, CtxKind::Item);
         let r = engine.run_item(self, ctx, d.id, &d.use_script);
         if let Err(e) = r {
             self.notice(format!("item {}: {e:#}", d.id));

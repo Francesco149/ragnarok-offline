@@ -46,6 +46,8 @@ pub struct PlayerUnit {
     pub sp_acc: u64,
     /// Shop NPC the player has open (for buy/sell packets).
     pub shop: Option<u32>,
+    /// Kafra storage window is open.
+    pub storage_open: bool,
     pub gm_level: u8,
 }
 
@@ -66,6 +68,8 @@ pub enum NpcKind {
 pub struct NpcUnit {
     pub kind: NpcKind,
     pub touch: Option<(u16, u16)>,
+    /// Not shown to clients (Athena sprite -1: touch areas, event NPCs).
+    pub hidden: bool,
 }
 
 #[derive(Debug, Clone)]
@@ -79,6 +83,8 @@ pub struct MobUnit {
     pub next_attack_at: u64,
     /// Damage taken per player unit (EXP share).
     pub damage_log: HashMap<u32, u32>,
+    /// Script event run when it dies ("Npc::OnMyMobDead"); script-spawned mobs only.
+    pub event: Option<String>,
 }
 
 #[derive(Debug, Clone)]
@@ -182,6 +188,13 @@ pub struct MapInst {
     pub players: usize,
     /// Monster spawns have been instantiated (lazily, on first visit).
     pub populated: bool,
+}
+
+impl Unit {
+    /// Clients are told about this unit (hidden script NPCs are server-side only).
+    pub fn shown(&self) -> bool {
+        !matches!(&self.kind, UnitKind::Npc(NpcUnit { hidden: true, .. }))
+    }
 }
 
 pub fn in_area(a: &Unit, b: &Unit) -> bool {

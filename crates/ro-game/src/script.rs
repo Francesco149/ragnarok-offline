@@ -41,9 +41,19 @@ impl<T> Ah<T> for mlua::Result<T> {
 pub struct Ctx {
     /// Player unit id (0 = none, e.g. server events).
     pub player: u32,
-    /// NPC unit id (0 = none, e.g. @commands and item scripts).
+    /// NPC unit id (0 = none, e.g. @commands, item scripts, floating NPCs).
     pub npc: u32,
     pub kind: CtxKind,
+    /// Index of the running NPC definition in `Defs::npcs` (NO_DEF = none).
+    pub def: u32,
+}
+
+pub const NO_DEF: u32 = u32::MAX;
+
+impl Ctx {
+    pub fn new(player: u32, npc: u32, kind: CtxKind) -> Self {
+        Ctx { player, npc, kind, def: NO_DEF }
+    }
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -63,16 +73,24 @@ pub trait Host {
 
 #[derive(Debug, Clone)]
 pub struct NpcDef {
+    /// Map name; "-" = floating NPC (no unit, only events).
     pub map: String,
     pub x: u16,
     pub y: u16,
     pub dir: u8,
-    pub sprite: u16,
+    /// Client NPC job id; None = invisible (Athena sprite -1).
+    pub sprite: Option<u16>,
     pub name: String,
+    /// Unique name for events, enable/disable ("Name::id" in Athena); defaults to `name`.
+    pub id: String,
     pub on_click: Option<Function>,
     pub on_touch: Option<Function>,
     /// Touch area half-size (xs, ys): a cell triggers when |dx|<=xs && |dy|<=ys.
     pub touch: Option<(u16, u16)>,
+    /// Event labels `on_click(label)` accepts ("OnInit", "OnTimer5000", ...).
+    pub events: Vec<String>,
+    /// Where the NPC comes from: "817:cities/prontera.txt:2" for imports.
+    pub src: Option<String>,
     pub source: String,
 }
 
@@ -119,6 +137,8 @@ pub struct SpawnDef {
 #[derive(Default)]
 pub struct Defs {
     pub npcs: Vec<NpcDef>,
+    /// `src` tags hand-written scripts replaced or removed (npc{replaces=}, remove_npc()).
+    pub removed: Vec<(String, String)>,
     pub warps: Vec<WarpDef>,
     pub shops: Vec<ShopDef>,
     pub spawns: Vec<SpawnDef>,
@@ -183,12 +203,27 @@ fn collect_lua_files(dir: &Path, out: &mut Vec<PathBuf>) {
     }
 }
 
+/// Load-time options: content flags scripts test with `content("juno")`.
+#[derive(Debug, Clone, Default)]
+pub struct LoadOptions {
+    pub content: std::collections::BTreeMap<String, bool>,
+}
+
 impl ScriptEngine {
     /// Load prelude + all scripts under `dir`.
     pub fn load(dir: &Path) -> Result<Self> {
+        Self::load_with(dir, &LoadOptions::default())
+    }
+
+    pub fn load_with(dir: &Path, opts: &LoadOptions) -> Result<Self> {
         let lua = Lua::new();
         let defs = Rc::new(RefCell::new(Defs::default()));
         Self::install_decls(&lua, defs.clone()).ah()?;
+        let content = lua.create_table().ah()?;
+        for (k, v) in &opts.content {
+            content.set(k.as_str(), *v).ah()?;
+        }
+        lua.globals().set("CONTENT", content).ah()?;
         lua.load(PRELUDE).set_name("@prelude.lua").exec().map_err(|e| anyhow!("prelude: {e}"))?;
         let mut files = Vec::new();
         // rules first, so content files can rely on them
@@ -206,6 +241,17 @@ impl ScriptEngine {
         }
         let mut defs = std::mem::take(&mut *defs.borrow_mut());
         defs.files = files;
+        // hand-written replacements win over imported NPCs
+        if !defs.removed.is_empty() {
+            let known: std::collections::HashSet<String> = defs.npcs.iter().filter_map(|n| n.src.clone()).collect();
+            for (src, by) in &defs.removed {
+                if !known.contains(src) {
+                    return Err(anyhow!("{by}: replaces/removes {src:?}, but no NPC has that src (regenerated import?)"));
+                }
+            }
+            let gone: std::collections::HashSet<String> = defs.removed.iter().map(|(s, _)| s.clone()).collect();
+            defs.npcs.retain(|n| !n.src.as_ref().is_some_and(|s| gone.contains(s)));
+        }
         Ok(ScriptEngine { lua, defs, dir: dir.to_path_buf(), item_fns: RefCell::new(HashMap::new()) })
     }
 
@@ -224,17 +270,37 @@ impl ScriptEngine {
                     Some(tt) => Some((tt.get::<u16>(1)?, tt.get::<u16>(2)?)),
                     None => None,
                 };
-                d.borrow_mut().npcs.push(NpcDef {
+                let sprite: i32 = opt(&t, "sprite")?.unwrap_or(111);
+                let name: String = opt(&t, "name")?.unwrap_or_default();
+                let on_click: Option<Function> = opt(&t, "on_click")?;
+                // Athena: stepping into a touch area runs the script from the start
+                let on_touch: Option<Function> = opt(&t, "on_touch")?.or_else(|| touch.and(on_click.clone()));
+                let events: Vec<String> = opt::<Vec<String>>(&t, "events")?.unwrap_or_default();
+                let source = source_of(lua);
+                let mut d = d.borrow_mut();
+                match t.get::<LuaValue>("replaces")? {
+                    LuaValue::String(s) => d.removed.push((s.to_str()?.to_string(), source.clone())),
+                    LuaValue::Table(list) => {
+                        for s in list.sequence_values::<String>() {
+                            d.removed.push((s?, source.clone()));
+                        }
+                    }
+                    _ => {}
+                }
+                d.npcs.push(NpcDef {
                     map: get(&t, "map")?,
-                    x: get(&t, "x")?,
-                    y: get(&t, "y")?,
+                    x: opt(&t, "x")?.unwrap_or(0),
+                    y: opt(&t, "y")?.unwrap_or(0),
                     dir: opt(&t, "dir")?.unwrap_or(0),
-                    sprite: opt(&t, "sprite")?.unwrap_or(111),
-                    name: opt(&t, "name")?.unwrap_or_default(),
-                    on_click: opt(&t, "on_click")?,
-                    on_touch: opt(&t, "on_touch")?,
+                    sprite: u16::try_from(sprite).ok(),
+                    id: opt::<String>(&t, "id")?.unwrap_or_else(|| name.clone()),
+                    name,
+                    on_click,
+                    on_touch,
                     touch,
-                    source: source_of(lua),
+                    events,
+                    src: opt(&t, "src")?,
+                    source,
                 });
                 Ok(())
             })?,
@@ -320,6 +386,14 @@ impl ScriptEngine {
                 Ok(())
             })?,
         )?;
+        let d = defs.clone();
+        g.set(
+            "remove_npc",
+            lua.create_function(move |lua, src: String| {
+                d.borrow_mut().removed.push((src, source_of(lua)));
+                Ok(())
+            })?,
+        )?;
         let d = defs;
         g.set(
             "on",
@@ -344,7 +418,8 @@ impl ScriptEngine {
                     });
                 }
                 let r = host.borrow_mut().call(&ctx, &op, jargs).map_err(mlua::Error::external)?;
-                lua.to_value(&r)
+                // JSON null is nil in Lua (mlua would give its null sentinel userdata)
+                if r.is_null() { Ok(LuaValue::Nil) } else { lua.to_value(&r) }
             })?;
             self.lua.globals().set("_rt", rt)?;
             body(&self.lua)
@@ -372,11 +447,14 @@ impl ScriptEngine {
         }
     }
 
-    /// Start `f` as a coroutine (NPC click/touch).
-    pub fn start(&self, host: &mut dyn Host, ctx: Ctx, f: &Function) -> Result<(Thread, Outcome)> {
+    /// Start `f` as a coroutine (NPC click/touch); `at` = event label to enter at.
+    pub fn start(&self, host: &mut dyn Host, ctx: Ctx, f: &Function, at: Option<&str>) -> Result<(Thread, Outcome)> {
         let thread = self.lua.create_thread(f.clone()).ah()?;
         let ret = self
-            .with_host(host, ctx, |_| thread.resume::<mlua::MultiValue>(()))
+            .with_host(host, ctx, |_| match at {
+                Some(label) => thread.resume::<mlua::MultiValue>(label),
+                None => thread.resume::<mlua::MultiValue>(()),
+            })
             .map_err(|e| anyhow!("{e}"))?;
         let o = self.outcome(&thread, ret)?;
         Ok((thread, o))

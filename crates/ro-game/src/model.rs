@@ -16,6 +16,10 @@ pub struct Account {
     pub gm_level: u8,
     /// Character ids by slot (0..=8).
     pub slots: BTreeMap<u8, u32>,
+    /// Kafra storage, shared by the account's characters.
+    pub storage: Vec<InvItem>,
+    /// Persistent per-account script variables.
+    pub vars: BTreeMap<String, serde_json::Value>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]

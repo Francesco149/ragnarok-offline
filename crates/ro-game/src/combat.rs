@@ -100,6 +100,7 @@ impl Game {
                 next_think: now + rand::random::<u64>() % 1000,
                 next_attack_at: 0,
                 damage_log: Default::default(),
+                event: None,
             })),
         });
         self.update_watchers(id, true);
@@ -250,6 +251,11 @@ impl Game {
         let Some(m) = u.mob() else { return };
         let mdb = self.db.mob(m.mob_id).cloned().unwrap_or_default();
         self.despawn(mob, 1);
+        if let Some(ev) = m.event.clone().filter(|e| !e.is_empty()) {
+            // Athena: the killer is attached (the last player to hit it)
+            let killer = m.damage_log.keys().copied().find(|p| self.world.units.contains_key(p)).unwrap_or(0);
+            self.queue_event(&ev, killer);
+        }
         // EXP: whole amount to everyone who hit it (single player: you)
         for (&pid, _) in &m.damage_log {
             if self.world.units.get(&pid).is_some_and(|p| p.is_player()) {

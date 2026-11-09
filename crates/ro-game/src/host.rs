@@ -87,6 +87,11 @@ impl Game {
             "hair_color" => json!(c.hair_color),
             "clothes_color" => json!(c.clothes_color),
             "save_map" => json!(c.save_point.map),
+            "next_base_exp" => json!(self.exp_next(c).0),
+            "next_job_exp" => json!(self.exp_next(c).1),
+            "option" => json!(c.option),
+            "karma" => json!(c.karma),
+            "manner" => json!(c.manner),
             _ => Value::Null,
         }
     }
@@ -152,7 +157,7 @@ impl Game {
     fn mes_target(&self, ctx: &Ctx) -> Result<(u32, u32), String> {
         let unit = self.need_player(ctx)?;
         let sid = self.sid_of(unit).ok_or("player has no session")?;
-        if ctx.kind != CtxKind::Dialog && ctx.kind != CtxKind::Touch {
+        if !matches!(ctx.kind, CtxKind::Dialog | CtxKind::Touch | CtxKind::Event) {
             return Err("dialog functions only work in NPC scripts (use notify() elsewhere)".into());
         }
         Ok((unit, sid))
@@ -214,9 +219,14 @@ impl Host for Game {
                 let c = self.char_of_unit_mut(unit).ok_or("no character")?;
                 match op {
                     "var_get" => return Ok(c.vars.get(&key).cloned().unwrap_or(Value::Null)),
-                    "var_set" => {
-                        c.vars.insert(key, arg(&a, 1).clone());
-                    }
+                    "var_set" => match arg(&a, 1) {
+                        Value::Null => {
+                            c.vars.remove(&key);
+                        }
+                        v => {
+                            c.vars.insert(key, v.clone());
+                        }
+                    },
                     _ => {
                         c.vars.remove(&key);
                     }
@@ -251,16 +261,11 @@ impl Host for Game {
                 self.heal(unit, d.max_hp as i64 * int(&a, 0) / 100, d.max_sp as i64 * int(&a, 1) / 100);
             }
             "sc_end" => {} // status effects: not implemented yet (docs/ROADMAP.md)
-            "warp" => {
-                let unit = self.need_player(ctx)?;
-                let map = text(&a, 0);
-                if !self.warp_player(unit, &map, int(&a, 1) as u16, int(&a, 2) as u16) {
-                    return Err(format!("cannot warp to {map}"));
-                }
-            }
             "save_point" => {
                 let unit = self.need_player(ctx)?;
-                let p = Point::new(&text(&a, 0), int(&a, 1) as u16, int(&a, 2) as u16);
+                let map = text(&a, 0).to_ascii_lowercase();
+                let map = map.strip_suffix(".gat").unwrap_or(&map);
+                let p = Point::new(map, int(&a, 1) as u16, int(&a, 2) as u16);
                 self.char_of_unit_mut(unit).ok_or("no character")?.save_point = p;
             }
             "job_change" => {
@@ -294,6 +299,7 @@ impl Host for Game {
                 }
                 self.area_send(unit, packets::look(unit, 0, job as u8), true);
                 self.send_full_status(unit);
+                self.send_skill_list(unit);
             }
             "give_exp" => {
                 let unit = self.need_player(ctx)?;
@@ -313,14 +319,6 @@ impl Host for Game {
             "notify" => {
                 let unit = self.need_player(ctx)?;
                 self.tell(unit, &text(&a, 0));
-            }
-            "announce" => {
-                let pkt = packets::broadcast(&text(&a, 0));
-                for pid in self.world.all_players() {
-                    if let Some(sid) = self.sid_of(pid) {
-                        self.send(sid, pkt.clone());
-                    }
-                }
             }
             "open_shop" => {
                 let unit = self.need_player(ctx)?;
@@ -401,7 +399,12 @@ impl Host for Game {
             "reload" => {
                 return self.reload_scripts().map(Value::from).map_err(|e| format!("{e:#}"));
             }
-            other => return Err(format!("unknown runtime op {other:?}")),
+            other => {
+                return match self.npc_call(ctx, other, &a) {
+                    Some(r) => r,
+                    None => Err(format!("unknown runtime op {other:?}")),
+                };
+            }
         }
         Ok(Value::Null)
     }

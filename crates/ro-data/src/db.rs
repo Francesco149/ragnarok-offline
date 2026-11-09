@@ -6,6 +6,7 @@
 //!
 //! Files (all optional; missing ones load empty with a warning):
 //!   data/db/items.toml  data/db/mobs.toml  data/db/exp.toml  data/db/jobs.toml
+//!   data/db/skills.toml
 
 use std::collections::HashMap;
 use std::path::Path;
@@ -164,6 +165,46 @@ pub struct Job {
     pub job_bonus: Vec<u8>,
 }
 
+#[derive(Debug, Clone, Default, Serialize, Deserialize)]
+#[serde(default)]
+pub struct Skill {
+    pub id: u16,
+    /// Aegis name ("SM_BASH"); the client keys its own tables by it.
+    pub name: String,
+    pub max: u8,
+    /// Target type: 0 passive, 1 enemy, 2 place, 4 self, 16 friend.
+    pub inf: u16,
+    /// Cells; negative = weapon range.
+    pub range: i32,
+    pub hit: u8,
+    pub element: u8,
+    pub nk: u8,
+    /// SP per level (index 0 = level 1).
+    pub sp: Vec<u16>,
+    /// Learnt only from NPC quests, never with skill points.
+    pub quest: bool,
+}
+
+#[derive(Debug, Clone, Default, Serialize, Deserialize)]
+#[serde(default)]
+pub struct TreeEntry {
+    pub job: u16,
+    pub skill: u16,
+    pub max: u8,
+    /// (skill, level) prerequisites.
+    pub need: Vec<(u16, u8)>,
+}
+
+#[derive(Debug, Default, Serialize, Deserialize)]
+struct SkillFile {
+    #[serde(default)]
+    meta: Meta,
+    #[serde(default)]
+    skill: Vec<Skill>,
+    #[serde(default)]
+    tree: Vec<TreeEntry>,
+}
+
 #[derive(Debug, Default, Serialize, Deserialize)]
 struct ItemFile {
     #[serde(default)]
@@ -197,6 +238,11 @@ pub struct Database {
     pub exp: ExpTables,
     pub jobs: HashMap<u16, Job>,
     pub jobs_meta: Meta,
+    pub skills: HashMap<u16, Skill>,
+    pub skills_by_name: HashMap<String, u16>,
+    /// Skill tree per job, in file order.
+    pub skill_tree: HashMap<u16, Vec<TreeEntry>>,
+    pub skills_meta: Meta,
     pub warnings: Vec<String>,
 }
 
@@ -231,7 +277,20 @@ impl Database {
         for j in jobs.job {
             db.jobs.insert(j.id, j);
         }
+        let skills: SkillFile = read_toml(&dir.join("skills.toml"), &mut db.warnings)?;
+        db.skills_meta = skills.meta;
+        for sk in skills.skill {
+            db.skills_by_name.insert(sk.name.to_ascii_uppercase(), sk.id);
+            db.skills.insert(sk.id, sk);
+        }
+        for t in skills.tree {
+            db.skill_tree.entry(t.job).or_default().push(t);
+        }
         Ok(db)
+    }
+
+    pub fn skill(&self, id: u16) -> Option<&Skill> {
+        self.skills.get(&id)
     }
 
     pub fn item(&self, id: u32) -> Option<&Item> {
