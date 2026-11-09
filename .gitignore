@@ -8,3 +8,8 @@
 *.grf
 *.gpf
 /dist/
+/third_party/*
+!/third_party/README.md
+# `msiinfo export` dumps stream columns (Gravity's icons/bitmaps) into <Table>/ in the cwd
+/Icon/
+/Binary/
