@@ -103,6 +103,8 @@ pub struct MobUnit {
     pub target: Option<u32>,
     pub next_think: u64,
     pub next_attack_at: u64,
+    /// Athena's MS_ATTACK: the attack timer is running (next_attack_at).
+    pub attacking: bool,
     /// Damage taken per player unit (EXP share).
     pub damage_log: HashMap<u32, u32>,
     /// Script event run when it dies ("Npc::OnMyMobDead"); script-spawned mobs only.

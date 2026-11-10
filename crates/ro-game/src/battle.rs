@@ -244,6 +244,18 @@ impl Game {
         (opt1, opt2, option)
     }
 
+    /// Turning to stone (eAthena 817 skill.c:5705, its opt1 6): the five
+    /// seconds before Stone Curse sets. Walking goes on; attacks and skills
+    /// do not. (Not sent: whether this client knows opt1 6 is THREADS.md #21.)
+    pub(crate) fn turning_stone(&self, unit: u32) -> bool {
+        self.sc_map(unit).is_some_and(|sc| sc.get(&SC_STONE).is_some_and(|s| s.val2 != 0))
+    }
+
+    /// Stone, frozen, stunned, asleep, or turning to stone: no attack, no skill.
+    pub(crate) fn cannot_act(&self, unit: u32) -> bool {
+        self.opts_of(unit).0 > 0 || self.turning_stone(unit)
+    }
+
     /// Icon number for a status change, as mod0631 sends it (skill.c:4017):
     /// the type itself below 64, a few 2-2 ones by table.
     fn sc_icon(kind: u16) -> Option<u16> {
@@ -278,8 +290,13 @@ impl Game {
 
     /// Only the values and the end time change (timers re-arming themselves).
     pub(crate) fn sc_touch(&mut self, unit: u32, kind: u16, f: impl FnOnce(&mut StatusChange)) {
+        let before = self.opts_of(unit);
         if let Some(s) = self.sc_map_mut(unit).and_then(|m| m.get_mut(&kind)) {
             f(s);
+        }
+        // a value can change what is drawn (stone setting: 817 skill.c:5113)
+        if self.opts_of(unit) != before {
+            self.after_sc_change(unit, before);
         }
     }
 
@@ -724,6 +741,7 @@ impl Game {
     pub(crate) fn bl_json(&self, id: u32) -> Value {
         let Some(u) = self.world.units.get(&id) else { return Value::Null };
         let (opt1, opt2, option) = self.opts_of(id);
+        let opt1 = if self.turning_stone(id) { 6 } else { opt1 };
         let now = self.now();
         let mut o = json!({
             "id": id, "map": u.map, "x": u.x, "y": u.y, "dir": u.dir, "dead": u.state == 1, "sit": u.state == 2,

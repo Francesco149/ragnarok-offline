@@ -125,6 +125,7 @@ impl Game {
                 next_walk: now + 5000 + rand::random::<u64>() % 50,
                 move_fail: 0,
                 skill_state: MobState::Idle,
+                attacking: false,
                 skill_used: vec![0; skills],
                 loot: Vec::new(),
                 master_dist: 0,
@@ -156,8 +157,8 @@ impl Game {
             return;
         }
         // pc_attack_timer: not while stunned, frozen, asleep, stone, hidden or cloaked
-        let (opt1, _, option) = self.opts_of(unit);
-        if opt1 > 0 || option & 6 != 0 {
+        let (_, _, option) = self.opts_of(unit);
+        if self.cannot_act(unit) || option & 6 != 0 {
             return;
         }
         let me = self.world.units.get_mut(&unit).unwrap();
@@ -226,8 +227,8 @@ impl Game {
     fn player_attack_step(&mut self, id: u32, now: u64) {
         let Some(intent) = self.world.units.get(&id).and_then(|u| u.player()).and_then(|p| p.attack) else { return };
         let target_ok = self.world.units.get(&intent.target).is_some_and(|t| t.mob().is_some() && t.state != 1 && t.map == self.world.units[&id].map);
-        let (opt1, _, option) = self.opts_of(id);
-        if !target_ok || opt1 > 0 || option & 6 != 0 || self.world.units[&id].state == 1 {
+        let (_, _, option) = self.opts_of(id);
+        if !target_ok || self.cannot_act(id) || option & 6 != 0 || self.world.units[&id].state == 1 {
             self.world.units.get_mut(&id).unwrap().player_mut().unwrap().attack = None;
             return;
         }
@@ -677,8 +678,11 @@ impl Game {
             }
         }
 
-        let m = self.world.units[&id].mob().unwrap();
+        let m = self.world.units.get_mut(&id).unwrap().mob_mut().unwrap();
         let (target, looting, min_chase, next_walk) = (m.target, m.looting, m.min_chase, m.next_walk);
+        // Athena's state MS_ATTACK: an attack timer is running. Anything but
+        // staying in reach of the target ends it.
+        let was_attacking = std::mem::take(&mut m.attacking);
         let walk_to = self.world.units[&id].walk.as_ref().map(|w| (w.to.0 as i32, w.to.1 as i32));
         if let Some(t) = target {
             let Some(tu) = self.world.units.get(&t).filter(|tu| tu.map == map) else {
@@ -706,7 +710,8 @@ impl Game {
                     }
                     self.world.units.get_mut(&id).unwrap().mob_mut().unwrap().skill_state = MobState::Chase;
                     self.mobskill_use(id, now, "");
-                    if self.world.units.get(&id).is_none_or(|u| u.mob().is_none_or(|m| m.cast.is_some())) {
+                    // gone, casting, or moved by its own skill: think again next time
+                    if self.world.units.get(&id).is_none_or(|u| (u.x as i32, u.y as i32) != (x, y) || u.mob().is_none_or(|m| m.cast.is_some())) {
                         return;
                     }
                     // already walking: keep on once the half second since the last
@@ -747,10 +752,19 @@ impl Game {
                     if walk_to.is_some() {
                         self.stop_walking(id);
                     }
-                    // mob.c:407 mob_changestate(MS_ATTACK): when the next attack is
-                    // due within 2 s, then; else at once, or after its attack
-                    // motion if it has just turned on who hit it
                     let next = self.world.units[&id].mob().unwrap().next_attack_at;
+                    if was_attacking {
+                        // already attacking (mob.c:1224): the attack timer runs by itself
+                        self.world.units.get_mut(&id).unwrap().mob_mut().unwrap().attacking = true;
+                        if next <= now {
+                            self.mob_attack(id, t, &mdb, now);
+                        }
+                        return;
+                    }
+                    self.world.units.get_mut(&id).unwrap().mob_mut().unwrap().attacking = true;
+                    // mob.c:407 mob_changestate(MS_ATTACK), on starting to attack:
+                    // when the next attack is due within 2 s, then; else at once,
+                    // or after its attack motion if it has just turned on who hit it
                     if next > now && next < now + 2000 {
                         return;
                     }
@@ -774,7 +788,8 @@ impl Game {
                     }
                     self.world.units.get_mut(&id).unwrap().mob_mut().unwrap().skill_state = MobState::Loot;
                     self.mobskill_use(id, now, "");
-                    if self.world.units.get(&id).is_none_or(|u| u.mob().is_none_or(|m| m.cast.is_some())) {
+                    // gone, casting, or moved by its own skill: think again next time
+                    if self.world.units.get(&id).is_none_or(|u| (u.x as i32, u.y as i32) != (x, y) || u.mob().is_none_or(|m| m.cast.is_some())) {
                         return;
                     }
                     if let Some((wx, wy)) = walk_to {
@@ -854,6 +869,13 @@ impl Game {
         let now = self.now();
         let tick = self.tick32();
         let u = self.world.units.get_mut(&id).unwrap();
+        if let Some(w) = &mut u.walk {
+            // already walking: the course changes at the next cell, the step
+            // under way is not started again (mob.c mob_walktoxy: change_walk_target)
+            w.retarget = Some((x1 as u16, y1 as u16));
+            w.to = (x1 as u16, y1 as u16);
+            return true;
+        }
         let first = crate::mapsrv::step_cost(u.speed, dirs[0]) / 2;
         u.walk = Some(Walk { path: dirs, pos: 0, next_at: now + first as u64, to: (x1 as u16, y1 as u16), retarget: None });
         self.area_send(id, packets::unit_move(id, x0 as u16, y0 as u16, x1 as u16, y1 as u16, tick), false);
@@ -871,6 +893,10 @@ impl Game {
             lose(self);
             return;
         };
+        // turning to stone: no blow (817 mob.c:341)
+        if self.turning_stone(id) {
+            return;
+        }
         let (x, y) = (self.world.units[&id].x as i32, self.world.units[&id].y as i32);
         if dead || path::distance(x, y, tx, ty) >= 13 || !self.mob_sees(mdb, target) {
             lose(self);
@@ -879,6 +905,10 @@ impl Game {
         // one cell of slack for a monster that can walk (mob.c:345)
         let range = mdb.range.max(1) as i32 + (mdb.mode & MD_CANMOVE != 0) as i32;
         if path::distance(x, y, tx, ty) > range {
+            // (mob.c:346: back to idle)
+            if let Some(m) = self.world.units.get_mut(&id).and_then(|u| u.mob_mut()) {
+                m.attacking = false;
+            }
             return;
         }
         // face the target
@@ -890,6 +920,10 @@ impl Game {
             m.skill_state = MobState::Attack;
         }
         if self.mobskill_use(id, now, "") {
+            // the skill's own delay follows; attacking starts afresh after it
+            if let Some(m) = self.world.units.get_mut(&id).and_then(|u| u.mob_mut()) {
+                m.attacking = false;
+            }
             return;
         }
         let r = self.rule_call("weapon_attack", json!({"src": id, "target": target}));
@@ -951,8 +985,8 @@ impl Game {
             let Some(tgt) = tgt else { return false };
             let Some((tx, ty)) = self.world.units.get(&tgt).map(|t| (t.x, t.y)) else { return false };
             // silenced, stunned, hidden: no skills (mob.c:2011)
-            let (opt1, _, option) = self.opts_of(id);
-            if opt1 > 0 || option & 6 != 0 || self.has_sc(id, SC_SILENCE) {
+            let (_, _, option) = self.opts_of(id);
+            if self.cannot_act(id) || option & 6 != 0 || self.has_sc(id, SC_SILENCE) {
                 return false;
             }
             // range of the skill itself; a weapon-range skill (below 0) reaches as the monster does
@@ -1028,8 +1062,12 @@ impl Game {
     pub(crate) fn respawn_player(&mut self, unit: u32) {
         let Some(c) = self.char_of_unit(unit).cloned() else { return };
         let d = self.derive(&c);
-        let died_on = self.world.units.get_mut(&unit).and_then(|u| u.player_mut()).and_then(|p| p.died_on.take());
+        // where it died; after logging back in dead, where it lies
+        let died_on = self.world.units.get_mut(&unit).and_then(|u| u.player_mut()).and_then(|p| p.died_on.take()).or_else(|| self.world.units.get(&unit).map(|u| u.map.clone()));
         let was_dead = c.hp == 0;
+        if !was_dead {
+            return; // clif_parse_Restart: only the dead go back to the save point
+        }
         if was_dead {
             let (nb, nj) = self.exp_next(&c);
             let free = died_on.as_deref().is_some_and(|m| self.db.map_flag(m, "nopenalty"));

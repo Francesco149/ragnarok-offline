@@ -724,9 +724,11 @@ fn stone_sets_then_wears_off() {
     let mut t = T::new();
     let mob = t.spawn(27, 25, 1002);
     t.lua(&format!("skill_status_change_start({mob}, SC.STONE, 1, 0, {{ tick = 12000 }})"));
-    assert_eq!(t.lua(&format!("battle.get({mob}).opt1")).trim(), "0", "still turning");
+    assert_eq!(t.lua(&format!("battle.get({mob}).opt1")).trim(), "6", "still turning (817's opt1 6)");
+    assert!(t.packets(0x0119).is_empty(), "nothing drawn yet");
     t.run(5500);
     assert_eq!(t.lua(&format!("battle.get({mob}).opt1")).trim(), "1", "stone");
+    assert!(t.packets(0x0119).iter().any(|p| u16_at(p, 6) == 1), "the client is shown the stone when it sets");
     t.run(13_000);
     assert_eq!(t.lua(&format!("battle.sc(battle.get({mob}), SC.STONE) and 1 or 0")).trim(), "0", "worn off");
 }
@@ -1085,4 +1087,28 @@ fn hunter_traps() {
     assert!(trap_cells(&t).is_empty(), "the falcon springs the trap");
     assert_eq!(traps(&t), n, "nothing comes back");
     let _ = me;
+}
+
+/// A monster with a long attack delay (a Zombie: 2612 ms) keeps to it, and
+/// a living player cannot "return to the save point".
+#[test]
+fn slow_attackers_keep_their_delay() {
+    let mut t = T::new();
+    t.lua("player.base_level = 90; player.vit = 90; heal(9999, 9999)");
+    let me = t.me;
+    let z = t.spawn(26, 25, 1015);
+    t.lua(&format!("_rt('mob_target', {z}, {me}, 0)"));
+    t.run(1000);
+    t.packets(0);
+    t.run(13_000);
+    let blows = t.packets(0x008a).iter().filter(|p| u32_at(p, 2) == z).count();
+    // (fewer when it uses a skill instead: that costs it a delay as well)
+    assert!((1..=6).contains(&blows), "{blows} blows in 13 s at 2.6 s a blow");
+    // alive: restart type 0 does nothing
+    let at = t.pos(me);
+    let mut w = Writer::new(0x00b2);
+    w.u8(0);
+    t.send(w);
+    assert_eq!(t.pos(me), at);
+    assert_eq!(t.g.world.units[&me].map, "testmap");
 }

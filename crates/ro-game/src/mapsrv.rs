@@ -725,7 +725,9 @@ impl Game {
         // Athena skill_unit_move: ground skills notice who walks in and out
         if self.world.units.get(&id).is_some_and(|u| u.is_fighter()) && self.has_skill_cells(&map) {
             self.rule_call("skill_unit_move", serde_json::json!({"bl": id}));
-            if self.world.units.get(&id).is_none_or(|u| u.walk.is_none() || u.map != map) {
+            // stopped, thrown or sent elsewhere by what it stepped on
+            let ended = done || retarget.is_some();
+            if self.world.units.get(&id).is_none_or(|u| u.map != map || (u.x, u.y) != (x, y) || (!ended && u.walk.is_none())) || !self.can_move(id) {
                 return false;
             }
         }

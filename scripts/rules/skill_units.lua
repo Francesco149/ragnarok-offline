@@ -357,9 +357,12 @@ end
 
 -- skill.c:4189 skill_delunit
 del_cell = function(c, from_group)
-  if not c.alive then return end
+  if not c.alive or c.closing then return end
   local g = groups[c.group]
   local now = _rt("now")
+  -- (marked before its last act: an opening portal sets a new group, and
+  -- the cap on groups must not come back to this cell)
+  c.closing = true
   onlimit(c, now)
   if g then
     -- those standing in it lose what it gave (skill.c:2676)
