@@ -19,7 +19,15 @@
 --   * no "Use Kafra Pass" entry: kRO removed the Kafra voucher menu on
 --     2003-05-20, and 817's was "Under development";
 --   * "Cancel" and "Other Information Check" work (817 pointed them at
---     missing labels); the location tip marks this town's Kafras.
+--     missing labels); the location tip marks this town's Kafras;
+--   * the special reserve (Kafra points): a tenth of every teleport fare, as
+--     in mod0631 (`set KF_PIT,KF_PIT+90` after the 900z to Izlude, line 187,
+--     and so at every Kafra; storage, carts and saving earn nothing). 817's
+--     "Special Reserve Check" said "Under development", and its exchange
+--     counter in the Al De Baran head office had a prize list and no code
+--     behind it; both work here, the counter at the end of this file. kRO's
+--     notice of 2004-02-10 has players carrying saved-up points to that
+--     head office (research/notes/round2-review.md, THREADS.md #4).
 -- Pre-2004-02-24 fares are period-emulator values (research/THREADS.md #3,
 -- research/notes/round1-review.md). kRO's own notice of 2004-02-24 lists only
 -- the fares that replaced them.
@@ -91,6 +99,7 @@ local function kafra(k)
         return bye(cut)
       end
       player.zeny = player.zeny - t[2]
+      v.KF_PIT = v.KF_PIT + t[2] // 10 -- mod0631's variable and rule
       cutin(cut, 255)
       warp(t[3], t[4], t[5])
       return
@@ -127,6 +136,20 @@ local function kafra(k)
       return bye(cut)
 
     elseif act == "info" then
+      -- 817's submenu ("Special Reverse Check" there). mod0631 has the same two
+      -- as "積立ポイント確認" and "カプラ職員配置案内" in the main menu
+      local c = menu("Special Reserve Check", "Location Tip", "Cancel")
+      if c == 1 then
+        mes "[Kafra]"
+        mes(player.name .. "'s special reserve is " .. v.KF_PIT .. ".")
+        next()
+        mes "[Kafra]"
+        mes "You can exchange special reserve for goods at the head office of Kafra."
+        mes "Please use our service for convenience and receive free goods with the special reserve."
+        return bye(cut)
+      elseif c ~= 2 then
+        return bye(cut)
+      end
       -- 817: "Location Tip" marks the town's Kafras on the mini-map
       local n = 0
       for _, o in ipairs(KAFRA_LIST) do
@@ -250,3 +273,61 @@ for _, k in ipairs(KAFRA_LIST) do
     replaces = k.src, src = not k.src and ("m631:conf/npc_town_kafra.txt:" .. k.m631) or nil, on_click = kafra(k),
   }
 end
+
+-- The special reserve counter in the Kafra head office (817 other/kafra.txt:995,
+-- not imported: its menu labels start with digits, which 817 read as numbers,
+-- and every prize branch was a bare `close`). The place, the sprite, the
+-- wording and the prize list are 817's. Ours: the points are taken and the
+-- goods handed over. The two lottery entries (1000p and 3000p) are left out:
+-- 817 names no prize ("Price is + itemName + 1 ea").
+local RESERVE_PRIZES = {
+  { 516, { { 100, 7 }, { 200, 15 }, { 300, 25 }, { 400, 35 }, { 500, 50 }, { 600, 60 }, { 700, 75 }, { 800, 85 }, { 900, 100 } } },
+  { 501, { { 1100, 7 }, { 1300, 15 }, { 1500, 25 }, { 1700, 35 }, { 1900, 50 }, { 2100, 60 }, { 2300, 75 }, { 2500, 85 }, { 2800, 100 } } },
+}
+
+npc {
+  map = "aldeba_in", x = 79, y = 161, dir = 6, sprite = 115, name = "Kafra",
+  src = "817:other/kafra.txt:995",
+  on_click = function()
+    mes "[Kafra]"
+    mes("Welcome, my dearest " .. player.name .. ".")
+    mes "Take as many goods as you've got special reserve from Kafra Service~"
+    next()
+    mes "[Kafra]"
+    mes "Please keep in mind that each window requires a different special reserve for your information."
+    mes "The window I am at allows you to use special reserve from ^FF00FF100p to 3000p^000000."
+    next()
+    mes "[Kafra]"
+    mes("Your special reserve is ^FF0000" .. v.KF_PIT .. "^000000~")
+    mes "Please choose the items you want."
+    next()
+    local page = 1
+    while true do
+      local item, tiers = RESERVE_PRIZES[page][1], RESERVE_PRIZES[page][2]
+      local list = {}
+      for i, t in ipairs(tiers) do
+        list[i] = t[1] .. "p = " .. item_name(item):gsub("_", " ") .. " " .. t[2] .. " ea"
+      end
+      if page == 1 then list[#list + 1] = "Next Articles" end
+      list[#list + 1] = "Cancel"
+      local i = menu(list)
+      local t = tiers[i]
+      if t then
+        mes "[Kafra]"
+        if v.KF_PIT < t[1] then
+          mes "Dear~ I hope you will save more special reserve for next time~"
+        else
+          v.KF_PIT = v.KF_PIT - t[1]
+          give_item(item, t[2])
+          mes "Here you are, dear~"
+          mes "Please come again~~"
+        end
+        return close()
+      elseif page == 1 and i == #tiers + 1 then
+        page = 2
+      else
+        return close()
+      end
+    end
+  end,
+}

@@ -39,7 +39,7 @@ questions that could change an entry here are in
 | Accounts | Website registration, CD code, e-mail | First login creates the account; `_M`/`_F` suffix picks sex | No website. Athena-style auto-register |
 | GM rights | Players had none; GMs were euRO staff | New accounts are GM 99: all `@commands` | It's your server. Set `new_account_gm_level = 0` in `ragnarok-offline.toml` for a period account |
 | Start point | Novice training ground (official map, entry cell unknown) | `new_zone01 53,111`, Athena's `new_1-1` entry on this client's older-named map | THREADS.md #6 |
-| Rates | Closed beta: "higher experience", factor unknown. Open beta: presumably 1x | 1x | THREADS.md #1. `base_exp_rate`/`job_exp_rate`/`drop_rate` in the config |
+| Rates | Closed beta: "higher experience" (BHI-OE, 2003-12-20); 3x EXP and drops according to one player's forum post of 2004-01-27, never confirmed. Open beta: 1x | 1x | THREADS.md #1. For the closed beta as that player describes it, set `base_exp_rate`, `job_exp_rate` and `drop_rate` to 3 in the config |
 | Character slots | 3 (5 from 2004-08-18) | The client shows 9; the server accepts all 9 | Not enforced yet |
 | Patcher | euRO's patch servers | A local stand-in serving an archived snapshot | docs/WINDOWS.md |
 | Display | Real fullscreen mode switch | Emulated fullscreen (DDrawCompat) | docs/WINDOWS.md |
@@ -100,13 +100,36 @@ eAthena 817 (2004-02-19), bugs included. The translator is
     and 817's was "Under development".
   * "Cancel" and "Other Information Check" work (817 pointed them at missing
     labels). The location tip marks the town's Kafras.
+  * Kafra points ("special reserve") are earned: a tenth of every teleport
+    fare, the rule in mod0631's script. 817's "Special Reserve Check" said
+    "Under development"; here it tells you the total, in 817's words.
   * Izlude's "Save inside City" saved nothing in 817. It saves at izlude
     94,103, as in mod0631 and jAthena (2004-01).
   * Typos in the Kafra lines are fixed. The wording is otherwise 817's.
-* **Removed outright:** 817's Kafra-points exchange in Al De Baran. Its menu
-  never worked: labels starting with digits parse as numbers in 817. Kafra
-  points did exist (kRO notice of 2004-02-10); what they bought is
-  THREADS.md #4.
+* **The special reserve counter** in the Al De Baran head office
+  (`aldeba_in 79,161`) is 817's NPC with code behind it. In 817 it was a
+  prize list and nothing else: the menu labels start with digits, which 817
+  parsed as numbers, and every prize was a bare `close`. Here it takes the
+  points and gives the Sweet Potatoes (100p to 900p) or Red Potions (1100p
+  to 2800p) of 817's list. The two "Lottery Chance" entries are left out:
+  817 names no prize. That the official counter gave these goods at these
+  prices rests on 817 alone (THREADS.md #4).
+* **Thief quest skills** (`scripts/npc/thief_skills.lua`). 817 had four
+  separate NPCs in Morroc, of which only Stone Fling's ("Sono-san") loaded,
+  and none for Sand Attack. mod0631 has one NPC for all four in the Thief
+  guild under the Pyramid ("アルコスク", `moc_prydb1 154,128`) and a pouch
+  maker in Payon; the client ships the Sand Attack quest's two items, and
+  RODataZone's Thief page of 2003-12-04 describes the same NPC on the same
+  cell for the international servers. We use mod0631's NPCs, places, items
+  and job levels, and remove Sono-san. The names "Alcouskou" and "Bag
+  Seller" are RODataZone's; the dialogue is our translation of mod0631's
+  Japanese, not Gravity's text.
+* **Monster Tamers** (`scripts/npc/monster_tamers.lua`): three NPCs from
+  mod0631 that 817 lacks, in Alberta, Izlude and Al De Baran, where the iRO
+  pet guide of 2004 says they stood. They turn ingredients into taming
+  items and pet accessories. The guide says "available for purchase";
+  mod0631's take no zeny, and we follow mod0631. The English is ours, one
+  template for all three.
 * **Commands 817's scripts used but its engine lacked**, where the meaning
   is unmistakable. 817 stopped the script at each of them; we run them:
   * `releaseall` (unequip everything) comes right before `jobchange` in the
