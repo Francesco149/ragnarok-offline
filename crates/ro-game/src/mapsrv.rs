@@ -348,6 +348,7 @@ impl Game {
                 inc_sp_acc: 0,
                 spirit_acc: 0,
                 weight_icon: 0,
+                died_on: None,
             })),
         };
         self.world.add(u);

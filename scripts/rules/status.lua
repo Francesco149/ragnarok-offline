@@ -382,7 +382,7 @@ end
 -- What the server itself keeps of a character's status (the status window,
 -- walk and attack speed, weight limit, attack range).
 local VIEW = { "max_hp", "max_sp", "atk", "atk2", "matk_min", "matk_max", "def", "def2", "mdef", "mdef2", "hit", "flee",
-               "flee2", "crit", "max_weight", "range", "speed", "bstr", "bagi", "bvit", "bint", "bdex", "bluk" }
+               "flee2", "crit", "max_weight", "range", "speed", "dmotion", "bstr", "bagi", "bvit", "bint", "bdex", "bluk" }
 function rules.status_view(c)
   local s = rules.status(c)
   local v = {}

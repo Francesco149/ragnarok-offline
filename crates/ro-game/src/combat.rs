@@ -31,7 +31,6 @@ const MD_CANMOVE: u32 = 0x01;
 const MD_LOOTER: u32 = 0x02;
 const MD_AGGRESSIVE: u32 = 0x04;
 const MD_ASSIST: u32 = 0x08;
-const MD_CASTSENSOR: u32 = 0x10;
 const MD_BOSS: u32 = 0x20;
 
 // status changes the AI reads
@@ -129,6 +128,7 @@ impl Game {
                 skill_used: vec![0; skills],
                 loot: Vec::new(),
                 master_dist: 0,
+                delay_until: 0,
             })),
         });
         self.update_watchers(id, true);
@@ -231,11 +231,13 @@ impl Game {
             self.world.units.get_mut(&id).unwrap().player_mut().unwrap().attack = None;
             return;
         }
-        // pc_attack_timer: a skill's delay holds the attack back too
+        // pc.c:2419 pc_attack_timer: no attack during a skill's delay; the
+        // client is told and the attack is dropped
         let p = self.world.units[&id].player().unwrap();
         if p.canact > now || p.cast.is_some() {
-            let wait = p.canact.max(now + 50);
-            self.world.units.get_mut(&id).unwrap().player_mut().unwrap().next_attack_at = wait;
+            let sid = p.sid;
+            self.world.units.get_mut(&id).unwrap().player_mut().unwrap().attack = None;
+            self.send(sid, packets::skill_fail(1, 0, 4));
             return;
         }
         let Some(c) = self.char_of_unit(id).cloned() else { return };
@@ -275,11 +277,16 @@ impl Game {
     /// Athena mob_damage, the part before death. Returns true when it died.
     pub(crate) fn damage_mob(&mut self, mob: u32, by: u32, dmg: u32) -> bool {
         let by_player = self.world.units.get(&by).is_some_and(|u| u.is_player());
+        let now = self.now();
+        let flinch = self.world.units.get(&mob).and_then(|u| u.mob()).and_then(|m| self.db.mob(m.mob_id)).map(|d| d.damage_motion as u64).unwrap_or(0);
         let Some(u) = self.world.units.get_mut(&mob) else { return false };
-        // mob.c:1549: a hit stops its walk
+        // mob.c:1549: a hit stops its walk and holds it for its damage motion
         let stopped = u.walk.take().is_some();
         let (x, y) = (u.x, u.y);
         let Some(m) = u.mob_mut() else { return false };
+        if stopped {
+            m.delay_until = now + flinch;
+        }
         let dmg = dmg.min(m.hp);
         if by_player {
             *m.damage_log.entry(by).or_default() += dmg;
@@ -321,11 +328,12 @@ impl Game {
             0 => mdb.hp.max(1) as u64,
             s => s,
         };
+        // mob.c:2323: every monster is worth 1 EXP at least; the rate comes before the share
+        let base_all = (mdb.base_exp as u64 * self.cfg.base_exp_rate as u64 / 100).max(1);
+        let job_all = (mdb.job_exp as u64 * self.cfg.job_exp_rate as u64 / 100).max(1);
         for &(pid, dmg) in &here {
             let per = (dmg as u64 * 256 * (9 + count) / 10 / sum).clamp(1, 512);
-            let base = mdb.base_exp as u64 * per / 256 * self.cfg.base_exp_rate as u64 / 100;
-            let job = mdb.job_exp as u64 * per / 256 * self.cfg.job_exp_rate as u64 / 100;
-            self.gain_exp(pid, base, job);
+            self.gain_exp(pid, base_all * per / 256, job_all * per / 256);
         }
         // drops (Athena: rate/10000, scaled by drop_rate)
         let drop_at = |g: &Game| {
@@ -335,7 +343,8 @@ impl Game {
         };
         for d in &mdb.drops {
             let rate = (d.rate as u64 * self.cfg.drop_rate as u64 / 100).min(10000) as u32;
-            if rand::random::<u32>() % 10000 < rate && self.db.item(d.item).is_some() {
+            // mob.c:1669: dropped unless the rate is below the roll
+            if rate > 0 && rand::random::<u32>() % 10000 <= rate && self.db.item(d.item).is_some() {
                 let (x, y) = drop_at(self);
                 let mut it = InvItem::new(d.item, 1);
                 // equipment falls unidentified (mob.c mob_delay_item_drop: identify = !itemdb_isequip3)
@@ -356,7 +365,7 @@ impl Game {
                 self.area_send(mvp, packets::mvp_effect(mvp), true);
                 let mut got = false;
                 for d in &mdb.mvp_drops {
-                    if d.item == 0 || d.rate <= rand::random::<u32>() % 10000 || self.db.item(d.item).is_none() {
+                    if d.item == 0 || d.rate < rand::random::<u32>() % 10000 || self.db.item(d.item).is_none() {
                         continue;
                     }
                     if let Some(sid) = self.sid_of(mvp) {
@@ -379,10 +388,15 @@ impl Game {
                 }
             }
         }
-        // its slaves go with it (mob_deleteslave)
+        // its slaves die with it (mob.c:1496 mob_deleteslave: a death like any
+        // other, with drops, and EXP for whoever had hit them)
         let slaves: Vec<u32> = self.world.units.values().filter(|s| s.mob().is_some_and(|sm| sm.master == Some(mob))).map(|s| s.id).collect();
         for s in slaves {
-            self.despawn(s, 1);
+            if let Some(sm) = self.world.units.get_mut(&s).and_then(|u| u.mob_mut()) {
+                sm.hp = 0;
+                sm.master = None;
+            }
+            self.mob_dies(s);
         }
         self.defer_rule("unit_gone", json!({"bl": mob}));
         if let Some(i) = m.spawn {
@@ -460,7 +474,18 @@ impl Game {
         a.clamp(20, 2000) as u16
     }
 
-    /// mob_ai_sub_hard.
+    /// mob_can_reach (mob.c:708): within `range` cells and a walkable path.
+    fn mob_can_reach(&self, map: &str, x: i32, y: i32, tx: i32, ty: i32, range: i32) -> bool {
+        if range > 0 && range < path::distance(x, y, tx, ty) {
+            return false;
+        }
+        if (x, y) == (tx, ty) {
+            return true;
+        }
+        self.grid(map).is_some_and(|g| path::find(&g, x, y, tx, ty).is_some())
+    }
+
+    /// mob_ai_sub_hard (mob.c:1050).
     fn mob_think(&mut self, id: u32, now: u64) {
         let Some(u) = self.world.units.get(&id) else { return };
         let Some(m) = u.mob() else { return };
@@ -484,19 +509,21 @@ impl Game {
                 m.target = None;
             }
         }
-        // stone, frozen, stunned, asleep
-        if self.opts_of(id).0 > 0 {
+        // stone, frozen, stunned, asleep; or flinching from a hit (MS_DELAY)
+        if self.opts_of(id).0 > 0 || self.world.units[&id].mob().unwrap().delay_until > now {
             return;
         }
         let m = self.world.units[&id].mob().unwrap();
-        let (attacked, master) = (m.attacked, m.master);
+        let (attacked, master, class) = (m.attacked, m.master, m.mob_id);
         let dist_to = |g: &Game, t: u32| g.world.units.get(&t).filter(|tu| tu.map == map).map(|tu| path::distance(x, y, tu.x as i32, tu.y as i32));
 
-        // friends of the same kind come to help (mob.c:1086 link search)
+        // The hit monster's kind comes to help (mob.c:1086, 850): every one
+        // of its class within 13 cells that can reach the attacker, itself
+        // included, turns on him, unless it is busy fighting while this one is too.
         if let (Some(a), true) = (attacked, mode & MD_ASSIST != 0) {
-            if self.world.units.get(&a).is_some_and(|p| p.is_player()) {
-                let class = m.mob_id;
-                let friends: Vec<u32> = self
+            if let Some((ax, ay)) = self.world.units.get(&a).filter(|p| p.is_player() && p.map == map).map(|p| (p.x as i32, p.y as i32)) {
+                let me_idle = m.target.is_none() || m.looting; // md->state.targettype == NONE_ATTACKABLE
+                let friends: Vec<(u32, i32, i32)> = self
                     .world
                     .maps
                     .get(&map)
@@ -504,13 +531,16 @@ impl Game {
                         mi.units
                             .iter()
                             .filter_map(|i| self.world.units.get(i))
-                            .filter(|f| f.id != id && (f.x as i32 - x).abs() <= 13 && (f.y as i32 - y).abs() <= 13)
-                            .filter(|f| f.mob().is_some_and(|fm| fm.mob_id == class && (fm.target.is_none() || fm.looting)))
-                            .map(|f| f.id)
+                            .filter(|f| (f.x as i32 - x).abs() <= 13 && (f.y as i32 - y).abs() <= 13)
+                            .filter(|f| f.mob().is_some_and(|fm| fm.mob_id == class && (fm.target.is_none() || me_idle)))
+                            .map(|f| (f.id, f.x as i32, f.y as i32))
                             .collect()
                     })
                     .unwrap_or_default();
-                for f in friends {
+                for (f, fx, fy) in friends {
+                    if !self.mob_can_reach(&map, fx, fy, ax, ay, 12) {
+                        continue;
+                    }
                     if let Some(fm) = self.world.units.get_mut(&f).and_then(|u| u.mob_mut()) {
                         fm.target = Some(a);
                         fm.looting = false;
@@ -522,73 +552,72 @@ impl Game {
 
         // whoever hit it (mob.c:1099); aggressive ones switch a quarter of the time
         let m = self.world.units[&id].mob().unwrap();
-        let mut attack_now = false;
+        let mut retaliate = false;
         if let (Some(a), true) = (attacked, mode > 0) {
             if m.target.is_none() || m.looting || (mode & MD_AGGRESSIVE != 0 && rand::random::<u32>() % 100 < 25) {
-                let d = dist_to(self, a).filter(|d| *d < 32 && self.world.units[&a].state != 1);
+                let d = dist_to(self, a).filter(|d| *d < 32);
                 let m = self.world.units.get_mut(&id).unwrap().mob_mut().unwrap();
                 m.attacked = None;
                 if let Some(d) = d {
                     m.target = Some(a);
                     m.looting = false;
                     m.min_chase = (d + 13).min(26);
-                    attack_now = true;
+                    retaliate = true;
                 }
             }
         }
 
         // a slave follows its master and takes its target (mob.c:885)
         let mut master_check = false;
-        if let Some(mid) = master {
-            match self.world.units.get(&mid).filter(|mu| mu.map == map) {
-                Some(mu) => {
-                    let (mx, my) = (mu.x as i32, mu.y as i32);
-                    let mtarget = mu.mob().and_then(|mm| mm.target.filter(|_| !mm.looting));
-                    let old = self.world.units[&id].mob().unwrap().master_dist;
-                    let dist = path::distance(x, y, mx, my);
-                    self.world.units.get_mut(&id).unwrap().mob_mut().unwrap().master_dist = dist;
-                    if old < 6 && dist > 15 {
-                        self.mob_teleport(id, mx as u16, my as u16);
-                        return;
-                    }
-                    let m = self.world.units[&id].mob().unwrap();
-                    let free = m.target.is_none() || m.looting;
-                    if free && self.can_move(id) && self.world.units[&id].walk.is_none() && dist < 15 {
-                        for i in 0..10 {
-                            let (dx, dy) = if dist > 4 {
-                                if i <= 5 {
-                                    let step = |d: i32| d - d.signum() * (rand_range(0, d.abs().min(3) - 1).max(0) + 1).min(d.abs());
-                                    (step(mx - x), step(my - y))
-                                } else {
-                                    (mx - x + rand_range(-3, 3), my - y + rand_range(-3, 3))
-                                }
-                            } else {
-                                (mx - x + rand_range(-4, 4), my - y + rand_range(-4, 4))
-                            };
-                            if (dx, dy) != (0, 0) && self.mob_walk(id, &map, x, y, x + dx, y + dy) {
-                                break;
-                            }
-                        }
-                        if let Some(m) = self.world.units.get_mut(&id).and_then(|u| u.mob_mut()) {
-                            m.next_walk = now + 500;
-                        }
-                        master_check = true;
-                    }
-                    if let (Some(t), true) = (mtarget, free) {
-                        if self.mob_sees(&mdb, t) {
-                            let d = dist_to(self, t).unwrap_or(0);
-                            let m = self.world.units.get_mut(&id).unwrap().mob_mut().unwrap();
-                            m.target = Some(t);
-                            m.looting = false;
-                            m.min_chase = 5 + d;
-                            master_check = true;
+        if let Some((mx, my, mtarget)) = master.and_then(|mid| self.world.units.get(&mid)).filter(|mu| mu.map == map).map(|mu| {
+            (mu.x as i32, mu.y as i32, mu.mob().and_then(|mm| mm.target.filter(|_| !mm.looting)))
+        }) {
+            let old = self.world.units[&id].mob().unwrap().master_dist;
+            let dist = path::distance(x, y, mx, my);
+            self.world.units.get_mut(&id).unwrap().mob_mut().unwrap().master_dist = dist;
+            if old < 6 && dist > 15 {
+                // the master was near a moment ago: jump after it (mob_warp)
+                self.mob_teleport(id, mx as u16, my as u16);
+                if let Some(m) = self.world.units.get_mut(&id).and_then(|u| u.mob_mut()) {
+                    m.attacked = None;
+                    m.skill_state = MobState::Idle;
+                    m.next_think = now + MOB_THINK_MS;
+                }
+                return;
+            }
+            let m = self.world.units[&id].mob().unwrap();
+            let free = m.target.is_none() || m.looting;
+            if free && self.can_move(id) && self.world.units[&id].walk.is_none() && dist < 15 {
+                if dist > 4 {
+                    // toward the master, stopping short by up to three cells
+                    for i in 0..10 {
+                        let (dx, dy) = if i <= 5 {
+                            let step = |d: i32| d - d.signum() * (rand_range(0, d.abs().min(3) - 1).max(0) + 1).min(d.abs());
+                            (step(mx - x), step(my - y))
+                        } else {
+                            (mx - x + rand_range(-3, 3), my - y + rand_range(-3, 3))
+                        };
+                        if (dx, dy) != (0, 0) && self.mob_walk(id, &map, x, y, x + dx, y + dy, false) {
+                            break;
                         }
                     }
                 }
-                None => {
-                    // master gone: the slave goes too
-                    self.despawn(id, 1);
-                    return;
+                // (within 4 cells mod0631 picks a cell around the master, adds
+                // the master's position to it twice, and so never walks: the
+                // slave stands. mob.c:934)
+                if let Some(m) = self.world.units.get_mut(&id).and_then(|u| u.mob_mut()) {
+                    m.next_walk = now + 500;
+                }
+                master_check = true;
+            }
+            if let (Some(t), true) = (mtarget, free) {
+                if self.mob_sees(&mdb, t) {
+                    let d = dist_to(self, t).unwrap_or(0);
+                    let m = self.world.units.get_mut(&id).unwrap().mob_mut().unwrap();
+                    m.target = Some(t);
+                    m.looting = false;
+                    m.min_chase = 5 + d;
+                    master_check = true;
                 }
             }
         }
@@ -596,16 +625,15 @@ impl Game {
         // aggressive monsters look for players within 9 cells, any of them equally (mob.c:785)
         let m = self.world.units[&id].mob().unwrap();
         if (m.target.is_none() || m.looting) && mode & MD_AGGRESSIVE != 0 && !master_check {
-            let grid = self.grid(&map);
             let mut n = 0u32;
             let mut pick = None;
             for pid in self.world.players_on(&map) {
                 let p = &self.world.units[&pid];
-                if path::distance(x, y, p.x as i32, p.y as i32) >= 9 || !self.mob_sees(&mdb, pid) {
+                let (px, py) = (p.x as i32, p.y as i32);
+                if p.state == 1 || path::distance(x, y, px, py) >= 9 || !self.mob_sees(&mdb, pid) {
                     continue;
                 }
-                let reach = grid.as_ref().is_some_and(|g| (p.x as i32, p.y as i32) == (x, y) || path::find(g, x, y, p.x as i32, p.y as i32).is_some());
-                if !reach {
+                if !self.mob_can_reach(&map, x, y, px, py, 12) {
                     continue;
                 }
                 n += 1;
@@ -621,21 +649,24 @@ impl Game {
             }
         }
 
-        // looters look for items within 9 cells (mob.c:822)
+        // looters look for items within 9 cells they can walk to (mob.c:822)
         let m = self.world.units[&id].mob().unwrap();
         if m.target.is_none() && mode & MD_LOOTER != 0 && !master_check {
+            let items: Vec<(u32, i32, i32)> = self
+                .world
+                .maps
+                .get(&map)
+                .map(|mi| mi.units.iter().filter_map(|i| self.world.units.get(i)).filter(|i| i.is_item()).map(|i| (i.id, i.x as i32, i.y as i32)).collect())
+                .unwrap_or_default();
             let mut n = 0u32;
             let mut pick = None;
-            if let Some(mi) = self.world.maps.get(&map) {
-                for iid in &mi.units {
-                    let Some(it) = self.world.units.get(iid).filter(|i| i.is_item()) else { continue };
-                    if path::distance(x, y, it.x as i32, it.y as i32) >= 9 {
-                        continue;
-                    }
-                    n += 1;
-                    if rand::random::<u32>() % 1000 < 1000 / n {
-                        pick = Some(*iid);
-                    }
+            for (iid, ix, iy) in items {
+                if path::distance(x, y, ix, iy) >= 9 || !self.mob_can_reach(&map, x, y, ix, iy, 12) {
+                    continue;
+                }
+                n += 1;
+                if rand::random::<u32>() % 1000 < 1000 / n {
+                    pick = Some(iid);
                 }
             }
             if let Some(iid) = pick {
@@ -647,8 +678,8 @@ impl Game {
         }
 
         let m = self.world.units[&id].mob().unwrap();
-        let (target, looting, min_chase) = (m.target, m.looting, m.min_chase);
-        let walking = self.world.units[&id].walk.is_some();
+        let (target, looting, min_chase, next_walk) = (m.target, m.looting, m.min_chase, m.next_walk);
+        let walk_to = self.world.units[&id].walk.as_ref().map(|w| (w.to.0 as i32, w.to.1 as i32));
         if let Some(t) = target {
             let Some(tu) = self.world.units.get(&t).filter(|tu| tu.map == map) else {
                 self.mob_unlock(id, now);
@@ -657,8 +688,12 @@ impl Game {
             let (tx, ty) = (tu.x as i32, tu.y as i32);
             let dist = path::distance(x, y, tx, ty);
             if !looting {
-                if dist >= min_chase || !self.mob_sees(&mdb, t) {
-                    // out of sight, or fooled by hiding / playing dead
+                // mob.c:1152: hiding and playing dead fool all but bosses, insects and demons
+                let fooled = mode & MD_BOSS == 0 && {
+                    let (_, _, option) = self.opts_of(t);
+                    self.has_sc(t, crate::battle::SC_TRICKDEAD) || (option & 6 != 0 && mdb.race != 4 && mdb.race != 6)
+                };
+                if dist >= min_chase || fooled || !tu.is_player() {
                     self.mob_unlock(id, now);
                 } else if dist > mdb.range.max(1) as i32 {
                     // out of reach: chase
@@ -670,49 +705,64 @@ impl Game {
                         return;
                     }
                     self.world.units.get_mut(&id).unwrap().mob_mut().unwrap().skill_state = MobState::Chase;
-                    if self.mobskill_use(id, now, "") {
+                    self.mobskill_use(id, now, "");
+                    if self.world.units.get(&id).is_none_or(|u| u.mob().is_none_or(|m| m.cast.is_some())) {
                         return;
                     }
-                    // already on its way to where the target is
-                    let m = self.world.units[&id].mob().unwrap();
-                    if let Some(w) = &self.world.units[&id].walk {
-                        if m.next_walk > now || path::distance(w.to.0 as i32, w.to.1 as i32, tx, ty) < 2 {
+                    // already walking: keep on once the half second since the last
+                    // re-path is over, or when the path ends next to the target (mob.c:1174)
+                    if let Some((wx, wy)) = walk_to {
+                        if next_walk < now || path::distance(wx, wy, tx, ty) < 2 {
                             return;
                         }
+                    }
+                    if !self.mob_can_reach(&map, x, y, tx, ty, min_chase.max(13)) {
+                        // no way there (an Ice Wall?): let go
+                        self.mob_unlock(id, now);
+                        return;
                     }
                     self.world.units.get_mut(&id).unwrap().mob_mut().unwrap().next_walk = now + 500;
                     // first straight at the cell next to the target, then at random ones around it
                     let mut ok = false;
+                    let (mut dx, mut dy) = (0, 0);
                     for i in 0..5 {
-                        let (dx, dy) = if i == 0 {
+                        (dx, dy) = if i == 0 {
                             (tx - x - (tx - x).signum(), ty - y - (ty - y).signum())
                         } else {
                             (tx - x + rand_range(-1, 1), ty - y + rand_range(-1, 1))
                         };
-                        if self.mob_walk(id, &map, x, y, x + dx, y + dy) {
+                        if self.mob_walk(id, &map, x, y, x + dx, y + dy, false) {
                             ok = true;
                             break;
                         }
                     }
                     if !ok {
-                        // nowhere to go (an Ice Wall?): let go
-                        self.mob_unlock(id, now);
+                        // attacked from where it cannot go: two steps back (mob.c:1209)
+                        let back = |d: i32| if d < 0 { 2 } else if d > 0 { -2 } else { 0 };
+                        self.mob_walk(id, &map, x, y, x + back(dx), y + back(dy), false);
                     }
                 } else {
                     // in reach: attack
                     self.world.units.get_mut(&id).unwrap().mob_mut().unwrap().skill_state = MobState::Attack;
-                    if walking {
+                    if walk_to.is_some() {
                         self.stop_walking(id);
                     }
+                    // mob.c:407 mob_changestate(MS_ATTACK): when the next attack is
+                    // due within 2 s, then; else at once, or after its attack
+                    // motion if it has just turned on who hit it
                     let next = self.world.units[&id].mob().unwrap().next_attack_at;
-                    if next <= now || (attack_now && next <= now + 100) {
-                        self.mob_attack(id, t, &mdb, now);
+                    if next > now && next < now + 2000 {
+                        return;
                     }
+                    if retaliate {
+                        self.world.units.get_mut(&id).unwrap().mob_mut().unwrap().next_attack_at = now + mdb.attack_motion as u64;
+                        return;
+                    }
+                    self.mob_attack(id, t, &mdb, now);
                 }
             } else {
                 // loot (mob.c:1237)
-                let full = self.world.units[&id].mob().unwrap().loot.len() >= LOOT_SIZE;
-                if !tu.is_item() || dist >= min_chase || full {
+                if !tu.is_item() || dist >= min_chase {
                     self.mob_unlock(id, now);
                 } else if dist > 0 {
                     if mode & MD_CANMOVE == 0 {
@@ -723,20 +773,30 @@ impl Game {
                         return;
                     }
                     self.world.units.get_mut(&id).unwrap().mob_mut().unwrap().skill_state = MobState::Loot;
-                    if self.mobskill_use(id, now, "") {
+                    self.mobskill_use(id, now, "");
+                    if self.world.units.get(&id).is_none_or(|u| u.mob().is_none_or(|m| m.cast.is_some())) {
                         return;
                     }
-                    if walking {
-                        return;
+                    if let Some((wx, wy)) = walk_to {
+                        if next_walk < now || (wx, wy) == (tx, ty) {
+                            return; // on its way
+                        }
                     }
                     self.world.units.get_mut(&id).unwrap().mob_mut().unwrap().next_walk = now + 500;
-                    if !self.mob_walk(id, &map, x, y, tx, ty) {
+                    if !self.mob_walk(id, &map, x, y, tx, ty, false) {
                         self.mob_unlock(id, now);
                     }
                 } else {
-                    // on the item: take it
+                    // on the item: take it. A full bag lets the oldest go (monster_loot_type 0)
+                    if walk_to.is_some() {
+                        self.stop_walking(id);
+                    }
                     if let Some(UnitKind::Item(fi)) = self.world.units.get(&t).map(|i| i.kind.clone()) {
-                        self.world.units.get_mut(&id).unwrap().mob_mut().unwrap().loot.push(fi.item);
+                        let m = self.world.units.get_mut(&id).unwrap().mob_mut().unwrap();
+                        if m.loot.len() >= LOOT_SIZE {
+                            m.loot.remove(0);
+                        }
+                        m.loot.push(fi.item);
                         self.despawn(t, 0);
                     }
                     self.mob_unlock(id, now);
@@ -751,23 +811,24 @@ impl Game {
         }
         // random walk (not slaves that stay with their master)
         let m = self.world.units[&id].mob().unwrap();
-        if mode & MD_CANMOVE != 0 && self.can_move(id) && (m.master.is_none() || m.master_dist > 10) && m.next_walk < now && !walking {
+        if mode & MD_CANMOVE != 0 && self.can_move(id) && (m.master.is_none() || m.master_dist > 10) && m.next_walk < now {
             self.mob_random_walk(id, &map, x, y, now);
             return;
         }
-        if !walking {
+        if walk_to.is_none() {
             self.world.units.get_mut(&id).unwrap().mob_mut().unwrap().skill_state = MobState::Idle;
         }
     }
 
-    /// mob_randomwalk: a cell within 12 (fewer after failures), then 3-6 s rest.
+    /// mob_randomwalk (mob.c:1009): a cell within 12 (fewer after failures)
+    /// that a straight walk reaches, then 3-6 s rest.
     fn mob_random_walk(&mut self, id: u32, map: &str, x: i32, y: i32, now: u64) {
         let fail = self.world.units[&id].mob().unwrap().move_fail as i32;
         let d = (12 - fail).max(5);
         let mut walked = false;
         for _ in 0..20 {
             let (nx, ny) = (x + rand_range(-d, d), y + rand_range(-d, d));
-            if (nx, ny) != (x, y) && self.mob_walk(id, map, x, y, nx, ny) {
+            if (nx, ny) != (x, y) && self.mob_walk(id, map, x, y, nx, ny, true) {
                 walked = true;
                 break;
             }
@@ -775,14 +836,18 @@ impl Game {
         let speed = self.world.units[&id].speed as u64;
         let steps: u64 = self.world.units[&id].walk.as_ref().map(|w| w.path.iter().map(|d| if path::is_diagonal(*d) { speed * 14 / 10 } else { speed }).sum()).unwrap_or(0);
         let m = self.world.units.get_mut(&id).unwrap().mob_mut().unwrap();
+        // (after 1000 rounds without a cell mod0631 respawns the monster; here it keeps trying)
         m.move_fail = if walked { 0 } else { m.move_fail + 1 };
         m.next_walk = now + 3000 + rand::random::<u64>() % 3000 + steps;
         m.skill_state = MobState::Walk;
     }
 
-    fn mob_walk(&mut self, id: u32, map: &str, x0: i32, y0: i32, x1: i32, y1: i32) -> bool {
+    /// mob_walktoxy. `easy`: only a straight path, no way around obstacles.
+    #[allow(clippy::too_many_arguments)]
+    fn mob_walk(&mut self, id: u32, map: &str, x0: i32, y0: i32, x1: i32, y1: i32, easy: bool) -> bool {
         let Some(grid) = self.grid(map) else { return false };
-        let Some(dirs) = path::find(&grid, x0, y0, x1, y1) else { return false };
+        let found = if easy { path::find_easy(&grid, x0, y0, x1, y1) } else { path::find(&grid, x0, y0, x1, y1) };
+        let Some(dirs) = found else { return false };
         if dirs.is_empty() {
             return false;
         }
@@ -797,19 +862,32 @@ impl Game {
 
     /// mob.c:314 mob_attack: a skill of the attack state, or a plain hit.
     fn mob_attack(&mut self, id: u32, target: u32, mdb: &ro_data::db::Mob, now: u64) {
-        if !self.mob_sees(mdb, target) {
-            self.mob_unlock(id, now);
+        let lose = |g: &mut Game| {
+            if let Some(m) = g.world.units.get_mut(&id).and_then(|u| u.mob_mut()) {
+                m.target = None;
+            }
+        };
+        let Some((tx, ty, dead)) = self.world.units.get(&target).map(|t| (t.x as i32, t.y as i32, t.state == 1)) else {
+            lose(self);
+            return;
+        };
+        let (x, y) = (self.world.units[&id].x as i32, self.world.units[&id].y as i32);
+        if dead || path::distance(x, y, tx, ty) >= 13 || !self.mob_sees(mdb, target) {
+            lose(self);
+            return;
+        }
+        // one cell of slack for a monster that can walk (mob.c:345)
+        let range = mdb.range.max(1) as i32 + (mdb.mode & MD_CANMOVE != 0) as i32;
+        if path::distance(x, y, tx, ty) > range {
             return;
         }
         // face the target
-        if let (Some((tx, ty)), Some(u)) = (self.world.units.get(&target).map(|t| (t.x as i32, t.y as i32)), self.world.units.get_mut(&id)) {
-            let (dx, dy) = (tx - u.x as i32, ty - u.y as i32);
-            if (dx, dy) != (0, 0) {
-                u.dir = path::dir_of(dx, dy);
-            }
+        if (tx - x, ty - y) != (0, 0) {
+            self.world.units.get_mut(&id).unwrap().dir = path::dir_of(tx - x, ty - y);
         }
         if let Some(m) = self.world.units.get_mut(&id).and_then(|u| u.mob_mut()) {
             m.min_chase = 13;
+            m.skill_state = MobState::Attack;
         }
         if self.mobskill_use(id, now, "") {
             return;
@@ -821,12 +899,15 @@ impl Game {
         }
     }
 
-    /// mobskill_use: go down the monster's skill list; the first line whose
-    /// delay, state, condition and chance all pass is cast. `event` is the
-    /// condition that just happened ("closedattacked", "skillused:15", ...)
-    /// or "" for the regular check. True when a skill was used.
+    /// mobskill_use (mob.c:2126): go down the monster's skill list; the
+    /// first line whose delay, state, condition and chance all pass is cast.
+    /// `event` is the condition that just happened ("closedattacked",
+    /// "skillused:15", ...) or "" for the regular check. True when a skill
+    /// was used.
     pub(crate) fn mobskill_use(&mut self, id: u32, now: u64, event: &str) -> bool {
         let Some(m) = self.world.units.get(&id).and_then(|u| u.mob()) else { return false };
+        // ours: one cast at a time (in mod0631 a counter skill could start
+        // over a cast in progress and leave both timers running)
         if m.cast.is_some() {
             return false;
         }
@@ -859,22 +940,24 @@ impl Game {
                 continue;
             }
             let Some(sk) = self.db.skill(ms.skill).cloned() else { continue };
-            // silenced, stunned, hidden: no skills (mob.c:2011)
-            let (opt1, _, option) = self.opts_of(id);
-            if opt1 > 0 || option & 6 != 0 || self.has_sc(id, SC_SILENCE) {
-                return false;
-            }
             let m = self.world.units[&id].mob().unwrap();
             let (me_x, me_y) = (self.world.units[&id].x, self.world.units[&id].y);
             let tgt = match ms.target.as_str() {
                 "target" => m.target.filter(|_| !m.looting),
                 "self" => Some(id),
-                _ => None, // "friend" was not implemented in mod0631
+                _ => continue, // "friend": not implemented in mod0631 either (the line is skipped)
             };
-            let Some(tgt) = tgt else { continue };
-            let Some((tx, ty)) = self.world.units.get(&tgt).map(|t| (t.x, t.y)) else { continue };
-            let range = if sk.range < 0 { 1 - (sk.range + 1) } else { sk.range }.max(1);
-            if path::distance(me_x as i32, me_y as i32, tx as i32, ty as i32) > range {
+            // from here a failure ends the search (mobskill_use_id returning 0)
+            let Some(tgt) = tgt else { return false };
+            let Some((tx, ty)) = self.world.units.get(&tgt).map(|t| (t.x, t.y)) else { return false };
+            // silenced, stunned, hidden: no skills (mob.c:2011)
+            let (opt1, _, option) = self.opts_of(id);
+            if opt1 > 0 || option & 6 != 0 || self.has_sc(id, SC_SILENCE) {
+                return false;
+            }
+            // range of the skill itself; a weapon-range skill (below 0) reaches as the monster does
+            let range = if sk.range < 0 { mdb_range(self, m.mob_id) - (sk.range + 1) } else { sk.range };
+            if range > 0 && path::distance(me_x as i32, me_y as i32, tx as i32, ty as i32) > range {
                 return false;
             }
             if let Some(m) = self.world.units.get_mut(&id).and_then(|u| u.mob_mut()) {
@@ -883,9 +966,7 @@ impl Game {
                 }
             }
             let place = sk.inf & 2 != 0;
-            // a cast-sensing monster turns on whoever casts at it (mob.c:2035 is mob vs mob; players: skill_use)
-            let _ = MD_CASTSENSOR;
-            self.begin_cast(id, ms.skill, ms.lv, if place { 0 } else { tgt }, if place { tx } else { 0 }, if place { ty } else { 0 }, ms.cast as u64, 0, ms.cancel, false, ms.val as i64);
+            self.begin_cast(id, ms.skill, ms.lv, if place { 0 } else { tgt }, if place { tx } else { 0 }, if place { ty } else { 0 }, ms.cast as u64, 0, ms.cancel, false, ms.val as i64, i as i32);
             return true;
         }
         false
@@ -899,8 +980,15 @@ impl Game {
         }
     }
 
+    /// mob_countslave (mob.c:1823): its slaves within 20 cells.
     fn mob_slaves(&self, id: u32) -> i32 {
-        self.world.units.values().filter(|u| u.mob().is_some_and(|m| m.master == Some(id))).count() as i32
+        let Some((map, x, y)) = self.world.units.get(&id).map(|u| (u.map.clone(), u.x as i32, u.y as i32)) else { return 0 };
+        self.world
+            .units
+            .values()
+            .filter(|u| u.map == map && (u.x as i32 - x).abs() <= 20 && (u.y as i32 - y).abs() <= 20)
+            .filter(|u| u.mob().is_some_and(|m| m.master == Some(id)))
+            .count() as i32
     }
 
     /// Players attacking this monster right now (mob_counttargeted).
@@ -922,39 +1010,45 @@ impl Game {
         self.area_send(unit, packets::vanish(unit, 1), true);
         // the pet minds (pc.c:2832)
         self.pet_owner_died(unit);
-        // death EXP penalty from rules (Athena: 1% of next level, not novices); none on nopenalty maps
-        let here = self.world.units.get(&unit).map(|u| u.map.clone()).unwrap_or_default();
-        let free = self.db.map_flag(&here, "nopenalty");
-        let penalty = self.char_of_unit(unit).cloned().filter(|_| !free).and_then(|c| {
-            let (nb, nj) = self.exp_next(&c);
-            self.scripts.as_ref().and_then(|e| {
-                e.rule("death_penalty", &json!({"class": c.class, "next_base": nb, "next_job": nj})).ok().flatten()
-            })
-        });
-        if let Some(v) = penalty {
-            let b = v.get("base").and_then(crate::status::lua_u64).unwrap_or(0);
-            let j = v.get("job").and_then(crate::status::lua_u64).unwrap_or(0);
-            if let Some(c) = self.char_of_unit_mut(unit) {
-                c.base_exp = c.base_exp.saturating_sub(b);
-                c.job_exp = c.job_exp.saturating_sub(j);
-            }
+        // (the EXP penalty is taken on the way back to the save point: respawn_player)
+        let here = here_map(&self.world, unit);
+        if let Some(p) = self.world.units.get_mut(&unit).and_then(|u| u.player_mut()) {
+            p.died_on = Some(here);
         }
         self.send_full_status(unit);
     }
 
-    /// "Return to save point" after death.
+    /// "Return to save point" after death (pc.c:208 pc_setrestartvalue):
+    /// the HP and SP to come back with, and the death penalty, both from the
+    /// rules. The penalty is not taken on a `nopenalty` map.
     pub(crate) fn respawn_player(&mut self, unit: u32) {
         let Some(c) = self.char_of_unit(unit).cloned() else { return };
         let d = self.derive(&c);
-        let hp = self
-            .scripts
-            .as_ref()
-            .and_then(|e| e.rule("respawn_hp", &json!({"class": c.class, "max_hp": d.max_hp})).ok().flatten())
-            .and_then(|v| crate::status::lua_u64(&v))
-            .unwrap_or(1) as u32;
-        if let Some(cm) = self.char_of_unit_mut(unit) {
-            if cm.hp == 0 {
-                cm.hp = hp.max(1);
+        let died_on = self.world.units.get_mut(&unit).and_then(|u| u.player_mut()).and_then(|p| p.died_on.take());
+        let was_dead = c.hp == 0;
+        if was_dead {
+            let (nb, nj) = self.exp_next(&c);
+            let free = died_on.as_deref().is_some_and(|m| self.db.map_flag(m, "nopenalty"));
+            let r = self
+                .scripts
+                .as_ref()
+                .and_then(|e| {
+                    e.rule(
+                        "respawn",
+                        &json!({"class": c.class, "max_hp": d.max_hp, "max_sp": d.max_sp, "sp": c.sp, "base_exp": c.base_exp, "job_exp": c.job_exp,
+                                "next_base": nb, "next_job": nj, "nopenalty": free, "osiris": self.has_card(unit, 4144)}),
+                    )
+                    .ok()
+                    .flatten()
+                })
+                .unwrap_or(Value::Null);
+            let get = |k: &str, def: u64| r.get(k).and_then(crate::status::lua_u64).unwrap_or(def);
+            let (hp, sp, base, job) = (get("hp", 1), get("sp", c.sp as u64), get("base", 0), get("job", 0));
+            if let Some(cm) = self.char_of_unit_mut(unit) {
+                cm.hp = (hp as u32).clamp(1, d.max_hp);
+                cm.sp = (sp as u32).min(d.max_sp);
+                cm.base_exp = cm.base_exp.saturating_sub(base);
+                cm.job_exp = cm.job_exp.saturating_sub(job);
             }
         }
         if let Some(u) = self.world.units.get_mut(&unit) {
@@ -962,7 +1056,7 @@ impl Game {
         }
         let Point { map, x, y } = c.save_point.clone();
         self.warp_player(unit, &map, x, y);
-        self.send_hp_sp(unit);
+        self.send_full_status(unit);
     }
 
     // ------------------------------------------------------------ regen
@@ -978,10 +1072,18 @@ impl Game {
             .world
             .units
             .values()
-            .filter(|u| u.player().is_some_and(|p| p.loaded && now >= p.last_regen + 500) && u.state != 1)
+            .filter(|u| u.player().is_some_and(|p| now >= p.last_regen + 500))
             .map(|u| u.id)
             .collect();
         for id in due {
+            // dead, or still loading the map: the clocks stand at zero (pc.c:4036)
+            let u = &self.world.units[&id];
+            if u.state == 1 || !u.player().is_some_and(|p| p.loaded) {
+                let p = self.world.units.get_mut(&id).unwrap().player_mut().unwrap();
+                p.last_regen = now;
+                (p.hp_acc, p.sp_acc, p.inc_hp_acc, p.inc_sp_acc, p.spirit_acc) = (0, 0, 0, 0, 0);
+                continue;
+            }
             let sitting = self.world.units[&id].state == 2;
             let walking = self.world.units[&id].walk.is_some();
             let Some(c) = self.char_of_unit(id).cloned() else { continue };
@@ -1035,7 +1137,8 @@ impl Game {
                         }
                     }
                 }
-                if c.sp >= d.max_sp {
+                if c.sp >= d.max_sp || (hp_clock == 0 && sp_clock == 0) {
+                    // full, or nothing recovers (overweight, hidden): the clock is zeroed
                     p.sp_acc = 0;
                     p.inc_sp_acc = 0;
                 } else {
@@ -1054,7 +1157,7 @@ impl Game {
                         }
                     }
                 }
-                if sp_hp == 0 && sp_sp == 0 {
+                if (sp_hp == 0 && sp_sp == 0) || (c.hp >= d.max_hp && c.sp >= d.max_sp) {
                     p.spirit_acc = 0;
                 } else {
                     p.spirit_acc += a;
@@ -1085,6 +1188,15 @@ impl Game {
             self.send_hp_sp(id);
         }
     }
+}
+
+/// A monster's own reach (its attack range).
+fn mdb_range(g: &Game, mob_id: u32) -> i32 {
+    g.db.mob(mob_id).map(|d| d.range.max(1) as i32).unwrap_or(1)
+}
+
+fn here_map(w: &crate::world::World, unit: u32) -> String {
+    w.units.get(&unit).map(|u| u.map.clone()).unwrap_or_default()
 }
 
 pub(crate) fn rand_range(a: i32, b: i32) -> i32 {

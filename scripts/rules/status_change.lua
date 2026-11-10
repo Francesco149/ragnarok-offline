@@ -44,7 +44,7 @@ function skill_status_change_start(id, type, val1, val2, opt)
   local val3, val4 = opt.val3 or 0, opt.val4 or val2
   -- 817:5540 the target's stats shorten an ailment
   local function ailment(default, stat)
-    local t = opt.tick or (val2 > 0 and val2) or default
+    local t = (opt.tick and opt.tick > 0 and opt.tick) or (val2 > 0 and val2) or default
     if not opt.nodef then
       local def
       if stat == "mdef" then def = 100 - battle.mdef(bl)
@@ -71,6 +71,10 @@ function skill_status_change_start(id, type, val1, val2, opt)
       if res > 0 and rnd(100) < res then return false end
     end
   end
+  -- 817:5245 the undead do not freeze; 817:5251 stun, poison, blind and
+  -- silence cannot be renewed while they last
+  if type == SC.FREEZE and (battle.elem_type(bl) == 9 or battle.race(bl) == 1) then return false end
+  if (type == SC.STAN or type == SC.POISON or type == SC.BLIND or type == SC.SILENCE) and has(type) then return false end
   if type == SC.STONE or type == SC.FREEZE or type == SC.STAN or type == SC.SLEEP then
     _rt("stop_walking", id)
   end
@@ -81,6 +85,7 @@ function skill_status_change_start(id, type, val1, val2, opt)
   elseif type == SC.CONCENTRATE then tick = 1000 * (40 + val1 * 20)
   elseif type == SC.BLESSING then
     tick = 1000 * (40 + val1 * 20)
+    -- (mod0631 bug: it compares the whole element word with 9, which no monster has; the Undead are meant)
     if md and battle.elem_type(bl) ~= 9 and battle.race(bl) ~= 6 then
       stop(SC.CURSE)
       stop(SC.STONE)
@@ -123,7 +128,7 @@ function skill_status_change_start(id, type, val1, val2, opt)
   elseif type == SC.QUAGMIRE then
     tick = 5000 * val1
     for _, t in ipairs({ SC.CONCENTRATE, SC.INCREASEAGI, SC.TWOHANDQUICKEN, SC.SPEARSQUICKEN, SC.ADRENALINE, SC.LOUD }) do stop(t) end
-  elseif type == SC.SIGNUMCRUCIS then tick = 5000 * 60 * 25
+  elseif type == SC.SIGNUMCRUCIS then tick = 5000 * 60 * 25 -- mod0631's length (the status itself is only started by 817's Signum Crucis)
   elseif type == SC.FLAMELAUNCHER or type == SC.FROSTWEAPON or type == SC.LIGHTNINGLOADER or type == SC.SEISMICWEAPON then
     tick = 1000 * (15 + val1 * 15)
     enchant_end(bl, type)
@@ -144,14 +149,19 @@ function skill_status_change_start(id, type, val1, val2, opt)
   elseif type == SC.EXPLOSIONSPIRITS then tick = 180000; val2 = 75 + 25 * val1
   elseif type == SC.STEELBODY then tick = 1000 * 30 * val1
   elseif type == SC.SPEEDPOTION0 or type == SC.SPEEDPOTION1 or type == SC.SPEEDPOTION2 then
-    -- Concentration 90, Awakening 85, Berserk 80 (% of the attack delay); the stronger replaces
+    -- Concentration 90, Awakening 85, Berserk 80 (% of the attack delay); if
+    -- several are on, the strongest counts (status.lua)
     tick = 1000 * val1
     val2 = 100 - 5 * (2 + type - SC.SPEEDPOTION0)
-    for t = SC.SPEEDPOTION0, SC.SPEEDPOTION2 do if t ~= type then stop(t) end end
   elseif type == SC.STONE then
-    -- 817:5541 MDEF takes 200 ms a point off
-    tick = opt.tick or (val2 > 0 and val2) or 600000
+    -- 817:5541 MDEF takes 200 ms a point off. Five seconds of turning to
+    -- stone first (val2 = 1), then the seconds counted in val3.
+    tick = (opt.tick and opt.tick > 0 and opt.tick) or (val2 > 0 and val2) or 600000
     if not opt.nodef then tick = math.max(1000, tick - battle.mdef(bl) * 200) end
+    val3 = math.max(1, floor(tick / 1000))
+    tick = 5000
+    val2 = 1
+    val4 = 0
   elseif type == SC.SLEEP then tick = ailment(30000, "int")
   elseif type == SC.FREEZE then tick = ailment(3000 * val1, "mdef")
   elseif type == SC.STAN then tick = ailment(5000, "vit")
@@ -185,7 +195,6 @@ function skill_status_change_start(id, type, val1, val2, opt)
     val3 = (val1 | 1) * (val1 | 1) - 1
   elseif type == SC.AUTOCOUNTER then tick = opt.tick or skill_get_time(SK.KN_AUTOCOUNTER, val1) -- 817 cast_db: 0.4 s a level
   elseif type == SC.POISONREACT then tick = opt.tick or skill_get_time(SK.AS_POISONREACT, val1) -- 817 cast_db
-  elseif type == SC.SPLASHER then tick = opt.tick or 5000
   elseif type == SC.RIDING or type == SC.FALCON or type == SC.WEIGHT50 or type == SC.WEIGHT90 then tick = 600000
   else
     return false -- UnknownStatusChange
@@ -195,7 +204,6 @@ function skill_status_change_start(id, type, val1, val2, opt)
   if type == SC.STONE or type == SC.FREEZE or type == SC.STAN or type == SC.SLEEP then
     _rt("stop_attack", id)
     for t = SC.STONE, SC.SLEEP do if t ~= type then stop(t) end end
-    _rt("cast_cancel", id)
   elseif type == SC.HIDDING or type == SC.CLOAKING then
     _rt("stop_attack", id)
   end
@@ -205,6 +213,7 @@ end
 
 -- skill.c:3458: what Sight and Ruwach do to each unit around the caster
 local function reveal(src, type)
+  -- AREA_SIZE: the screen (20 cells in mod0631, 14 here)
   for _, tid in ipairs(_rt("in_area", src.map, src.x - 14, src.y - 14, src.x + 14, src.y + 14)) do
     if tid ~= src.id then
       local bl = battle.get(tid)
@@ -265,9 +274,23 @@ function skill_status_change_timer(id, type)
       end
       return again(1000, nil, nil, t.val3 - 1)
     end
-  elseif type == SC.SPLASHER then
-    skill_splasher_burst(id, t)
-  elseif type == SC.AETERNA or type == SC.TRICKDEAD or type == SC.STONE or type == SC.RIDING
+  elseif type == SC.STONE then
+    -- 817:5107 turned to stone after the first five seconds; then a second
+    -- at a time, and every fifth one 1% of max HP while above a quarter
+    if t.val2 ~= 0 then
+      _rt("stop_walking", id)
+      return again(1000, nil, 0, nil)
+    end
+    if t.val3 - 1 > 0 then
+      local n = t.val4 + 1
+      local mhp = battle.max_hp(bl)
+      if n % 5 == 0 and battle.hp(bl) > (mhp >> 2) then
+        _rt("bl_set", id, "hp", battle.hp(bl) - math.max(1, floor(mhp / 100)))
+      end
+      _rt("sc_touch", id, type, nil, nil, t.val3 - 1, 1000, n)
+      return
+    end
+  elseif type == SC.AETERNA or type == SC.TRICKDEAD or type == SC.RIDING
     or type == SC.FALCON or type == SC.WEIGHT50 or type == SC.WEIGHT90 then
     return again(600000) -- no time limit
   end

@@ -5,15 +5,29 @@
 
 local floor = math.floor
 
--- battle_athena.conf (mod0631): death_penalty_base/job 100 = 1% of the
--- EXP needed for the next level; novices lose nothing.
-function rules.death_penalty(t)
-  if t.class == 0 then return { base = 0, job = 0 } end
-  return { base = floor(t.next_base / 100), job = floor(t.next_job / 100) }
+-- pc.c:208 pc_setrestartvalue, with mod0631's battle_athena.conf
+-- (death_penalty_type 0, death_penalty_base / _job 100, restart_hp_rate 0,
+-- restart_sp_rate 0): what a dead character comes back with at the save
+-- point, and what dying cost.
+--   HP: 1; a Novice half its max HP; with an Osiris Card all HP and SP.
+--   EXP: 1% of the base and job EXP *held* (type 0; not of the EXP the next
+--   level needs), nothing for Novices, at the top level, or on a map
+--   flagged nopenalty.
+-- t: class, max_hp, max_sp, sp, base_exp, job_exp, next_base, next_job,
+--    nopenalty, osiris. Returns {hp, sp, base, job} (base/job = EXP lost).
+function rules.respawn(t)
+  local r = { hp = 1, sp = t.sp, base = 0, job = 0 }
+  if t.osiris then
+    r.hp, r.sp = t.max_hp, t.max_sp
+  elseif t.class == 0 then
+    r.hp = floor(t.max_hp / 2)
+  end
+  if t.class ~= 0 and not t.nopenalty then
+    if t.next_base > 0 then r.base = floor(t.base_exp * 100 / 10000) end
+    if t.next_job > 0 then r.job = floor(t.job_exp * 100 / 10000) end
+  end
+  return r
 end
-
--- restart_hp_rate 0 (mod0631) -> 1 HP after "return to save point".
-function rules.respawn_hp(t) return 1 end
 
 -- pc.c:3806-4060. The server runs the clocks (crates/ro-game/src/combat.rs
 -- tick_regen); this says how fast they run and what each tick gives.

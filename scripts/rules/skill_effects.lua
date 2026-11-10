@@ -63,7 +63,7 @@ function skill_castend_damage_id(src_id, bl_id, skillid, skilllv, opt)
     -- by the rows of 817:1913 (see skill_castend_nodamage_id)
     skill_attack(BF.WEAPON, src_id, src_id, bl_id, skillid, skilllv, opt.wflag or 1)
     local after = get(bl_id)
-    if after and not after.dead and not opt.sub then
+    if after and not after.dead then
       skill_blown(src, bl_id, 1)
       _rt("clif_fixpos", bl_id)
     end
@@ -257,7 +257,7 @@ function skill_castend_nodamage_id(src_id, bl_id, skillid, skilllv, opt)
     for _, t in ipairs(skill_area(src, src.map, src.x, src.y, 14, BCT.ENEMY)) do
       local race = battle.race(t)
       if (race == 6 or race == 1) and rnd(100) < skilllv * 2 + battle.lv(src) + 28 - battle.lv(t) then
-        skill_status_change_start(t.id, SC.SIGNUMCRUCIS, skilllv, skilllv + 14, { tick = skill_get_time2(skillid, skilllv) })
+        skill_status_change_start(t.id, SC.SIGNUMCRUCIS, skilllv, skilllv + 14) -- 817:5365 DEF down by 14% + 1% a level
         _rt("clif_emotion", t.id, 4)
       end
     end
@@ -282,13 +282,9 @@ function skill_castend_nodamage_id(src_id, bl_id, skillid, skilllv, opt)
     skill_status_change_end(src_id, SC.HIDDING)
 
   elseif SC_PARTY[skillid] then
-    -- skill.c:1332: the whole party; alone, the caster. A monster's slaves count as its party.
-    local list = { bl }
-    if md then list = skill_area(src, src.map, src.x, src.y, 14, BCT.PARTY) end
-    for _, t in ipairs(list) do
-      nodamage(t.id, t.id, skillid, skilllv)
-      skill_status_change_start(t.id, SkillStatusChangeTable[skillid], skilllv, 0)
-    end
+    -- skill.c:1332: the whole party; without one (a lone player, a monster), the target
+    nodamage(bl_id, bl_id, skillid, skilllv)
+    skill_status_change_start(bl_id, SkillStatusChangeTable[skillid], skilllv, 0)
 
   elseif SC_TOGGLE[skillid] then
     -- skill.c:1353: on, or off again
@@ -360,7 +356,7 @@ function skill_castend_nodamage_id(src_id, bl_id, skillid, skilllv, opt)
     nodamage(src_id, bl_id, skillid, skilllv)
     if sd then
       if _rt("map_flag", sd.map, "noteleport") then
-        _rt("clif_map_info", src_id, 0) -- "Unable to Teleport in this area"
+        _rt("clif_map_info", src_id, 0) -- ours: the client's "Unable to Teleport in this area" (mod0631 says nothing)
         return
       end
       if skilllv == 1 then
@@ -414,6 +410,15 @@ function skill_castend_nodamage_id(src_id, bl_id, skillid, skilllv, opt)
       end
     end
     if not hit[bl_id] then skill_castend_damage_id(src_id, bl_id, skillid, skilllv, { wflag = 1 }) end
+
+  elseif skillid == SK.AS_SPLASHER then
+    -- Not in mod0631. eAthena 817 skill.c:1326 makes it a plain splash: the
+    -- target and the enemies within 2 cells (its damage: battle.lua). The
+    -- delayed burst of the client's skill text is in neither.
+    skill_attack(BF.WEAPON, src_id, src_id, bl_id, skillid, skilllv, 0)
+    for _, t in ipairs(skill_area(src, bl.map, bl.x, bl.y, 2, BCT.ENEMY)) do
+      if t.id ~= bl_id then skill_attack(BF.WEAPON, src_id, src_id, t.id, skillid, skilllv, 0, { type = 5 }) end
+    end
 
   elseif skillid == SK.RG_INTIMIDATE then
     if sd then
@@ -525,6 +530,12 @@ function skill_castend_pos2(src_id, x, y, skillid, skilllv, opt)
   elseif skillid == SK.WZ_METEOR then
     -- skill.c:1863: 2 + level/2 meteors, a second apart, on random cells within 2 of the spot
     local n = 2 + (skilllv >> 1)
+    local map = src.map
+    -- a meteor does not follow a caster who left the map (skill.c:671)
+    local function here()
+      local s = get(src_id)
+      return s and not s.dead and s.map == map
+    end
     local px, py
     for i = 0, n - 1 do
       local tx, ty = x + rnd(5) - 2, y + rnd(5) - 2
@@ -533,6 +544,7 @@ function skill_castend_pos2(src_id, x, y, skillid, skilllv, opt)
       else
         local fx, fy, sx, sy = px, py, tx, ty
         battle.after(i * 1000, function()
+          if not here() then return end
           skill_unitsetting(src_id, skillid, skilllv, fx, fy, 0)
           _rt("clif_skill_poseffect", src_id, skillid, skilllv, sx, sy)
         end)
@@ -540,13 +552,13 @@ function skill_castend_pos2(src_id, x, y, skillid, skilllv, opt)
       px, py = tx, ty
     end
     local lx, ly = px, py
-    battle.after(n * 1000, function() skill_unitsetting(src_id, skillid, skilllv, lx, ly, 0) end)
+    battle.after(n * 1000, function() if here() then skill_unitsetting(src_id, skillid, skilllv, lx, ly, 0) end end)
 
   elseif skillid == SK.AL_WARP then
     -- skill.c:1893: where to? the save point, then one memo point per level above 1
     if not sd then return end
     if _rt("map_flag", sd.map, "noteleport") then
-      _rt("clif_map_info", src_id, 0) -- "Unable to Teleport in this area"
+      _rt("clif_map_info", src_id, 0) -- ours, as for Teleport
       return
     end
     local save = _rt("pc_save_point", src_id)
@@ -565,8 +577,8 @@ function rules.skill_castend_map(a)
   if not sd or sd.dead then return end
   if sd.opt1 > 0 or (sd.option & 6) ~= 0 or sc(sd, SC.DIVINA) then return end
   local map = (a.map or ""):gsub("%.gat$", "")
-  if map == "cancel" or map == "" then return end
   _rt("stop_attack", a.src)
+  if map == "cancel" or map == "" then return end
   if a.skill == SK.AL_TELEPORT then
     if map == "Random" then _rt("pc_warp", a.src, "Random") else _rt("pc_warp", a.src, "SavePoint") end
   elseif a.skill == SK.AL_WARP then

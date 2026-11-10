@@ -101,9 +101,10 @@ function skill_additional_effect(src_id, bl_id, skillid, skilllv, attack_type)
     end
     -- Enchant Poison: the status carries a "chance to poison" (skill.c:3802,
     -- 3% to 7%) that neither mod0631 nor 817 ever rolls. Rolled here on each hit.
+    -- The poison lasts as Envenom's of the same level does (ours).
     local ep = sc(src, SC.ENCPOISON)
     if ep and not undead and rnd(100) < floor(ep.val2 * sc_def_vit / 100) then
-      start(SC.POISON, ep.val1, skill_get_time2(SK.AS_ENCHANTPOISON, ep.val1))
+      start(SC.POISON, ep.val1, skill_get_time2(SK.TF_POISON, ep.val1))
     end
   elseif skillid == SK.SM_BASH then
     -- Fatal Blow: Bash from level 6 stuns
@@ -236,7 +237,8 @@ function skill_attack(attack_type, src_id, dsrc, bl_id, skillid, skilllv, wflag,
   local ptype = opt.type or -1
   if dmg.damage <= 0 or dmg.damage < dmg.div then dmg.blewcount = 0 end
   if dmg.blewcount ~= 0 then
-    skill_blown(dsrc_bl, bl_id, dmg.blewcount & 0xffff, (dmg.blewcount & 0x10000) ~= 0 and false)
+    -- 0x10000: thrown back from the way it faces, not away from the source
+    skill_blown(dsrc_bl, bl_id, dmg.blewcount & 0xffff, (dmg.blewcount & 0x10000) ~= 0)
     _rt("clif_skill_damage2", dsrc_bl.id, bl_id, dmg.amotion, dmg.dmotion, dmg.damage, dmg.div, skillid, lv, ptype)
   else
     _rt("clif_skill_damage", dsrc_bl.id, bl_id, dmg.amotion, dmg.dmotion, dmg.damage, dmg.div, skillid, lv, ptype)
@@ -362,7 +364,6 @@ function rules.skill_use(a)
   if sd.opt1 > 0 or (sd.option & 6) ~= 0 or sc(sd, SC.DIVINA) then
     if not hidden_ok(sd, skill) or sd.opt1 > 0 then return nil end
   end
-  if sc(sd, SC.TRICKDEAD) and skill ~= SK.NV_TRICKDEAD then return nil end
   if skill == SK.HT_BLITZBEAT and not sd.st.falcon then return nil end
 
   -- range
@@ -391,7 +392,9 @@ function rules.skill_use(a)
   end
   if a.item then casttime, delay = 0, 0 end -- a skill from an item: instant
 
-  -- a cast-sensing monster turns on whoever casts at it (skill.c:3308)
+  -- A cast-sensing monster turns on whoever casts at it (skill.c:3308;
+  -- there: unless it is attacking; here: unless it has a target). mod0631
+  -- defines a "casttargeted" skill condition and never raises it; raised here.
   if bl and (casttime > 0 or forcecast) and bl.kind == "mob" and (bl.db.mode & 0x10) ~= 0 and not bl.target then
     _rt("mob_target", bl.id, sd.id, 0)
     _rt("mob_event", bl.id, "casttargeted")
@@ -442,11 +445,10 @@ function skill_check_condition(sd, skill, lv, a)
     if sd.char.zeny < zeny then return fail(5) end
   elseif skill == SK.MC_VENDING then
     if not sd.st.cart then return fail() end
-  elseif skill == SK.AC_DOUBLE or skill == SK.AC_SHOWER or skill == SK.AC_CHARGEARROW then
+  elseif skill == SK.AC_DOUBLE or skill == SK.AC_SHOWER then
     if w ~= 11 then return fail(6) end
   elseif skill == SK.KN_BRANDISHSPEAR then
     if not sd.st.riding then return fail() end
-    if w ~= 4 and w ~= 5 then return fail(6) end
   elseif skill == SK.KN_PIERCE or skill == SK.KN_SPEARSTAB or skill == SK.KN_SPEARBOOMERANG then
     if w ~= 4 and w ~= 5 then return fail(6) end
   elseif skill == SK.KN_TWOHANDQUICKEN then
@@ -467,15 +469,12 @@ function skill_check_condition(sd, skill, lv, a)
   elseif skill == SK.RG_RAID then
     if (sd.option & 2) == 0 then return fail() end
   elseif skill == SK.MC_CARTREVOLUTION then
+    -- ours: no cart, no Cart Revolution ("Hit a target hard using cart", the client's skill text); mod0631 does not check
     if not sd.st.cart then return fail() end
   end
 
   if sp > 0 and sd.char.sp < sp then return fail(1) end
-  -- arrows for the bow skills (one each; Arrow Shower too)
-  if (skill == SK.AC_DOUBLE or skill == SK.AC_SHOWER or skill == SK.AC_CHARGEARROW) and not sd.st.ammo then
-    _rt("pc_ammo_use", id)
-    return false
-  end
+  -- (mod0631 takes arrows for plain shots only: the bow skills use none. THREADS.md #22)
   for item, n in pairs(items) do
     -- a Mistress Card (4132) casts without gemstones
     if not (GEMS[item] and battle.dcard(sd, 4132)) then
@@ -485,10 +484,10 @@ function skill_check_condition(sd, skill, lv, a)
       end
     end
   end
+  -- (mod0631 bug: an item in the first inventory slot was not used up, skill.c:3140)
   for item, n in pairs(items) do
     if not (GEMS[item] and battle.dcard(sd, 4132)) then _rt("pc_item_take", id, item, n) end
   end
-  if skill == SK.AC_DOUBLE or skill == SK.AC_SHOWER or skill == SK.AC_CHARGEARROW then _rt("pc_ammo_use", id) end
   if sp > 0 then _rt("bl_set", id, "sp", sd.char.sp - sp) end
   if zeny > 0 then _rt("bl_set", id, "zeny", sd.char.zeny - zeny) end
   return true
@@ -509,8 +508,6 @@ function rules.skill_castend(a)
     bl = get(a.target)
     if not bl or bl.map ~= src.map then return false end
   end
-  if src.kind == "mob" and (src.opt1 > 0 or (src.option & 6) ~= 0 or sc(src, SC.DIVINA)) then return false end
-
   local tx, ty = a.x, a.y
   if bl then tx, ty = bl.x, bl.y end
   local range = sd and skill_range(sd, skill) + battle_config.pc_skill_add_range or skill_get_range(skill)
@@ -526,9 +523,9 @@ function rules.skill_castend(a)
       _rt("clif_skill_fail", sd.id, skill, 0, 0)
       return false
     end
-  elseif out and src.kind == "mob" and range >= 0 and not place then
-    -- mob.c:1949: the monster's target moved out of reach
-    if range + 1 < battle.distance(src, bl) then return false end
+  elseif out then
+    -- mob.c:1943, 1982: the monster's target (or cell) is out of the skill's range
+    return false
   end
 
   if place then
@@ -539,8 +536,8 @@ function rules.skill_castend(a)
   if (skill_get_inf(skill) & 1) ~= 0 and not battle.is_enemy(src, bl) then return false end
   local nk = skill_get_nk(skill)
   if nk == 1 then
-    -- Heal and Resurrection hurt the undead
-    if (skill == SK.AL_HEAL or skill == SK.ALL_RESURRECTION) and battle.elem_type(bl) == 9 and battle.is_enemy(src, bl) then
+    -- Heal and Resurrection hurt whatever is of the Undead element (friend or not: skill.c:1780)
+    if (skill == SK.AL_HEAL or skill == SK.ALL_RESURRECTION) and battle.elem_type(bl) == 9 then
       skill_castend_damage_id(a.src, a.target, skill, lv, a)
     else
       skill_castend_nodamage_id(a.src, a.target, skill, lv, a)

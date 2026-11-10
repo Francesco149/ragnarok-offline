@@ -156,7 +156,8 @@ formula comes from in a comment (see PROVENANCE.md).
 | `skill.lua` | using a skill: `rules.skill_use` (range, cast time, delay), `skill_check_condition` (SP, items, weapon), `rules.skill_castend`, `skill_attack`, side effects of a hit |
 | `skill_effects.lua` | what each skill does once cast |
 | `skill_units.lua` | ground skills: cells, who they act on, how long |
-| `combat.lua` | `rules.death_penalty`, `rules.respawn_hp`, `rules.regen` |
+| `combat.lua` | `rules.respawn` (HP and EXP lost on returning from death), `rules.regen`, `item_heal`, shop prices |
+| `produce.lua` | forging and ore refining |
 | `refine.lua` | `rules.refine_chance` |
 
 The server calls `rules.weapon_attack{src, target}` when an attack comes

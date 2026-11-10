@@ -80,7 +80,7 @@ function skill_unitsetting(src_id, skillid, skilllv, x, y, flag)
     range = 1
   elseif skillid == SK.AL_WARP then
     target = BCT.ALL
-    val1 = skilllv + 6 -- people it lets through
+    val1 = skillid + 6 -- people it lets through: 33 (skill.c:2018; the skill's id, not its level, is what the source adds)
     limit = flag == 0 and 2000 or 5000 * (1 + skilllv)
   elseif skillid == SK.PR_SANCTUARY then
     count = 21
@@ -128,6 +128,14 @@ function skill_unitsetting(src_id, skillid, skilllv, x, y, flag)
     limit, interval, count = 5000 * skilllv, 1000, 5
   elseif skillid == SK.HT_TALKIEBOX then
     limit, range, target = 600000, 1, BCT.ALL -- 817 cast_db: 600 s
+  end
+
+  -- skill.c:4223: a player keeps 32 groups, a monster 4; the oldest makes room
+  local mine = {}
+  for _, og in pairs(groups) do if og.src == src_id then mine[#mine + 1] = og end end
+  if #mine >= (src.kind == "player" and 32 or 4) then
+    table.sort(mine, function(p, q) return p.tick < q.tick or (p.tick == q.tick and p.id < q.id) end)
+    skill_delunitgroup(mine[1])
   end
 
   local g = {
@@ -235,7 +243,7 @@ local function onplace(c, bl, now)
       if battle.dcard(bl, 4128) then heal = 0 end
       _rt("clif_skill_nodamage", c.id, bl.id, SK.AL_HEAL, heal, 1)
       battle.heal(bl.id, heal, 0)
-    elseif battle.is_enemy(ss, bl) then
+    else
       skill_attack(BF.MAGIC, g.src, cell_src, bl.id, g.skill, g.lv, 0)
     end
   elseif uid == 0x84 then -- Magnus Exorcismus: demons and the undead
@@ -245,7 +253,7 @@ local function onplace(c, bl, now)
   elseif uid == 0x85 or uid == 0x7e then -- Pneuma, Safety Wall
     local type = uid == 0x85 and SC.PNEUMA or SC.SAFETYWALL
     local t = sc(bl, type)
-    local left = math.max(100, g.limit - (now - g.tick))
+    local left = g.limit -- skill.c:3993: the group's whole time; leaving or the cell's end stops it sooner
     if not t then
       skill_status_change_start(bl.id, type, g.val1, c.id, { tick = left })
     elseif t.val2 ~= c.id then
@@ -271,7 +279,8 @@ local function onplace(c, bl, now)
     skill_attack(BF.MAGIC, g.src, cell_src, bl.id, g.skill, g.lv, 0)
   elseif uid == 0x90 then -- Skid Trap: slides the victim, gone 3 s later
     if g.val2 == 0 then
-      skill_blown(cell_src, bl.id, g.lv)
+      -- one cell at a time, backwards from the way the victim faces
+      for _ = 1, g.lv do skill_blown(cell_src, bl.id, 1, true) end
       _rt("clif_fixpos", bl.id)
       g.limit = now - g.tick + 3000
       g.val2 = bl.id
@@ -295,10 +304,10 @@ local function onplace(c, bl, now)
     end
   elseif uid == 0x80 then -- Warp Portal, open
     if bl.kind == "player" and g.valstr then
+      -- the one stepping in after the last passage closes it (skill.c:2521)
+      local left = g.val1
       g.val1 = g.val1 - 1
-      local last = g.val1 <= 0
-      _rt("pc_warp", bl.id, g.valstr, g.to_x, g.to_y)
-      if last then skill_delunitgroup(g) end
+      if left > 0 then _rt("pc_warp", bl.id, g.valstr, g.to_x, g.to_y) else skill_delunitgroup(g) end
     end
   elseif uid == 0x8e or uid == 0x92 then -- Quagmire, Venom Dust
     local type = SkillStatusChangeTable[g.skill]
@@ -355,7 +364,7 @@ del_cell = function(c, from_group)
   if g then
     -- those standing in it lose what it gave (skill.c:2676)
     local uid = g.unit_id
-    if uid == 0x85 or uid == 0x7e or uid == 0x8e or uid == 0x91 then
+    if uid == 0x85 or uid == 0x7e or uid == 0x8e then
       local range = c.range ~= 0 and c.range or g.range
       for _, id in ipairs(_rt("in_area", c.map, c.x - range, c.y - range, c.x + range, c.y + range)) do
         local bl = get(id)
@@ -408,7 +417,7 @@ function skill_unit_move(bl_id)
   local now = _rt("now")
   local near = {}
   for _, c in pairs(cells) do
-    if c.map == bl.map and math.abs(c.x - bl.x) <= 10 and math.abs(c.y - bl.y) <= 10 then near[#near + 1] = c end
+    if c.map == bl.map and math.abs(c.x - bl.x) <= 5 and math.abs(c.y - bl.y) <= 5 then near[#near + 1] = c end
   end
   table.sort(near, function(a, b) return a.id < b.id end)
   for _, c in ipairs(near) do
@@ -430,14 +439,4 @@ function skill_unit_owner_gone(src_id)
   local list = {}
   for _, g in pairs(groups) do if g.src == src_id then list[#list + 1] = g end end
   for _, g in ipairs(list) do skill_delunitgroup(g) end
-end
-
--- Venom Splasher is not in mod0631. eAthena 817: the mark bursts when its
--- time is up, hitting the enemies around the marked one.
-function skill_splasher_burst(bl_id, t)
-  local bl, src = get(bl_id), get(t.val3)
-  if not bl or not src or bl.dead then return end
-  for _, e in ipairs(skill_area(src, bl.map, bl.x, bl.y, 2, BCT.ENEMY)) do
-    skill_attack(BF.WEAPON, src.id, src.id, e.id, SK.AS_SPLASHER, t.val1, 0, e.id ~= bl_id and { type = 5 } or nil)
-  end
 end

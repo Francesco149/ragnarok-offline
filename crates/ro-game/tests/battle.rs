@@ -670,3 +670,75 @@ fn monster_skill_names_resolve() {
 fn skill_num(t: &mut T, name: &str, lv: u16) -> u16 {
     t.lua(&format!("skill_get_num(SK.{name}, {lv})")).trim().parse().unwrap()
 }
+
+/// Dying: no recovery while dead, and on returning to the save point 1% of
+/// the EXP held is gone and the character has 1 HP (pc_setrestartvalue).
+#[test]
+fn death_and_return() {
+    let mut t = T::new();
+    t.lua("job_change(1); player.base_level = 20; player.base_exp = 10000; player.job_exp = 5000; heal(9999, 9999)");
+    let me = t.me;
+    t.lua(&format!("_rt('bl_damage', 0, {me}, 99999)"));
+    assert_eq!(t.hp(), 0);
+    assert_eq!(t.g.world.units[&me].state, 1, "dead");
+    assert_eq!(t.g.store.chars[&t.cid].base_exp, 10000, "nothing lost yet");
+    t.run(60_000);
+    assert_eq!(t.hp(), 0, "the dead do not recover");
+    let mut w = Writer::new(0x00b2);
+    w.u8(0);
+    t.send(w);
+    t.send(Writer::new(0x007d));
+    let c = &t.g.store.chars[&t.cid];
+    assert_eq!((c.hp, c.base_exp, c.job_exp), (1, 9900, 4950));
+    // a minute of death is not paid out in one go afterwards
+    t.run(600);
+    assert!(t.hp() <= 1 + 20, "regen burst after respawn: {} HP", t.hp());
+    // a Novice comes back with half its HP and loses nothing
+    t.lua("job_change(0); player.base_exp = 10000");
+    t.lua(&format!("_rt('bl_damage', 0, {me}, 99999)"));
+    let mut w = Writer::new(0x00b2);
+    w.u8(0);
+    t.send(w);
+    t.send(Writer::new(0x007d));
+    let max = t.st("max_hp") as u32;
+    let c = &t.g.store.chars[&t.cid];
+    assert_eq!((c.hp, c.base_exp), (max / 2, 10000));
+}
+
+/// Stone Curse (eAthena 817): five seconds of turning to stone, during which
+/// the victim still acts; then stone until the time is up.
+#[test]
+fn stone_sets_then_wears_off() {
+    let mut t = T::new();
+    let mob = t.spawn(27, 25, 1002);
+    t.lua(&format!("skill_status_change_start({mob}, SC.STONE, 1, 0, {{ tick = 12000 }})"));
+    assert_eq!(t.lua(&format!("battle.get({mob}).opt1")).trim(), "0", "still turning");
+    t.run(5500);
+    assert_eq!(t.lua(&format!("battle.get({mob}).opt1")).trim(), "1", "stone");
+    t.run(13_000);
+    assert_eq!(t.lua(&format!("battle.sc(battle.get({mob}), SC.STONE) and 1 or 0")).trim(), "0", "worn off");
+}
+
+/// EXP levels a character up: base level with status points, job level
+/// with a skill point (the tables of data/db/exp.toml must have loaded).
+#[test]
+fn exp_levels_up() {
+    let mut t = T::new();
+    assert!(t.g.db.exp.base.len() >= 98 && t.g.db.exp.base[0] == 9, "base EXP table: {:?}", &t.g.db.exp.base.iter().take(3).collect::<Vec<_>>());
+    assert_eq!(t.g.db.exp.job_novice[0], 10);
+    let c = &t.g.store.chars[&t.cid];
+    let (sp0, kp0) = (c.status_point, c.skill_point);
+    // 9 base EXP for level 2, 10 job EXP for job level 2
+    t.lua("give_exp(9, 10)");
+    let c = &t.g.store.chars[&t.cid];
+    assert_eq!((c.base_level, c.job_level), (2, 2));
+    assert_eq!(c.status_point, sp0 + (2 + 14) / 5);
+    assert_eq!(c.skill_point, kp0 + 1);
+    assert!(!t.packets(0x019b).is_empty(), "level-up effect");
+    // a Poring's 2 EXP (mobs.toml) by killing it
+    let before = t.g.store.chars[&t.cid].base_exp;
+    let mob = t.spawn(26, 25, 1002);
+    let me = t.me;
+    t.lua(&format!("_rt('bl_damage', {me}, {mob}, 9999)"));
+    assert_eq!(t.g.store.chars[&t.cid].base_exp, before + 2);
+}

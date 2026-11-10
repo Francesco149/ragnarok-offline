@@ -224,7 +224,8 @@ impl Game {
             self.send(sid, packets::equip_ack(idx, 0, false));
             return;
         }
-        // unidentified equipment cannot be worn
+        // unidentified equipment cannot be worn (ours: mod0631's pc_isequip
+        // does not check; the appraisal would have no point)
         if !it.identify {
             self.send(sid, packets::equip_ack(idx, 0, false));
             return;
@@ -232,7 +233,8 @@ impl Game {
         let mut loc = d.loc;
         let used: u32 = c.inventory.iter().map(|x| x.equip).fold(0, |a, b| a | b);
         if loc & (EQP_ACC_L | EQP_ACC_R) == (EQP_ACC_L | EQP_ACC_R) {
-            loc = if used & EQP_ACC_L == 0 { EQP_ACC_L } else { EQP_ACC_R };
+            // pc.c:3489: the right slot if only the left is taken, else the left
+            loc = if used & (EQP_ACC_L | EQP_ACC_R) == EQP_ACC_L { EQP_ACC_R } else { EQP_ACC_L };
         }
         // an Assassin with Lefthand Mastery (134) wields a second one-handed
         // weapon in the shield hand (mod0631 pc_equipitem: pos 0x22)

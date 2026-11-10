@@ -60,6 +60,8 @@ pub struct Cast {
     pub cancelable: bool,
     /// Skill argument of a monster skill line (monster to summon, emotion).
     pub val: i64,
+    /// Which line of the monster's skill list this is (-1: none).
+    pub line: i32,
 }
 
 /// One cell of a ground skill. Its group and behaviour are the rules'.
@@ -218,7 +220,11 @@ impl Game {
     pub(crate) fn opts_of(&self, unit: u32) -> (u16, u16, u16) {
         let base = self.char_of_unit(unit).map(|c| c.option as u16).unwrap_or(0);
         let Some(sc) = self.sc_map(unit) else { return (0, 0, base) };
-        let opt1 = (SC_STONE..=SC_SLEEP).find(|k| sc.contains_key(k)).map(|k| k - SC_STONE + 1).unwrap_or(0);
+        // stone only counts once it has set (val2 = 1 while still turning: eAthena 817)
+        let opt1 = (SC_STONE..=SC_SLEEP)
+            .find(|k| sc.get(k).is_some_and(|s| *k != SC_STONE || s.val2 == 0))
+            .map(|k| k - SC_STONE + 1)
+            .unwrap_or(0);
         let mut opt2 = 0;
         for k in SC_POISON..=SC_BLIND {
             if sc.contains_key(&k) {
@@ -362,6 +368,8 @@ impl Game {
         }
         let now = self.now();
         let (opt1, _, option) = self.opts_of(unit);
+        // (playing dead: ours. clif_parse_WalkToXY does not check it, so in
+        // mod0631 one could walk about while "dead")
         if opt1 > 0 || self.has_sc(unit, SC_ANKLE) || self.has_sc(unit, SC_TRICKDEAD) {
             return false;
         }
@@ -453,7 +461,13 @@ impl Game {
             }
         }
         if !endure {
+            // pc.c:2249 pc_stop_walking(sd, 3): stopped, and held for the damage motion
             self.stop_walking(target);
+            let dmotion = self.char_of_unit(target).map(|c| self.derive(c).dmotion as u64).unwrap_or(0);
+            let now = self.now();
+            if let Some(p) = self.world.units.get_mut(&target).and_then(|u| u.player_mut()) {
+                p.canmove = p.canmove.max(now + dmotion);
+            }
         }
         let dead = {
             let Some(c) = self.char_of_unit_mut(target) else { return false };
@@ -532,20 +546,23 @@ impl Game {
         let from_item = item.is_some_and(|(s, _)| s == skill);
         let r = self.rule_call("skill_use", json!({"src": unit, "skill": skill, "lv": lv, "target": target, "x": x, "y": y, "item": from_item}));
         let Some(r) = r.filter(|v| v.is_object()) else { return };
-        self.begin_cast(unit, skill, lv, field(&r, "target") as u32, x, y, field(&r, "cast") as u64, field(&r, "delay") as u64, r.get("cancelable").and_then(Value::as_bool).unwrap_or(true), r.get("forcecast").and_then(Value::as_bool).unwrap_or(false), 0);
+        self.begin_cast(unit, skill, lv, field(&r, "target") as u32, x, y, field(&r, "cast") as u64, field(&r, "delay") as u64, r.get("cancelable").and_then(Value::as_bool).unwrap_or(true), r.get("forcecast").and_then(Value::as_bool).unwrap_or(false), 0, -1);
     }
 
     /// Start a cast decided by `rules.skill_use` / the monster skill rules:
     /// casting bar (0x013e), timers, and the cast end when there is no cast time.
     #[allow(clippy::too_many_arguments)]
-    pub(crate) fn begin_cast(&mut self, unit: u32, skill: u16, lv: u16, target: u32, x: u16, y: u16, cast_ms: u64, delay_ms: u64, cancelable: bool, forcecast: bool, val: i64) {
+    pub(crate) fn begin_cast(&mut self, unit: u32, skill: u16, lv: u16, target: u32, x: u16, y: u16, cast_ms: u64, delay_ms: u64, cancelable: bool, forcecast: bool, val: i64, line: i32) {
         let now = self.now();
         let element = self.db.skill(skill).map(|s| s.element as u32).unwrap_or(0);
         if cast_ms > 0 || forcecast {
             self.area_send(unit, packets::skill_casting(unit, target, x, y, skill, element, cast_ms as u32), true);
         }
-        let cast = Cast { skill, lv, target, x, y, end_at: now + cast_ms, cancelable: cancelable && cast_ms > 0, val };
-        self.stop_walking_for_cast(unit);
+        let cast = Cast { skill, lv, target, x, y, end_at: now + cast_ms, cancelable: cancelable && cast_ms > 0, val, line };
+        // a player stops to cast (but a Sage with Free Cast); a monster's walk runs on
+        if self.world.units.get(&unit).is_some_and(|u| u.is_player()) && self.skill_level(unit, 278) == 0 {
+            self.stop_walking(unit);
+        }
         if let Some(u) = self.world.units.get_mut(&unit) {
             match &mut u.kind {
                 UnitKind::Player(p) => {
@@ -563,13 +580,6 @@ impl Game {
         }
         if cast_ms == 0 {
             self.finish_cast(unit);
-        }
-    }
-
-    fn stop_walking_for_cast(&mut self, unit: u32) {
-        // a Sage with Free Cast keeps walking
-        if self.skill_level(unit, 278) == 0 {
-            self.stop_walking(unit);
         }
     }
 
@@ -600,6 +610,18 @@ impl Game {
 
     fn finish_cast(&mut self, unit: u32) {
         let Some(c) = self.take_cast(unit) else { return };
+        // mob.c:1936, 1945: after a skill on a target the monster rests for
+        // one attack delay, and the line's own delay starts again here
+        let now = self.now();
+        let adelay = self.world.units.get(&unit).and_then(|u| u.mob()).and_then(|m| self.db.mob(m.mob_id)).map(|d| d.attack_delay as u64);
+        if let (Some(adelay), Some(m)) = (adelay, self.world.units.get_mut(&unit).and_then(|u| u.mob_mut())) {
+            if c.target != 0 {
+                m.next_think = m.next_think.max(now + adelay);
+            }
+            if let Some(used) = usize::try_from(c.line).ok().and_then(|i| m.skill_used.get_mut(i)) {
+                *used = now.max(1);
+            }
+        }
         let from_item = self.world.units.get(&unit).and_then(|u| u.player()).and_then(|p| p.skill_item).is_some_and(|(s, _)| s == c.skill);
         if from_item {
             if let Some(p) = self.world.units.get_mut(&unit).and_then(|u| u.player_mut()) {
@@ -864,7 +886,7 @@ impl Game {
             "sc_touch" => {
                 // re-arm: new values (nil keeps) and time
                 let now = self.now();
-                let (v1, v2, v3, ms) = (arg(a, 2).clone(), arg(a, 3).clone(), arg(a, 4).clone(), int(a, 5).max(0) as u64);
+                let (v1, v2, v3, ms, v4) = (arg(a, 2).clone(), arg(a, 3).clone(), arg(a, 4).clone(), int(a, 5).max(0) as u64, arg(a, 6).clone());
                 self.sc_touch(id(0), int(a, 1) as u16, |s| {
                     if !v1.is_null() {
                         s.val1 = num(&v1);
@@ -874,6 +896,9 @@ impl Game {
                     }
                     if !v3.is_null() {
                         s.val3 = num(&v3);
+                    }
+                    if !v4.is_null() {
+                        s.val4 = num(&v4);
                     }
                     s.until = now + ms;
                 });

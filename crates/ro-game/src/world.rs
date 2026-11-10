@@ -69,6 +69,8 @@ pub struct PlayerUnit {
     pub spirit_acc: u64,
     /// Overweight icon shown: 0 none, 1 half the limit, 2 nine tenths.
     pub weight_icon: u8,
+    /// The map the character died on (the death penalty asks its flags at respawn).
+    pub died_on: Option<String>,
 }
 
 #[derive(Debug, Clone, Copy)]
@@ -130,6 +132,9 @@ pub struct MobUnit {
     pub loot: Vec<InvItem>,
     /// Distance to its master at the last check (Athena master_dist).
     pub master_dist: i32,
+    /// Flinching from a hit taken while walking: no thinking before this
+    /// tick (Athena MS_DELAY, for the monster's damage motion).
+    pub delay_until: u64,
 }
 
 /// Athena MSS_*: the state monster skills are conditioned on.

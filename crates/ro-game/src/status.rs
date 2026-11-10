@@ -54,6 +54,8 @@ pub struct Derived {
     pub range: u32,
     /// Walk speed, ms per cell.
     pub speed: u32,
+    /// How long a hit holds the character (damage motion), ms.
+    pub dmotion: u32,
     /// Stat bonuses (equipment, job, status changes): str..luk, shown as "+n".
     pub bonus: [i32; 6],
 }
@@ -89,6 +91,7 @@ impl Derived {
                 0 => 150,
                 v => v,
             },
+            dmotion: g("dmotion"),
             bonus: ["bstr", "bagi", "bvit", "bint", "bdex", "bluk"].map(|k| o.get(k).and_then(Value::as_i64).unwrap_or(0) as i32),
         })
     }
@@ -372,6 +375,7 @@ pub(crate) fn fallback_derive(c: &Character) -> Derived {
         max_weight: 20000 + s * 300,
         range: 1,
         speed: 150,
+        dmotion: 400,
         ..Default::default()
     }
 }
