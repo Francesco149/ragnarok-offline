@@ -1,0 +1,46 @@
+Evidence for Thread #6: The Start Cell and Novice Training Ground
+
+Source 1: euRO Client CD 2003-12-18 data.grf data/resnametable.txt
+Date: 2003-12-18
+Passage:
+"new_1-1.gat#new_zone01.gat#
+new_2-1.gat#new_zone01.gat#
+new_3-1.gat#new_zone01.gat#
+new_4-1.gat#new_zone01.gat#
+new_5-1.gat#new_zone01.gat#
+new_1-2.gat#new_zone02.gat#
+new_1-3.gat#new_zone03.gat#
+new_1-4.gat#new_zone04.gat#"
+(The client natively redirects server map new_1-1.gat to new_zone01.gat).
+
+Source 2: jAthena Readme Snapshot //0305 & //0307
+URL: https://raw.githubusercontent.com/flaviojs/jathena/master/Readme
+Date: Mid-2003
+Passage:
+//0305 (by いど):
+"・新規PCの位置を初心者修練場に変更。"
+(//0307 by 胡蝶蘭):
+"・新規PCの初期位置をchar_athena.cnfに書けるようにした
+start_point: マップ名,x,y のように指定します。
+<例> start_point: new_1-1.gat,53,111"
+
+Source 3: Client Map new_zone01.gat Coordinates
+Date: 2003-12-18
+Passage:
+Cell (53, 111): type 0 (walkable), height -7.81.
+Located at the center of the western starting bridgehead platform (x=45..66, y=109..118) facing east towards the bridge leading to the training castle.
+Sprakki was placed by Gravity in Episode 12 at (53, 114) — exactly 3 cells north.
+
+Source 4: Starting Equipment in Athena char.c (Snapshot //0631, 2003-12-18)
+URL: https://raw.githubusercontent.com/flaviojs/jathena/master/src/char/char.c
+Passage:
+char_dat[i].inventory[0].nameid = 1201; /* Knife */
+char_dat[i].inventory[1].nameid = 2301; /* Cotton Shirt */
+(No Novice-specific gear; Novice gear was only added in kRO on June 1, 2004).
+
+Source 5: Japanese Historical Quest Archive (roquest.work/?DeletedQuest/Beginner)
+Passage:
+"2. <初心者修練場受付> 初心者修練場受付要員に話しかけると、初心者修練場に行くかすぐ冒険を始めるか聞かれる。
+→すぐ冒険を始める。[初心者修練場を通過してプロンテラへ]
+→初心者修練場の申し込み。[50zeny支給、初心者修練場内へ]"
+(Confirms 50z training subsidy and immediate skip to Prontera/towns).

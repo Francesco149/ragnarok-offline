@@ -1,0 +1,28 @@
+Evidence for Thread #4: Kafra Points and Kafra Pass in Dec 2003
+
+Source 1: kRO Patch Notes 2003-05-20
+URL: https://ragnarok.fandom.com/api.php?action=parse&page=RO_Patch_(2003_May_20)&prop=wikitext&format=json
+Date: 2003-05-20
+Passage:
+"- 카프라이용권 메뉴가 사라졌습니다."
+("The menu for the Kafra voucher has disappeared.")
+
+Source 2: Period Client Item Database (Item #1084 Kafra Pass)
+Passage:
+"カプラの全てのサービスを無料で利用することができる。「１人１枚に限ります。」と書いてある。現在は利用できない。"
+("Can use all services of Kafra for free. Written: 'Limit 1 per person.' Currently cannot be used.")
+
+Source 3: eAthena 817 npc/other/kafra.lua
+Passage:
+::NeedKafraPass::
+mes "[Kafra]"
+mes "Dear you need at least 1 passport."
+...
+mes "Under development"
+...
+::ReserveCheck::
+mes "[Kafra]"
+mes "Under development"
+
+Conclusion:
+Kafra Points and Passes were retired/disabled across official servers by May 2003. Aldebaran Kafra HQ did not sell passes or exchange points. 817's Sweet Potato lottery was a broken fan script.

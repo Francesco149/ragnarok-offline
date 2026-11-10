@@ -1,0 +1,44 @@
+Evidence for Thread #2: Official English NPC Dialogue (iRO/euRO 2003-2004)
+
+Source 1: OpenKore tables/euRO/quests.txt vs tables/iRO/quests.txt
+URL: https://raw.githubusercontent.com/openkore/openkore/master/tables/euRO/quests.txt
+URL: https://raw.githubusercontent.com/openkore/openkore/master/tables/iRO/quests.txt
+Date: 2004
+Passage:
+[euRO quest 1014 - Swordsman test]:
+"Sign up on the swordman application. For the test, player needs to get a success messages from the manager located at the last check point after pass the all of test courses.# Pass the all test courses.#"
+
+[iRO quest 1014 - Swordsman test]:
+"The purpose of this test is to confirm whether or not you are qualified to be a Swordman. Now, the conditions for completing this test are very simple. You will travel through three courses and must reach the final checkpoint within ^FF000010 minutes^000000.# Reach the final checkpoint.#"
+
+Source 2: Prontera Citizen Tono dialogue (Aegis official dialogue)
+URL: https://raw.githubusercontent.com/rathena/rathena/master/npc/cities/prontera.txt
+Passage:
+"mes \"[Tono]\";
+mes \"The larva of Creamy is Fabre. So, those green little wormy things are actually the babies of those pinkish, purply butterfly things you see around.\";
+next;
+mes \"[Tono]\";
+mes \"But before Fabres can become Creamys, they go into a pupa stage. When that happens, they turn into these dark purple cocoons we call Pupa. Simple, huh?\";
+next;
+mes \"[Tono]\";
+mes \"There's another monster that goes through a really big change... Pickys.\";
+next;
+mes \"[Tono]\";
+mes \"Pickys are so cute when they're young, but when they grow up, they turn into those big, gawky looking Peco Pecos. Talk about awkward puberty.\";"
+
+Source 3: Kafra Official Dialogue (functions_kafras.txt)
+URL: https://raw.githubusercontent.com/rathena/rathena/master/npc/kafras/functions_kafras.txt
+Passage:
+"mes \"[Kafra Employee]\";
+mes \"Welcome to the Kafra Corporation. The Kafra services are always on your side. How may I assist you?\";
+menu \"Save\", - ,\"Use Storage\", - ,\"Use Teleport Service\", - ,\"Rent a Pushcart\", - ,\"Check Other Information\", - ,\"Cancel\", - ;"
+
+Source 4: Izlude Swordsman Guild (Aegis 10.3 standard)
+URL: https://raw.githubusercontent.com/rathena/rathena/master/npc/pre-re/jobs/1-1/swordman.txt
+Passage:
+"mes \"[Swordman]\";
+mes \"Welcome to the Swordman Association! So... What business brings you to us?\";
+...
+mes \"Job change? Muhahaha! But you're already a Swordman! Be proud and be strong!\";
+...
+mes \"So you wish to become a proud Swordman? By all means, please sign up!\";"

@@ -1,0 +1,26 @@
+Evidence for Thread #18: Izlude Arena Timeline (2003-2004)
+
+Source 1: kRO Patch Notes 2004-06-01 (Statue Teaser)
+URL: https://ragnarok.fandom.com/wiki/RO_Patch_(2004_Jun._01) / ro.gnjoy.com seq=1189
+Date: 2004-06-01
+Passage:
+"- 이즈루드의 북쪽 아레나 입구앞에 있는 동상을 클릭하여 보시기 바랍니다."
+("Please click on the statue in front of the entrance to the north side of Izlude.")
+
+Source 2: kRO Patch Notes 2004-09-14 (Sakray Opening)
+URL: https://ragnarok.fandom.com/wiki/RO_Patch_(2004_Sept._14) / ro.gnjoy.com seq=1742
+Date: 2004-09-14
+Passage:
+"- 이즈루드 마을에 아레나가 오픈됩니다. 아레나에 진입하시어 사크라이 유저 여러분들의 많은 제보와 건의사항을 부탁드리겠습니다."
+("Arena is opened in Izlude village. Please enter the arena and ask a lot of tips and suggestions from Sakray users.")
+
+Source 3: kRO Patch Notes 2004-10-12 (Main Server Launch)
+URL: https://ragnarok.fandom.com/wiki/RO_Patch_(2004_Oct._12) / ro.gnjoy.com seq=1796
+Date: 2004-10-12
+Passage:
+"- 오랜시간의 재공사끝에 이즈루드 마을에 아레나가 추가되었습니다."
+("After a long renovation, the Arena has been added to the village of Izlude.")
+
+Conclusion:
+Neither iRO nor euRO had the Izlude Arena in Dec 2003 - Feb 2004. Izlude Arena did not open until October 2004 on kRO.
+The arena scripts in 817 were custom Prontera tests (prt_are_in.gat).

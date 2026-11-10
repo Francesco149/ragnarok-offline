@@ -10,8 +10,12 @@ dig first. Background research: `research/notes/` (euro-history.md,
 mechanics-sources.md, emulators.md).
 
 Research rounds: round 1 (Antigravity, then a Claude pass to confirm) is
-briefed in `research/agy-threads/HANDOFF.md`; its report lands in the same
-directory.
+briefed in `research/agy-threads/HANDOFF.md`; its report is
+`research/agy-threads/REPORT-antigravity.md`. **Read it together with
+`research/notes/round1-review.md`**, the second pass: it says which claims
+were loaded again from the source, which turned out wrong, and which are
+still only the report's word. Below, "round 1" marks what that pass
+confirmed.
 
 Ruled out as a source: leaked Gravity server packages (Aegis binaries and
 scripts). They are not ours to use or redistribute, and nothing here may be
@@ -28,6 +32,11 @@ factor is unknown, as are open-beta and commercial rates (presumably 1x).
 captures). The thousands of 2004 `www.euro-ro.net/community/forum`
 captures. German fan sites rns.gamona.de and ragnarokonline.de (2003-12 to
 2004-02).
+**Round 1 (report only, not re-checked):** no number was ever published;
+a Gamona staff post of 2004-01-27 calls the closed beta's "EXP und Drop
+Rate zu hoch" (`ragnarok.gamona.de/forum/index.php?act=ST&f=31&t=9857`,
+capture 20040213093633); players reached level 64 in four days. Next:
+load those captures, then IRC logs of `#bhi-oe`.
 
 ### 2. Official English NPC dialogue, iRO/euRO 2003–04
 Our dialogue is the emulator authors' (817), often a fan translation or
@@ -41,22 +50,32 @@ paraphrase. euRO used Gravity's English text, very likely iRO's.
 * rAthena `npc/pre-re` (official transcriptions, but ~2006+: tier later).
   Use it only where the period text is clearly a paraphrase, and mark it.
 
-### 3. Kafra fares and save cells before 2004-02-24
-817's menus and code disagree (Prontera→Geffen 1400 shown, 1800 charged;
-Alberta→Prontera 1800/2100). kRO replaced the fare table on 2004-02-24.
-iRO's early-2004 fares are unknown. 817's Izlude "Save inside City" saved
-nothing; we use 91,105.
+### 3. Kafra fares before 2004-02-24 on iRO and euRO
+Round 1 settled the emulator side (see R4): mod0631 and jAthena agree with
+817's menus, and add per-place storage fees and the Comodo routes. Both
+follow jRO. What is still unattested is the fare table of **iRO and euRO
+themselves** in Dec 2003 – Feb 2004, and when euRO took kRO's new table of
+2004-02-24.
 **Impact:** `scripts/npc/kafra.lua`.
-**Look:** Fandom "RO Patch (2004 Feb. 24)": does the Korean text list the
-old fares? iRO notices on Wayback (`allim/content.asp?bbs=tNotice`).
-Screenshots in period guides.
+**Look:** iRO notices on Wayback (`allim/content.asp?bbs=tNotice`),
+screenshots of a Kafra menu in period guides and fan sites, euRO patch
+notes of spring 2004. The kRO notice of 2004-02-24 lists only the new
+fares.
 
 ### 4. Kafra points and the Kafra Pass in Dec 2003
 817 had a Kafra-points "Sweet Potato" exchange (broken) and a Kafra Pass
-seller in the Al De Baran HQ. kRO removed the voucher menu on 2003-05-20.
-**Impact:** whether the Aldebaran Kafra HQ NPCs should offer anything.
-**Look:** kRO notices 2003 (S1/S2 in mechanics-sources.md), iRO guide
-pages (2004).
+seller in the Al De Baran HQ. kRO removed the *voucher* menu on 2003-05-20.
+**Round 1:** the points outlived the voucher. kRO's notice of 2004-02-10:
+"the NPC that rewards Kafra points has been improved; take your saved-up
+points to the Al De Baran headquarters". jAthena (2004-01-31) adds a tenth
+of each teleport fare to `KF_PIT` and has a "check Kafra points" menu
+entry. (The round-1 report says the opposite; it is wrong here.)
+**Open:** what the points bought before and after 2004-02-10, and whether
+iRO/euRO had them. Then: accrue points in `kafra.lua` and bring back the
+exchange NPC.
+**Impact:** the Aldebaran Kafra HQ NPCs; "Other Information Check".
+**Look:** jAthena's Al De Baran scripts of 2004 (`KF_PIT`), kRO notices of
+2003, iRO guide pages (2004).
 
 ### 5. Job-change quests on euRO before "New Comodo"
 euRO's "New Comodo" update (Jan 2004) lists "2nd-job quests" as new. So in
@@ -86,6 +105,12 @@ it: `//0305` moved new characters to the training ground, `//0307` made the
 cell configurable. Where 53,111 itself came from is unknown. From there a new
 character crosses a long bridge east to the castle.
 
+**Round 1:** the map half is settled. The client redirects `new_1-1` to
+`new_zone01` itself (R2), so a server of the time that sent Athena's start
+point put the character on exactly this map. The cell is still only
+Athena's. The report's further arguments (a 2017 private-server video, a
+2013 rAthena NPC three cells north) do not date the cell.
+
 **Goal (owner, 2026-11-09):** find the period-accurate start position and
 document it. Failing that, pick the best-supported cell and list it as a
 possible deviation.
@@ -110,6 +135,11 @@ Blacksmith and Assassin. 817's Priest and Hunter do have quests.
 **Impact:** whether the 2-1 jobs should have their tests; see #5.
 **Look:** eathena-v0.5.2 (2004-05) `npc/jobs/*.txt`; period
 walkthroughs (#2).
+**Round 1:** the Wizard test existed on kRO by 2004-02-10 (a notice fixes
+"no recovery when moving to the next stage"). eathena-v0.5.2 has a full
+three-stage script, but it runs on `job_wiz`, a later map: this client's
+test map is `job_wizard` (its `wizard_1-1`), and the cells do not match
+(3 of 10). A port has to find the three rooms on the older map first.
 
 ### 9. Refining details
 Phracon price (iRO page 2000z vs data 200z), armor DEF per refine (1, 5 or
@@ -118,6 +148,14 @@ cards.
 **Impact:** shops, `rules/status.lua` refine bonuses (not applied yet),
 `scripts/import/npc/other/refine.lua`.
 **Look:** iRO *Refine System* page (2004-06, Wayback), kRO notices.
+**Round 1:** the iRO page (capture 20040605070057) was loaded. It says: on
+failure "the item, Zeny used, and any cards in the slots will all be
+destroyed completely"; Phracon 2000z, Emveretarcon 1,000z; fees 50 / 200 /
+5,000 / 5,000 (weapon levels 1–4) and 2,000 (armor); +2 / +3 / +5 / +5
+damage per level; armor "+1 adds 1 defense"; safe to +7 / +6 / +5 / +4,
+armor +4. Its level-4 row repeats level 3's, so the page is not careful,
+but it is the only official statement found. Cards: settled. The rest
+stays a recorded disagreement (PROVENANCE).
 
 ### 10. Monster spawns, Dec 2003
 mod0631's spawn lists are the closest in time. Some kRO spawn rebalances
@@ -140,6 +178,9 @@ lacks. Which did the official servers have? Unknown.
 **Impact:** dungeon teleport rules, death penalty in towns.
 **Look:** 817 `conf/mapflag/*.txt`, mod0631 `conf/mapflag.txt`; check
 what the client's own `mapnametable`/indoor tables imply.
+**Round 1:** the client's `indoorrswtable.txt` lists 22 interiors (town
+insides, `prt_are_in`, `arena_room`, `sword_1-1..3-1`, ...). It is a
+rendering table; nothing ties it to Teleport. No change.
 
 ### 13. Dyes and palettes
 817's dyer needs a 77-palette client patch. Which clothes dyes existed in
@@ -182,14 +223,30 @@ yet they hold mini-bosses and an Eddga.
 
 Whatever we build gets a DEVIATIONS.md entry saying what is period
 behaviour and what is invented.
+
+**Round 1, done:** a castle without an owner held monsters. kRO's notices
+of 2004-02-10 and -17 describe it (and remove it); 817's `mobs/gvg.txt`
+has the lists. With one player no castle ever has an owner, so the castles
+now hold those monsters (`scripts/npc/castles.lua`, DEVIATIONS).
+
+**Round 1, for the owner to decide** (the report's options, its sources
+mostly tier later; research/notes/round1-review.md):
+* A. Let the player take a castle: break an Emperium guarded by that
+  garrison, then a steward, investment, the daily treasure room and the
+  lever into the guild dungeon. Uses period maps and numbers; the solo
+  capture is invented.
+* B. Leave castles as they are and open the guild dungeons and treasure
+  another way (an NPC, a quest). Little is period.
+* C. A timed trial modelled on kRO's later novice/training WoE. Later
+  inspiration only.
+
+Before any of them: load the iRO guide pages of 2004-04
+(`game/warofemperium.asp`, `game/guildsystem.asp`) for what the master
+room gave, and find period numbers for treasure and investment.
 **Impact:** castle treasure, guild dungeons, guild-only drops.
 **Look:** kRO notices on WoE rules; the iRO guide's guild/WoE pages; euRO
 WoE news (Apr and Sep 2004: "treasure boxes and guild dungeons disabled");
 period guides. Round 1: research/agy-threads/HANDOFF.md.
-
-### 18. Izlude Arena (time attack) in iRO 2003
-817 ships the Izlude arena NPCs. Did iRO have it in Dec 2003?
-**Look:** kRO notices (arena added when?), iRO guides.
 
 ### 19. Lutie (Xmas) in January
 Was Lutie a permanent town on euRO, or seasonal? The CD patcher carries
@@ -211,6 +268,29 @@ client's `.gat`. Results: `new_1-N` = `new_zone0N`, `sword_1-1` =
 `ordeal_a00`, `ordeal_1-2` = `ordeal_a02`, `priest_1-1` = `job_priest`.
 `tools/import/maps.py`.
 
+Round 1 found the client saying so itself: `data\resnametable.txt` in
+data.grf redirects each newer name to the file it has
+(`new_1-1.gat#new_zone01.gat#`, 143 `.gat` lines; the full list is in
+research/notes/round1-review.md). Tier client. The later names `job_wiz`,
+`job_knt`, `job_prist`, `job_hunte` are different maps, not aliases.
+
 ### R3. Skill SP costs
 The client's `leveluseskillspamount.txt` has them per level. The server
 reads them from the GRF at start (tier client).
+
+### R4. Kafra fares in the period emulators (was part of #3)
+817's menus were right and its code was not: mod0631's Kafra script
+(archived 2003-12-18) and jAthena's of 2004-01-31 show and take
+Prontera→Geffen 1400 and Alberta→Prontera 2100. They also give what 817
+lacked: a storage fee per place (30 to 80z), Prontera→Comodo 2000,
+Morroc→Comodo 1500, Al De Baran→Geffen 1600 and →Mt. Mjolnir 1700, the
+Kafras of Comodo, Pharos, Mt. Mjolnir and Prontera's gates, and Izlude's
+save cell 94,103. kRO's notice of 2004-02-24 confirms that the dungeon
+Kafras saved until that day. All in `scripts/npc/kafra.lua`; the table is
+in research/notes/round1-review.md. Tier athena2003 (jRO lineage).
+
+### R5. The arena (was #18)
+Not open in Dec 2003 – Feb 2004. kRO, 2004-10-12, main servers: "after a
+long reconstruction, an arena was added to Izlude". 817's arena is its own:
+entered from an NPC in the middle of Prontera, on `prt_are_in` and
+`force_1-N` (maps this client does ship). `[game.content] arena`, off.

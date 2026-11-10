@@ -1,0 +1,31 @@
+Evidence for Thread #7: First-Class Quest Skills (Platinum Skills)
+
+Source 1: kRO Patch Notes 2003-01-21
+URL: https://ragnarok.fandom.com/api.php?action=parse&page=RO_Patch_(2003_Jan._21)&prop=wikitext&format=json
+Date: 2003-01-21
+Passage:
+Rebalancing of existing quest skills: Energy Coat damage reduction set to 30%, SP drain 3%; Holy Light cast time reduced to 1.5s.
+(Confirms quest skills were already fully implemented on official servers in 2002/early 2003).
+
+Source 2: Official iRO Skill Guide (2004-03-27)
+URL: https://web.archive.org/web/20040327034756/http://iro.ragnarokonline.com:80/game/jobacoskill.asp
+Date: 2004-03-27
+Passage:
+"Holy Light: This skill requires Acolyte job level 30 and a quest. Attacks a target from a distance with a holy light. Consumes 15 SP. Has a 2 second casting delay. Deals 125% of the magic attack strengh."
+
+Source 3: Official Quest NPC Locations vs 817 Discrepancies
+- Novice First Aid: Nami (prt_in 234, 134) and Nurse Instructor in Prontera Castle.
+- Novice Play Dead: Chivalry Member Bulma (prt_in 80, 100).
+- Thief Skills (Backslide, Pick Stone, Throw Sand, Find Stone):
+  Taught by Alcouskou at moc_prydb1 154, 128 (inside Morroc Pyramids opposite Thief Guild) and RuRumuni at payon 91, 77.
+  817's "Sono-san" at morocc 165, 124 was an emulator fan invention with broken space indentation that caused 817 to fail loading it.
+- Swordman Moving HP Recovery: Knight De Thomas in Izlude.
+- Swordman Auto Berserk: Juan at prontera 205, 157.
+- Swordman Fatal Blow: Leon at prontera 74, 219.
+- Acolyte Holy Light: prt_church 176, 22 (Job 30, Opal, Crystal Blue, Rosary).
+- Archer Arrow Crafting: Kylick at morocc 121, 109.
+- Archer Charge Arrow: Jason at pay_arche 103, 63.
+- Merchant Cart Revolution: Gershaun at alberta 232, 106.
+- Merchant Change Cart: Shailon at alberta 119, 221.
+- Merchant Crazy Uproar: Necko at alberta 83, 182.
+- Mage Energy Coat: Great Wizard at gef_tower 116, 113.

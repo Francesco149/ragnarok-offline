@@ -1,0 +1,16 @@
+Evidence for Thread #14: Pets on euRO and iRO (2003-2004)
+
+Source 1: Official iRO Guide "Cute Pet System"
+URL: https://web.archive.org/web/20040404074213/http://iro.ragnarokonline.com/game/qpetsystem.asp
+Date: 2004-04-04
+Passage:
+"There are a total of 24 monsters that can be tamed to be pets. While the Poring, Deviruchi, and Sohee are the most favored, there are several other monsters that also have distinct personalities."
+(Documents 24 tameable pets: Eggs 9001-9024).
+
+Source 2: mod0631 and 817 pet_db.txt
+Date: 2003-12-18 / 2004-02-19
+Passage:
+25 pets total. The 25th entry is:
+1188,BON_GUN,659,9025,10020,537,80,20,10,100,250,20,500,200
+(Bongun: taming item 659 "Her Heart", Egg 9025, food 537 "Pet Food", accessory 10020 "Grave Keeper's Sword").
+Bongun was tied to the Comodo quest on kRO.

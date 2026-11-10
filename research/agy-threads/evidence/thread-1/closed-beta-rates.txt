@@ -1,0 +1,29 @@
+Evidence for Thread #1: euRO Closed Beta Rates and Launch Rates
+
+Source 1: BHI-OE euRO Launch Notice
+URL: http://web.archive.org/web/20031223001708/http://euro.bhi-oe.de:80/
+Date: 2003-12-20
+Passage:
+"As we are testing with higher experience, we will delete all characters and/or accounts at the end of the Closed Beta."
+
+Source 2: RnS / Gamona Staff Statement (Astartus)
+URL: http://web.archive.org/web/20040213093633/http://ragnarok.gamona.de/forum/index.php?act=ST&f=31&t=9857
+Date: 2004-01-27
+Passage:
+"Die Closed Beta Accounts werden sie sicher nicht versuchen zu übernehmen, da die Zeit einfach zu kurz, und die EXP und Drop Rate zu hoch war."
+("They will certainly not try to carry over the Closed Beta accounts, as the time was simply too short, and the EXP and Drop Rate was too high.")
+
+Source 3: euRO Closed Beta Forum f=3 Topics (Topic 67 and 80)
+URL: http://web.archive.org/web/20031227055051/http://forum.euro.bhi-oe.de:80/viewforum.php?f=3&amp
+Date: 2003-12-24 / 2003-12-25
+Passage:
+Topic 67: "what's the exactly exp/Droprate atm? 12 Kuja 401 Thu Dec 25, 2003 10:44 pm kon1"
+Topic 80: "[ Poll ] Exp and Droprate : Higher or high enough :D? 11 hentaifreak03 489 Wed Dec 24, 2003 9:29 am hentaifreak03"
+(Both topic bodies were not captured in Wayback).
+
+Source 4: Open Beta Character Retention Proof of 1x Commercial Rates
+URL: http://web.archive.org/web/20040423025155/http://www.euro-ro.net:80/news/eu/00054/
+Date: 2004-04-08
+Passage:
+"Prontera Tourism Office announces today that the Open Beta characters will not be deleted... all characters will have the items and Zeny inventory of today (8th of April) 9 am CET."
+Because Open Beta progression was preserved into live commercial service, Open Beta and Commercial service were strictly 1x/1x/1x.

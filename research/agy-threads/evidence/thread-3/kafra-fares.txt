@@ -1,0 +1,49 @@
+Evidence for Thread #3: Kafra Fares and Save Cells before 2004-02-24
+
+Source 1: jAthena npc_town_kafra.txt (Snapshot //0676, 2004-01-01)
+URL: https://raw.githubusercontent.com/flaviojs/jathena/master/script/npc/town/npc_town_kafra.txt
+Date: 2004-01-01
+Passage:
+Prontera Kafra:
+menu "イズルード -> 900 z",L3_1,"ゲフェン -> 1400 z",L3_2,"フェイヨン -> 1700 z",L3_3,"モロク -> 1800 z",L3_4,"オークダンジョン -> 1700 z",L3_5,"やめる",Lcancel;
+...
+L3_2:
+if (Zeny < 1400) goto Lerror3;
+set Zeny,Zeny-1400;
+warp "geffen",120,39;
+(Prontera to Geffen was 1400z. In 817, the menu displayed 1400z but the code had set Zeny,Zeny-1800, which was an emulator copy-paste bug from the Morroc branch).
+
+Alberta Kafra:
+menu "フェイヨン -> 1300 z",L3_1,"プロンテラ -> 2100 z",L3_2,"モロク -> 2200 z",L3_3,"やめる",Lcancel;
+...
+L3_2:
+if (Zeny < 2100) goto Lerror3;
+set Zeny,Zeny-2100;
+warp "prontera",116,72;
+(Alberta to Prontera was 2100z).
+
+Source 2: Tiered Storage Fees in jAthena
+Passage:
+Prontera: callfunc "kfstorage",40; (40z)
+Izlude: callfunc "kfstorage",30; (30z)
+Geffen: callfunc "kfstorage",30; (30z)
+Payon: callfunc "kfstorage",30; (30z)
+Morroc: callfunc "kfstorage",30; (30z)
+Alberta: callfunc "kfstorage",50; (50z)
+Orc Dungeon: callfunc "kfstorage",130; (130z)
+(817 flattened all storage fees to 30z).
+
+Source 3: Izlude Save Cell
+File: rAthena / Aegis 10.3 kafras.txt & jAthena
+Passage:
+savepoint "izlude",94,103,1,1;
+(Cell 94, 103 is the official savepoint; 91, 105 is the warp arrival cell).
+
+Source 4: kRO Notice seq 1182 (2004-02-24 Patch)
+URL: https://ro.gnjoy.com/news/notice/View.asp?BBSMode=10001&seq=1182&curpage=562
+Date: 2004-02-23
+Passage:
+"- 사크라이 서버에서 테스트를 진행했던 카프라 요금 체계와 이동지역이 본서버에 업데이트 됩니다."
+Overhauled fares:
+Prontera: Izlude 600z, Geffen/Morroc/Payon 1200z, Alberta 1800z, Orc Dungeon 1700z.
+Storage service removed from dungeon Kafras (Mjolnir, Orc, Pyramid, Shipwreck, Byalan, Archer Village).

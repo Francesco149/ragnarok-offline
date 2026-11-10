@@ -1,0 +1,56 @@
+Evidence for Thread #12: Map Flags (Teleport, Memo, Save, Penalty) in 2003-2004
+
+Source 1: Official euRO client data.grf indoorrswtable.txt
+Date: 2003-12-18
+Passage:
+List of 31 indoor maps where teleportation is disabled natively:
+alberta_in.rsw#
+izlude_in.rsw#
+gef_tower.rsw#
+geffen_in.rsw#
+moc_castle.rsw#
+morocc_in.rsw#
+payon_in01.rsw#
+payon_in02.rsw#
+prt_in.rsw#
+prt_castle.rsw#
+prt_church.rsw#
+in_orcs01.rsw#
+aldeba_in.rsw#
+monk_in.rsw#
+prt_are_in.rsw#
+arena_room.rsw#
+sword_1-1.rsw#
+sword_2-1.rsw#
+sword_3-1.rsw#
+xmas_in.rsw#
+cmd_in01.rsw#
+cmd_in02.rsw#
+yuno_in01.rsw#
+yuno_in03.rsw#
+yuno_in04.rsw#
+yuno_in05.rsw#
+alde_alche.rsw#
+sec_in01.rsw#
+ama_in01.rsw#
+ama_in02.rsw#
+gon_in.rsw#
+
+Source 2: mod0631 conf/mapflag.txt (2003-12-18)
+Passage:
+//MapFlag By Jioh L. Jung
+prontera.gat	mapflag	nopenalty	dummy
+morocc.gat	mapflag	nopenalty	dummy
+geffen.gat	mapflag	nopenalty	dummy
+payon.gat	mapflag	nopenalty	dummy
+alberta.gat	mapflag	nopenalty	dummy
+izlude.gat	mapflag	nopenalty	dummy
+aldebaran.gat	mapflag	nopenalty	dummy
+xmas.gat	mapflag	nopenalty	dummy
+comodo.gat	mapflag	nopenalty	dummy
+yuno.gat	mapflag	nopenalty	dummy
+amatsu.gat	mapflag	nopenalty	dummy
+gonryun.gat	mapflag	nopenalty	dummy
+alberta_in.gat	mapflag	noteleport	dummy
+...
+(12 outdoor towns given nopenalty as emulator anti-grief protection)

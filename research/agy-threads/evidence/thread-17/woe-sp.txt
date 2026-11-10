@@ -1,0 +1,50 @@
+Evidence for Thread #17: War of Emperium, Guild Castles, and Single Player
+
+Source 1: iRO Official Guide "War of Emperium"
+URL: http://web.archive.org/web/20040405051438/http://iro.ragnarokonline.com/game/warofemperium.asp
+Date: 2004-01-01
+Passage:
+"Enter Master Room: There is a room that is only open to the Guild master. In this room. 1 rare item will be given once a day"
+
+Source 2: rAthena / eAthena agit_main.txt (Aegis logic)
+URL: https://raw.githubusercontent.com/rathena/rathena/master/npc/guild/agit_main.txt
+Date: 2004-02-19 / Pre-Re
+Passage:
+Treasure box spawn logic:
+"OnClock0001:
+set .@Treasure,GetCastleData(strnpcinfo(2),CD_CURRENT_ECONOMY)/5+4;"
+(Daily boxes = floor(Economy/5) + 4, scaling from 4 at 0 Economy to 24 at 100 Economy).
+
+Guild dungeon entrance logic:
+"There's a small lever...
+if (getcharid(2) == .@GID) warp .@destination$,.@coordinates[0],.@coordinates[1];"
+
+Source 3: euRO Maintenance Notice
+URL: http://web.archive.org/web/20040910081217/http://www.euro-ro.net/news/eu/00499/
+Date: 2004-09-03
+Passage:
+"During this time Treasure boxes, epmerium and guild dungeons are deactivated."
+
+Source 4: kRO Patch Notes 2004-02-10 (Unoccupied Castle Mob Spawns)
+URL: https://ragnarok.fandom.com/wiki/RO_Patch_(2004_Feb._10)
+Date: 2004-02-10
+Passage:
+"아지트를 소유했던 길드가 해체했을 경우 관리하던 아지트에 몬스터들이 대거 등장했었습니다. 이에 길드의 해체와 창설을 반복하며 레벨업을 하는 형태가 목격되었습니다."
+("When a guild that owned a hideout was disbanded, monsters appeared in large numbers in the managed hideout. As a result, leveling up by repeatedly disbanding and creating guilds was witnessed.")
+
+Source 5: euRO Planned Event "GM Castle Assault"
+URL: http://web.archive.org/web/20040414010235/http://www.euro-ro.net/events/planned/de/00074/
+Date: 2004-04-09
+Passage:
+"Das Prontera Tourism Office warnt beim nächsten War of Emperium (Sonntag, 11 April 18Uhr) vor einem GM-Angriff auf die Burgen."
+("The Prontera Tourism Office warns of a GM attack on the castles at the next War of Emperium (Sunday, 11 April 18:00).")
+
+Source 6: Guild Dungeon MVPs and Respawns
+File: npc/pre-re/mobs/dungeons/gld_dun.txt
+Passage:
+Eddga (gld_dun01 - Payon): mob 1115, 1 spawn, 8h respawn (28,800,000 ms)
+Doppelganger (gld_dun02 - Geffen): mob 1046, 1 spawn, 8h respawn
+Maya (gld_dun03 - Aldebaran): mob 1159, 1 spawn, 8h respawn
+Dark Lord (gld_dun04 - Prontera): mob 1272, 1 spawn, 8h respawn
+Unique cards: Maya Purple Card (detect hidden), Dark Illusion Card.
+God item quest materials (Freyja's Jewel, Thor's Gauntlet, etc.) drop at 0.10% only from castle treasure boxes.

@@ -1,0 +1,64 @@
+Evidence for Thread #5: 2-1 Job Changes on euRO before New Comodo
+
+Source 1: euRO Forum Topic t=1791 (New Comodo Announcement & Player Reactions)
+URL: https://web.archive.org/web/20040723203021/http://forum.euro.bhi-oe.de/viewtopic.php?t=1791
+Date: 2004-01-18
+Passage:
+PerrI (General Manager):
+"New in 'New Comodo' / 'New Comodo''daki yenilikler / Neu in 'New Comodo' / Ecco le novità della 'New Comodo'
+1. added heal-effect, modified potions
+2. added 2nd job quest
+3. added monster skills
+4. added lvl99 aura
+5. fixed refining bug
+6. adjusted monsters HP / Exp -ends-
+ITALIAN
+1. Aggiunti gli effetti grafici degli oggetti di cura, pozioni modificate
+2. Aggiunte le quest per diventare seconda classe(wizard,priest,etc)
+3. Aggiunte ai mostri le skill (ora i mostri possono lanciare magie)
+4. Aggiunta l'aura intorno al personaggio per chi è livello 99
+5. Sistemati i bug per la raffinazione degli oggetti
+6. Modificate le caratteristiche dei mostri e il loro premio in esperienza"
+
+Condor (Sun Jan 18, 2004 9:11 am):
+"very good the 2nd job Quest but buggy, i can't be a Priest *sigh* but very good ^^ i like the Monsterskills"
+
+Source 2: euRO Official Server News Page
+URL: https://web.archive.org/web/20040207012248/http://www.euro-ro.net/server/
+Date: 2004-01-08 / 2004-02-04
+Passage:
+"New Comodo Update | January 8th, 2004
+Prontera Tourism Office is proud to announce the successful update of euro-ro to New Comodo.
+Prontera (pna) - The Prontera Tourism Office today announced the successful update of euro-ro to New Comodo.
+New in 'New Comodo' (among others):
+Added Heal-Effect, Modified Potions
+Added 2nd Job Quest
+Added Monster Skills
+Added lvl99-Aura
+Fixed Refining Bug
+Adjusted Monsters HP/Exp"
+
+Source 3: iRO Sakray Notice seq 213 (2-1 Job Quest Slip)
+URL: https://web.archive.org/web/20031010001233/http://iro.ragnarokonline.com:80/allim/content.asp?bbs=tNotice&seq=213&page=1
+Date: 2003-10-07
+Passage:
+"Dear users,
+We apologize, but due to unforeseen circumstances. We ran into some technical difficulties and were not able to update the Sakray server with the 2-1 job quest update. We will be working hard towards bringing you the next update as soon as possible. Again we apologize for the delay. Thank you for your understanding.
+iRO GM Team, Gravity Interactive LLC."
+
+Source 4: iRO Turtle Island Update (Live 2-1 Job Quests)
+URL: https://irowiki.org/wiki/Updates_Changelog / http://renewal.playragnarok.com/news/newslist.aspx?page=287
+Date: 2003-12-16
+Passage:
+"Turtle Island Changes (December 16, 2003)
+- Job change quests (Knight, Assassin, Hunter)
+- Monster skills
+- War of Emperium around now"
+
+Source 5: Athena 659 / 817 Pre-Quest NPC Dialogue
+Files: scripts/import/npc/jobs/*.lua
+Passage:
+Knight: "His Majesty Tristram 3rd has been encouraging people to be Knights without any difficult requirements except Job Level 40 or above. Anyway according to the Rumor, people say another requirements would be added soon when the Society become stabilized. If it were so,you got to become a Knight now."
+Blacksmith: "To make our nation an Advanced Country, we establish the requirements of Blacksmiths only Job Level 40!... There is no Later for us, Alright?"
+Wizard: "To Utilise the Magical Power of Geffen, Rune-Midgard encourages Mages to Grow Wizards. Why don't you apply on the Wizard if you reach at Job Level 40? At this Time Geffen is at the height of its Magical prosperity.Also this is the Good opportunity to become a Wizard. There won't be a Tomorrow for Mages."
+Hunter: "It seems the King needs more Hunters! So he established a new constitution of Hunters, so you can be a Hunter anytime if you reach at Job Level 40 or above."

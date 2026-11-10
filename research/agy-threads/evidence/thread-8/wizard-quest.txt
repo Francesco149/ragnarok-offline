@@ -1,0 +1,26 @@
+Evidence for Thread #8: Wizard and 2-1 Job Quests
+
+Source 1: eathena-v0.5.2 (2004-05-07) npc/jobs/wizard.txt
+Translated by yoshiki, converted by RoVeRT
+Passage:
+Stage 1: Application & Item Collection
+Worker Cartlin Medichi (gef_tower 111, 37):
+Requires either:
+- Group 1: Red Blood, Crystal Blue, Wind of Verdure, Green Live (10 of each)
+- Group 2: Red Gemstone, Blue Gemstone, Yellow Gemstone (10 of each)
+(Waived if Job Level 50).
+
+Stage 2: Written Examination
+Examiner Raul Expagarus (gef_tower 102, 24):
+10 questions on elemental theory and monster properties. Passing score is 90%.
+
+Stage 3: Practical Combat Trial
+Gloomy Wizard (gef_tower 116, 110):
+Warps into job_wiz (Water Room -> Earth Room -> Fire Room).
+Player must eliminate elemental monsters within 3 minutes per room.
+Fallback: If the player fails 4 times, they can bring a Worn Out Scroll to pass.
+
+Comparison with other 2-1 jobs in eathena-v0.5.2:
+Knight, Blacksmith, Assassin, and Hunter scripts remained simple Job Level 40 stubs waiving tests.
+Priest had a custom Holy Grail script.
+Wizard had the complete 1,563-line authentic test script.

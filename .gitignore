@@ -14,3 +14,10 @@
 /Icon/
 /Binary/
 __pycache__/
+# round-1 research: raw downloads and third-party dumps stay local (the report,
+# its notes and excerpts are committed)
+/research/agy-threads/*.txt
+/research/agy-threads/*.json
+/research/agy-threads/*.rar
+/research/agy-threads/frames/
+/research/agy-threads/report.md

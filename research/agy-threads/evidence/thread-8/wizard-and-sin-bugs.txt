@@ -1,0 +1,15 @@
+Evidence for Thread #8: 2-1 Job Quest Mechanics (Wizard & Assassin) from iRO Bug Reports (June 2004)
+
+Source 1: iRO Community Bug Report #4218 ("Bug with wizard guildsman")
+URL: https://web.archive.org/web/20040608124530/http://iro.ragnarokonline.com/community/bugContent.asp?mNum=2&seqNo=4218
+Date: 2004-06-05
+Passage:
+"I am currently Mage job level 50 but the guildsman is still asking me for the items of the first test. I was under the impression at job level 50 we get to skip the first test. So why is it they are still asking me to take the first test?"
+(Confirms the period rule that Job Level 50 Mages officially skipped Stage 1 item gathering for the Wizard quest).
+
+Source 2: iRO Community Bug Report #4222 ("Assassin's written test bug")
+URL: https://web.archive.org/web/20040608124530/http://iro.ragnarokonline.com/community/bugContent.asp?mNum=2&seqNo=4222&page=1&serOption=&sertext=
+Date: 2004-06-05
+Passage:
+"I recently turned sin, as in last night, and found something interesting. The hardest part of the test, the written part, is flawed. When you talk to the 'annonymus' guy. After getting asked the first question, just his cancel and walk up to the waiting room. I didn't answer a question and was turned assassin. might wanna fix that :) not that i mind of course, was getting mad at getting 80 / 100 and getting failed."
+(Verbatim bug report confirming the 'annonymus' NPC written test cancel bypass on the official Assassin job quest).

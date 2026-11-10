@@ -1,0 +1,25 @@
+Evidence for Thread #19: Lutie Permanence & CD Patcher xmas Strings
+
+Source 1: kRO Episode 2 Announcement
+Date: 2002-12-17
+Passage:
+Lutie was introduced in Episode 2 (2002-12-17) as a permanent town. The maps (xmas, xmas_fild01, xmas_dun01..02) and Aldebaran Santa NPC (aldebaran 223, 222) were permanent year-round fixtures.
+
+Source 2: euRO CD Patcher Ragnarok.exe Disassembly
+Date: 2003-12-12
+Passage:
+Strings in Ragnarok.exe:
+- 0x1d0d4: notice_xmas.txt
+- 0x1d0e4: 2003-10-31gdata_xmas.gpf
+- 0x1d100: xmas
+- 0x1d108: deny
+- 0x1d310: patch_allow.txt
+
+Disassembly:
+- 0x51c0: strncmp(edi, "xmas", 4)
+- 0x51d6: push 2003-10-31gdata_xmas.gpf
+- 0x51e7: push notice_xmas.txt
+
+Conclusion:
+Gravity built a remote Christmas event trigger directly into Ragnarok.exe. When patch_allow.txt returned "xmas", the patcher downloaded 2003-10-31gdata_xmas.gpf.
+Lutie itself was already a permanent town in data.grf.
