@@ -340,7 +340,8 @@ fn elements_and_magic() {
         let id = t.g.db.skills_by_name[skill];
         t.skill(id, 1, mob);
         // cast bar first, nothing lost yet
-        assert_eq!(t.packets(0x013e).len(), 1, "{skill}: cast bar");
+        let me = t.me;
+        assert_eq!(t.packets(0x013e).iter().filter(|p| u32_at(p, 2) == me).count(), 1, "{skill}: cast bar");
         assert_eq!(t.mob_hp(mob), Some(hp));
         t.run(3000);
         let left = t.mob_hp(mob).unwrap_or(0);

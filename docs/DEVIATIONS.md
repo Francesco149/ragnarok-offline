@@ -211,6 +211,11 @@ research should check is in research/THREADS.md #20–#23.
   only to a hit.
 * **The pushcart** slowed its owner only if he had Pushcart, the skill the
   cart cannot be had without. Same result; the condition is gone.
+* **Blessing on a monster** lifts Curse and Stone unless it is Undead or a
+  demon; mod0631 compares the whole element word with 9, which matches
+  nothing.
+* **A skill's item** (gemstone, trap) was not used up when it sat in the
+  first inventory slot.
 * **Attack speed.** Not mod0631's slip but ours, fixed now: the server
   attacked twice as fast as the status window's ASPD says. The delay between
   two attacks is twice the "aspd" value (`pc.c:2458`).
@@ -227,9 +232,13 @@ research should check is in research/THREADS.md #20–#23.
   only shows.
 * **Blessing lifts Curse and Stone from players** too (mod0631: monsters only).
 * **Storm Gust freezes on its third hit** (817) instead of 35%+3%/level a hit.
-* **Brandish Spear, Auto Counter, Signum Crucis, Slow Poison, Find Stone,
-  Ruwach's damage, element-resisting cards against magic**: not in mod0631
-  at all.
+* **Stone** takes five seconds to set, then lasts its time and costs 1% HP
+  every fifth second (817); in mod0631 it is instant and never wears off.
+* **Stun, poison, blind and silence are not renewed** while they last, and
+  **the undead do not freeze** (817).
+* **Brandish Spear, Auto Counter, Venom Splasher, Signum Crucis, Slow
+  Poison, Find Stone, Ruwach's damage, element-resisting cards against
+  magic**: not in mod0631 at all.
 
 **Ours, where neither emulator has anything** (tier guess unless noted):
 
@@ -248,15 +257,25 @@ research should check is in research/THREADS.md #20–#23.
 
 **Engine:**
 
-* **Range.** A skill or attack needs its target within range; the emulator
-  also asked for a walkable path between the two ("no shooting over
-  cliffs"). Not checked yet.
 * **Invulnerability after a warp** (`ghost_time`, 5 s in which monsters
   ignore you) is not there.
 * **Monsters on maps nobody is on** stand still. Athena's "lazy" AI let them
   wander and warp now and then.
 * **Parties.** Party-wide skills (Angelus, Magnificat, Gloria, Adrenaline
   Rush...) reach the caster only: there is no party.
-* **Not built yet:** the 2-2 jobs' skills, Poison React's counter, Venom Splasher, Talkie Box's text, Remove Trap,
-  Spring Trap, Repair Weapon (nothing breaks in this era's data), attacking
-  an Ice Wall, monsters' "friend" skill targets (mod0631 has none either).
+* **Not built yet:** the 2-2 jobs' skills, Poison React's counter, Talkie
+  Box's text, Remove Trap, Spring Trap, Repair Weapon (nothing breaks in
+  this era's data), attacking an Ice Wall, monsters' "friend" skill targets
+  (mod0631 has none either). Venom Splasher is 817's plain splash, without
+  the delayed burst of the client's skill text.
+* **One cast at a time for monsters.** In mod0631 a counter skill could
+  start over a cast in progress.
+* **Unidentified equipment cannot be worn**, and **nobody walks while
+  playing dead**: mod0631 checks neither.
+* **Cart Revolution needs a cart** (the client's skill text); mod0631 does
+  not check.
+* **"Unable to Teleport in this area"** is shown when Teleport or Warp
+  Portal is refused by a map; mod0631 says nothing.
+* **A monster that senses casting** reacts unless it has a target (mod0631:
+  unless it is attacking), and the "casttargeted" skill condition, which
+  mod0631 defines and never raises, is raised.

@@ -442,9 +442,9 @@ Built from the client's text or by analogy, to be sharpened (DEVIATIONS.md
 has the table): Flasher's chance, Shockwave Trap on monsters, Enchant
 Poison's chance to poison, Brandish Spear's cells, Detect's range, Change
 Cart's level steps. Open in both emulators and not built: Poison React,
-Venom Splasher (817 has a damage formula only), Remove Trap, Spring Trap,
-Talkie Box, forging and its success rates, Repair Weapon. Arrows add no
-ATK in mod0631 (the line is commented out): did they on the official
+Venom Splasher's delayed burst (817 makes it a plain splash), Remove Trap, Spring Trap,
+Talkie Box, Repair Weapon. Arrows add no ATK in mod0631 (the line is
+commented out) and its bow skills use none: did they on the official
 servers of Dec 2003? The client shows an ATK on arrow items.
 **Impact:** Hunter, Assassin and Blacksmith play.
 **Look:** jAthena's history (`refs/jathena`, `git log -S` on each skill

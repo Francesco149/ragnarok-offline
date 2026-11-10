@@ -695,8 +695,8 @@ impl Game {
                 };
                 if dist >= min_chase || fooled || !tu.is_player() {
                     self.mob_unlock(id, now);
-                } else if dist > mdb.range.max(1) as i32 {
-                    // out of reach: chase
+                } else if dist > mdb.range.max(1) as i32 || !self.grid(&map).is_some_and(|g| path::can_shoot(&g, x, y, tx, ty)) {
+                    // out of reach, or no free line (battle_check_range): chase
                     if mode & MD_CANMOVE == 0 {
                         self.mob_unlock(id, now);
                         return;
@@ -958,6 +958,10 @@ impl Game {
             // range of the skill itself; a weapon-range skill (below 0) reaches as the monster does
             let range = if sk.range < 0 { mdb_range(self, m.mob_id) - (sk.range + 1) } else { sk.range };
             if range > 0 && path::distance(me_x as i32, me_y as i32, tx as i32, ty as i32) > range {
+                return false;
+            }
+            let map = self.world.units[&id].map.clone();
+            if !self.grid(&map).is_some_and(|g| path::can_shoot(&g, me_x as i32, me_y as i32, tx as i32, ty as i32)) {
                 return false;
             }
             if let Some(m) = self.world.units.get_mut(&id).and_then(|u| u.mob_mut()) {

@@ -872,6 +872,11 @@ impl Game {
                 Value::Null
             }
             "map_flag" => json!(self.db.map_flag(&text(a, 0), &text(a, 1))),
+            "can_shoot" => {
+                // a free straight line between two cells (battle_check_range)
+                let map = text(a, 0);
+                json!(self.grid(&map).is_some_and(|g| path::can_shoot(&g, int(a, 1) as i32, int(a, 2) as i32, int(a, 3) as i32, int(a, 4) as i32)))
+            }
             "reachable" => {
                 let map = text(a, 0);
                 json!(self.grid(&map).is_some_and(|g| path::find(&g, int(a, 1) as i32, int(a, 2) as i32, int(a, 3) as i32, int(a, 4) as i32).is_some()))

@@ -39,12 +39,11 @@ overweight icons.
 
 Next:
 
-* **Skills left out** (DEVIATIONS.md, THREADS.md #22): Poison React, Venom
-  Splasher, Remove Trap, Spring Trap, Talkie Box's text, attacking an Ice
-  Wall.
+* **Skills left out** (DEVIATIONS.md, THREADS.md #22): Poison React, Remove
+  Trap, Spring Trap, Talkie Box's text, attacking an Ice Wall, Venom
+  Splasher's delayed burst.
 * **The 2-2 jobs' skills** (behind `jobs2_2`): Crusader, Monk, Sage, Rogue,
   Alchemist, Bard, Dancer. mod0631 has most; nothing is ported.
-* **Line of sight** for skills and bows (the emulator's path check).
 * **Check against the client's skill text and period guides**
   (THREADS.md #20, #21).
 * Play every job in the real client: skill window, hotkeys, each skill's

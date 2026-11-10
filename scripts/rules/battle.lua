@@ -237,11 +237,14 @@ function battle.check_dir(s_dir, t_dir)
   return not (d == 0 or d == 1 or d == 7)
 end
 
--- battle_check_range (battle.c:1809): within range. (The emulator also asked
--- for a walkable path; with one client that walks into range itself, range alone decides.)
+-- battle_check_range (battle.c:1809): within range (0 = any distance), and
+-- a free straight line to the cell: no hitting through walls; cliffs can be
+-- shot over.
 function battle.check_range(src, x, y, range)
   local d = math.max(math.abs(x - src.x), math.abs(y - src.y))
-  return not (range > 0 and range < d)
+  if range > 0 and range < d then return false end
+  if d == 0 then return true end
+  return _rt("can_shoot", src.map, src.x, src.y, x, y)
 end
 
 -- ------------------------------------------------------------ element table
@@ -848,6 +851,10 @@ function rules.weapon_attack(a)
   local src, target = get(a.src), get(a.target)
   if not src or not target or src.dead or target.dead or src.map ~= target.map then return false end
   if not battle.is_enemy(src, target) then return false end
+  -- battle.c:1683: nothing happens without a free line to the target
+  if not battle.check_range(src, target.x, target.y, 0) then
+    return { adelay = src.kind == "player" and src.st.aspd * 2 or src.db.attack_delay }
+  end
   local adelay
   if src.kind == "player" then
     adelay = src.st.aspd * 2 -- pc.c:2458

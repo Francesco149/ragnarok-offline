@@ -60,6 +60,34 @@ pub fn find_easy(g: &MapGrid, x0: i32, y0: i32, x1: i32, y1: i32) -> Option<Vec<
     Some(path)
 }
 
+/// Can something at (x0,y0) shoot or strike at (x1,y1)? Athena's
+/// battle_check_range: the straight ("easy") path must be free, where cliffs
+/// that cannot be walked may still be shot over (path_search flag 0x10001).
+pub fn can_shoot(g: &MapGrid, x0: i32, y0: i32, x1: i32, y1: i32) -> bool {
+    let free = |x: i32, y: i32| g.flags(x, y) & ro_data::gat::SHOOT != 0;
+    if (x0, y0) == (x1, y1) {
+        return true;
+    }
+    if !free(x1, y1) {
+        return false;
+    }
+    let (dx, dy) = ((x1 - x0).signum(), (y1 - y0).signum());
+    let (mut x, mut y) = (x0, y0);
+    for _ in 0..64 {
+        if (x, y) == (x1, y1) {
+            return true;
+        }
+        let (sx, sy) = (if x != x1 { dx } else { 0 }, if y != y1 { dy } else { 0 });
+        let (nx, ny) = (x + sx, y + sy);
+        // a diagonal step needs both cells beside it free, as walking does
+        if !free(nx, ny) || (sx != 0 && sy != 0 && (!free(x, ny) || !free(nx, y))) {
+            return false;
+        }
+        (x, y) = (nx, ny);
+    }
+    false
+}
+
 /// Path from (x0,y0) to (x1,y1) as a list of directions, or None.
 pub fn find(g: &MapGrid, x0: i32, y0: i32, x1: i32, y1: i32) -> Option<Vec<u8>> {
     if !g.walkable(x1, y1) {
@@ -156,5 +184,25 @@ mod tests {
         let mut g = MapGrid::open("t", 10, 10);
         g.set_walkable(5, 5, false);
         assert!(find(&g, 1, 1, 5, 5).is_none());
+    }
+}
+
+#[cfg(test)]
+mod shoot_tests {
+    use super::*;
+
+    #[test]
+    fn walls_block_a_shot() {
+        let mut g = MapGrid::open("t", 10, 10);
+        assert!(can_shoot(&g, 1, 1, 6, 1));
+        assert!(can_shoot(&g, 1, 1, 5, 4));
+        g.set_walkable(3, 1, false); // not walkable but still shootable: a cliff (or an Ice Wall)
+        assert!(can_shoot(&g, 1, 1, 6, 1), "a cliff can be shot over");
+        g.set_flags(3, 1, 0);
+        assert!(!can_shoot(&g, 1, 1, 6, 1), "a wall cannot");
+        assert!(can_shoot(&g, 1, 2, 6, 2), "the row beside it is free");
+        // a diagonal step may not cut a wall's corner
+        g.set_flags(2, 2, 0);
+        assert!(!can_shoot(&g, 1, 1, 3, 3));
     }
 }

@@ -70,6 +70,12 @@ impl MapGrid {
             }
         }
     }
+    /// Set a cell's flags outright (WALK | SHOOT | WATER; 0 = a wall).
+    pub fn set_flags(&mut self, x: i32, y: i32, flags: u8) {
+        if self.in_bounds(x, y) {
+            self.cells[y as usize * self.width as usize + x as usize] = flags;
+        }
+    }
     pub fn walkable_count(&self) -> usize {
         self.cells.iter().filter(|&&c| c & WALK != 0).count()
     }
