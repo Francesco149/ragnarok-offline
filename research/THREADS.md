@@ -26,6 +26,10 @@ briefed in `research/agy-threads/HANDOFF-r3.md`: War of Emperium in depth
 first, and findings only as rows that `research/check_rows.py` can check
 against the cited file, revision or saved page.
 
+What the outside agent is asked next is in
+`research/agy-threads/QUEUE.md`: a standing list, updated and refilled at
+the end of each working session.
+
 Ruled out as a source: leaked Gravity server packages (Aegis binaries and
 scripts). They are not ours to use or redistribute, and nothing here may be
 derived from them.

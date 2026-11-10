@@ -27,3 +27,5 @@ __pycache__/
 /research/agy-threads/r2/frames/
 # round 3: the web pages its rows cite, as fetched (third-party content; the rows quote what matters)
 /research/agy-threads/r3/pages/
+# later rounds: the same
+/research/agy-threads/r[0-9]*/pages/
