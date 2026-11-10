@@ -67,12 +67,14 @@ pub struct GameConfig {
     pub autosave_secs: u64,
     /// Content switches scripts test with `content("name")`. Defaults are
     /// euRO's state in Jan-Feb 2004 (docs/DEVIATIONS.md): juno and jobs2_2
-    /// opened 2004-06-09; pvp needs other players; events are seasonal.
+    /// opened 2004-06-09; pvp needs other players; events are seasonal; kRO
+    /// opened the arena on 2004-10-12; a guild castle nobody owns held
+    /// monsters (kRO until 2004-02-10, eAthena 817).
     pub content: std::collections::BTreeMap<String, bool>,
 }
 
 pub fn default_content() -> std::collections::BTreeMap<String, bool> {
-    [("juno", false), ("jobs2_2", false), ("pvp", false), ("events", false)]
+    [("juno", false), ("jobs2_2", false), ("pvp", false), ("events", false), ("arena", false), ("castle_monsters", true)]
         .into_iter()
         .map(|(k, v)| (k.to_string(), v))
         .collect()

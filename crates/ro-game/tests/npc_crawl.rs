@@ -120,7 +120,7 @@ fn crawl_every_npc() {
         db_dir: root.join("data/db"),
         start_point: Point::new("crawlmap", 25, 25),
         // everything on, so gated files are crawled too
-        content: ["juno", "jobs2_2", "pvp", "events"].iter().map(|k| (k.to_string(), true)).collect(),
+        content: ["juno", "jobs2_2", "pvp", "events", "arena", "castle_monsters"].iter().map(|k| (k.to_string(), true)).collect(),
         ..Default::default()
     };
     let cap = Cap::default();

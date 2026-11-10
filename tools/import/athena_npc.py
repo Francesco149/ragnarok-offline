@@ -94,10 +94,15 @@ FILES = {
     "other/guide.txt": ("other/guide.lua", None, ""),
     "other/books.txt": ("other/books.lua", None, ""),
     "other/ctower.txt": ("other/clock_tower.lua", None, ""),
-    "other/arena.txt": ("other/arena.lua", None, "Izlude arena: monster time attack, solo by design"),
+    "other/arena.txt": ("other/arena.lua", "arena",
+                        "monster time attack, entered from the middle of Prontera: 817's own placement. kRO only "
+                        "opened the arena (in Izlude) on 2004-10-12; off by default (THREADS.md R5)"),
     "other/pvp.txt": ("other/pvp.lua", "pvp", "PvP needs other players; off by default (DEVIATIONS.md)"),
     "other/IceCream.txt": ("events/ice_cream.lua", "events", "seasonal event (Aug 2003)"),
     "other/MrSmile.txt": ("events/mr_smile.lua", "events", "national event"),
+    "mobs/gvg.txt": ("castles/monsters.lua", "castle_monsters",
+                     "monsters of a guild castle nobody owns, called at WoE start (scripts/npc/castles.lua "
+                     "calls them: THREADS.md #17)"),
     "quests/headgearquest.txt": ("quests/headgear.lua", None, ""),
     "quests/bunnyband.txt": ("quests/bunny_band.lua", "events", "Bunny Band festival event"),
     "quests/munak.txt": ("quests/munak.lua", None, ""),
@@ -149,7 +154,7 @@ SKIP = {
     "guild/*": "guild castles: needs guilds; single-player stand-ins in scripts/npc/guild.lua",
     "sample/*": "samples",
     "warps/*": "imported from mod0631 by athena_import.py",
-    "mobs/*": "imported from mod0631 by athena_import.py",
+    "mobs/*": "imported from mod0631 by athena_import.py (except gvg.txt: script NPCs, above)",
     "shops/*": "imported from mod0631 by athena_import.py",
 }
 

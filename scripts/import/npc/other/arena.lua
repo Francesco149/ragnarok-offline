@@ -3,7 +3,8 @@
 -- the emulator authors' (often fan-translated), not Gravity's. GPL, like its source.
 -- Don't edit: override in scripts/npc/ (npc{replaces=}, wrap_npc, remove_npc) and list the
 -- change in docs/DEVIATIONS.md.
--- Note: Izlude arena: monster time attack, solo by design
+-- Note: monster time attack, entered from the middle of Prontera: 817's own placement. kRO only opened the arena (in Izlude) on 2004-10-12; off by default (THREADS.md R5)
+if not content("arena") then return end
 
 npc {
   map = "prontera", x = 160, y = 185, dir = 3, sprite = 116, name = "Arena Entrance",
