@@ -858,6 +858,24 @@ fn thief_skills() {
     t.run(300);
     assert!(!t.has_sc(p, "POISON"), "Detoxify cures");
     t.kill(p);
+    // Poison React answers one poisonous blow (an Envenom thrown back at us), once
+    t.lua("job_change(12)");
+    t.learn("AS_POISONREACT", 5);
+    let me = t.me;
+    let m = t.spawn(26, 25, 1008); // a Pupa (the answer is of the Poison element: not an Undead)
+    t.cast("AS_POISONREACT", me);
+    t.run(500);
+    assert!(t.sc(7), "Poison React is up");
+    let hp = t.mob_hp(m).unwrap();
+    t.lua(&format!("rules.weapon_attack{{src={m}, target={me}}}"));
+    assert!(t.sc(7), "a plain blow does not set it off");
+    assert_eq!(t.mob_hp(m), Some(hp));
+    t.lua(&format!("skill_attack(BF.WEAPON, {m}, {m}, {me}, SK.TF_POISON, 1, 0)"));
+    assert!(!t.sc(7), "a poisonous one does, once");
+    assert!(t.mob_hp(m).is_none_or(|h| h < hp), "and is answered");
+    t.kill(m);
+    t.lua("heal(9999, 9999)");
+    t.run(2000);
     // Steal from a Poring: sooner or later an item, and then never again
     let before: u32 = t.g.store.chars[&t.cid].inventory.iter().map(|i| i.amount).sum();
     let p = t.spawn(26, 25, 1002);
@@ -1010,7 +1028,7 @@ fn fighter_skills() {
 fn hunter_traps() {
     let mut t = T::new();
     t.lua("job_change(11); player.base_level = 70; player.dex = 90; player.int = 40; heal(9999, 9999); give_item(1065, 10)");
-    for (s, lv) in [("HT_LANDMINE", 5), ("HT_ANKLESNARE", 5), ("HT_BLITZBEAT", 5), ("HT_FALCON", 1)] {
+    for (s, lv) in [("HT_LANDMINE", 5), ("HT_ANKLESNARE", 5), ("HT_BLITZBEAT", 5), ("HT_FALCON", 1), ("HT_REMOVETRAP", 1), ("HT_SPRINGTRAP", 5)] {
         t.learn(s, lv);
     }
     let me = t.me;
@@ -1034,6 +1052,23 @@ fn hunter_traps() {
     t.run(3000);
     assert_eq!(t.pos(z), at, "it does not move");
     assert!((at.0 as i32 - 28).abs() <= 1, "caught at the trap: {at:?}");
+    // Remove Trap takes a trap up again and gives the Trap back; Spring Trap needs the falcon
+    let traps = |t: &T| t.g.store.chars[&t.cid].inventory.iter().find(|i| i.nameid == 1065).map(|i| i.amount).unwrap_or(0);
+    let trap_cells = |t: &T| -> Vec<u32> { t.g.world.units.values().filter(|u| u.skill().is_some() && (u.x, u.y) == (23, 25)).map(|u| u.id).collect() };
+    t.run(2000);
+    t.cast_at("HT_LANDMINE", 23, 25);
+    let n = traps(&t);
+    let cell = trap_cells(&t)[0];
+    t.run(2000);
+    t.cast("HT_REMOVETRAP", cell);
+    assert!(trap_cells(&t).is_empty(), "the trap is taken up");
+    assert_eq!(traps(&t), n + 1, "and the Trap is back");
+    t.run(2000);
+    t.cast_at("HT_LANDMINE", 23, 25);
+    let cell = trap_cells(&t)[0];
+    t.run(2000);
+    t.cast("HT_SPRINGTRAP", cell);
+    assert_eq!(trap_cells(&t).len(), 1, "no falcon, no Spring Trap");
     // Blitz Beat needs the falcon
     t.packets(0);
     t.cast("HT_BLITZBEAT", z);
@@ -1044,5 +1079,10 @@ fn hunter_traps() {
     t.cast("HT_BLITZBEAT", z);
     t.run(2000);
     assert!(t.mob_hp(z).is_none_or(|h| h < hp), "the falcon strikes");
+    t.run(2000);
+    let n = traps(&t);
+    t.cast("HT_SPRINGTRAP", cell);
+    assert!(trap_cells(&t).is_empty(), "the falcon springs the trap");
+    assert_eq!(traps(&t), n, "nothing comes back");
     let _ = me;
 }

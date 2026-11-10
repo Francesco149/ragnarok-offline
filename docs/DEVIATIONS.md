@@ -263,11 +263,16 @@ research should check is in research/THREADS.md #20–#23.
   wander and warp now and then.
 * **Parties.** Party-wide skills (Angelus, Magnificat, Gloria, Adrenaline
   Rush...) reach the caster only: there is no party.
-* **Not built yet:** the 2-2 jobs' skills, Poison React's counter, Talkie
-  Box's text, Remove Trap, Spring Trap, Repair Weapon (nothing breaks in
-  this era's data), attacking an Ice Wall, monsters' "friend" skill targets
-  (mod0631 has none either). Venom Splasher is 817's plain splash, without
-  the delayed burst of the client's skill text.
+* **Poison React, Remove Trap, Spring Trap** are drafts from the client's
+  skill text alone (tier `guess`; no emulator of the period has them).
+  Poison React answers one weapon blow of the Poison element with
+  (100 + 30 x level)% and ends; Remove Trap takes up any Hunter trap and
+  gives one Trap back; Spring Trap needs the falcon and destroys the trap.
+  Not tried in the real client yet (does it let you click a trap?).
+* **Not built yet:** the 2-2 jobs' skills, Talkie Box's text, Repair Weapon
+  (nothing breaks in this era's data), attacking an Ice Wall, monsters'
+  "friend" skill targets (mod0631 has none either). Venom Splasher is 817's
+  plain splash, without the delayed burst of the client's skill text.
 * **One cast at a time for monsters.** In mod0631 a counter skill could
   start over a cast in progress.
 * **Unidentified equipment cannot be worn**, and **nobody walks while

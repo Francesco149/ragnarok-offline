@@ -222,6 +222,25 @@ end
 
 -- ------------------------------------------------------------ skill_attack
 
+-- Poison React, a draft. Neither mod0631 nor eAthena 817 has more than the
+-- status; the client's skill text: "Enable to Counter for one time when the
+-- Selected player hit by a Poisonous attack". Ours (guess): a weapon blow of
+-- the Poison element is answered once with (100 + 30 x level)% (battle.lua)
+-- if the attacker is within the weapon's reach plus one cell, as Auto
+-- Counter measures it; then the status ends. THREADS.md #22.
+function skill_poison_react(src_id, bl_id, ele)
+  if ele ~= 5 then return end
+  local bl = get(bl_id)
+  local pr = bl and not bl.dead and sc(bl, SC.POISONREACT)
+  if not pr then return end
+  local src = get(src_id)
+  if not src or src.dead or src.map ~= bl.map then return end
+  local reach = bl.kind == "player" and bl.st.attackrange or bl.db.range
+  if battle.distance(src, bl) > reach + 1 then return end
+  skill_status_change_end(bl_id, SC.POISONREACT)
+  skill_attack(BF.WEAPON, bl_id, bl_id, src_id, SK.AS_POISONREACT, pr.val1, 0)
+end
+
 -- skill.c:527. `dsrc` is what the client sees the hit come from (the caster,
 -- or a ground cell {id=, x=, y=}). opt: wflag = number handed to the damage
 -- formula (targets sharing, distance), type = damage packet type, lv = level
@@ -246,6 +265,10 @@ function skill_attack(attack_type, src_id, dsrc, bl_id, skillid, skilllv, wflag,
   local total = dmg.damage + math.max(0, dmg.damage2)
   battle.damage(src_id, bl_id, total)
   if total > 0 then skill_additional_effect(src_id, bl_id, skillid, skilllv, attack_type) end
+  if attack_type == BF.WEAPON and skillid ~= SK.AS_POISONREACT then
+    local pl = skill_get_pl(skillid)
+    skill_poison_react(src_id, bl_id, pl > 0 and pl or battle.attack_element(src))
+  end
   -- a monster may answer a skill with one of its own (skill.c:573)
   if bl.kind == "mob" and src_id ~= bl_id then _rt("mob_event", bl_id, "skillused:" .. skillid) end
   return total
@@ -356,8 +379,10 @@ function rules.skill_use(a)
   local bl
   if not place then
     if (inf & 4) ~= 0 then target_id = sd.id end
-    bl = get(target_id)
+    -- aimed at a trap (Remove Trap, Spring Trap): a cell, not a unit that fights
+    bl = inf == 32 and skill_trap_cell(target_id) or get(target_id)
     if not bl or bl.map ~= sd.map then return nil end
+    if inf == 32 then bl = { x = bl.x, y = bl.y, kind = "trap" } end
   end
 
   -- stunned, frozen, asleep, stone; hidden; silenced
@@ -457,7 +482,8 @@ function skill_check_condition(sd, skill, lv, a)
     if w ~= 6 and w ~= 7 and w ~= 8 then return fail(6) end
   elseif skill == SK.BS_MAXIMIZE or skill == SK.NV_TRICKDEAD or skill == SK.TF_HIDING or skill == SK.AS_CLOAKING then
     if sc(sd, SkillStatusChangeTable[skill]) then sp = 0 end -- switching it off is free
-  elseif skill == SK.HT_BLITZBEAT then
+  elseif skill == SK.HT_BLITZBEAT or skill == SK.HT_SPRINGTRAP then
+    -- Spring Trap: the client's text, "Manage a Falcon to Destroy a installed Trap"
     if not sd.st.falcon then return fail() end
   elseif skill == SK.AS_GRIMTOOTH then
     if (sd.option & 2) == 0 then return fail() end
@@ -504,8 +530,9 @@ function rules.skill_castend(a)
   local sd = src.kind == "player" and src or nil
   local place = (skill_get_inf(skill) & 2) ~= 0 and (not a.target or a.target == 0)
   local bl
+  local trap = skill_get_inf(skill) == 32
   if not place then
-    bl = get(a.target)
+    bl = trap and skill_trap_cell(a.target) or get(a.target)
     if not bl or bl.map ~= src.map then return false end
   end
   local tx, ty = a.x, a.y
@@ -530,6 +557,10 @@ function rules.skill_castend(a)
 
   if place then
     skill_castend_pos2(a.src, a.x, a.y, skill, lv, a)
+    return true
+  end
+  if trap then
+    skill_castend_trap(src, bl, skill, lv)
     return true
   end
   -- an attack skill needs an enemy (skill.c:1769)

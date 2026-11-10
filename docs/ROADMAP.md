@@ -39,9 +39,9 @@ overweight icons.
 
 Next:
 
-* **Skills left out** (DEVIATIONS.md, THREADS.md #22): Poison React, Remove
-  Trap, Spring Trap, Talkie Box's text, attacking an Ice Wall, Venom
-  Splasher's delayed burst.
+* **Skills left out** (DEVIATIONS.md, THREADS.md #22): Talkie Box's text,
+  attacking an Ice Wall, Venom Splasher's delayed burst. Poison React,
+  Remove Trap and Spring Trap are drafts to try in the client.
 * **The 2-2 jobs' skills** (behind `jobs2_2`): Crusader, Monk, Sage, Rogue,
   Alchemist, Bard, Dancer. mod0631 has most; nothing is ported.
 * **Check against the client's skill text and period guides**

@@ -381,6 +381,21 @@ del_cell = function(c, from_group)
   end
 end
 
+-- Remove Trap and Spring Trap aim at a trap on the ground: the cell with
+-- this unit id if it is one of the Hunter's traps, and taking it away.
+local TRAPS = { [0x8f] = true, [0x90] = true, [0x91] = true, [0x93] = true, [0x94] = true, [0x95] = true,
+                [0x96] = true, [0x97] = true, [0x98] = true, [0x99] = true }
+function skill_trap_cell(id)
+  local c = cells[id]
+  local g = c and c.alive and groups[c.group]
+  if not g or not TRAPS[g.unit_id] then return nil end
+  return { id = c.id, map = c.map, x = c.x, y = c.y, src = g.src, skill = g.skill }
+end
+function skill_trap_remove(id)
+  local c = cells[id]
+  if c and c.alive then del_cell(c) end
+end
+
 -- skill.c:4442 / 4477: every 100 ms each cell acts on who stands in its
 -- range, then goes if its time is up.
 function skill_unit_timer(now)

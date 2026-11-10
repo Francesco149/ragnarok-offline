@@ -176,6 +176,16 @@ function skill_castend_damage_id(src_id, bl_id, skillid, skilllv, opt)
   end
 end
 
+-- Remove Trap and Spring Trap, drafts: in neither mod0631 nor eAthena 817.
+-- The client's skill text: "Remove a Trap Installed. After removing, Can
+-- Regain 1 Trap" and "Manage a Falcon to Destroy a installed Trap". Whose
+-- traps, and which kinds, it does not say: any Hunter trap here. THREADS.md #22.
+function skill_castend_trap(src, cell, skillid, skilllv)
+  nodamage(src.id, src.id, skillid, skilllv)
+  skill_trap_remove(cell.id)
+  if skillid == SK.HT_REMOVETRAP and src.kind == "player" then _rt("pc_item_add", src.id, 1065, 1) end
+end
+
 -- ------------------------------------------------------------ support skills
 
 local SC_SIMPLE = {}

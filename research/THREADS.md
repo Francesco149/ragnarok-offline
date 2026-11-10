@@ -441,9 +441,11 @@ guide's status pages (2004), kRO notices.
 Built from the client's text or by analogy, to be sharpened (DEVIATIONS.md
 has the table): Flasher's chance, Shockwave Trap on monsters, Enchant
 Poison's chance to poison, Brandish Spear's cells, Detect's range, Change
-Cart's level steps. Open in both emulators and not built: Poison React,
-Venom Splasher's delayed burst (817 makes it a plain splash), Remove Trap, Spring Trap,
-Talkie Box, Repair Weapon. Arrows add no ATK in mod0631 (the line is
+Cart's level steps. Open in both emulators and drafted from the client's
+text only: Poison React (what counts as a poisonous attack, the counter's
+strength, how long it lasts), Remove Trap and Spring Trap (whose traps,
+which kinds, Spring Trap's range by level). Not built: Venom Splasher's
+delayed burst (817 makes it a plain splash), Talkie Box, Repair Weapon. Arrows add no ATK in mod0631 (the line is
 commented out) and its bow skills use none: did they on the official
 servers of Dec 2003? The client shows an ATK on arrow items.
 **Impact:** Hunter, Assassin and Blacksmith play.

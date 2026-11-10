@@ -680,6 +680,8 @@ battle.weapon_skill = {
   end,
   -- Venom Splasher: 817 battle.c:2470 (not in mod0631)
   [SK.AS_SPLASHER] = function(w) w.div = 6; return pct(w, 200 + 20 * w.lv) end,
+  -- Poison React's answer: ours, see skill_poison_react (skill.lua)
+  [SK.AS_POISONREACT] = function(w) return pct(w, 100 + 30 * w.lv) end,
   [SK.AS_SONICBLOW] = function(w) w.div = 8; return pct(w, 300 + 50 * w.lv) end,
   [SK.AC_CHARGEARROW] = function(w) w.blewcount = 6; return w end,
   [SK.TF_SPRINKLESAND] = function(w) return pct(w, 125) end,
@@ -907,5 +909,6 @@ function rules.weapon_attack(a)
   local total = wd.damage + math.max(0, wd.damage2)
   battle.damage(src.id, target.id, total)
   if total > 0 then skill_additional_effect(src.id, target.id, 0, 0) end
+  skill_poison_react(src.id, target.id, battle.attack_element(src))
   return { adelay = adelay }
 end
