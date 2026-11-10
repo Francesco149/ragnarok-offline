@@ -15,7 +15,9 @@ briefed in `research/agy-threads/HANDOFF.md`; its report is
 `research/notes/round1-review.md`**, the second pass: it says which claims
 were loaded again from the source, which turned out wrong, and which are
 still only the report's word. Below, "round 1" marks what that pass
-confirmed.
+confirmed. Round 2 is briefed in `research/agy-threads/HANDOFF-r2.md`: the
+same questions with a stricter method (one graded, quoted row per claim)
+and the local period sources first, above all mod0631's own NPC scripts.
 
 Ruled out as a source: leaked Gravity server packages (Aegis binaries and
 scripts). They are not ours to use or redistribute, and nothing here may be

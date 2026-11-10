@@ -8,6 +8,11 @@ record; a copy sits next to the image on cold as `README.md`.
 re-fetchable download). Working copy on maximus: `~/data/ragnarok-cd/`
 (mounted at `/data` in the workbench).
 
+**Public copy:** the image, its logs, hashes and photos of the disc are on
+the Internet Archive since 2026-11-09:
+<https://archive.org/details/ragnarok-online-euro-cd-2003-12-ichipm01>. `RAGNAROK.iso` and
+`RAGNAROK.bin` there have the hashes listed below.
+
 ## The disc
 
 | | |

@@ -60,8 +60,10 @@ Full identification, with evidence: [docs/CLIENT.md](docs/CLIENT.md). In short:
   patch files. euRO itself only opened Juno and the 2-2 jobs on 2004-06-09,
   so they are off by default here.
 - The CD itself is most likely a magazine cover disc (CHIP Italia, June
-  2004) carrying the December 2003 build. [docs/PRESERVATION.md](docs/PRESERVATION.md)
-  records the rip and how the disc was identified.
+  2004) carrying the December 2003 build. Its image is preserved on the
+  Internet Archive: [ragnarok-online-euro-cd-2003-12-ichipm01](https://archive.org/details/ragnarok-online-euro-cd-2003-12-ichipm01).
+  [docs/PRESERVATION.md](docs/PRESERVATION.md) records the rip and how the
+  disc was identified.
 
 ## Status
 
@@ -150,7 +152,10 @@ date. Open an issue and say which thread it answers.
 There is no binary release yet. Build the packages from source
 ([docs/DEVELOPMENT.md](docs/DEVELOPMENT.md): `tools/wb exec tools/package.sh`
 writes them to `dist/`). You need the client from the CD. It is Gravity's and
-is not in this repository.
+is not in this repository. The server supports exactly one client, the one
+on this disc: [the CD image on the Internet Archive](https://archive.org/details/ragnarok-online-euro-cd-2003-12-ichipm01)
+(`RAGNAROK.iso`, sha256 `b5d579a4…19a6`). Mount it and run its `setup.exe`,
+or build the all-in-one installer from it (below).
 
 ### Windows 10/11
 
