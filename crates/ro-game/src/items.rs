@@ -161,6 +161,9 @@ impl Game {
         let i = idx.wrapping_sub(INV_OFFSET) as usize;
         let Some(it) = self.char_of_unit(unit).and_then(|c| c.inventory.get(i)).cloned() else { return };
         let Some(d) = self.db.item(it.nameid).cloned() else { return };
+        if self.world.units.get(&unit).is_some_and(|u| u.state != 1) {
+            self.end_ghost(unit); // clif.c:5108
+        }
         // pc_isUseitem: the item's sex, level and jobs
         let (class, lv) = self.char_of_unit(unit).map(|c| (c.class, c.base_level)).unwrap_or((0, 1));
         let sex = self.world.units.get(&unit).and_then(|u| u.player()).map(|p| p.sex).unwrap_or(1);

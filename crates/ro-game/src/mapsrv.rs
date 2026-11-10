@@ -13,6 +13,9 @@ use crate::path;
 use crate::script::{Ctx, CtxKind, Outcome, Wait};
 use crate::world::{AttackIntent, DEFAULT_SPEED, NpcKind, NpcUnit, PlayerUnit, Unit, UnitKind, Walk, in_area};
 
+/// Athena battle_config.ghost_time (mod0631 battle.c:1884).
+const GHOST_TIME_MS: u64 = 5000;
+
 impl Game {
     pub(crate) fn map_packet(&mut self, sid: u32, pkt: &[u8]) -> Result<()> {
         let mut r = Reader::new(pkt);
@@ -81,6 +84,7 @@ impl Game {
                             self.send(sid, packets::skill_fail(1, 0, 4));
                             return Ok(());
                         }
+                        self.end_ghost(unit); // clif.c:4971
                         self.start_attack(unit, AttackIntent { target, continuous: action == 7 })
                     }
                     2 => {
@@ -255,6 +259,7 @@ impl Game {
                 // Teleport / Warp Portal: the map picked from the list
                 let skill = r.u16()?;
                 let map = r.str_fixed(16)?;
+                self.end_ghost(unit); // clif.c:5472
                 let pending = self.world.units.get_mut(&unit).and_then(|u| u.player_mut()).and_then(|p| p.skill_menu.take());
                 if let Some((s, lv, x, y)) = pending.filter(|p| p.0 == skill) {
                     self.rule_call("skill_castend_map", serde_json::json!({"src": unit, "skill": s, "lv": lv, "x": x, "y": y, "map": map}));
@@ -305,6 +310,28 @@ impl Game {
 
     // ------------------------------------------------------------ units
 
+    /// Athena pc_setghosttimer: monsters ignore the character for
+    /// `GHOST_TIME_MS` (battle_config.ghost_time, 5000 in mod0631).
+    pub(crate) fn set_ghost(&mut self, unit: u32) {
+        let until = self.now() + GHOST_TIME_MS;
+        if let Some(p) = self.world.units.get_mut(&unit).and_then(|u| u.player_mut()) {
+            p.ghost_until = until;
+        }
+    }
+
+    /// Athena pc_delghosttimer: acting ends the protection.
+    pub(crate) fn end_ghost(&mut self, unit: u32) {
+        if let Some(p) = self.world.units.get_mut(&unit).and_then(|u| u.player_mut()) {
+            p.ghost_until = 0;
+        }
+    }
+
+    /// Athena `sd->ghost_timer != -1`.
+    pub(crate) fn is_ghost(&self, unit: u32) -> bool {
+        let now = self.now();
+        self.world.units.get(&unit).and_then(|u| u.player()).is_some_and(|p| p.ghost_until > now)
+    }
+
     #[allow(clippy::too_many_arguments)]
     pub(crate) fn spawn_player(&mut self, sid: u32, unit: u32, aid: u32, cid: u32, sex: u8, gm: u8, p: &Point) {
         let c = &self.store.chars[&cid];
@@ -342,6 +369,7 @@ impl Game {
                 cast: None,
                 canact: 0,
                 canmove: 0,
+                ghost_until: 0,
                 skill_item: None,
                 skill_menu: None,
                 inc_hp_acc: 0,
@@ -362,6 +390,7 @@ impl Game {
         if let Some(p) = u.player_mut() {
             p.loaded = true;
         }
+        self.set_ghost(unit);
         let Some(sid) = self.sid_of(unit) else { return };
         self.send_skill_list(unit);
         self.send_full_status(unit);
@@ -822,6 +851,7 @@ impl Game {
             if let Some(p) = self.world.units.get_mut(&unit).and_then(|u| u.player_mut()) {
                 p.loaded = true;
             }
+            self.set_ghost(unit);
             self.send(sid, packets::map_move(&map, x, y));
             self.refresh_view(unit, true);
         } else {

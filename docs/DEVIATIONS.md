@@ -277,8 +277,6 @@ research should check is in research/THREADS.md #20–#23.
 
 **Engine:**
 
-* **Invulnerability after a warp** (`ghost_time`, 5 s in which monsters
-  ignore you) is not there.
 * **Monsters on maps nobody is on** stand still. Athena's "lazy" AI let them
   wander and warp now and then.
 * **Parties.** Party-wide skills (Angelus, Magnificat, Gloria, Adrenaline

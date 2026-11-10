@@ -114,6 +114,7 @@ impl T {
         g.handle(NetEvent::Packet { sid: 3, data: Writer::new(0x007d).finish() });
         cap.0.lock().unwrap().clear();
         let mut t = T { g, cap, me: aid, cid };
+        t.g.skew(5100); // past the five seconds in which monsters ignore a newcomer
         t.check();
         t
     }
@@ -529,6 +530,35 @@ fn monster_ai() {
         skills += t.cap.take().iter().filter(|p| id_of(p) == 0x01de && u32_at(p, 4) == s).count();
     }
     assert!(skills > 0, "the Scorpion used a skill in a minute of fighting");
+}
+
+/// Five seconds of peace after entering a map (mod0631 ghost_time), ended
+/// by the first thing the player does.
+#[test]
+fn newcomers_are_left_alone() {
+    let mut t = T::new();
+    t.lua("player.base_level = 50; player.vit = 80; heal(9999, 9999); give_item(501, 1)");
+    let hp = t.hp();
+    t.lua("warp('testmap', 25, 25)");
+    t.send(Writer::new(0x007d));
+    let z = t.spawn(26, 25, 1015); // a Zombie on the next cell
+    // (run() also lets real time pass, so stay well inside the five seconds)
+    t.run(2500);
+    assert_eq!(t.hp(), hp, "half-way in: the Zombie has not noticed");
+    assert!(t.g.world.units[&z].mob().unwrap().target.is_none());
+    t.run(6000);
+    assert!(t.hp() < hp, "after five it attacks");
+    // again, but drinking a potion ends the peace at once
+    t.lua(&format!("_rt('mob_kill', {z}); heal(9999, 0); warp('testmap', 25, 25)"));
+    t.send(Writer::new(0x007d));
+    let z = t.spawn(26, 25, 1015);
+    t.run(200);
+    assert!(t.g.world.units[&z].mob().unwrap().target.is_none());
+    let mut w = Writer::new(0x00a7);
+    w.u16(2).u32(t.me);
+    t.send(w);
+    t.run(1000);
+    assert!(t.g.world.units[&z].mob().unwrap().target.is_some(), "the potion gave us away");
 }
 
 /// A bow needs arrows, spends one a shot, and reaches as far as it says.

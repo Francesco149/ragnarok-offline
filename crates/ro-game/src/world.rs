@@ -59,6 +59,10 @@ pub struct PlayerUnit {
     pub canact: u64,
     /// No walking before this tick (Athena canmove_tick).
     pub canmove: u64,
+    /// Monsters leave the character alone until this tick: five seconds
+    /// after entering a map or being raised, ended by the first attack, item
+    /// or skill (Athena ghost_timer; mod0631 battle.c:1884, clif.c:4689).
+    pub ghost_until: u64,
     /// Skill granted by an item being used (Athena skillitem): (skill, level).
     pub skill_item: Option<(u16, u16)>,
     /// Skill waiting for a map choice (Teleport, Warp Portal): (skill, level, x, y).

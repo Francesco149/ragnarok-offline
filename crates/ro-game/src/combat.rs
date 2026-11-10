@@ -420,6 +420,10 @@ impl Game {
         if t.state == 1 || !t.is_player() {
             return false;
         }
+        // just arrived: nothing sees them, bosses included (mob.c:752, 797, 956)
+        if self.is_ghost(target) {
+            return false;
+        }
         if mdb.mvp_exp > 0 || mdb.mode & MD_BOSS != 0 {
             return true;
         }
@@ -521,7 +525,7 @@ impl Game {
         // The hit monster's kind comes to help (mob.c:1086, 850): every one
         // of its class within 13 cells that can reach the attacker, itself
         // included, turns on him, unless it is busy fighting while this one is too.
-        if let (Some(a), true) = (attacked, mode & MD_ASSIST != 0) {
+        if let (Some(a), true) = (attacked, mode & MD_ASSIST != 0 && !self.is_ghost(m.attacked.unwrap_or(0))) {
             if let Some((ax, ay)) = self.world.units.get(&a).filter(|p| p.is_player() && p.map == map).map(|p| (p.x as i32, p.y as i32)) {
                 let me_idle = m.target.is_none() || m.looting; // md->state.targettype == NONE_ATTACKABLE
                 let friends: Vec<(u32, i32, i32)> = self
@@ -556,7 +560,7 @@ impl Game {
         let mut retaliate = false;
         if let (Some(a), true) = (attacked, mode > 0) {
             if m.target.is_none() || m.looting || (mode & MD_AGGRESSIVE != 0 && rand::random::<u32>() % 100 < 25) {
-                let d = dist_to(self, a).filter(|d| *d < 32);
+                let d = dist_to(self, a).filter(|d| *d < 32 && !self.is_ghost(a)); // mob.c:1102
                 let m = self.world.units.get_mut(&id).unwrap().mob_mut().unwrap();
                 m.attacked = None;
                 if let Some(d) = d {

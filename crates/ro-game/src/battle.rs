@@ -550,10 +550,11 @@ impl Game {
             self.send(sid, packets::skill_fail(skill, 0, 4));
             return;
         }
+        let item = p.skill_item;
         if self.dialogs.contains_key(&unit) {
             return;
         }
-        let item = p.skill_item;
+        self.end_ghost(unit); // clif.c:5414, 5446
         let known = self.skill_level(unit, skill) as u16;
         let lv = match item {
             Some((s, l)) if s == skill => lv.min(l).max(1),
@@ -850,6 +851,7 @@ impl Game {
                 if let Some(c) = self.char_of_unit_mut(unit) {
                     c.hp = int(a, 1).max(1) as u32;
                 }
+                self.set_ghost(unit); // skill.c:1219
                 self.area_send(unit, packets::resurrection(unit, 0), true);
                 self.send_hp_sp(unit);
                 Value::Null
