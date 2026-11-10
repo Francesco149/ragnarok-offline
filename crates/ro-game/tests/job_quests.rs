@@ -90,11 +90,11 @@ fn enter(g: &mut Game, cap: &Cap) -> u32 {
     aid
 }
 
-/// The quest's NPCs (map, x, y, touch area) and the item ids its scripts
-/// count, read from the script files themselves.
-fn read_quest(root: &std::path::Path, files: &[&str]) -> (Vec<(String, u16, u16, bool)>, Vec<u32>) {
+/// The quest's NPCs (map, x, y, touch area) and the items its scripts count
+/// (id, amount asked for or 0), read from the script files themselves.
+fn read_quest(root: &std::path::Path, files: &[&str]) -> (Vec<(String, u16, u16, bool)>, Vec<(u32, u32)>) {
     let mut npcs = Vec::new();
-    let mut items = Vec::new();
+    let mut items: Vec<(u32, u32)> = Vec::new();
     for f in files {
         let text = std::fs::read_to_string(root.join("scripts").join(f)).unwrap_or_else(|e| panic!("{f}: {e}"));
         let lines: Vec<&str> = text.lines().collect();
@@ -114,9 +114,16 @@ fn read_quest(root: &std::path::Path, files: &[&str]) -> (Vec<(String, u16, u16,
                 }
             }
             for part in l.split("count_item(").skip(1) {
-                if let Ok(id) = part.split(')').next().unwrap().trim().parse::<u32>() {
-                    if !items.contains(&id) {
-                        items.push(id);
+                let mut it = part.splitn(2, ')');
+                if let Ok(id) = it.next().unwrap().trim().parse::<u32>() {
+                    // "count_item(id) >= n": the amount asked for
+                    let need = it
+                        .next()
+                        .and_then(|rest| rest.trim_start().strip_prefix(">= "))
+                        .and_then(|r| r.split(|c: char| !c.is_ascii_digit()).next()?.parse::<u32>().ok());
+                    match items.iter_mut().find(|(i, _)| *i == id) {
+                        Some(e) => e.1 = e.1.max(need.unwrap_or(0)),
+                        None => items.push((id, need.unwrap_or(0))),
                     }
                 }
             }
@@ -131,14 +138,16 @@ struct Quest {
     from: u16,
     job_level: u16,
     to: u16,
-    /// Items to start with; None = 30 of everything the scripts count.
+    /// A quest skill to learn instead of a job to reach (0 = the job).
+    skill: u16,
+    /// Items to start with; None = what the scripts ask for (">= n"), else 30 of each item they count.
     gifts: Option<&'static [(u32, u32)]>,
     /// Numbers to type when asked for one (else something under 30).
     numbers: &'static [u32],
 }
 
 const QUESTS: &[Quest] = &[
-    Quest { name: "Swordman", files: &["import/npc/jobs/swordsman.lua"], from: 0, job_level: 10, to: 1, gifts: None, numbers: &[] },
+    Quest { name: "Swordman", files: &["import/npc/jobs/swordsman.lua"], from: 0, job_level: 10, to: 1, skill: 0, gifts: None, numbers: &[] },
     // the materials a Novice would bring, and the four numbers the guild's book gives
     Quest {
         name: "Mage",
@@ -146,11 +155,12 @@ const QUESTS: &[Quest] = &[
         from: 0,
         job_level: 10,
         to: 2,
+        skill: 0,
         gifts: Some(&[(909, 30), (914, 30), (519, 5)]),
         numbers: &[8472, 3735, 2750, 5429],
     },
-    Quest { name: "Archer", files: &["import/npc/jobs/archer.lua"], from: 0, job_level: 10, to: 3, gifts: None, numbers: &[] },
-    Quest { name: "Acolyte", files: &["import/npc/jobs/acolyte.lua"], from: 0, job_level: 10, to: 4, gifts: None, numbers: &[] },
+    Quest { name: "Archer", files: &["import/npc/jobs/archer.lua"], from: 0, job_level: 10, to: 3, skill: 0, gifts: None, numbers: &[] },
+    Quest { name: "Acolyte", files: &["import/npc/jobs/acolyte.lua"], from: 0, job_level: 10, to: 4, skill: 0, gifts: None, numbers: &[] },
     // nothing in hand; the eight serial numbers the Chief may name
     Quest {
         name: "Merchant",
@@ -158,16 +168,17 @@ const QUESTS: &[Quest] = &[
         from: 0,
         job_level: 10,
         to: 5,
+        skill: 0,
         gifts: Some(&[]),
         numbers: &[2485741, 2328137, 2989396, 2191737, 3012685, 3487372, 3318702, 3543625],
     },
-    Quest { name: "Thief", files: &["import/npc/jobs/thief.lua"], from: 0, job_level: 10, to: 6, gifts: None, numbers: &[] },
-    Quest { name: "Knight", files: &["import/npc/jobs/knight.lua"], from: 1, job_level: 50, to: 7, gifts: None, numbers: &[] },
-    Quest { name: "Priest", files: &["import/npc/jobs/priest.lua"], from: 4, job_level: 50, to: 8, gifts: None, numbers: &[] },
-    Quest { name: "Wizard", files: &["import/npc/jobs/wizard.lua"], from: 2, job_level: 50, to: 9, gifts: None, numbers: &[] },
-    Quest { name: "Blacksmith", files: &["import/npc/jobs/blacksmith.lua"], from: 5, job_level: 50, to: 10, gifts: None, numbers: &[] },
-    Quest { name: "Hunter", files: &["import/npc/jobs/hunter.lua"], from: 3, job_level: 50, to: 11, gifts: None, numbers: &[] },
-    Quest { name: "Assassin", files: &["import/npc/jobs/assassin.lua"], from: 6, job_level: 50, to: 12, gifts: None, numbers: &[] },
+    Quest { name: "Thief", files: &["import/npc/jobs/thief.lua"], from: 0, job_level: 10, to: 6, skill: 0, gifts: None, numbers: &[] },
+    Quest { name: "Knight", files: &["import/npc/jobs/knight.lua"], from: 1, job_level: 50, to: 7, skill: 0, gifts: None, numbers: &[] },
+    Quest { name: "Priest", files: &["import/npc/jobs/priest.lua"], from: 4, job_level: 50, to: 8, skill: 0, gifts: None, numbers: &[] },
+    Quest { name: "Wizard", files: &["import/npc/jobs/wizard.lua"], from: 2, job_level: 50, to: 9, skill: 0, gifts: None, numbers: &[] },
+    Quest { name: "Blacksmith", files: &["import/npc/jobs/blacksmith.lua"], from: 5, job_level: 50, to: 10, skill: 0, gifts: None, numbers: &[] },
+    Quest { name: "Hunter", files: &["import/npc/jobs/hunter.lua"], from: 3, job_level: 50, to: 11, skill: 0, gifts: None, numbers: &[] },
+    Quest { name: "Assassin", files: &["import/npc/jobs/assassin.lua"], from: 6, job_level: 50, to: 12, skill: 0, gifts: None, numbers: &[] },
 ];
 
 /// Talk to (or step on) the quest's NPCs until the class changes. Returns
@@ -203,7 +214,7 @@ fn play(q: &Quest, seed: u64, limit: usize) -> Result<Option<usize>, String> {
     let mut rng = Rng(seed);
     let gifts: String = match q.gifts {
         Some(g) => g.iter().map(|(id, n)| format!("give_item({id}, {n}) ")).collect(),
-        None => items.iter().map(|id| format!("give_item({id}, 30) ")).collect(),
+        None => items.iter().map(|(id, n)| format!("give_item({id}, {}) ", if *n > 0 { *n } else { 30 })).collect(),
     };
     g.console_eval(
         &format!(
@@ -283,7 +294,12 @@ fn play(q: &Quest, seed: u64, limit: usize) -> Result<Option<usize>, String> {
             let _ = std::fs::remove_dir_all(&saves);
             return Err(errors.join("; "));
         }
-        if g.console_eval("return player.class", me) == q.to.to_string() {
+        let done = if q.skill != 0 {
+            g.console_eval(&format!("return skill_level({})", q.skill), me) != "0"
+        } else {
+            g.console_eval("return player.class", me) == q.to.to_string()
+        };
+        if done {
             result = Some(n + 1);
             break;
         }
@@ -292,11 +308,10 @@ fn play(q: &Quest, seed: u64, limit: usize) -> Result<Option<usize>, String> {
     Ok(result)
 }
 
-#[test]
-fn every_job_can_be_reached() {
-    let mut stuck = Vec::new();
+fn run(quests: &[Quest]) -> Vec<&'static str> {
     let only = std::env::var("QUEST").ok();
-    for q in QUESTS.iter().filter(|q| only.as_deref().is_none_or(|o| o == q.name)) {
+    let mut stuck = Vec::new();
+    for q in quests.iter().filter(|q| only.as_deref().is_none_or(|o| o == q.name)) {
         // three characters each: a script error on any of them counts
         let mut reached = None;
         let mut error = None;
@@ -308,15 +323,46 @@ fn every_job_can_be_reached() {
         }
         match (reached, error) {
             (_, Some(e)) => {
-                println!("{:<10} SCRIPT ERROR {e}", q.name);
+                println!("{:<16} SCRIPT ERROR {e}", q.name);
                 stuck.push(q.name);
             }
-            (Some(n), None) => println!("{:<10} reached after {n} conversations", q.name),
+            (Some(n), None) => println!("{:<16} reached after {n} conversations", q.name),
             (None, None) => {
-                println!("{:<10} NOT reached", q.name);
+                println!("{:<16} NOT reached", q.name);
                 stuck.push(q.name);
             }
         }
     }
+    stuck
+}
+
+#[test]
+fn every_job_can_be_reached() {
+    let stuck = run(QUESTS);
     assert!(stuck.is_empty(), "no way into: {stuck:?}");
+}
+
+const fn skill_quest(name: &'static str, files: &'static [&'static str], class: u16, skill: u16) -> Quest {
+    Quest { name, files, from: class, job_level: 50, to: class, skill, gifts: None, numbers: &[] }
+}
+
+/// The quest skills 817 has NPCs for. The Novice's and the Thief's come from
+/// mod0631 and have their own test (npc_mod0631.rs).
+const SKILL_QUESTS: &[Quest] = &[
+    skill_quest("Moving HP Recovery", &["import/npc/skillquests/moving_hp.lua"], 1, 144),
+    skill_quest("Fatal Blow", &["import/npc/skillquests/fatal_blow.lua"], 1, 145),
+    skill_quest("Auto Berserk", &["import/npc/skillquests/auto_berserk.lua"], 1, 146),
+    skill_quest("Arrow Crafting", &["import/npc/skillquests/arrow_craft.lua"], 3, 147),
+    skill_quest("Charge Arrow", &["import/npc/skillquests/arrow_repel.lua"], 3, 148),
+    skill_quest("Cart Revolution", &["import/npc/skillquests/cart_revolution.lua"], 5, 153),
+    skill_quest("Change Cart", &["import/npc/skillquests/change_cart.lua"], 5, 154),
+    skill_quest("Crazy Uproar", &["import/npc/skillquests/loud.lua"], 5, 155),
+    skill_quest("Holy Light", &["import/npc/skillquests/holy_light.lua"], 4, 156),
+    skill_quest("Energy Coat", &["import/npc/skillquests/energy_coat.lua"], 2, 157),
+];
+
+#[test]
+fn every_quest_skill_can_be_learnt() {
+    let stuck = run(SKILL_QUESTS);
+    assert!(stuck.is_empty(), "cannot be learnt: {stuck:?}");
 }

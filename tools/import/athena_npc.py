@@ -234,6 +234,10 @@ SOURCE_FIXES = {
         "if(@TEMP !=0) goto R10;", "if(@TEMP !=0) goto R11;",
         "the label jumped to itself for ever (one application in eight hung 817); R11 is the "
         "second serial number, as in R00/R01, R20/R21, R30/R31"),
+    ("skillquests/arrowrepel.txt", 115): (
+        'everything";f', 'everything";',
+        "a stray f after the line made the next one an unknown command, so the script stopped "
+        "with its window open"),
 }
 
 ITEM_ARG = {"getitem", "delitem", "countitem", "checkweight"}

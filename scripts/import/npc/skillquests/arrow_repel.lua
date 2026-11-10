@@ -3,8 +3,8 @@
 -- the emulator authors' (often fan-translated), not Gravity's. GPL, like its source.
 -- Don't edit: override in scripts/npc/ (npc{replaces=}, wrap_npc, remove_npc) and list the
 -- change in docs/DEVIATIONS.md.
+-- source fix (skillquests/arrowrepel.txt:115): everything";f -> everything";: a stray f after the line made the next one an unknown command, so the script stopped with its window open
 
--- warning (skillquests/arrowrepel.txt:5): unknown command f at line 115
 npc {
   map = "payon", x = 30, y = 94, dir = 3, sprite = 88, name = "Deothen",
   src = "817:skillquests/arrowrepel.txt:5",
@@ -67,7 +67,7 @@ npc {
     mes "[Deothen]"
     mes "Hey! It's you again?"
     mes "I'm afraid I taught you everything"
-    athena_unknown("f", v.mes, "I know.")
+    mes "I know."
     close()
   end,
 }

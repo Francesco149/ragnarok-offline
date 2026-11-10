@@ -168,7 +168,8 @@ eAthena 817 (2004-02-19), bugs included. The translator is
   application in eight hung the server. It goes to `R11`, the second serial
   number, like its three sister branches. This is the one fix made in the
   translator (`SOURCE_FIXES`) rather than in an override: the NPC is 350
-  lines long.
+  lines long. A stray `f` in Charge Arrow's "you again?" line
+  (`skillquests/arrowrepel.txt:115`) is dropped the same way.
 * **Monsters and warps of the job tests.** The world's monsters and warps
   are mod0631's. 817's job files place some of their own, and those are
   taken where mod0631 has none: the Chonchons along the Swordman course and
