@@ -124,6 +124,20 @@ eAthena 817 (2004-02-19), bugs included. The translator is
   and job levels, and remove Sono-san. The names "Alcouskou" and "Bag
   Seller" are RODataZone's; the dialogue is our translation of mod0631's
   Japanese, not Gravity's text.
+* **Novice quest skills** (`scripts/npc/novice_skills.lua`). 817 has no
+  First Aid or Play Dead quest. mod0631 has both: Nami in a Prontera inn
+  ("ナミ", `prt_in 234,133`), a member of the Chivalry (`prt_in 73,87`) and
+  the nursing officer in Prontera Castle (`prt_castle 175,146`).
+  RODataZone's Novice page of 2003-12-15 has the same three NPCs on the
+  same cells for the international servers. We use mod0631's NPCs, places,
+  items and steps, with three changes. First Aid starts at Novice job level
+  4, as mod0631's own dialogue and RODataZone say; its code tests for 3.
+  The Newbie Tag is the client's item 7039, as on RODataZone; mod0631 keeps
+  it in a temporary variable. The ten minutes for Play Dead's errand are
+  counted: mod0631's NPC announces them ("if you are late you will have to
+  go again") and never checks the clock. The NPC names are RODataZone's;
+  the dialogue is our translation of mod0631's Japanese, not Gravity's
+  text.
 * **Monster Tamers** (`scripts/npc/monster_tamers.lua`): three NPCs from
   mod0631 that 817 lacks, in Alberta, Izlude and Al De Baran, where the iRO
   pet guide of 2004 says they stood. They turn ingredients into taming

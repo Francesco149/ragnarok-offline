@@ -1,6 +1,7 @@
-//! The NPCs taken from mod0631 in research round 2, on their success paths:
-//! Kafra points (earned by teleporting, spent in the head office), the Thief
-//! quest skills from Alcouskou, and a Monster Tamer's recipe. The crawler
+//! The NPCs taken from mod0631 in research rounds 2 and 3, on their success
+//! paths: Kafra points (earned by teleporting, spent in the head office), the
+//! Thief quest skills from Alcouskou, a Monster Tamer's recipe, and the
+//! Novice's First Aid and Play Dead. The crawler
 //! (npc_crawl.rs) only takes random paths through them. Repo scripts,
 //! synthetic all-walkable maps, no client files.
 
@@ -143,6 +144,9 @@ impl T {
     }
 }
 
+const MAPS: [&str; 9] =
+    ["prontera", "izlude", "aldeba_in", "moc_prydb1", "payon", "alberta_in", "morocc", "prt_in", "prt_castle"];
+
 fn setup(tag: &str) -> T {
     let root = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../..");
     let saves = std::env::temp_dir().join(format!("ro-offline-m631-{tag}-{}", std::process::id()));
@@ -158,12 +162,12 @@ fn setup(tag: &str) -> T {
     };
     let cap = Cap::default();
     let mut g = Game::new(cfg, Resources::new(vfs), Box::new(cap.clone())).expect("game");
-    for m in ["prontera", "izlude", "aldeba_in", "moc_prydb1", "payon", "alberta_in", "morocc"] {
+    for m in MAPS {
         g.res.vfs.add_memory_file(&format!("data\\{m}.gat"), gat(400, 400));
         g.res.maps.insert(m.to_string());
     }
     let me = enter(&mut g, &cap);
-    for m in ["prontera", "izlude", "aldeba_in", "moc_prydb1", "payon", "alberta_in", "morocc"] {
+    for m in MAPS {
         g.ensure_map(m);
     }
     g.notices.clear();
@@ -261,4 +265,53 @@ fn monster_tamer() {
     t.eval("give_item(912, 2); give_item(2208, 1)");
     t.talk("aldeba_in", 168, 175, &[7]);
     assert_eq!(t.eval("return count_item(10014)"), "1");
+}
+
+#[test]
+fn novice_quest_skills() {
+    let mut t = setup("novice_quest_skills");
+    // First Aid: Novice job level 4 (Nami's own words, RODataZone)
+    t.eval("player.job_level = 3");
+    assert!(t.talk("prt_in", 234, 133, &[]).is_empty(), "job level 3: she is dozing");
+    t.eval("player.job_level = 4");
+    t.talk("prt_in", 234, 133, &[2]);
+    assert_eq!(t.eval("return v.skill_nov"), "0", "sneaked away");
+    t.talk("prt_in", 234, 133, &[1]);
+    assert_eq!(t.eval("return v.skill_nov"), "1");
+    // the bandages are a flag, from the Nursing Instructor in the castle
+    t.talk("prt_castle", 175, 146, &[]);
+    assert_eq!(t.eval("return v.skill_nov"), "2");
+    t.eval("give_item(507, 3); give_item(705, 2)");
+    t.talk("prt_in", 234, 133, &[1]);
+    assert_eq!(t.eval("return skill_level(142)"), "0", "one Clover short");
+    t.eval("give_item(705, 1)");
+    t.talk("prt_in", 234, 133, &[1]);
+    assert_eq!(t.eval("return skill_level(142)"), "1");
+    assert_eq!(t.eval("return count_item(507) + count_item(705)"), "0");
+    assert_eq!(t.eval("return v.skill_nov"), "3");
+
+    // Play Dead: job level 7, First Aid, and a run to the castle and back
+    t.talk("prt_in", 73, 87, &[]);
+    assert_eq!(t.eval("return v.skill_nov"), "3", "job level 4 is too low");
+    t.eval("player.job_level = 7");
+    t.talk("prt_in", 73, 87, &[]);
+    assert_eq!(t.eval("return v.skill_nov"), "4");
+    assert_eq!(t.eval("return tmp.nov_run"), "1");
+    t.talk("prt_castle", 175, 146, &[]);
+    assert_eq!(t.eval("return count_item(7039)"), "1");
+    assert_eq!(t.eval("return v.skill_nov"), "5");
+    // the ten minutes run out: round again, without the old tag
+    t.eval("do_event('nov_playdead::OnLate')");
+    t.g.tick();
+    assert_eq!(t.eval("return tmp.nov_run"), "0");
+    t.talk("prt_in", 73, 87, &[]);
+    assert_eq!(t.eval("return skill_level(143)"), "0");
+    assert_eq!(t.eval("return v.skill_nov"), "4");
+    assert_eq!(t.eval("return count_item(7039)"), "0");
+    // in time
+    t.talk("prt_castle", 175, 146, &[]);
+    t.talk("prt_in", 73, 87, &[]);
+    assert_eq!(t.eval("return skill_level(143)"), "1");
+    assert_eq!(t.eval("return count_item(7039)"), "0");
+    assert_eq!(t.eval("return v.skill_nov"), "6");
 }
