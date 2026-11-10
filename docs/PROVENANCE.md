@@ -29,12 +29,25 @@ period source). Research behind the tiers: `research/notes/mechanics-sources.md`
 | Items, monsters, drops | athena-dev-2.1.1-mod0631 `db/` (archived 2003-12-18) — numbers; English names from eAthena 0.5.2 (2004-05) | athena2003 |
 | EXP tables, job HP/SP/weight/ASPD | mod0631 `db/exp.txt`, `job_db1.txt`, `job_db2.txt` | athena2003 |
 | Warps (2,038), spawns (2,001 groups), shops (80) | mod0631 `conf/map_athena.conf` npc list | athena2003 |
-| HP/SP/ATK/hit/flee/crit/ASPD formulas | mod0631 `map/pc.c` pc_calcstatus | athena2003 |
-| Damage, hit chance, criticals, DEF | mod0631 `map/battle.c` battle_calc_weapon_attack (no element/size/cards yet) | athena2003 |
-| Natural regen | mod0631 `map/pc.c` natural heal (4 s HP / 8 s SP clocks) | athena2003 |
+| HP/SP/ATK/hit/flee/crit/ASPD, job bonuses, equipment and card bonuses, refine bonuses, passive skills | mod0631 `map/pc.c` pc_calcstatus, pc_bonus, pc_bonus2; `db/size_fix.txt`, `db/refine_db.txt`; the items' own scripts (`scripts/rules/status.lua`) | athena2003 |
+| Weapon damage: hit, critical, DEF, masteries, size, cards, elements, two weapons, Double Attack | mod0631 `map/battle.c` battle_calc_weapon_attack, battle_addmastery, `db/attr_fix.txt` (`scripts/rules/battle.lua`) | athena2003 |
+| Magic and trap/falcon damage | mod0631 `map/battle.c` battle_calc_magic_attack, battle_calc_misc_attack | athena2003 |
+| Skills: what each does, cast time, delay, SP, gemstones, weapon needs | mod0631 `map/skill.c`, `db/skill_db.txt`, `db/cast_db.txt` (`scripts/rules/skill*.lua`, `data/db/skills.toml`); gaps from eAthena 817 `map/skill.c`, marked in the Lua; the few neither has are listed in DEVIATIONS.md | athena2003 / guess |
+| Skill SP per level | the client's `leveluseskillspamount.txt` | client |
+| Ground skills (walls, traps, Sanctuary, storms, portals): cells, timing, effects | mod0631 `map/skill.c` skill_unitsetting, skill_unit_onplace and friends (`scripts/rules/skill_units.lua`) | athena2003 |
+| Status changes: which, how long, what they change | mod0631 `map/skill.c` skill_status_change_start, `map/pc.c`, `map/battle.c` (`scripts/rules/status_change.lua`); numbers below 64 are the client's icon ids | athena2003 / client |
+| Ailments: chance, resistance by stats, length; poison's HP loss | eAthena 817 `map/skill.c` skill_additional_effect, skill_status_change_start, `db/cast_db.txt` time columns (2004-02-19). mod0631's are placeholders | athena2003 |
+| Skill packets (cast bar, skill damage, ground cells, status icons, option words) | layouts: mod0631 `map/clif.c`; lengths: the client; the real client draws them (cast bar, bolts, Fire Wall, Safety Wall, Sight, a frozen monster; 2026-11-10) | client / athena2003 |
+| Natural regen, Increase HP/SP Recovery, Moving HP Recovery, no regen at half weight or hidden | mod0631 `map/pc.c` pc_natural_heal_hp / _sp (4 s HP / 8 s SP clocks; 10 s skill clocks) | athena2003 |
+| Arrows: one a shot, element from the arrow, no ATK of their own | mod0631 `map/battle.c:1687`, `map/pc.c:854` (its arrow ATK line is commented out) | athena2003 |
+| Steal, Steal Coin | mod0631 `map/pc.c` pc_steal_item, pc_steal_coin | athena2003 |
+| Arrow Crafting and forge recipes | mod0631 `db/create_arrow_db.txt`, `db/produce_db.txt` (`scripts/import/craft.lua`; forging itself is not built) | athena2003 |
 | Death penalty 1%, respawn 1 HP | mod0631 `conf/battle_athena.conf` | athena2003 |
 | Start point `new_zone01 53,111` | Map: the client redirects `new_1-1` to `new_zone01` itself (`data\\resnametable.txt`). Cell: `start_point: new_1-1.gat,53,111` of every Athena config of 2003–04 (jAthena //0307); where they got it is unknown (THREADS.md #6) | client (map) / athena2003 (cell) |
-| Monster AI | simplified Athena behaviour (aggressive pick-up, chase, random walk) | guess |
+| Monster AI: targets, chase, attack, assist, looting, slaves, random walk | mod0631 `map/mob.c` mob_ai_sub_hard and friends (`crates/ro-game/src/combat.rs`). Maps nobody is on stand still (DEVIATIONS.md) | athena2003 |
+| Monster skills: which, when, how often | mod0631 `db/mob_skill_db.txt` (`data/db/mob_skills.toml`), `map/mob.c` mobskill_use | athena2003 |
+| EXP share, drops (equipment unidentified), looted items, MVP reward | mod0631 `map/mob.c` mob_damage | athena2003 |
+| Card insertion, item identification | mod0631 `map/pc.c` pc_insert_card, `map/clif.c` clif_use_card, clif_item_identify_list | athena2003 |
 | NPC scripts (611 NPCs: towns, job quests, training ground, guides, refiners, quests) | eAthena 817 `npc/` (2004-02-19), translated by `tools/import/athena_npc.py`; each NPC's `src` gives file:line; source bugs kept, fixes in `scripts/npc/` (DEVIATIONS.md) | athena2003 |
 | Kafra service (`scripts/npc/kafra.lua`) | 817 places/sprites/save cells/destinations and wording; fares as 817's menus and mod0631 show them; storage fee per place, Comodo and Al De Baran routes, Izlude's save cell and six more Kafras from mod0631 `conf/npc_town_kafra.txt` (jRO lineage, archived 2003-12-18); storage rule from the client's Basic Skill description | athena2003 / client |
 | Map names of the training ground and test maps | The client's own `data\\resnametable.txt` (`new_1-1.gat#new_zone01.gat#` ...); before that, NPC/warp cells of the scripts checked against the client's `.gat` (`tools/import/maps.py`) | client |
@@ -54,6 +67,15 @@ period source). Research behind the tiers: `research/notes/mechanics-sources.md`
 | DDrawCompat settings (`DDrawCompat.ini`) | chosen for this client, reasons in docs/WINDOWS.md | guess |
 | Patch server files (notice, list, allow, front page) | euRO's `wpatch.euro-ro.net` as archived by the Wayback Machine: list 2004-02-21, notices 2004-07-18, front page 2004-02-21 (digests checked) | official |
 | Served patch list | the archived list with entries above the CD's `patch.inf` (303) commented out | official / ours |
+
+## The client's skill text
+
+`data\skilldesctable.txt` in the client gives per-level numbers for many
+skills. It is Gravity's own, but not kept up to date: it gives Teleport ten
+levels and Kyrie Eleison a length by level, as in kRO's beta. So it is used
+where the emulators have nothing (DEVIATIONS.md lists those), and where it
+disagrees with them the emulator's value stands and the disagreement is a
+research thread (THREADS.md #20).
 
 ## Known period disagreements (don't "fix" these silently)
 

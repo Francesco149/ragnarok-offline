@@ -141,14 +141,36 @@ each does is `rules.status_change`), `check_option`, `set_option`,
 The mapping is the `BUILTINS` table in `tools/import/athena_npc.py`; ones
 not implemented yet log a notice once (`:notices`).
 
-## Rules (formulas)
+## Rules (formulas, battle, skills)
 
-`rules.status(c)`, `rules.attack{attacker, defender}`,
-`rules.death_penalty(t)`, `rules.respawn_hp(t)`, `rules.regen(t)` and
-`rules.refine_chance(weapon_level, refine)` are
-plain functions called by the server; their inputs and outputs are documented
-at the top of `scripts/rules/*.lua`. Change a number, save, and the next hit
-uses it. Cite where a formula comes from in a comment (see PROVENANCE.md).
+`scripts/rules/` holds what a period server decided and the client cannot
+confirm. Change a number, save, and the next hit uses it. Cite where a
+formula comes from in a comment (see PROVENANCE.md).
+
+| File | What |
+|---|---|
+| `00_const.lua` | `SC` (status change numbers), `SK` (skill ids by Aegis name), `skill_get_*`, the emulator's battle settings |
+| `status.lua` | `rules.status(c)`: a character's numbers from stats, job, equipment, cards, skills and status changes |
+| `battle.lua` | `battle.*`: a unit's numbers, the element table, weapon / magic / misc damage, `rules.weapon_attack` |
+| `status_change.lua` | `skill_status_change_start / _end / _timer`: what each status change does and for how long |
+| `skill.lua` | using a skill: `rules.skill_use` (range, cast time, delay), `skill_check_condition` (SP, items, weapon), `rules.skill_castend`, `skill_attack`, side effects of a hit |
+| `skill_effects.lua` | what each skill does once cast |
+| `skill_units.lua` | ground skills: cells, who they act on, how long |
+| `combat.lua` | `rules.death_penalty`, `rules.respawn_hp`, `rules.regen` |
+| `refine.lua` | `rules.refine_chance` |
+
+The server calls `rules.weapon_attack{src, target}` when an attack comes
+due, `rules.skill_use{...}` when the client asks for a skill,
+`rules.skill_castend{...}` when the cast is over, and `rules.battle_tick`
+every 100 ms (status changes that ran out, ground skills, delayed hits).
+The rules act on the world through the battle API (`_rt` operations wrapped
+in `battle.lua`): `battle.get(id)` is a snapshot of a player or monster,
+`battle.damage`, `battle.heal`, `skill_status_change_start(id, type, val1,
+val2)`, `skill_blown`, `skill_unitsetting`, `battle.after(ms, fn)`.
+
+To try a skill from the console or the chat: `@allskill`, then
+`@useskill MG_FIREBOLT 10` (on the nearest monster, yourself or its cell,
+as the skill's target type says).
 
 ## Console (for you or an LLM)
 

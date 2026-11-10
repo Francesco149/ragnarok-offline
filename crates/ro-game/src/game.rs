@@ -201,10 +201,17 @@ pub struct Game {
     pub(crate) respawns: Vec<(u64, usize)>,
     /// NPC runtime state: events, timers, temp variables (npcrt.rs).
     pub(crate) npcrt: crate::npcrt::NpcRuntime,
+    /// Battle bookkeeping: status-change index, deferred rules (battle.rs).
+    pub(crate) battle: crate::battle::BattleState,
     start: Instant,
+    /// Milliseconds added to the clock (tests fast-forward with `skew`).
+    time_skew: u64,
     last_autosave: u64,
     /// Messages for the admin console / logs (script errors etc.).
     pub notices: Vec<String>,
+    /// Rule errors met where the game is only borrowed for reading (the
+    /// status formula): moved into `notices` on the next tick, once each.
+    pub(crate) soft_notices: std::cell::RefCell<Vec<String>>,
 }
 
 impl Game {
@@ -238,9 +245,12 @@ impl Game {
             dialog_open: HashMap::new(),
             respawns: Vec::new(),
             npcrt: Default::default(),
+            battle: Default::default(),
             start: Instant::now(),
+            time_skew: 0,
             last_autosave: 0,
             notices: Vec::new(),
+            soft_notices: Default::default(),
         };
         g.reload_scripts()?;
         Ok(g)
@@ -248,7 +258,11 @@ impl Game {
 
     /// Server tick in ms (what the client sees in 0x007f etc.).
     pub fn now(&self) -> u64 {
-        self.start.elapsed().as_millis() as u64
+        self.start.elapsed().as_millis() as u64 + self.time_skew
+    }
+    /// Move the clock forward (tests: let a cast or a status change run out).
+    pub fn skew(&mut self, ms: u64) {
+        self.time_skew += ms;
     }
     pub fn tick32(&self) -> u32 {
         self.now() as u32
@@ -308,7 +322,7 @@ impl Game {
 
     /// (Re)load all scripts. On failure the previous scripts stay active.
     pub fn reload_scripts(&mut self) -> Result<String> {
-        let opts = crate::script::LoadOptions { content: self.cfg.content.clone() };
+        let opts = crate::script::LoadOptions { content: self.cfg.content.clone(), globals: self.script_globals() };
         let engine = match ScriptEngine::load_with(&self.cfg.script_dir, &opts) {
             Ok(e) => e,
             Err(e) => {
@@ -329,7 +343,16 @@ impl Game {
                 }
             }
         }
-        // drop every scripted unit (npcs, warps, shops, spawned mobs) ...
+        // Ice Wall cells go back to what the map says
+        for (map, x, y) in std::mem::take(&mut self.battle.walls) {
+            if let Some(m) = self.world.maps.get_mut(&map) {
+                let mut g = (*m.grid).clone();
+                g.set_walkable(x as i32, y as i32, true);
+                m.grid = Arc::new(g);
+            }
+        }
+        self.battle.deferred.clear();
+        // drop every scripted unit (npcs, warps, shops, spawned mobs, ground skills) ...
         let doomed: Vec<u32> = self
             .world
             .units
@@ -376,6 +399,22 @@ impl Game {
         Ok(summary)
     }
 
+    /// Data tables the rules read as Lua globals: the skill database
+    /// (skills.toml, with the client's own SP table laid over it).
+    fn script_globals(&self) -> Vec<(String, serde_json::Value)> {
+        let mut skills: Vec<&ro_data::db::Skill> = self.db.skills.values().collect();
+        skills.sort_by_key(|s| s.id);
+        let rows: Vec<serde_json::Value> = skills
+            .iter()
+            .map(|s| {
+                let sp: Vec<u16> = (1..=s.max.max(1)).map(|lv| self.skill_sp(s.id, lv)).collect();
+                serde_json::json!({"id": s.id, "name": s.name, "max": s.max, "inf": s.inf, "range": s.range, "hit": s.hit,
+                    "pl": s.element, "nk": s.nk, "sp": sp, "num": s.num, "cast": s.cast, "delay": s.delay, "time": s.time, "time2": s.time2, "npc": s.npc, "quest": s.quest})
+            })
+            .collect();
+        vec![("SKILL_DB".to_string(), serde_json::Value::Array(rows))]
+    }
+
     // ------------------------------------------------------------ events
 
     pub fn handle(&mut self, ev: NetEvent) {
@@ -399,6 +438,7 @@ impl Game {
                 if let Err(e) = r {
                     warn!("session {sid}: packet {:02x}{:02x}: {e:#}", data[1], data[0]);
                 }
+                self.run_deferred();
             }
         }
     }
@@ -728,7 +768,12 @@ impl Game {
         self.tick_respawns(now);
         self.tick_npc_timers(now);
         self.tick_pets(now);
-        self.tick_status_changes(now);
+        self.tick_battle(now);
+        self.run_deferred();
+        let soft = std::mem::take(&mut *self.soft_notices.borrow_mut());
+        for m in soft {
+            self.notice(m);
+        }
         self.run_events();
         if now - self.last_autosave >= self.cfg.autosave_secs * 1000 {
             self.last_autosave = now;
@@ -759,6 +804,12 @@ impl Game {
 
     /// Run Lua as the given player (admin console). `player` 0 = none.
     pub fn console_eval(&mut self, code: &str, player: u32) -> String {
+        let r = self.console_eval_inner(code, player);
+        self.run_deferred();
+        r
+    }
+
+    fn console_eval_inner(&mut self, code: &str, player: u32) -> String {
         let Some(engine) = self.scripts.clone() else { return "no scripts loaded".into() };
         let ctx = Ctx::new(player, 0, crate::script::CtxKind::Console);
         let r = engine.eval(self, ctx, code);

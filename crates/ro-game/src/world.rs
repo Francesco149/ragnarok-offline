@@ -53,6 +53,20 @@ pub struct PlayerUnit {
     /// This player's pet unit, if out.
     pub pet_unit: Option<u32>,
     pub gm_level: u8,
+    /// Skill being cast (Athena skilltimer).
+    pub cast: Option<crate::battle::Cast>,
+    /// No skill or attack before this tick (Athena canact_tick).
+    pub canact: u64,
+    /// No walking before this tick (Athena canmove_tick).
+    pub canmove: u64,
+    /// Skill granted by an item being used (Athena skillitem): (skill, level).
+    pub skill_item: Option<(u16, u16)>,
+    /// Skill waiting for a map choice (Teleport, Warp Portal): (skill, level, x, y).
+    pub skill_menu: Option<(u16, u16, u16, u16)>,
+    /// Natural-recovery skill clocks (Athena inchealhptick / inchealsptick / inchealspirittick).
+    pub inc_hp_acc: u64,
+    pub inc_sp_acc: u64,
+    pub spirit_acc: u64,
 }
 
 #[derive(Debug, Clone, Copy)]
@@ -89,6 +103,56 @@ pub struct MobUnit {
     pub damage_log: HashMap<u32, u32>,
     /// Script event run when it dies ("Npc::OnMyMobDead"); script-spawned mobs only.
     pub event: Option<String>,
+    /// Status changes in effect (Athena sc_data).
+    pub sc: std::collections::BTreeMap<u16, crate::model::StatusChange>,
+    /// Defence element when a skill changed it (element type + level*20).
+    pub def_ele: Option<u16>,
+    pub cast: Option<crate::battle::Cast>,
+    pub canact: u64,
+    /// Summoner (Athena master_id), for slaves.
+    pub master: Option<u32>,
+    /// Who hit it last (Athena attacked_id): the AI turns on them.
+    pub attacked: Option<u32>,
+    /// The target is a floor item (looters), not something to attack.
+    pub looting: bool,
+    /// Give up the chase beyond this many cells (Athena min_chase).
+    pub min_chase: i32,
+    /// No random walk before this tick (Athena next_walktime).
+    pub next_walk: u64,
+    pub move_fail: u32,
+    /// What it is doing, for skill conditions (Athena skillstate).
+    pub skill_state: MobState,
+    /// When each line of its skill list was last used.
+    pub skill_used: Vec<u64>,
+    /// Items a looter picked up (dropped again when it dies).
+    pub loot: Vec<InvItem>,
+    /// Distance to its master at the last check (Athena master_dist).
+    pub master_dist: i32,
+}
+
+/// Athena MSS_*: the state monster skills are conditioned on.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
+pub enum MobState {
+    #[default]
+    Idle,
+    Walk,
+    Attack,
+    Dead,
+    Loot,
+    Chase,
+}
+
+impl MobState {
+    pub fn name(self) -> &'static str {
+        match self {
+            MobState::Idle => "idle",
+            MobState::Walk => "walk",
+            MobState::Attack => "attack",
+            MobState::Dead => "dead",
+            MobState::Loot => "loot",
+            MobState::Chase => "chase",
+        }
+    }
 }
 
 #[derive(Debug, Clone)]
@@ -112,6 +176,8 @@ pub struct PetUnit {
 
 #[derive(Debug, Clone)]
 pub enum UnitKind {
+    /// One cell of a ground skill (Athena skill_unit).
+    Skill(crate::battle::SkillCell),
     Player(Box<PlayerUnit>),
     Pet(PetUnit),
     Npc(NpcUnit),
@@ -166,6 +232,22 @@ impl Unit {
     }
     pub fn is_item(&self) -> bool {
         matches!(self.kind, UnitKind::Item(_))
+    }
+    pub fn skill(&self) -> Option<&crate::battle::SkillCell> {
+        match &self.kind {
+            UnitKind::Skill(s) => Some(s),
+            _ => None,
+        }
+    }
+    pub fn skill_mut(&mut self) -> Option<&mut crate::battle::SkillCell> {
+        match &mut self.kind {
+            UnitKind::Skill(s) => Some(s),
+            _ => None,
+        }
+    }
+    /// Players and monsters: what skills and attacks can hit.
+    pub fn is_fighter(&self) -> bool {
+        matches!(self.kind, UnitKind::Player(_) | UnitKind::Mob(_))
     }
     /// Look for 0x0078/0x0079/0x007b.
     pub fn look(&self, extra: Option<(&crate::model::Character, CharView)>) -> UnitLook {

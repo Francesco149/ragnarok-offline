@@ -381,6 +381,7 @@ impl Host for Game {
                         crate::world::UnitKind::Mob(m) => ("mob", json!({"mob_id": m.mob_id, "hp": m.hp, "max_hp": m.max_hp})),
                         crate::world::UnitKind::Item(fi) => ("item", json!({"item": fi.item.nameid, "amount": fi.item.amount})),
                         crate::world::UnitKind::Pet(p) => ("pet", json!({"owner": p.owner, "pet_id": p.pet_id})),
+                        crate::world::UnitKind::Skill(s) => ("skill", json!({"unit_id": s.unit_id, "src": s.src, "group": s.group})),
                     };
                     out.push(json!({"id": id, "kind": kind, "name": u.name, "x": u.x, "y": u.y, "info": extra}));
                 }
@@ -402,7 +403,10 @@ impl Host for Game {
                 return self.reload_scripts().map(Value::from).map_err(|e| format!("{e:#}"));
             }
             other => {
-                return match self.npc_call(ctx, other, &a) {
+                if let Some(r) = self.npc_call(ctx, other, &a) {
+                    return r;
+                }
+                return match self.battle_call(ctx, other, &a) {
                     Some(r) => r,
                     None => Err(format!("unknown runtime op {other:?}")),
                 };

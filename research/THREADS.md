@@ -396,6 +396,73 @@ Was Lutie a permanent town on euRO, or seasonal? The CD patcher carries
 `2003-10-31gdata_xmas.gpf`.
 **Look:** euRO notices Dec 2003–Jan 2004.
 
+### 20. Skill numbers: the client's own text against the emulators
+The client's `data\skilldesctable.txt` gives per-level numbers for many
+skills. Some agree with mod0631 (Mammonite 150–600%, Discount 7–24%, Stone
+Fling 30, First Aid 5 HP, Moving HP Recovery 25%, Suffragium 15/30/45% for
+30/20/10 s). Others do not, and the text is partly older than the client
+(Teleport with ten levels):
+
+| Skill | Client text | mod0631 (used) |
+|---|---|---|
+| Sword / Two-Handed Sword Mastery | +5 a level (to +50) | +4 a level |
+| Beast Bane | +3 a level | +4 a level |
+| Two-Hand Quicken | lasts 15 s to 60 s | 30 s a level |
+| Impositio Manus | +2 a level, 40 s | +5 a level, 60 s |
+| Aspersio | 5 s to 17 s | 60 s to 180 s |
+| Kyrie Eleison | 10 s a level, blocks 1 to 3 times | 120 s, 5 to 10 hits, a share of max HP |
+| Resurrection | 1 HP, 15%, 30%, 50% | 10%, 30%, 50%, 80% |
+| Charge Arrow | throws the target 4 cells | 6 cells |
+| Land Mine | lasts 65 s down to 5 s | 200 s down to 40 s |
+| Blast Mine | goes off after 10 s down to 2 s | 25 s down to 5 s |
+| Shockwave Trap | needs 2 Traps | 1 Trap |
+
+**Impact:** each row is a number in `scripts/rules/`.
+**Look:** which state of the game the text describes (kRO beta? when was
+each line last edited: compare the same file in later clients and in the
+2003-04-30 and 2003-12-11 patch archives on the CD); iRO skill pages of
+late 2003 on Wayback (RODataZone's job pages list skill tables); kRO
+notices on skill changes in 2003.
+
+### 21. Ailments: which emulator is nearer the official servers
+mod0631 (2003-12): fixed chances, no resistance from the target's stats,
+placeholder lengths, no Curse, poison without HP loss. eAthena 817
+(2004-02): chances and lengths fall with MDEF / VIT / INT / LUK, lengths
+per skill level in `cast_db.txt`, poison takes HP down to a quarter, Storm
+Gust freezes on the third hit. We follow 817 (DEVIATIONS.md). Neither says
+where its numbers came from.
+**Impact:** `skill_additional_effect` and the ailment part of
+`skill_status_change_start` in `scripts/rules/`.
+**Look:** period player guides on stun and freeze resistance ("VIT 97
+immune to stun" is a later formula: when does it first appear?), the iRO
+guide's status pages (2004), kRO notices.
+
+### 22. Skills approximated or missing
+Built from the client's text or by analogy, to be sharpened (DEVIATIONS.md
+has the table): Flasher's chance, Shockwave Trap on monsters, Enchant
+Poison's chance to poison, Brandish Spear's cells, Detect's range, Change
+Cart's level steps. Open in both emulators and not built: Poison React,
+Venom Splasher (817 has a damage formula only), Remove Trap, Spring Trap,
+Talkie Box, forging and its success rates, Repair Weapon. Arrows add no
+ATK in mod0631 (the line is commented out): did they on the official
+servers of Dec 2003? The client shows an ATK on arrow items.
+**Impact:** Hunter, Assassin and Blacksmith play.
+**Look:** jAthena's history (`refs/jathena`, `git log -S` on each skill
+name gives the date and often a source note), 817 and eathena-v0.5.2, the
+client's item text for arrows (`idnum2itemdesctable.txt`).
+
+### 23. Monster skills and behaviour
+The monsters' skill lists are mod0631's `db/mob_skill_db.txt` (1,109
+lines): its authors' reconstruction of what jRO's monsters did, with
+"friend" targets and several conditions never implemented. euRO got
+monster skills with "New Comodo" (January 2004). The AI is mod0631's
+`mob_ai_sub_hard`: 9-cell sight for aggressive monsters, chase to 13
+cells, 25% chance to switch target, looters, assist within 13 cells.
+**Impact:** how every fight feels; `data/db/mob_skills.toml`.
+**Look:** kRO notices on monster skills (2003); period monster databases
+that list skills (RODataZone, RO Empire); later official data is tier
+later but shows which monster has which skill at all.
+
 ## Resolved
 
 ### R1. Basic Skill levels

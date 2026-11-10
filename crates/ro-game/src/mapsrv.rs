@@ -32,6 +32,10 @@ impl Game {
             CZ_PING => {}
             CZ_REQUEST_MOVE => {
                 let (x, y, _) = r.pos3()?;
+                // clif_parse_WalkToXY: not while casting, delayed, stunned, snared or hidden
+                if !self.can_move(unit) {
+                    return Ok(());
+                }
                 if let Some(p) = self.world.units.get_mut(&unit).and_then(|u| u.player_mut()) {
                     p.attack = None;
                 }
@@ -70,7 +74,15 @@ impl Game {
                 let target = r.u32()?;
                 let action = r.u8()?;
                 match action {
-                    0 | 7 => self.start_attack(unit, AttackIntent { target, continuous: action == 7 }),
+                    0 | 7 => {
+                        // clif_parse_ActionRequest: no attack during a skill's delay
+                        let now = self.now();
+                        if self.world.units.get(&unit).and_then(|u| u.player()).is_some_and(|p| p.canact > now) {
+                            self.send(sid, packets::skill_fail(1, 0, 4));
+                            return Ok(());
+                        }
+                        self.start_attack(unit, AttackIntent { target, continuous: action == 7 })
+                    }
                     2 => {
                         if self.basic_skill_ok(unit, 3, 2) {
                             self.set_sit(unit, true)
@@ -224,9 +236,60 @@ impl Game {
                 // Athena clif_parse_RemoveOption: cart, falcon and peco all go
                 self.set_option(unit, 0);
             }
-            0x0113 | 0x0116 | 0x0190 => {
-                // skills: server-side behaviour not reconstructed yet
-                self.send(sid, ro_proto::Writer::new(ZC_ACK_TOUSESKILL).u16(0).u16(0).u16(0).u8(0).u8(0).finish());
+            0x0113 => {
+                // use skill on a unit: u16 level, u16 skill, u32 target
+                let lv = r.u16()?;
+                let skill = r.u16()?;
+                let target = r.u32()?;
+                self.skill_request(unit, skill, lv, target, 0, 0);
+            }
+            0x0116 | 0x0190 => {
+                // use skill on a cell: u16 level, u16 skill, u16 x, u16 y (0x0190 adds 80 bytes of text)
+                let lv = r.u16()?;
+                let skill = r.u16()?;
+                let x = r.u16()?;
+                let y = r.u16()?;
+                self.skill_request(unit, skill, lv, 0, x, y);
+            }
+            0x011b => {
+                // Teleport / Warp Portal: the map picked from the list
+                let skill = r.u16()?;
+                let map = r.str_fixed(16)?;
+                let pending = self.world.units.get_mut(&unit).and_then(|u| u.player_mut()).and_then(|p| p.skill_menu.take());
+                if let Some((s, lv, x, y)) = pending.filter(|p| p.0 == skill) {
+                    self.rule_call("skill_castend_map", serde_json::json!({"src": unit, "skill": s, "lv": lv, "x": x, "y": y, "map": map}));
+                }
+            }
+            0x011d => self.memo_request(unit),
+            0x0118 => {
+                // stop attacking
+                if let Some(p) = self.world.units.get_mut(&unit).and_then(|u| u.player_mut()) {
+                    p.attack = None;
+                }
+            }
+            0x0178 => {
+                let idx = r.u16()?;
+                self.identify_item(unit, idx);
+            }
+            0x017a => {
+                let idx = r.u16()?;
+                self.card_use(unit, idx);
+            }
+            0x017c => {
+                let card = r.u16()?;
+                let equip = r.u16()?;
+                self.card_insert(unit, card, equip);
+            }
+            0x01ae => {
+                // Arrow Crafting: the item picked
+                let item = r.u16()?;
+                self.rule_call("arrow_create", serde_json::json!({"src": unit, "item": item}));
+            }
+            0x018e => {
+                // forge / mix: u16 item, 3 x u16 extra materials
+                let item = r.u16()?;
+                let (m1, m2, m3) = (r.u16()?, r.u16()?, r.u16()?);
+                self.rule_call("produce_mix", serde_json::json!({"src": unit, "item": item, "slots": [m1, m2, m3]}));
             }
             other => debug!("map: unhandled {other:#06x} ({} bytes)", pkt.len()),
         }
@@ -269,6 +332,14 @@ impl Game {
                 catch_class: None,
                 pet_unit: None,
                 gm_level: gm,
+                cast: None,
+                canact: 0,
+                canmove: 0,
+                skill_item: None,
+                skill_menu: None,
+                inc_hp_acc: 0,
+                inc_sp_acc: 0,
+                spirit_acc: 0,
             })),
         };
         self.world.add(u);
@@ -293,7 +364,18 @@ impl Game {
         if self.char_of_unit(unit).is_some_and(|c| c.option & crate::npcrt::CART_BITS != 0) {
             self.send_cart(unit);
         }
-        self.send(sid, packets::attack_range(1));
+        self.refresh_status(unit);
+        self.send_walls(unit);
+        // status changes come along: icons and the option words
+        let (opt1, opt2, opt) = self.opts_of(unit);
+        if opt1 != 0 || opt2 != 0 {
+            self.send(sid, packets::state_change(unit, opt1, opt2, opt, 0));
+        }
+        let icons: Vec<u16> = self.sc_map(unit).map(|m| m.keys().copied().filter(|k| *k < 64).collect()).unwrap_or_default();
+        for k in icons {
+            self.send(sid, packets::status_icon(k, unit, true));
+        }
+        self.send_arrow(unit);
         self.refresh_view(unit, true);
         // the pet out of its egg comes along (login, every map change)
         if self.char_of_unit(unit).is_some_and(|c| c.active_pet != 0) {
@@ -318,19 +400,26 @@ impl Game {
 
     /// Look of a unit as seen by others.
     pub(crate) fn unit_look(&self, u: &Unit) -> packets::UnitLook {
-        match u.player() {
+        let mut l = match u.player() {
             Some(p) => match self.store.chars.get(&p.char_id) {
                 Some(c) => u.look(Some((c, p.view))),
                 None => u.look(None),
             },
             None => u.look(None),
+        };
+        if u.is_fighter() {
+            (l.opt1, l.opt2, l.option) = self.opts_of(u.id);
         }
+        l
     }
 
     /// Packet that makes `u` appear for a viewer.
     pub(crate) fn appear_packet(&self, u: &Unit, fresh: bool) -> Vec<u8> {
         if let crate::world::UnitKind::Item(fi) = &u.kind {
             return packets::floor_item(u.id, fi.item.nameid, fi.item.identify, u.x, u.y, fi.item.amount as u16, fi.subx, fi.suby);
+        }
+        if let crate::world::UnitKind::Skill(s) = &u.kind {
+            return packets::skill_unit(u.id, s.src, u.x, u.y, s.unit_id);
         }
         let look = self.unit_look(u);
         if let Some(w) = &u.walk {
@@ -364,10 +453,10 @@ impl Game {
             }
         }
         for id in before.difference(&now_ids) {
-            if self.world.units.get(id).is_some_and(|o| o.is_item()) {
-                out.push(packets::floor_item_gone(*id));
-            } else {
-                out.push(packets::vanish(*id, 0));
+            match self.world.units.get(id) {
+                Some(o) if o.is_item() => out.push(packets::floor_item_gone(*id)),
+                Some(o) if o.skill().is_some() => out.push(packets::skill_unit_gone(*id)),
+                _ => out.push(packets::vanish(*id, 0)),
             }
         }
         // others start seeing us
@@ -421,7 +510,14 @@ impl Game {
                 self.send(sid, pkt);
                 self.world.units.get_mut(&pid).unwrap().player_mut().unwrap().visible.insert(unit);
             } else if !close && sees {
-                let pkt = if self.world.units[&unit].is_item() { packets::floor_item_gone(unit) } else { packets::vanish(unit, 0) };
+                let o = &self.world.units[&unit];
+                let pkt = if o.is_item() {
+                    packets::floor_item_gone(unit)
+                } else if o.skill().is_some() {
+                    packets::skill_unit_gone(unit)
+                } else {
+                    packets::vanish(unit, 0)
+                };
                 self.send(sid, pkt);
                 self.world.units.get_mut(&pid).unwrap().player_mut().unwrap().visible.remove(&unit);
             }
@@ -431,7 +527,13 @@ impl Game {
     /// Remove a unit and tell everyone who saw it (kind: 0 out of sight, 1 died, 2 logout, 3 teleport).
     pub(crate) fn despawn(&mut self, unit: u32, kind: u8) {
         let Some(u) = self.world.remove(unit) else { return };
-        let pkt = if u.is_item() { packets::floor_item_gone(unit) } else { packets::vanish(unit, kind) };
+        let pkt = if u.is_item() {
+            packets::floor_item_gone(unit)
+        } else if u.skill().is_some() {
+            packets::skill_unit_gone(unit)
+        } else {
+            packets::vanish(unit, kind)
+        };
         let watchers: Vec<(u32, u32)> = self
             .world
             .units
@@ -611,6 +713,13 @@ impl Game {
         } else {
             self.update_watchers(id, false);
         }
+        // Athena skill_unit_move: ground skills notice who walks in and out
+        if self.world.units.get(&id).is_some_and(|u| u.is_fighter()) && self.has_skill_cells(&map) {
+            self.rule_call("skill_unit_move", serde_json::json!({"bl": id}));
+            if self.world.units.get(&id).is_none_or(|u| u.walk.is_none() || u.map != map) {
+                return false;
+            }
+        }
         if let Some((tx, ty)) = retarget {
             if (tx, ty) != (x, y) {
                 self.start_walk(id, &map, x, y, tx, ty);
@@ -710,6 +819,30 @@ impl Game {
         }
         info!("warp {unit} -> {map} {x},{y}");
         true
+    }
+
+    /// Any ground skill cells on this map?
+    pub(crate) fn has_skill_cells(&self, map: &str) -> bool {
+        self.world.maps.get(map).is_some_and(|m| m.units.iter().any(|i| self.world.units.get(i).is_some_and(|u| u.skill().is_some())))
+    }
+
+    /// /memo (0x011d): remember this cell for Warp Portal. The rule says how
+    /// many points the character may keep (mod0631 pc_memo: the newest first,
+    /// a map already remembered is replaced).
+    fn memo_request(&mut self, unit: u32) {
+        let r = self.rule_call("memo", serde_json::json!({"src": unit}));
+        let Some(sid) = self.sid_of(unit) else { return };
+        let Some(keep) = r.as_ref().and_then(|v| v.as_u64()).filter(|k| *k > 0) else {
+            self.send(sid, packets::skill_memo(1));
+            return;
+        };
+        let Some(pt) = self.world.units.get(&unit).map(|u| Point::new(&u.map, u.x, u.y)) else { return };
+        if let Some(c) = self.char_of_unit_mut(unit) {
+            c.memo.retain(|p| p.map != pt.map);
+            c.memo.insert(0, pt);
+            c.memo.truncate(keep.min(3) as usize);
+        }
+        self.send(sid, packets::skill_memo(0));
     }
 
     fn set_sit(&mut self, unit: u32, sit: bool) {

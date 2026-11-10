@@ -183,7 +183,78 @@ eAthena 817 (2004-02-19), bugs included. The translator is
   `l` as temporary. Here only `l<digits>` are temporary: quest variables like
   `lutie_quest` survive logout. Server-wide `$` variables are saved
   (`saves/world.json`); in 817 they were lost on restart.
-* **Taming, pet hatching, `sc_start` (status changes), `produce` (forging),
-  item skills, equipment-look `setlook`, card removal.** Scripts that call
-  these continue, and the server logs once that it isn't implemented
-  (ROADMAP).
+* **`produce` (forging), equipment-look `setlook`, card removal.** Scripts
+  that call these continue, and the server logs once that it isn't
+  implemented (ROADMAP).
+
+## Battle and skills: what we changed relative to the period emulators
+
+The battle rules (`scripts/rules/`) are a port of athena-dev-2.1.1-mod0631
+(`map/battle.c`, `skill.c`, `pc.c`, `mob.c`, archived 2003-12-18), the
+emulator closest in date to this client. Where it has nothing, eAthena 817
+(2004-02-19) fills in; each such place is marked "817:" in the Lua. Both are
+evidence of the official game, not the game: which numbers a later round of
+research should check is in research/THREADS.md #20–#23.
+
+**Slips of mod0631 that are not carried over** (the Lua marks each
+"mod0631 bug"):
+
+* **Magnum Break** did 65% damage at every level and distance: C operator
+  precedence in `5*skill_lv +(wflag)?65:115`. Here: 115% + 5% a level on the
+  target, 65% + 5% a level around it, as the expression was meant.
+* **Faith, Invulnerable Siegfried, Providence** added to the *attack* bonus
+  against an element or race (`addele`, `addrace`) where a resistance was
+  meant. Here they resist (`subele`, `subrace`).
+* **Weaponry Research and Star Crumbs** added their damage to a miss. Here
+  only to a hit.
+* **The pushcart** slowed its owner only if he had Pushcart, the skill the
+  cart cannot be had without. Same result; the condition is gone.
+* **Attack speed.** Not mod0631's slip but ours, fixed now: the server
+  attacked twice as fast as the status window's ASPD says. The delay between
+  two attacks is twice the "aspd" value (`pc.c:2461`).
+
+**Taken from eAthena 817 because mod0631 leaves it unfinished:**
+
+* **Ailments** (stone, frozen, stun, sleep, poison, curse, silence, blind):
+  the chance falls with the target's MDEF, VIT, INT or LUK, the length with
+  the same stats, monsters keep half the chance at least, and the lengths
+  come from 817's `cast_db.txt` (`data/db/skills.toml` `time`, `time2`).
+  mod0631 has fixed chances, placeholder lengths ("some length or other" in
+  its comments), and no Curse at all (the status is refused).
+* **Poison takes HP** every second down to a quarter (817); in mod0631 it
+  only shows.
+* **Blessing lifts Curse and Stone from players** too (mod0631: monsters only).
+* **Storm Gust freezes on its third hit** (817) instead of 35%+3%/level a hit.
+* **Brandish Spear, Auto Counter, Signum Crucis, Slow Poison, Find Stone,
+  Ruwach's damage, element-resisting cards against magic**: not in mod0631
+  at all.
+
+**Ours, where neither emulator has anything** (tier guess unless noted):
+
+| Skill | What we do | From |
+|---|---|---|
+| Flasher | Blinds, at Sandman's chance | The client's skill text: "Blinds an Enemy". Chance ours |
+| Shockwave Trap | Takes 20/35/50/65/80% of a player's SP | The client's skill text. Monsters have no SP here |
+| Enchant Poison | Each hit may poison (3% to 7%) | mod0631 stores that chance on the status and never rolls it |
+| Brandish Spear | Rows of five cells from the knight toward the target, 1 to 4 rows by level | 817 has its own helper for the rows; the per-row damage is 817's |
+| Detect | Reveals the hidden within 3 cells of the spot | The client's skill text |
+| Change Cart | Cart look by base level (41, 66, 81, 91) | The client's skill text for the five carts; the levels are later emulators' (tier later) |
+| Provoke | Refused on the undead | The client's skill text: "Not appliable for the Undead" |
+| Sonic Blow | Needs a Katar | The client's skill text: "using Katar" |
+| Ice Wall | A cell someone stands on stays free | Nobody gets walled into a cell. The wall cannot be attacked yet |
+| Vending | "There is nobody to sell to." | Single player |
+
+**Engine:**
+
+* **Range.** A skill or attack needs its target within range; the emulator
+  also asked for a walkable path between the two ("no shooting over
+  cliffs"). Not checked yet.
+* **Invulnerability after a warp** (`ghost_time`, 5 s in which monsters
+  ignore you) is not there.
+* **Monsters on maps nobody is on** stand still. Athena's "lazy" AI let them
+  wander and warp now and then.
+* **Parties.** Party-wide skills (Angelus, Magnificat, Gloria, Adrenaline
+  Rush...) reach the caster only: there is no party.
+* **Not built yet:** the 2-2 jobs' skills, forging, Poison React's counter, Venom Splasher, Talkie Box's text, Remove Trap,
+  Spring Trap, Repair Weapon (nothing breaks in this era's data), attacking
+  an Ice Wall, monsters' "friend" skill targets (mod0631 has none either).

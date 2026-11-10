@@ -2,8 +2,15 @@
 //!
 //! The *timing and packets* are protocol facts; the *numbers* (damage, hit,
 //! EXP penalties, regen) are server-side and come from Lua `rules.*`
-//! (scripts/rules/combat.lua) with crude Rust fallbacks. Monster AI here is a
-//! simplified Athena-style reconstruction: see docs/ROADMAP.md.
+//! (scripts/rules/). An attack is one call of `rules.weapon_attack`, which
+//! computes, sends the damage packet and takes the HP through the battle
+//! API (battle.rs).
+//!
+//! Monster AI follows athena-dev-2.1.1-mod0631 `map/mob.c` (archived
+//! 2003-12-18): `mob_ai_sub_hard` (targets, chase, attack, loot, random
+//! walk), `mob_ai_sub_lazy` (maps nobody is on), `mobskill_use` (the skill
+//! list of data/db/mob_skills.toml) and `mob_damage` (EXP share, drops, MVP
+//! reward). Line numbers in comments are that file's. Tier athena2003.
 
 use serde_json::{Value, json};
 
@@ -11,22 +18,27 @@ use crate::game::Game;
 use crate::model::{InvItem, Point};
 use crate::packets;
 use crate::path;
-use crate::world::{AttackIntent, DEFAULT_SPEED, MobUnit, Unit, UnitKind, Walk};
+use crate::world::{AttackIntent, DEFAULT_SPEED, MobState, MobUnit, Unit, UnitKind, Walk};
 
+/// mob.c MIN_MOBTHINKTIME.
 const MOB_THINK_MS: u64 = 100;
 const DEFAULT_RESPAWN_MS: u32 = 5000;
+/// map.h LOOTITEM_SIZE.
+const LOOT_SIZE: usize = 20;
 
 // Athena monster mode bits
 const MD_CANMOVE: u32 = 0x01;
+const MD_LOOTER: u32 = 0x02;
 const MD_AGGRESSIVE: u32 = 0x04;
-const MD_CANATTACK: u32 = 0x80;
+const MD_ASSIST: u32 = 0x08;
+const MD_CASTSENSOR: u32 = 0x10;
+const MD_BOSS: u32 = 0x20;
 
-#[derive(Debug, Default)]
-struct Hit {
-    damage: u32,
-    /// "hit" | "crit" | "miss"
-    kind: String,
-}
+// status changes the AI reads
+const SC_INCREASEAGI: u16 = 12;
+const SC_DECREASEAGI: u16 = 13;
+const SC_QUAGMIRE: u16 = 8;
+const SC_SILENCE: u16 = 70;
 
 impl Game {
     /// Instantiate the monster spawns of a map (first time a player enters).
@@ -79,6 +91,7 @@ impl Game {
         let m = self.db.mob(mob_id)?.clone();
         let id = self.world.new_obj_id();
         let now = self.now();
+        let skills = self.db.mob_skills.get(&mob_id).map(|v| v.len()).unwrap_or(0);
         self.world.add(Unit {
             id,
             map: map.into(),
@@ -101,6 +114,21 @@ impl Game {
                 next_attack_at: 0,
                 damage_log: Default::default(),
                 event: None,
+                sc: Default::default(),
+                def_ele: None,
+                cast: None,
+                canact: 0,
+                master: None,
+                attacked: None,
+                looting: false,
+                min_chase: 13,
+                // mob.c:640 next_walktime = tick + rand()%50 + 5000
+                next_walk: now + 5000 + rand::random::<u64>() % 50,
+                move_fail: 0,
+                skill_state: MobState::Idle,
+                skill_used: vec![0; skills],
+                loot: Vec::new(),
+                master_dist: 0,
             })),
         });
         self.update_watchers(id, true);
@@ -127,6 +155,12 @@ impl Game {
         if me.map != tmap || me.state == 1 {
             return;
         }
+        // pc_attack_timer: not while stunned, frozen, asleep, stone, hidden or cloaked
+        let (opt1, _, option) = self.opts_of(unit);
+        if opt1 > 0 || option & 6 != 0 {
+            return;
+        }
+        let me = self.world.units.get_mut(&unit).unwrap();
         if me.state == 2 {
             me.state = 0;
         }
@@ -134,9 +168,27 @@ impl Game {
         p.attack = Some(intent);
         let range = self.char_of_unit(unit).map(|c| self.derive(c).range.max(1)).unwrap_or(1) as i32;
         let me = &self.world.units[&unit];
-        if path::distance(me.x as i32, me.y as i32, tx as i32, ty as i32) > range {
-            self.walk_to(unit, tx, ty);
+        // pc.c:2424: one cell of slack before walking closer
+        if path::distance(me.x as i32, me.y as i32, tx as i32, ty as i32) > range + 1 && self.can_move(unit) {
+            self.walk_toward(unit, tx, ty, range);
         }
+    }
+
+    /// Walk to a cell within `range` of (tx, ty) (the target's own cell is taken).
+    fn walk_toward(&mut self, unit: u32, tx: u16, ty: u16, range: i32) {
+        let Some(u) = self.world.units.get(&unit) else { return };
+        let (x, y) = (u.x as i32, u.y as i32);
+        let Some(grid) = self.grid(&u.map) else { return };
+        let (dx, dy) = ((x - tx as i32).signum(), (y - ty as i32).signum());
+        let r = range.max(1);
+        // the cell on our side of the target, `range` cells out; else the target cell itself
+        for k in (1..=r).rev() {
+            let (cx, cy) = (tx as i32 + dx * k, ty as i32 + dy * k);
+            if grid.walkable(cx, cy) && self.walk_to(unit, cx as u16, cy as u16) {
+                return;
+            }
+        }
+        self.walk_to(unit, tx, ty);
     }
 
     pub(crate) fn tick_combat(&mut self, now: u64) {
@@ -151,102 +203,102 @@ impl Game {
         for id in attackers {
             self.player_attack_step(id, now);
         }
-        // monsters on maps with players
-        let mobs: Vec<u32> = self
+        // monsters: the real AI near players, the lazy one elsewhere
+        let mobs: Vec<(u32, bool)> = self
             .world
             .units
             .values()
             .filter(|u| u.mob().is_some_and(|m| m.next_think <= now))
-            .filter(|u| self.world.maps.get(&u.map).is_some_and(|m| m.players > 0))
-            .map(|u| u.id)
+            .map(|u| (u.id, self.world.maps.get(&u.map).is_some_and(|m| m.players > 0)))
             .collect();
-        for id in mobs {
-            self.mob_think(id, now);
+        for (id, near) in mobs {
+            if near {
+                self.mob_think(id, now);
+            } else if let Some(m) = self.world.units.get_mut(&id).and_then(|u| u.mob_mut()) {
+                // nobody on the map: nothing to do until someone comes
+                m.next_think = now + MOB_THINK_MS * 10;
+                m.target = None;
+                m.attacked = None;
+            }
         }
     }
 
     fn player_attack_step(&mut self, id: u32, now: u64) {
         let Some(intent) = self.world.units.get(&id).and_then(|u| u.player()).and_then(|p| p.attack) else { return };
-        let target_ok = self.world.units.get(&intent.target).is_some_and(|t| t.mob().is_some() && t.state != 1);
-        if !target_ok {
+        let target_ok = self.world.units.get(&intent.target).is_some_and(|t| t.mob().is_some() && t.state != 1 && t.map == self.world.units[&id].map);
+        let (opt1, _, option) = self.opts_of(id);
+        if !target_ok || opt1 > 0 || option & 6 != 0 || self.world.units[&id].state == 1 {
             self.world.units.get_mut(&id).unwrap().player_mut().unwrap().attack = None;
+            return;
+        }
+        // pc_attack_timer: a skill's delay holds the attack back too
+        let p = self.world.units[&id].player().unwrap();
+        if p.canact > now || p.cast.is_some() {
+            let wait = p.canact.max(now + 50);
+            self.world.units.get_mut(&id).unwrap().player_mut().unwrap().next_attack_at = wait;
             return;
         }
         let Some(c) = self.char_of_unit(id).cloned() else { return };
         let d = self.derive(&c);
         let (me, t) = (&self.world.units[&id], &self.world.units[&intent.target]);
-        let mob = t.mob().unwrap().clone();
-        let dist = path::distance(me.x as i32, me.y as i32, t.x as i32, t.y as i32);
-        if dist > d.range.max(1) as i32 {
-            if me.walk.is_none() {
-                let (tx, ty) = (t.x, t.y);
-                self.walk_to(id, tx, ty);
+        let (mx, my, tx, ty, walking) = (me.x, me.y, t.x, t.y, me.walk.is_some());
+        let dist = path::distance(mx as i32, my as i32, tx as i32, ty as i32);
+        if dist > d.range.max(1) as i32 + 1 {
+            if !walking && self.can_move(id) {
+                self.walk_toward(id, tx, ty, d.range.max(1) as i32);
             }
             return;
         }
-        if me.walk.is_some() {
+        if walking {
             // in range: stop where we are
-            let (x, y) = (me.x, me.y);
-            self.world.units.get_mut(&id).unwrap().walk = None;
-            self.area_send(id, packets::stop_move(id, x, y), true);
+            self.stop_walking(id);
         }
-        let mdb = self.db.mob(mob.mob_id).cloned().unwrap_or_default();
-        let hit = self.roll_attack(
-            json!({"kind": "player", "char": self.char_lua(&c), "derived": derive_json(&d)}),
-            json!({"kind": "mob", "mob": mdb}),
-        );
-        let tick = self.tick32();
-        let kind = match hit.kind.as_str() {
-            "crit" => 10,
-            "miss" => 0,
-            _ => 0,
-        };
-        let dmg = if hit.kind == "miss" { 0 } else { hit.damage };
-        self.area_send(
-            id,
-            packets::action(id, intent.target, tick, d.amotion, mdb.damage_motion, dmg.min(32000) as u16, 1, kind, 0),
-            true,
-        );
-        {
-            let p = self.world.units.get_mut(&id).unwrap().player_mut().unwrap();
-            p.next_attack_at = now + d.amotion as u64;
-            if !intent.continuous {
+        // face the target (pc.c:2429)
+        let (dx, dy) = (tx as i32 - mx as i32, ty as i32 - my as i32);
+        if (dx, dy) != (0, 0) {
+            let dir = path::dir_of(dx, dy);
+            let u = self.world.units.get_mut(&id).unwrap();
+            u.dir = dir;
+            u.head_dir = 0;
+        }
+        let r = self.rule_call("weapon_attack", json!({"src": id, "target": intent.target}));
+        // pc.c:2461: the next attack comes after twice the "aspd" value
+        let delay = r.as_ref().and_then(|v| v.get("adelay")).and_then(crate::status::lua_u64).unwrap_or(d.amotion as u64 * 2).max(100);
+        if let Some(p) = self.world.units.get_mut(&id).and_then(|u| u.player_mut()) {
+            p.next_attack_at = now + delay;
+            if !intent.continuous || r == Some(Value::Bool(false)) {
                 p.attack = None;
             }
         }
-        self.damage_mob(intent.target, id, dmg);
     }
 
-    fn roll_attack(&self, attacker: Value, defender: Value) -> Hit {
-        if let Some(engine) = &self.scripts {
-            match engine.rule("attack", &json!({"attacker": attacker, "defender": defender})) {
-                Ok(Some(v)) => {
-                    return Hit {
-                        damage: v.get("damage").and_then(crate::status::lua_u64).unwrap_or(0) as u32,
-                        kind: v.get("kind").and_then(|k| k.as_str()).unwrap_or("hit").to_string(),
-                    };
-                }
-                Ok(None) => {}
-                Err(e) => tracing::warn!("{e:#}"),
+    /// Athena mob_damage, the part before death. Returns true when it died.
+    pub(crate) fn damage_mob(&mut self, mob: u32, by: u32, dmg: u32) -> bool {
+        let by_player = self.world.units.get(&by).is_some_and(|u| u.is_player());
+        let Some(u) = self.world.units.get_mut(&mob) else { return false };
+        // mob.c:1549: a hit stops its walk
+        let stopped = u.walk.take().is_some();
+        let (x, y) = (u.x, u.y);
+        let Some(m) = u.mob_mut() else { return false };
+        let dmg = dmg.min(m.hp);
+        if by_player {
+            *m.damage_log.entry(by).or_default() += dmg;
+            if m.attacked.is_none() {
+                m.attacked = Some(by);
             }
         }
-        Hit { damage: 1 + rand::random::<u32>() % 10, kind: "hit".into() }
-    }
-
-    fn damage_mob(&mut self, mob: u32, by: u32, dmg: u32) {
-        let Some(u) = self.world.units.get_mut(&mob) else { return };
-        let Some(m) = u.mob_mut() else { return };
-        *m.damage_log.entry(by).or_default() += dmg;
-        if m.target.is_none() {
-            m.target = Some(by);
+        m.hp -= dmg;
+        let dead = m.hp == 0;
+        if stopped && !dead {
+            self.area_send(mob, packets::stop_move(mob, x, y), false);
         }
-        m.hp = m.hp.saturating_sub(dmg);
-        if m.hp == 0 {
+        if dead {
             self.mob_dies(mob);
         }
+        dead
     }
 
-    fn mob_dies(&mut self, mob: u32) {
+    pub(crate) fn mob_dies(&mut self, mob: u32) {
         let Some(u) = self.world.units.get(&mob).cloned() else { return };
         let Some(m) = u.mob() else { return };
         let mdb = self.db.mob(m.mob_id).cloned().unwrap_or_default();
@@ -256,24 +308,83 @@ impl Game {
             let killer = m.damage_log.keys().copied().find(|p| self.world.units.contains_key(p)).unwrap_or(0);
             self.queue_event(&ev, killer);
         }
-        // EXP: whole amount to everyone who hit it (single player: you)
-        for (&pid, _) in &m.damage_log {
-            if self.world.units.get(&pid).is_some_and(|p| p.is_player()) {
-                let base = mdb.base_exp as u64 * self.cfg.base_exp_rate as u64 / 100;
-                let job = mdb.job_exp as u64 * self.cfg.job_exp_rate as u64 / 100;
-                self.gain_exp(pid, base, job);
-            }
+        // EXP (mob.c:1604): each attacker on the map gets its share of the
+        // damage, +10% of the total per attacker beyond the first, at most double
+        let here: Vec<(u32, u32)> = m
+            .damage_log
+            .iter()
+            .filter(|(p, _)| self.world.units.get(p).is_some_and(|pu| pu.is_player() && pu.map == u.map))
+            .map(|(p, d)| (*p, *d))
+            .collect();
+        let count = m.damage_log.keys().filter(|p| self.world.units.contains_key(p)).count() as u64;
+        let sum: u64 = match here.iter().map(|(_, d)| *d as u64).sum() {
+            0 => mdb.hp.max(1) as u64,
+            s => s,
+        };
+        for &(pid, dmg) in &here {
+            let per = (dmg as u64 * 256 * (9 + count) / 10 / sum).clamp(1, 512);
+            let base = mdb.base_exp as u64 * per / 256 * self.cfg.base_exp_rate as u64 / 100;
+            let job = mdb.job_exp as u64 * per / 256 * self.cfg.job_exp_rate as u64 / 100;
+            self.gain_exp(pid, base, job);
         }
         // drops (Athena: rate/10000, scaled by drop_rate)
+        let drop_at = |g: &Game| {
+            let (dx, dy) = (rand_range(-1, 1), rand_range(-1, 1));
+            let (x, y) = ((u.x as i32 + dx).max(0) as u16, (u.y as i32 + dy).max(0) as u16);
+            if g.grid(&u.map).is_some_and(|gr| gr.walkable(x as i32, y as i32)) { (x, y) } else { (u.x, u.y) }
+        };
         for d in &mdb.drops {
             let rate = (d.rate as u64 * self.cfg.drop_rate as u64 / 100).min(10000) as u32;
             if rand::random::<u32>() % 10000 < rate && self.db.item(d.item).is_some() {
-                let (dx, dy) = (rand_range(-1, 1), rand_range(-1, 1));
-                let (x, y) = ((u.x as i32 + dx).max(0) as u16, (u.y as i32 + dy).max(0) as u16);
-                let (x, y) = if self.grid(&u.map).is_some_and(|g| g.walkable(x as i32, y as i32)) { (x, y) } else { (u.x, u.y) };
-                self.drop_floor_item(&u.map, x, y, InvItem::new(d.item, 1), true);
+                let (x, y) = drop_at(self);
+                let mut it = InvItem::new(d.item, 1);
+                // equipment falls unidentified (mob.c mob_delay_item_drop: identify = !itemdb_isequip3)
+                if self.db.item(d.item).is_some_and(|i| matches!(i.kind, 4 | 5)) {
+                    it.identify = false;
+                }
+                self.drop_floor_item(&u.map, x, y, it, true);
             }
         }
+        // what a looter had picked up
+        for it in &m.loot {
+            let (x, y) = drop_at(self);
+            self.drop_floor_item(&u.map, x, y, it.clone(), true);
+        }
+        // MVP (mob.c:1703): the biggest damage dealer gets one reward item, or the MVP EXP
+        if mdb.mvp_exp > 0 {
+            if let Some(&(mvp, _)) = here.iter().max_by_key(|(_, d)| *d) {
+                self.area_send(mvp, packets::mvp_effect(mvp), true);
+                let mut got = false;
+                for d in &mdb.mvp_drops {
+                    if d.item == 0 || d.rate <= rand::random::<u32>() % 10000 || self.db.item(d.item).is_none() {
+                        continue;
+                    }
+                    if let Some(sid) = self.sid_of(mvp) {
+                        self.send(sid, packets::mvp_item(d.item as u16));
+                    }
+                    let heavy = self.char_of_unit(mvp).is_some_and(|c| self.weight_of(c) * 2 > self.derive(c).max_weight);
+                    if heavy || !self.add_item(mvp, InvItem::new(d.item, 1)) {
+                        if let Some((map, x, y)) = self.world.units.get(&mvp).map(|p| (p.map.clone(), p.x, p.y)) {
+                            self.drop_floor_item(&map, x, y, InvItem::new(d.item, 1), true);
+                        }
+                    }
+                    got = true;
+                    break;
+                }
+                if !got {
+                    if let Some(sid) = self.sid_of(mvp) {
+                        self.send(sid, packets::mvp_exp(mdb.mvp_exp));
+                    }
+                    self.gain_exp(mvp, mdb.mvp_exp as u64 * self.cfg.base_exp_rate as u64 / 100, 0);
+                }
+            }
+        }
+        // its slaves go with it (mob_deleteslave)
+        let slaves: Vec<u32> = self.world.units.values().filter(|s| s.mob().is_some_and(|sm| sm.master == Some(mob))).map(|s| s.id).collect();
+        for s in slaves {
+            self.despawn(s, 1);
+        }
+        self.defer_rule("unit_gone", json!({"bl": mob}));
         if let Some(i) = m.spawn {
             let s = self.scripts.as_ref().and_then(|e| e.defs.spawns.get(i)).cloned();
             if let Some(s) = s {
@@ -287,129 +398,530 @@ impl Game {
 
     // ------------------------------------------------------------ monster AI
 
-    fn mob_think(&mut self, id: u32, now: u64) {
-        let Some(u) = self.world.units.get(&id) else { return };
-        let Some(m) = u.mob() else { return };
-        let mdb = self.db.mob(m.mob_id).cloned().unwrap_or_default();
-        let mode = mdb.mode; // 0 = plant-like: never moves or attacks
-        let (map, x, y) = (u.map.clone(), u.x, u.y);
-        let mut target = m.target;
-        // drop targets that are gone, dead, or too far
-        if let Some(t) = target {
-            let keep = self.world.units.get(&t).is_some_and(|tu| {
-                tu.map == map && tu.state != 1 && path::distance(x as i32, y as i32, tu.x as i32, tu.y as i32) <= mdb.chase_range.max(12) as i32
-            });
-            if !keep {
-                target = None;
-            }
+    /// Can this monster see `target` as prey? Hiding, cloaking and playing
+    /// dead fool everything but bosses, insects and demons (mob.c:746).
+    fn mob_sees(&self, mdb: &ro_data::db::Mob, target: u32) -> bool {
+        let Some(t) = self.world.units.get(&target) else { return false };
+        if t.state == 1 || !t.is_player() {
+            return false;
         }
-        // aggressive monsters pick the nearest player in sight
-        if target.is_none() && mode & MD_AGGRESSIVE != 0 {
-            let view = mdb.view_range.max(1) as i32;
-            target = self
-                .world
-                .players_on(&map)
-                .into_iter()
-                .filter_map(|pid| self.world.units.get(&pid))
-                .filter(|p| p.state != 1 && path::distance(x as i32, y as i32, p.x as i32, p.y as i32) <= view)
-                .min_by_key(|p| path::distance(x as i32, y as i32, p.x as i32, p.y as i32))
-                .map(|p| p.id);
+        if mdb.mvp_exp > 0 || mdb.mode & MD_BOSS != 0 {
+            return true;
         }
-        let walking = u.walk.is_some();
-        {
-            let m = self.world.units.get_mut(&id).unwrap().mob_mut().unwrap();
-            m.target = target;
-            m.next_think = now + MOB_THINK_MS;
+        if self.has_sc(target, crate::battle::SC_TRICKDEAD) {
+            return false;
         }
-        match target {
-            Some(t) if mode & MD_CANATTACK != 0 => {
-                let tu = &self.world.units[&t];
-                let (tx, ty) = (tu.x, tu.y);
-                let dist = path::distance(x as i32, y as i32, tx as i32, ty as i32);
-                if dist <= mdb.range.max(1) as i32 {
-                    if walking {
-                        self.world.units.get_mut(&id).unwrap().walk = None;
-                        self.area_send(id, packets::stop_move(id, x, y), false);
-                    }
-                    let next = self.world.units[&id].mob().unwrap().next_attack_at;
-                    if next <= now {
-                        self.mob_attack(id, t, &mdb, now);
-                    }
-                } else if mode & MD_CANMOVE != 0 && !walking {
-                    self.mob_walk(id, &map, x, y, tx, ty);
-                }
-            }
-            _ => {
-                // idle: wander now and then (Athena random walk, simplified)
-                if mode & MD_CANMOVE != 0 && !walking && rand::random::<u32>() % 60 == 0 {
-                    let (dx, dy) = (rand_range(-5, 5), rand_range(-5, 5));
-                    let (nx, ny) = ((x as i32 + dx).max(0) as u16, (y as i32 + dy).max(0) as u16);
-                    self.mob_walk(id, &map, x, y, nx, ny);
-                }
+        let (_, _, option) = self.opts_of(target);
+        option & 6 == 0 || mdb.race == 4 || mdb.race == 6
+    }
+
+    /// Athena mob_target: something drew the monster's attention.
+    pub(crate) fn mob_target(&mut self, mob: u32, src: u32, dist: i32) {
+        let Some(m) = self.world.units.get(&mob).and_then(|u| u.mob()) else { return };
+        let Some(mdb) = self.db.mob(m.mob_id).cloned() else { return };
+        if mdb.mode == 0 {
+            return;
+        }
+        // already locked on and not minded to switch (aggressive ones do, 25%)
+        if m.target.is_some() && !m.looting && (mdb.mode & MD_AGGRESSIVE == 0 || rand::random::<u32>() % 100 > 25) {
+            return;
+        }
+        if self.mob_sees(&mdb, src) {
+            if let Some(m) = self.world.units.get_mut(&mob).and_then(|u| u.mob_mut()) {
+                m.target = Some(src);
+                m.looting = false;
+                m.min_chase = (dist + 13).min(26);
             }
         }
     }
 
-    fn mob_walk(&mut self, id: u32, map: &str, x0: u16, y0: u16, x1: u16, y1: u16) {
-        let Some(grid) = self.grid(map) else { return };
-        let Some(dirs) = path::find(&grid, x0 as i32, y0 as i32, x1 as i32, y1 as i32) else { return };
-        if dirs.is_empty() {
+    /// mob_unlocktarget.
+    fn mob_unlock(&mut self, id: u32, now: u64) {
+        if let Some(m) = self.world.units.get_mut(&id).and_then(|u| u.mob_mut()) {
+            m.target = None;
+            m.looting = false;
+            m.skill_state = MobState::Idle;
+            m.next_walk = now + 3000 + rand::random::<u64>() % 3000;
+        }
+    }
+
+    /// mob.c:203 mob_get_speed.
+    fn mob_speed(&self, id: u32, base: u32) -> u16 {
+        let mut a = if base > 0 { base } else { DEFAULT_SPEED as u32 };
+        if self.has_sc(id, SC_INCREASEAGI) {
+            a -= a * 25 / 100;
+        }
+        if self.has_sc(id, SC_DECREASEAGI) {
+            a = a * 125 / 100;
+        }
+        if self.has_sc(id, SC_QUAGMIRE) {
+            a = a * 3 / 2;
+        }
+        a.clamp(20, 2000) as u16
+    }
+
+    /// mob_ai_sub_hard.
+    fn mob_think(&mut self, id: u32, now: u64) {
+        let Some(u) = self.world.units.get(&id) else { return };
+        let Some(m) = u.mob() else { return };
+        let Some(mdb) = self.db.mob(m.mob_id).cloned() else { return };
+        let mode = mdb.mode; // 0 = plant-like: never moves or attacks
+        let (map, x, y) = (u.map.clone(), u.x as i32, u.y as i32);
+        let speed = self.mob_speed(id, mdb.speed);
+        {
+            let u = self.world.units.get_mut(&id).unwrap();
+            u.speed = speed;
+            let m = u.mob_mut().unwrap();
+            m.next_think = now + MOB_THINK_MS;
+            // casting
+            if m.cast.is_some() {
+                if now > m.next_walk + MOB_THINK_MS {
+                    m.next_walk = now;
+                }
+                return;
+            }
+            if mode == 0 {
+                m.target = None;
+            }
+        }
+        // stone, frozen, stunned, asleep
+        if self.opts_of(id).0 > 0 {
             return;
+        }
+        let m = self.world.units[&id].mob().unwrap();
+        let (attacked, master) = (m.attacked, m.master);
+        let dist_to = |g: &Game, t: u32| g.world.units.get(&t).filter(|tu| tu.map == map).map(|tu| path::distance(x, y, tu.x as i32, tu.y as i32));
+
+        // friends of the same kind come to help (mob.c:1086 link search)
+        if let (Some(a), true) = (attacked, mode & MD_ASSIST != 0) {
+            if self.world.units.get(&a).is_some_and(|p| p.is_player()) {
+                let class = m.mob_id;
+                let friends: Vec<u32> = self
+                    .world
+                    .maps
+                    .get(&map)
+                    .map(|mi| {
+                        mi.units
+                            .iter()
+                            .filter_map(|i| self.world.units.get(i))
+                            .filter(|f| f.id != id && (f.x as i32 - x).abs() <= 13 && (f.y as i32 - y).abs() <= 13)
+                            .filter(|f| f.mob().is_some_and(|fm| fm.mob_id == class && (fm.target.is_none() || fm.looting)))
+                            .map(|f| f.id)
+                            .collect()
+                    })
+                    .unwrap_or_default();
+                for f in friends {
+                    if let Some(fm) = self.world.units.get_mut(&f).and_then(|u| u.mob_mut()) {
+                        fm.target = Some(a);
+                        fm.looting = false;
+                        fm.min_chase = 13;
+                    }
+                }
+            }
+        }
+
+        // whoever hit it (mob.c:1099); aggressive ones switch a quarter of the time
+        let m = self.world.units[&id].mob().unwrap();
+        let mut attack_now = false;
+        if let (Some(a), true) = (attacked, mode > 0) {
+            if m.target.is_none() || m.looting || (mode & MD_AGGRESSIVE != 0 && rand::random::<u32>() % 100 < 25) {
+                let d = dist_to(self, a).filter(|d| *d < 32 && self.world.units[&a].state != 1);
+                let m = self.world.units.get_mut(&id).unwrap().mob_mut().unwrap();
+                m.attacked = None;
+                if let Some(d) = d {
+                    m.target = Some(a);
+                    m.looting = false;
+                    m.min_chase = (d + 13).min(26);
+                    attack_now = true;
+                }
+            }
+        }
+
+        // a slave follows its master and takes its target (mob.c:885)
+        let mut master_check = false;
+        if let Some(mid) = master {
+            match self.world.units.get(&mid).filter(|mu| mu.map == map) {
+                Some(mu) => {
+                    let (mx, my) = (mu.x as i32, mu.y as i32);
+                    let mtarget = mu.mob().and_then(|mm| mm.target.filter(|_| !mm.looting));
+                    let old = self.world.units[&id].mob().unwrap().master_dist;
+                    let dist = path::distance(x, y, mx, my);
+                    self.world.units.get_mut(&id).unwrap().mob_mut().unwrap().master_dist = dist;
+                    if old < 6 && dist > 15 {
+                        self.mob_teleport(id, mx as u16, my as u16);
+                        return;
+                    }
+                    let m = self.world.units[&id].mob().unwrap();
+                    let free = m.target.is_none() || m.looting;
+                    if free && self.can_move(id) && self.world.units[&id].walk.is_none() && dist < 15 {
+                        for i in 0..10 {
+                            let (dx, dy) = if dist > 4 {
+                                if i <= 5 {
+                                    let step = |d: i32| d - d.signum() * (rand_range(0, d.abs().min(3) - 1).max(0) + 1).min(d.abs());
+                                    (step(mx - x), step(my - y))
+                                } else {
+                                    (mx - x + rand_range(-3, 3), my - y + rand_range(-3, 3))
+                                }
+                            } else {
+                                (mx - x + rand_range(-4, 4), my - y + rand_range(-4, 4))
+                            };
+                            if (dx, dy) != (0, 0) && self.mob_walk(id, &map, x, y, x + dx, y + dy) {
+                                break;
+                            }
+                        }
+                        if let Some(m) = self.world.units.get_mut(&id).and_then(|u| u.mob_mut()) {
+                            m.next_walk = now + 500;
+                        }
+                        master_check = true;
+                    }
+                    if let (Some(t), true) = (mtarget, free) {
+                        if self.mob_sees(&mdb, t) {
+                            let d = dist_to(self, t).unwrap_or(0);
+                            let m = self.world.units.get_mut(&id).unwrap().mob_mut().unwrap();
+                            m.target = Some(t);
+                            m.looting = false;
+                            m.min_chase = 5 + d;
+                            master_check = true;
+                        }
+                    }
+                }
+                None => {
+                    // master gone: the slave goes too
+                    self.despawn(id, 1);
+                    return;
+                }
+            }
+        }
+
+        // aggressive monsters look for players within 9 cells, any of them equally (mob.c:785)
+        let m = self.world.units[&id].mob().unwrap();
+        if (m.target.is_none() || m.looting) && mode & MD_AGGRESSIVE != 0 && !master_check {
+            let grid = self.grid(&map);
+            let mut n = 0u32;
+            let mut pick = None;
+            for pid in self.world.players_on(&map) {
+                let p = &self.world.units[&pid];
+                if path::distance(x, y, p.x as i32, p.y as i32) >= 9 || !self.mob_sees(&mdb, pid) {
+                    continue;
+                }
+                let reach = grid.as_ref().is_some_and(|g| (p.x as i32, p.y as i32) == (x, y) || path::find(g, x, y, p.x as i32, p.y as i32).is_some());
+                if !reach {
+                    continue;
+                }
+                n += 1;
+                if rand::random::<u32>() % 1000 < 1000 / n {
+                    pick = Some(pid);
+                }
+            }
+            if let Some(pid) = pick {
+                let m = self.world.units.get_mut(&id).unwrap().mob_mut().unwrap();
+                m.target = Some(pid);
+                m.looting = false;
+                m.min_chase = 13;
+            }
+        }
+
+        // looters look for items within 9 cells (mob.c:822)
+        let m = self.world.units[&id].mob().unwrap();
+        if m.target.is_none() && mode & MD_LOOTER != 0 && !master_check {
+            let mut n = 0u32;
+            let mut pick = None;
+            if let Some(mi) = self.world.maps.get(&map) {
+                for iid in &mi.units {
+                    let Some(it) = self.world.units.get(iid).filter(|i| i.is_item()) else { continue };
+                    if path::distance(x, y, it.x as i32, it.y as i32) >= 9 {
+                        continue;
+                    }
+                    n += 1;
+                    if rand::random::<u32>() % 1000 < 1000 / n {
+                        pick = Some(*iid);
+                    }
+                }
+            }
+            if let Some(iid) = pick {
+                let m = self.world.units.get_mut(&id).unwrap().mob_mut().unwrap();
+                m.target = Some(iid);
+                m.looting = true;
+                m.min_chase = 13;
+            }
+        }
+
+        let m = self.world.units[&id].mob().unwrap();
+        let (target, looting, min_chase) = (m.target, m.looting, m.min_chase);
+        let walking = self.world.units[&id].walk.is_some();
+        if let Some(t) = target {
+            let Some(tu) = self.world.units.get(&t).filter(|tu| tu.map == map) else {
+                self.mob_unlock(id, now);
+                return;
+            };
+            let (tx, ty) = (tu.x as i32, tu.y as i32);
+            let dist = path::distance(x, y, tx, ty);
+            if !looting {
+                if dist >= min_chase || !self.mob_sees(&mdb, t) {
+                    // out of sight, or fooled by hiding / playing dead
+                    self.mob_unlock(id, now);
+                } else if dist > mdb.range.max(1) as i32 {
+                    // out of reach: chase
+                    if mode & MD_CANMOVE == 0 {
+                        self.mob_unlock(id, now);
+                        return;
+                    }
+                    if !self.can_move(id) {
+                        return;
+                    }
+                    self.world.units.get_mut(&id).unwrap().mob_mut().unwrap().skill_state = MobState::Chase;
+                    if self.mobskill_use(id, now, "") {
+                        return;
+                    }
+                    // already on its way to where the target is
+                    let m = self.world.units[&id].mob().unwrap();
+                    if let Some(w) = &self.world.units[&id].walk {
+                        if m.next_walk > now || path::distance(w.to.0 as i32, w.to.1 as i32, tx, ty) < 2 {
+                            return;
+                        }
+                    }
+                    self.world.units.get_mut(&id).unwrap().mob_mut().unwrap().next_walk = now + 500;
+                    // first straight at the cell next to the target, then at random ones around it
+                    let mut ok = false;
+                    for i in 0..5 {
+                        let (dx, dy) = if i == 0 {
+                            (tx - x - (tx - x).signum(), ty - y - (ty - y).signum())
+                        } else {
+                            (tx - x + rand_range(-1, 1), ty - y + rand_range(-1, 1))
+                        };
+                        if self.mob_walk(id, &map, x, y, x + dx, y + dy) {
+                            ok = true;
+                            break;
+                        }
+                    }
+                    if !ok {
+                        // nowhere to go (an Ice Wall?): let go
+                        self.mob_unlock(id, now);
+                    }
+                } else {
+                    // in reach: attack
+                    self.world.units.get_mut(&id).unwrap().mob_mut().unwrap().skill_state = MobState::Attack;
+                    if walking {
+                        self.stop_walking(id);
+                    }
+                    let next = self.world.units[&id].mob().unwrap().next_attack_at;
+                    if next <= now || (attack_now && next <= now + 100) {
+                        self.mob_attack(id, t, &mdb, now);
+                    }
+                }
+            } else {
+                // loot (mob.c:1237)
+                let full = self.world.units[&id].mob().unwrap().loot.len() >= LOOT_SIZE;
+                if !tu.is_item() || dist >= min_chase || full {
+                    self.mob_unlock(id, now);
+                } else if dist > 0 {
+                    if mode & MD_CANMOVE == 0 {
+                        self.mob_unlock(id, now);
+                        return;
+                    }
+                    if !self.can_move(id) {
+                        return;
+                    }
+                    self.world.units.get_mut(&id).unwrap().mob_mut().unwrap().skill_state = MobState::Loot;
+                    if self.mobskill_use(id, now, "") {
+                        return;
+                    }
+                    if walking {
+                        return;
+                    }
+                    self.world.units.get_mut(&id).unwrap().mob_mut().unwrap().next_walk = now + 500;
+                    if !self.mob_walk(id, &map, x, y, tx, ty) {
+                        self.mob_unlock(id, now);
+                    }
+                } else {
+                    // on the item: take it
+                    if let Some(UnitKind::Item(fi)) = self.world.units.get(&t).map(|i| i.kind.clone()) {
+                        self.world.units.get_mut(&id).unwrap().mob_mut().unwrap().loot.push(fi.item);
+                        self.despawn(t, 0);
+                    }
+                    self.mob_unlock(id, now);
+                }
+            }
+            return;
+        }
+
+        // idle / walking skills
+        if self.mobskill_use(id, now, "") {
+            return;
+        }
+        // random walk (not slaves that stay with their master)
+        let m = self.world.units[&id].mob().unwrap();
+        if mode & MD_CANMOVE != 0 && self.can_move(id) && (m.master.is_none() || m.master_dist > 10) && m.next_walk < now && !walking {
+            self.mob_random_walk(id, &map, x, y, now);
+            return;
+        }
+        if !walking {
+            self.world.units.get_mut(&id).unwrap().mob_mut().unwrap().skill_state = MobState::Idle;
+        }
+    }
+
+    /// mob_randomwalk: a cell within 12 (fewer after failures), then 3-6 s rest.
+    fn mob_random_walk(&mut self, id: u32, map: &str, x: i32, y: i32, now: u64) {
+        let fail = self.world.units[&id].mob().unwrap().move_fail as i32;
+        let d = (12 - fail).max(5);
+        let mut walked = false;
+        for _ in 0..20 {
+            let (nx, ny) = (x + rand_range(-d, d), y + rand_range(-d, d));
+            if (nx, ny) != (x, y) && self.mob_walk(id, map, x, y, nx, ny) {
+                walked = true;
+                break;
+            }
+        }
+        let speed = self.world.units[&id].speed as u64;
+        let steps: u64 = self.world.units[&id].walk.as_ref().map(|w| w.path.iter().map(|d| if path::is_diagonal(*d) { speed * 14 / 10 } else { speed }).sum()).unwrap_or(0);
+        let m = self.world.units.get_mut(&id).unwrap().mob_mut().unwrap();
+        m.move_fail = if walked { 0 } else { m.move_fail + 1 };
+        m.next_walk = now + 3000 + rand::random::<u64>() % 3000 + steps;
+        m.skill_state = MobState::Walk;
+    }
+
+    fn mob_walk(&mut self, id: u32, map: &str, x0: i32, y0: i32, x1: i32, y1: i32) -> bool {
+        let Some(grid) = self.grid(map) else { return false };
+        let Some(dirs) = path::find(&grid, x0, y0, x1, y1) else { return false };
+        if dirs.is_empty() {
+            return false;
         }
         let now = self.now();
         let tick = self.tick32();
         let u = self.world.units.get_mut(&id).unwrap();
         let first = crate::mapsrv::step_cost(u.speed, dirs[0]) / 2;
-        u.walk = Some(Walk { path: dirs, pos: 0, next_at: now + first as u64, to: (x1, y1), retarget: None });
-        self.area_send(id, packets::unit_move(id, x0, y0, x1, y1, tick), false);
+        u.walk = Some(Walk { path: dirs, pos: 0, next_at: now + first as u64, to: (x1 as u16, y1 as u16), retarget: None });
+        self.area_send(id, packets::unit_move(id, x0 as u16, y0 as u16, x1 as u16, y1 as u16, tick), false);
+        true
     }
 
+    /// mob.c:314 mob_attack: a skill of the attack state, or a plain hit.
     fn mob_attack(&mut self, id: u32, target: u32, mdb: &ro_data::db::Mob, now: u64) {
-        let Some(c) = self.char_of_unit(target).cloned() else { return };
-        let d = self.derive(&c);
-        let hit = self.roll_attack(
-            json!({"kind": "mob", "mob": mdb}),
-            json!({"kind": "player", "char": self.char_lua(&c), "derived": derive_json(&d)}),
-        );
-        let dmg = if hit.kind == "miss" { 0 } else { hit.damage };
-        let tick = self.tick32();
-        self.area_send(
-            id,
-            packets::action(id, target, tick, mdb.attack_motion, 0, dmg.min(32000) as u16, 1, if hit.kind == "crit" { 10 } else { 0 }, 0),
-            false,
-        );
-        if let Some(m) = self.world.units.get_mut(&id).and_then(|u| u.mob_mut()) {
-            m.next_attack_at = now + mdb.attack_delay.max(500) as u64;
+        if !self.mob_sees(mdb, target) {
+            self.mob_unlock(id, now);
+            return;
         }
-        if dmg > 0 {
-            let dead = {
-                let Some(c) = self.char_of_unit_mut(target) else { return };
-                c.hp = c.hp.saturating_sub(dmg);
-                c.hp == 0
+        // face the target
+        if let (Some((tx, ty)), Some(u)) = (self.world.units.get(&target).map(|t| (t.x as i32, t.y as i32)), self.world.units.get_mut(&id)) {
+            let (dx, dy) = (tx - u.x as i32, ty - u.y as i32);
+            if (dx, dy) != (0, 0) {
+                u.dir = path::dir_of(dx, dy);
+            }
+        }
+        if let Some(m) = self.world.units.get_mut(&id).and_then(|u| u.mob_mut()) {
+            m.min_chase = 13;
+        }
+        if self.mobskill_use(id, now, "") {
+            return;
+        }
+        let r = self.rule_call("weapon_attack", json!({"src": id, "target": target}));
+        let delay = r.as_ref().and_then(|v| v.get("adelay")).and_then(crate::status::lua_u64).unwrap_or(mdb.attack_delay as u64).max(100);
+        if let Some(m) = self.world.units.get_mut(&id).and_then(|u| u.mob_mut()) {
+            m.next_attack_at = now + delay;
+        }
+    }
+
+    /// mobskill_use: go down the monster's skill list; the first line whose
+    /// delay, state, condition and chance all pass is cast. `event` is the
+    /// condition that just happened ("closedattacked", "skillused:15", ...)
+    /// or "" for the regular check. True when a skill was used.
+    pub(crate) fn mobskill_use(&mut self, id: u32, now: u64, event: &str) -> bool {
+        let Some(m) = self.world.units.get(&id).and_then(|u| u.mob()) else { return false };
+        if m.cast.is_some() {
+            return false;
+        }
+        let Some(list) = self.db.mob_skills.get(&m.mob_id).cloned() else { return false };
+        let state = m.skill_state.name();
+        let (ev_name, ev_val) = event.split_once(':').unwrap_or((event, ""));
+        for (i, ms) in list.iter().enumerate() {
+            let m = self.world.units[&id].mob().unwrap();
+            let used = m.skill_used.get(i).copied().unwrap_or(0);
+            if used != 0 && now < used + ms.delay as u64 {
+                continue;
+            }
+            if ms.state != "any" && ms.state != state {
+                continue;
+            }
+            let flag = if !ev_name.is_empty() && ms.cond == ev_name {
+                ms.cond != "skillused" || ev_val.parse::<i32>().ok() == Some(ms.cond_val)
+            } else {
+                match ms.cond.as_str() {
+                    "always" => true,
+                    "myhpltmaxrate" => (m.hp as u64) < m.max_hp as u64 * ms.cond_val.max(0) as u64 / 100,
+                    "slavelt" => self.mob_slaves(id) < ms.cond_val,
+                    "slavele" => self.mob_slaves(id) <= ms.cond_val,
+                    "attackpcgt" => self.mob_targeted(id) > ms.cond_val,
+                    "attackpcge" => self.mob_targeted(id) >= ms.cond_val,
+                    _ => false,
+                }
             };
-            if let Some(u) = self.world.units.get_mut(&target) {
-                if u.state == 2 {
-                    u.state = 0;
+            if !flag || rand::random::<u32>() % 1000 >= ms.rate {
+                continue;
+            }
+            let Some(sk) = self.db.skill(ms.skill).cloned() else { continue };
+            // silenced, stunned, hidden: no skills (mob.c:2011)
+            let (opt1, _, option) = self.opts_of(id);
+            if opt1 > 0 || option & 6 != 0 || self.has_sc(id, SC_SILENCE) {
+                return false;
+            }
+            let m = self.world.units[&id].mob().unwrap();
+            let (me_x, me_y) = (self.world.units[&id].x, self.world.units[&id].y);
+            let tgt = match ms.target.as_str() {
+                "target" => m.target.filter(|_| !m.looting),
+                "self" => Some(id),
+                _ => None, // "friend" was not implemented in mod0631
+            };
+            let Some(tgt) = tgt else { continue };
+            let Some((tx, ty)) = self.world.units.get(&tgt).map(|t| (t.x, t.y)) else { continue };
+            let range = if sk.range < 0 { 1 - (sk.range + 1) } else { sk.range }.max(1);
+            if path::distance(me_x as i32, me_y as i32, tx as i32, ty as i32) > range {
+                return false;
+            }
+            if let Some(m) = self.world.units.get_mut(&id).and_then(|u| u.mob_mut()) {
+                if let Some(u) = m.skill_used.get_mut(i) {
+                    *u = now.max(1);
                 }
             }
-            self.send_hp_sp(target);
-            if dead {
-                self.player_dies(target);
-            }
+            let place = sk.inf & 2 != 0;
+            // a cast-sensing monster turns on whoever casts at it (mob.c:2035 is mob vs mob; players: skill_use)
+            let _ = MD_CASTSENSOR;
+            self.begin_cast(id, ms.skill, ms.lv, if place { 0 } else { tgt }, if place { tx } else { 0 }, if place { ty } else { 0 }, ms.cast as u64, 0, ms.cancel, false, ms.val as i64);
+            return true;
+        }
+        false
+    }
+
+    /// mobskill_event: a hit landed on the monster (flag: short or long range).
+    pub(crate) fn mobskill_event(&mut self, id: u32, event: &str) {
+        let now = self.now();
+        if self.world.units.get(&id).is_some_and(|u| u.state != 1) {
+            self.mobskill_use(id, now, event);
         }
     }
 
-    fn player_dies(&mut self, unit: u32) {
+    fn mob_slaves(&self, id: u32) -> i32 {
+        self.world.units.values().filter(|u| u.mob().is_some_and(|m| m.master == Some(id))).count() as i32
+    }
+
+    /// Players attacking this monster right now (mob_counttargeted).
+    fn mob_targeted(&self, id: u32) -> i32 {
+        self.world.units.values().filter(|u| u.player().is_some_and(|p| p.attack.is_some_and(|a| a.target == id))).count() as i32
+    }
+
+    pub(crate) fn player_dies(&mut self, unit: u32) {
         if let Some(u) = self.world.units.get_mut(&unit) {
             u.state = 1;
             u.walk = None;
             if let Some(p) = u.player_mut() {
                 p.attack = None;
+                p.cast = None;
             }
         }
         self.dialogs.remove(&unit);
         self.sc_clear(unit);
         self.area_send(unit, packets::vanish(unit, 1), true);
+        // the pet minds (pc.c:2832)
+        self.pet_owner_died(unit);
         // death EXP penalty from rules (Athena: 1% of next level, not novices); none on nopenalty maps
         let here = self.world.units.get(&unit).map(|u| u.map.clone()).unwrap_or_default();
         let free = self.db.map_flag(&here, "nopenalty");
@@ -427,6 +939,7 @@ impl Game {
                 c.job_exp = c.job_exp.saturating_sub(j);
             }
         }
+        self.send_full_status(unit);
     }
 
     /// "Return to save point" after death.
@@ -454,9 +967,12 @@ impl Game {
 
     // ------------------------------------------------------------ regen
 
-    /// Natural regen, Athena mod0631 model: a clock runs while not walking
-    /// (HP) / always (SP), sitting runs it twice as fast, and every
-    /// `hp_interval` / `sp_interval` ms of clock heals the rule's amount.
+    /// Natural regen, Athena mod0631 model (pc.c pc_natural_heal_*): clocks
+    /// that run while standing (HP) or always (SP), sitting twice as fast;
+    /// every `hp_interval` / `sp_interval` ms of clock heals the rule's
+    /// amount. The recovery skills (Increase HP/SP Recovery, Spiritual
+    /// Cadence) run on clocks of their own. What stops or changes it
+    /// (overweight, hiding, Magnificat, Moving HP Recovery) is the rule's.
     pub(crate) fn tick_regen(&mut self, now: u64) {
         let due: Vec<u32> = self
             .world
@@ -470,60 +986,105 @@ impl Game {
             let walking = self.world.units[&id].walk.is_some();
             let Some(c) = self.char_of_unit(id).cloned() else { continue };
             let d = self.derive(&c);
+            let (_, _, option) = self.opts_of(id);
             let r = self
                 .scripts
                 .as_ref()
                 .and_then(|e| {
-                    e.rule("regen", &json!({"max_hp": d.max_hp, "max_sp": d.max_sp, "vit": c.stats[2], "int": c.stats[3]}))
-                        .ok()
-                        .flatten()
+                    e.rule(
+                        "regen",
+                        &json!({"max_hp": d.max_hp, "max_sp": d.max_sp, "vit": c.stats[2] as i32 + d.bonus[2], "int": c.stats[3] as i32 + d.bonus[3],
+                                "sitting": sitting, "walking": walking, "weight": self.weight_of(&c), "max_weight": d.max_weight,
+                                "hiding": option & 2 != 0, "skills": c.skills.iter().map(|(k, v)| (k.to_string(), json!(v))).collect::<serde_json::Map<_, _>>(),
+                                "sc": c.sc.keys().map(|k| (k.to_string(), json!(true))).collect::<serde_json::Map<_, _>>()}),
+                    )
+                    .ok()
+                    .flatten()
                 })
                 .unwrap_or(Value::Null);
             let get = |k: &str, def: u64| r.get(k).and_then(crate::status::lua_u64).unwrap_or(def);
             let (hp_amt, sp_amt) = (get("hp", 0) as u32, get("sp", 0) as u32);
             let (hp_int, sp_int) = (get("hp_interval", 4000).max(100), get("sp_interval", 8000).max(100));
-            let sit_factor = get("sit_factor", 2);
+            let (hp_clock, sp_clock) = (get("hp_clock", 100), get("sp_clock", 100)); // percent of real time
+            let (inc_hp, inc_sp, inc_int) = (get("inc_hp", 0) as u32, get("inc_sp", 0) as u32, get("inc_interval", 10000).max(100));
+            let (sp_hp, sp_sp, sp_int2) = (get("spirit_hp", 0) as u32, get("spirit_sp", 0) as u32, get("spirit_interval", 10000).max(100));
             let (mut heal_hp, mut heal_sp) = (0u32, 0u32);
+            let (mut note_hp, mut note_sp) = (0u32, 0u32);
             {
                 let p = self.world.units.get_mut(&id).unwrap().player_mut().unwrap();
-                let mut a = now - p.last_regen;
+                let a = now - p.last_regen;
                 p.last_regen = now;
-                if sitting {
-                    a *= sit_factor;
-                }
-                if walking || c.hp >= d.max_hp {
+                let (ah, asp) = (a * hp_clock / 100, a * sp_clock / 100);
+                if ah == 0 || c.hp >= d.max_hp {
                     p.hp_acc = 0;
+                    p.inc_hp_acc = 0;
                 } else {
-                    p.hp_acc += a;
+                    p.hp_acc += ah;
                     while p.hp_acc >= hp_int {
                         p.hp_acc -= hp_int;
                         heal_hp += hp_amt;
                     }
+                    // Increase HP Recovery only counts time standing still
+                    if walking || inc_hp == 0 {
+                        p.inc_hp_acc = 0;
+                    } else {
+                        p.inc_hp_acc += ah;
+                        while p.inc_hp_acc >= inc_int {
+                            p.inc_hp_acc -= inc_int;
+                            note_hp += inc_hp;
+                        }
+                    }
                 }
                 if c.sp >= d.max_sp {
                     p.sp_acc = 0;
+                    p.inc_sp_acc = 0;
                 } else {
-                    p.sp_acc += a;
-                    while p.sp_acc >= sp_int {
+                    p.sp_acc += asp;
+                    while p.sp_acc >= sp_int && asp > 0 {
                         p.sp_acc -= sp_int;
                         heal_sp += sp_amt;
                     }
+                    if walking || inc_sp == 0 || asp == 0 {
+                        p.inc_sp_acc = 0;
+                    } else {
+                        p.inc_sp_acc += asp;
+                        while p.inc_sp_acc >= inc_int {
+                            p.inc_sp_acc -= inc_int;
+                            note_sp += inc_sp;
+                        }
+                    }
+                }
+                if sp_hp == 0 && sp_sp == 0 {
+                    p.spirit_acc = 0;
+                } else {
+                    p.spirit_acc += a;
+                    while p.spirit_acc >= sp_int2 {
+                        p.spirit_acc -= sp_int2;
+                        note_hp += sp_hp;
+                        note_sp += sp_sp;
+                    }
                 }
             }
-            if heal_hp == 0 && heal_sp == 0 {
+            if heal_hp == 0 && heal_sp == 0 && note_hp == 0 && note_sp == 0 {
                 continue;
             }
             let cm = self.char_of_unit_mut(id).unwrap();
-            cm.hp = (cm.hp + heal_hp).min(d.max_hp);
-            cm.sp = (cm.sp + heal_sp).min(d.max_sp);
+            let (hp0, sp0) = (cm.hp, cm.sp);
+            cm.hp = (cm.hp + heal_hp + note_hp).min(d.max_hp);
+            cm.sp = (cm.sp + heal_sp + note_sp).min(d.max_sp);
+            let (got_hp, got_sp) = ((cm.hp - hp0).saturating_sub(heal_hp), (cm.sp - sp0).saturating_sub(heal_sp));
+            if let Some(sid) = self.sid_of(id) {
+                // the skills' recovery shows as a number (clif_heal)
+                if note_hp > 0 && got_hp > 0 {
+                    self.send(sid, packets::heal_notice(crate::status::SP_HP, got_hp.min(32000) as u16));
+                }
+                if note_sp > 0 && got_sp > 0 {
+                    self.send(sid, packets::heal_notice(crate::status::SP_SP, got_sp.min(32000) as u16));
+                }
+            }
             self.send_hp_sp(id);
         }
     }
-}
-
-fn derive_json(d: &crate::status::Derived) -> Value {
-    json!({"max_hp": d.max_hp, "atk": d.atk, "atk2": d.atk2, "def": d.def, "def2": d.def2,
-           "hit": d.hit, "flee": d.flee, "flee2": d.flee2, "crit": d.crit, "amotion": d.amotion})
 }
 
 pub(crate) fn rand_range(a: i32, b: i32) -> i32 {

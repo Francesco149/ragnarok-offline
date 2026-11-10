@@ -635,3 +635,155 @@ pub fn look(id: u32, kind: u8, value: u8) -> Vec<u8> {
 pub fn look2(id: u32, kind: u8, v1: u16, v2: u16) -> Vec<u8> {
     Writer::new(ZC_SPRITE_CHANGE2).u32(id).u8(kind).u16(v1).u16(v2).finish()
 }
+
+// ---- skills (layouts: mod0631 clif.c, PACKETVER 4; lengths are the client's) ----
+
+/// 0x013e: casting bar. `element` colours the cast circle.
+pub fn skill_casting(src: u32, dst: u32, x: u16, y: u16, skill: u16, element: u32, cast_ms: u32) -> Vec<u8> {
+    Writer::new(0x013e).u32(src).u32(dst).u16(x).u16(y).u16(skill).u32(element).u32(cast_ms).finish()
+}
+
+/// 0x01b9: the cast was interrupted.
+pub fn skill_cast_cancel(id: u32) -> Vec<u8> {
+    Writer::new(0x01b9).u32(id).finish()
+}
+
+/// 0x01de: skill damage (32-bit damage). type: 6 single hit, 8 multi-hit, 5 splash, 9 endure.
+#[allow(clippy::too_many_arguments)]
+pub fn skill_damage(skill: u16, src: u32, dst: u32, tick: u32, sdelay: u32, ddelay: u32, damage: i32, lv: u16, div: u16, kind: u8) -> Vec<u8> {
+    Writer::new(0x01de).u16(skill).u32(src).u32(dst).u32(tick).u32(sdelay).u32(ddelay).i32(damage).u16(lv).u16(div).u8(kind).finish()
+}
+
+/// 0x0115: skill damage that also throws the target to (x, y).
+#[allow(clippy::too_many_arguments)]
+pub fn skill_damage_blown(skill: u16, src: u32, dst: u32, tick: u32, sdelay: u32, ddelay: u32, x: u16, y: u16, damage: u16, lv: u16, div: u16, kind: u8) -> Vec<u8> {
+    Writer::new(0x0115).u16(skill).u32(src).u32(dst).u32(tick).u32(sdelay).u32(ddelay).u16(x).u16(y).u16(damage).u16(lv).u16(div).u8(kind).finish()
+}
+
+/// 0x011a: skill without damage (buffs, heals; `heal` is the number shown).
+pub fn skill_nodamage(skill: u16, heal: u16, dst: u32, src: u32, ok: u8) -> Vec<u8> {
+    Writer::new(0x011a).u16(skill).u16(heal).u32(dst).u32(src).u8(ok).finish()
+}
+
+/// 0x0117: skill effect on a cell.
+pub fn skill_poseffect(skill: u16, src: u32, lv: u16, x: u16, y: u16, tick: u32) -> Vec<u8> {
+    Writer::new(0x0117).u16(skill).u32(src).u16(lv).u16(x).u16(y).u32(tick).finish()
+}
+
+/// 0x01c9: a ground skill cell appears (97 bytes; the tail is Graffiti text).
+pub fn skill_unit(id: u32, src: u32, x: u16, y: u16, unit_id: u8) -> Vec<u8> {
+    Writer::new(0x01c9).u32(id).u32(src).u16(x).u16(y).u8(unit_id).u8(1).zeros(81).finish()
+}
+
+/// 0x0120: a ground skill cell is gone.
+pub fn skill_unit_gone(id: u32) -> Vec<u8> {
+    Writer::new(0x0120).u32(id).finish()
+}
+
+/// 0x011c: Teleport / Warp Portal destination list (four 16-byte map names).
+pub fn skill_warp_point(skill: u16, maps: &[String]) -> Vec<u8> {
+    let mut w = Writer::new(0x011c);
+    w.u16(skill);
+    for i in 0..4 {
+        w.str_fixed(maps.get(i).map(String::as_str).unwrap_or(""), 16);
+    }
+    w.finish()
+}
+
+/// 0x011e: /memo result (0 saved, 1 skill too low, 2 no Warp Portal).
+pub fn skill_memo(flag: u8) -> Vec<u8> {
+    Writer::new(0x011e).u8(flag).finish()
+}
+
+/// 0x018c: Sense (monster information).
+#[allow(clippy::too_many_arguments)]
+pub fn estimation(class: u16, level: u16, size: u16, hp: u32, def: u16, race: u16, mdef: u16, element: u16, fix: &[u8]) -> Vec<u8> {
+    let mut w = Writer::new(0x018c);
+    w.u16(class).u16(level).u16(size).u32(hp).u16(def).u16(race).u16(mdef).u16(element);
+    for i in 0..9 {
+        w.u8(fix.get(i).copied().unwrap_or(100));
+    }
+    w.finish()
+}
+
+/// 0x013d: "recovered N HP/SP" (type 5 HP, 7 SP).
+pub fn heal_notice(kind: u16, amount: u16) -> Vec<u8> {
+    Writer::new(0x013d).u16(kind).u16(amount).finish()
+}
+
+/// 0x0148: a dead player stands up again.
+pub fn resurrection(id: u32, kind: u16) -> Vec<u8> {
+    Writer::new(0x0148).u32(id).u16(kind).finish()
+}
+
+/// 0x0192: a map cell changed type (Ice Wall: 5 blocked, 0 free).
+pub fn change_map_cell(x: u16, y: u16, kind: u16, map: &str) -> Vec<u8> {
+    Writer::new(0x0192).u16(x).u16(y).u16(kind).str_fixed(&format!("{map}.gat"), 16).finish()
+}
+
+/// 0x013b: arrow message (0 "equip arrows first", 3 "arrow equipped").
+pub fn arrow_fail(kind: u16) -> Vec<u8> {
+    Writer::new(0x013b).u16(kind).finish()
+}
+
+/// 0x013c: the arrow in the quiver (client inventory index; 0 = none).
+pub fn arrow_equip(idx: u16) -> Vec<u8> {
+    Writer::new(0x013c).u16(idx).finish()
+}
+
+/// 0x01ad: items Arrow Crafting can use.
+pub fn arrow_create_list(ids: &[u16]) -> Vec<u8> {
+    let mut w = Writer::new(0x01ad);
+    for i in ids {
+        w.u16(*i);
+    }
+    w.finish()
+}
+
+/// 0x0177: unidentified items (client inventory indices).
+pub fn identify_list(idx: &[u16]) -> Vec<u8> {
+    let mut w = Writer::new(0x0177);
+    for i in idx {
+        w.u16(*i);
+    }
+    w.finish()
+}
+
+/// 0x0179: identify result (0 = identified).
+pub fn identified(idx: u16, fail: u8) -> Vec<u8> {
+    Writer::new(0x0179).u16(idx).u8(fail).finish()
+}
+
+/// 0x017b: equipment a card can go into (client inventory indices).
+pub fn card_targets(idx: &[u16]) -> Vec<u8> {
+    let mut w = Writer::new(0x017b);
+    for i in idx {
+        w.u16(*i);
+    }
+    w.finish()
+}
+
+/// 0x017d: card inserted (fail 0) or not (1).
+pub fn card_inserted(equip_idx: u16, card_idx: u16, fail: u8) -> Vec<u8> {
+    Writer::new(0x017d).u16(equip_idx).u16(card_idx).u8(fail).finish()
+}
+
+/// 0x0147: a skill an item lets you use once (Fly Wing's Teleport, scrolls).
+pub fn item_skill(skill: u16, inf: u16, lv: u16, sp: u16, range: u16, name: &str) -> Vec<u8> {
+    Writer::new(0x0147).u16(skill).u16(inf).u16(0).u16(lv).u16(sp).u16(range).str_fixed(name, 24).u8(0).finish()
+}
+
+/// 0x010c: MVP effect over a player.
+pub fn mvp_effect(id: u32) -> Vec<u8> {
+    Writer::new(0x010c).u32(id).finish()
+}
+
+/// 0x010a: MVP reward item.
+pub fn mvp_item(nameid: u16) -> Vec<u8> {
+    Writer::new(0x010a).u16(nameid).finish()
+}
+
+/// 0x010b: MVP reward EXP.
+pub fn mvp_exp(exp: u32) -> Vec<u8> {
+    Writer::new(0x010b).u32(exp).finish()
+}

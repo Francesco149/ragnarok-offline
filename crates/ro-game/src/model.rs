@@ -91,6 +91,8 @@ pub struct Character {
     pub pets: BTreeMap<u32, Pet>,
     /// The pet out of its egg (0 = none).
     pub active_pet: u32,
+    /// Warp Portal destinations saved with /memo (Athena memo_point, up to 3).
+    pub memo: Vec<Point>,
     /// Status changes in effect, by Athena SC type (not saved: lost on logout, as in Athena).
     #[serde(skip)]
     pub sc: BTreeMap<u16, StatusChange>,
@@ -102,6 +104,8 @@ pub struct StatusChange {
     pub until: u64,
     pub val1: i64,
     pub val2: i64,
+    pub val3: i64,
+    pub val4: i64,
 }
 
 /// A tamed monster (Athena s_pet).
@@ -153,6 +157,7 @@ impl Default for Character {
             vars: BTreeMap::new(),
             pets: BTreeMap::new(),
             active_pet: 0,
+            memo: Vec::new(),
             sc: BTreeMap::new(),
         }
     }

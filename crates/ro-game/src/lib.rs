@@ -12,6 +12,7 @@ pub mod script;
 pub mod store;
 pub mod world;
 
+mod battle;
 mod cart;
 mod combat;
 mod host;

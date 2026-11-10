@@ -379,12 +379,16 @@ impl Game {
     pub(crate) fn set_option(&mut self, unit: u32, option: u32) {
         let Some(c) = self.char_of_unit_mut(unit) else { return };
         let had_cart = c.option & CART_BITS != 0;
-        c.option = option;
-        let (opt, karma) = (option as u16, c.karma as u8);
-        self.area_send(unit, packets::state_change(unit, 0, 0, opt, karma), true);
+        // bits 1, 2, 4 (sight, hide, cloak) belong to status changes
+        c.option = option & !7;
+        let karma = c.karma as u8;
+        let (opt1, opt2, opt) = self.opts_of(unit);
+        self.area_send(unit, packets::state_change(unit, opt1, opt2, opt, karma), true);
         if option & CART_BITS != 0 && !had_cart {
             self.send_cart(unit);
         }
+        // cart and peco change the walk speed, the peco the attack speed
+        self.refresh_status(unit);
     }
 
     /// Athena pc_resetstate: every stat back to 1, points refunded.
@@ -648,6 +652,10 @@ impl Game {
                 Value::Null
             }),
             "skill_level" => player().map(|u| json!(self.skill_level(u, int(a, 0) as u16))),
+            "skill_in_tree" => player().map(|u| {
+                let class = self.char_of_unit(u).map(|c| c.class).unwrap_or(0);
+                json!(self.db.skill_tree.get(&class).is_some_and(|t| t.iter().any(|e| e.skill as i64 == int(a, 0))))
+            }),
             "give_skill" => player().and_then(|u| self.give_skill(u, int(a, 0) as u16, int(a, 1).clamp(0, 10) as u8).map(|_| Value::Null)),
             "item_box" => player().map(|u| {
                 // Athena itemdb_searchrandomid: up to 2000 random picks, each kept with chance per/1e6
@@ -692,13 +700,6 @@ impl Game {
             }),
             "birth_pet" => player().map(|u| {
                 self.pet_egg_list(u);
-                Value::Null
-            }),
-            "sc_start" => player().and_then(|u| self.sc_start(u, int(a, 0) as u16, int(a, 1), int(a, 2))),
-            "sc_end" => player().map(|u| {
-                if let Some(t) = arg(a, 0).as_u64() {
-                    self.sc_end(u, t as u16);
-                }
                 Value::Null
             }),
             "unequip_all" => player().map(|u| {
@@ -751,76 +752,6 @@ impl Game {
                 Err(_) => self.db.item_by_name(s).map(|d| d.id).ok_or(format!("unknown item {s}")),
             },
             _ => Err("item id expected".into()),
-        }
-    }
-
-    // ------------------------------------------------------------ status changes
-
-    /// Script sc_start(type, val1, val2): durations and values come from
-    /// rules.status_change (scripts/rules/status_change.lua); unknown types
-    /// are reported once. Returns true when applied.
-    fn sc_start(&mut self, unit: u32, kind: u16, val1: i64, val2: i64) -> Result<Value, String> {
-        let Some(engine) = self.scripts.clone() else { return Ok(json!(false)) };
-        let r = engine
-            .rule("status_change", &json!({"type": kind, "val1": val1, "val2": val2}))
-            .map_err(|e| format!("{e:#}"))?;
-        let Some(r) = r.filter(|v| v.is_object()) else {
-            if self.npcrt.reported.insert(format!("sc {kind}")) {
-                self.notice(format!("status change {kind} has no rules.status_change entry yet"));
-            }
-            return Ok(json!(false));
-        };
-        let ms = r.get("ms").and_then(Value::as_u64).unwrap_or(0);
-        let v1 = r.get("val1").and_then(Value::as_i64).unwrap_or(val1);
-        let v2 = r.get("val2").and_then(Value::as_i64).unwrap_or(val2);
-        let ends: Vec<u16> = r.get("ends").and_then(Value::as_array).map(|a| a.iter().filter_map(|x| x.as_u64().map(|x| x as u16)).collect()).unwrap_or_default();
-        for e in ends {
-            if e != kind {
-                self.sc_end(unit, e);
-            }
-        }
-        let until = self.now() + ms;
-        if let Some(c) = self.char_of_unit_mut(unit) {
-            c.sc.insert(kind, crate::model::StatusChange { until, val1: v1, val2: v2 });
-        }
-        if kind < 64 {
-            // mod0631 skill_status_change_start: icon = type below 64
-            self.area_send(unit, packets::status_icon(kind, unit, true), true);
-        }
-        self.send_full_status(unit);
-        Ok(json!(true))
-    }
-
-    pub(crate) fn sc_end(&mut self, unit: u32, kind: u16) {
-        let had = self.char_of_unit_mut(unit).and_then(|c| c.sc.remove(&kind)).is_some();
-        if had {
-            if kind < 64 {
-                self.area_send(unit, packets::status_icon(kind, unit, false), true);
-            }
-            self.send_full_status(unit);
-        }
-    }
-
-    /// Expired status changes end; death ends them all (Athena status_change_clear).
-    pub(crate) fn tick_status_changes(&mut self, now: u64) {
-        let due: Vec<(u32, u16)> = self
-            .world
-            .all_players()
-            .into_iter()
-            .flat_map(|u| {
-                let ended: Vec<u16> = self.char_of_unit(u).map(|c| c.sc.iter().filter(|(_, s)| s.until <= now).map(|(k, _)| *k).collect()).unwrap_or_default();
-                ended.into_iter().map(move |k| (u, k))
-            })
-            .collect();
-        for (u, k) in due {
-            self.sc_end(u, k);
-        }
-    }
-
-    pub(crate) fn sc_clear(&mut self, unit: u32) {
-        let all: Vec<u16> = self.char_of_unit(unit).map(|c| c.sc.keys().copied().collect()).unwrap_or_default();
-        for k in all {
-            self.sc_end(unit, k);
         }
     }
 

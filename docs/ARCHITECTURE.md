@@ -6,8 +6,9 @@
   login/char/map hand-off, map cells (from the client's `.gat`), movement
   timing, what each packet means, persistence.
 * **Lua** owns what only a period *server* decided: NPCs and quests, warps,
-  shops, monster spawns, @commands, and the formulas (`rules.*`: HP/SP, ATK,
-  hit/flee, damage, regen, death penalty). Each value carries its source; see
+  shops, monster spawns, @commands, and the rules (`rules.*`: a character's
+  status, damage, what each skill and status change does, ground skills,
+  regen, death penalty). Each value carries its source; see
   [PROVENANCE.md](PROVENANCE.md).
 * **Data** (items, monsters, jobs, EXP) is TOML in `data/db/`, tagged with a
   provenance tier, generated from era emulator data by
@@ -36,8 +37,9 @@
 ```
 
 One thread owns the whole game (Lua state included): no locks, events
-processed in arrival order, `tick()` runs walks, monster AI, attacks, regen,
-floor-item expiry, respawns and autosave. Single player needs nothing more,
+processed in arrival order, `tick()` runs walks, monster AI, attacks, casts,
+status changes and ground skills, regen, floor-item expiry, respawns and
+autosave. Single player needs nothing more,
 and it keeps behaviour deterministic and easy to reason about.
 
 ## The three "servers"
@@ -68,6 +70,21 @@ into Lua bind a single scoped native, `_rt(op, ...)`, to the live game
 (`host.rs`); the prelude wraps it in the friendly API. NPC dialogs are
 coroutines that yield until the client clicks. A reload builds a new Lua
 state and swaps it in only if everything loaded.
+
+## Battle
+
+`battle.rs` is the layer between the rules and the world: snapshots of
+players and monsters for Lua, HP and SP, the status-change store (and the
+icons and option words the client draws from it), cast timers, the cells of
+ground skills as map units. `combat.rs` runs the attack timing and the
+monster AI (targets, chase, loot, skill lists). What a hit, a skill or a
+status change *does* is Lua (`scripts/rules/`), a port of the period
+emulator's battle code.
+
+A host operation never calls a world-bound script: the `_rt` binding
+belongs to one script call at a time (`ScriptEngine::busy`). What an
+operation wants scripted (a monster's counter skill, a player's Auto
+Berserk) is deferred and runs when the current script returns.
 
 ## Persistence
 

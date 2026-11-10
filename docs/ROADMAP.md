@@ -24,33 +24,34 @@ Add a `content_date` / episode setting that filters `scripts/import/*`
 (e.g. Juno warps) and NPCs by date, default 2004-01. Closed-beta EXP boost:
 unknown factor, keep as a rate.
 
-## 3. Battle completeness (tier `athena2003` sources already on disk)
+## 3. Battle, skills, status changes, monsters
 
-From athena-dev mod0631 (`~/data/ragnarok-cd/refs/eathena-archive/x/...`):
-element table `db/attr_fix.txt`, size modifiers `db/size_fix.txt` + weapon
-`atkmods`, refine bonuses `db/refine_db.txt`, card/equipment bonus scripts
-(`athena_equip` in items.toml → Lua `bonus` API), double attack, arrows,
-MDEF/magic damage. Monster element/race/size are already in mobs.toml.
+Done (scripts/rules/, crates/ro-game/src/battle.rs and combat.rs; sources
+in PROVENANCE.md, differences in DEVIATIONS.md): equipment, card and job
+bonuses; elements, sizes, masteries, refine bonuses, criticals, Double
+Attack, two weapons, arrows; the skills of the Novice, the six first jobs
+and the six 2-1 jobs with cast times, delays, SP and item costs; ground
+skills; status changes with icons and option words; ailments with
+resistance; natural recovery with its skills; monster AI and monster
+skills; MVP rewards; card insertion and item identification.
 
-## 4. Skills
+Next:
 
-Done: tree, points, skill window (0x010f/0x010e/0x0112), quest skills from
-NPCs, reset, Basic Skill gating. Next: using skills — `cast_db.txt` → TOML;
-packets 0x0113/0x0116/0x0190 (use), 0x0114/0x011a/0x0117 (results), 0x013e
-(casting). Skill effects in Lua (`rules/skills/*.lua`).
+* **Forging** (Blacksmith): `produce_db` is imported (`scripts/import/craft.lua`),
+  the window (0x018d / 0x018e / 0x018f) and the success rates
+  (mod0631 `skill.c:4549`) are not.
+* **Skills left out** (DEVIATIONS.md, THREADS.md #22): Poison React, Venom
+  Splasher, Remove Trap, Spring Trap, Talkie Box's text, attacking an Ice
+  Wall.
+* **The 2-2 jobs' skills** (behind `jobs2_2`): Crusader, Monk, Sage, Rogue,
+  Alchemist, Bard, Dancer. mod0631 has most; nothing is ported.
+* **Line of sight** for skills and bows (the emulator's path check).
+* **Check against the client's skill text and period guides**
+  (THREADS.md #20, #21).
+* Play every job in the real client: skill window, hotkeys, each skill's
+  effect and sound.
 
-## 5. Status effects
-
-`sc_start`/`sc_end` (poison, stun, blessing, AGI up, ...) with timers and the
-0x0196 icon packet; item scripts already call `sc_end`.
-
-## 6. Monsters
-
-Athena `mob.c` behaviour: random-walk cadence, chase/give-up ranges, looters,
-assist, cast sensor; monster skills (`db/mob_skill_db.txt`); MVP rewards;
-`mob_branch.txt` (Dead Branch).
-
-## 7. NPC content
+## 4. NPC content
 
 Done: eAthena 817's NPCs translated (`tools/import/athena_npc.py`,
 611 NPCs), the runtime they need (events, timers, variables, script
@@ -64,15 +65,14 @@ monsters, refining, storage), a hand-written Kafra service. Next, in order:
 * a period dyer (THREADS.md #13); English shop names from 817 by cell (#11);
 * better dialogue where period sources exist (THREADS.md #2).
 
-## 8. Systems
+## 5. Systems
 
 Done: Kafra storage, pushcart contents, pets (taming, eggs, hatching,
-following, hunger, intimacy, feeding, accessories, renaming), status
-changes with icons and expiry (the speed potions so far). Next: more SC
-types in `rules/status_change.lua` as skills arrive, item identification. Party/guild/trade/vending
-only matter for multiplayer (DEVIATIONS.md).
+following, hunger, intimacy, feeding, accessories, renaming), item
+identification, cards. Party/guild/trade/vending only matter for
+multiplayer (DEVIATIONS.md).
 
-## 9. Robustness
+## 6. Robustness
 
 Done: `RagnarokOffline.exe` (drop-in launcher) and the all-in-one installer
 (docs/WINDOWS.md); open items there under "Not verified yet". Next: packet fuzz tests against the length table;

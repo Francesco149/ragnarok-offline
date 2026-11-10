@@ -36,6 +36,12 @@ impl<T> Ah<T> for mlua::Result<T> {
     }
 }
 
+/// JSON -> Lua, with JSON null as nil (mlua's default is a userdata
+/// sentinel, which is truthy: `x or default` would never fall through).
+fn to_lua(lua: &Lua, v: &Value) -> mlua::Result<LuaValue> {
+    lua.to_value_with(v, mlua::SerializeOptions::new().serialize_none_to_null(false).serialize_unit_to_null(false))
+}
+
 /// Who a script call acts for.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct Ctx {
@@ -173,6 +179,9 @@ pub struct ScriptEngine {
     item_fns: RefCell<HashMap<u32, Function>>,
     /// Instructions run since the script was last entered, in thousands.
     budget: Rc<std::cell::Cell<u32>>,
+    /// World-bound script calls in progress (`_rt` is bound to one host at a
+    /// time: a host operation must not start another).
+    depth: std::cell::Cell<u32>,
 }
 
 /// A script that runs this many thousand Lua instructions without waiting
@@ -216,6 +225,9 @@ fn collect_lua_files(dir: &Path, out: &mut Vec<PathBuf>) {
 #[derive(Debug, Clone, Default)]
 pub struct LoadOptions {
     pub content: std::collections::BTreeMap<String, bool>,
+    /// Read-only data tables set as Lua globals before any script loads
+    /// (SKILL_DB: the skill database rules index by id and name).
+    pub globals: Vec<(String, Value)>,
 }
 
 impl ScriptEngine {
@@ -233,6 +245,9 @@ impl ScriptEngine {
             content.set(k.as_str(), *v).ah()?;
         }
         lua.globals().set("CONTENT", content).ah()?;
+        for (k, v) in &opts.globals {
+            lua.globals().set(k.as_str(), to_lua(&lua, v).ah()?).ah()?;
+        }
         lua.load(PRELUDE).set_name("@prelude.lua").exec().map_err(|e| anyhow!("prelude: {e}"))?;
         let mut files = Vec::new();
         // rules first, so content files can rely on them
@@ -273,7 +288,7 @@ impl ScriptEngine {
             }
             n.on_click = Some(new);
         }
-        Ok(ScriptEngine { lua, defs, dir: dir.to_path_buf(), item_fns: RefCell::new(HashMap::new()), budget: Default::default() })
+        Ok(ScriptEngine { lua, defs, dir: dir.to_path_buf(), item_fns: RefCell::new(HashMap::new()), budget: Default::default(), depth: Default::default() })
     }
 
     pub fn dir(&self) -> &Path {
@@ -458,7 +473,23 @@ impl ScriptEngine {
     }
 
     /// Run `body` with `_rt` bound to `host` for `ctx`.
+    /// A world-bound script is running: calling another now would unbind its `_rt`.
+    pub fn busy(&self) -> bool {
+        self.depth.get() > 0
+    }
+
     fn with_host<R>(&self, host: &mut dyn Host, ctx: Ctx, body: impl FnOnce(&Lua) -> mlua::Result<R>) -> mlua::Result<R> {
+        if self.busy() {
+            return Err(mlua::Error::runtime("a script is already running (host operations must defer their script calls)"));
+        }
+        struct Depth<'a>(&'a std::cell::Cell<u32>);
+        impl Drop for Depth<'_> {
+            fn drop(&mut self) {
+                self.0.set(self.0.get() - 1);
+            }
+        }
+        self.depth.set(self.depth.get() + 1);
+        let _depth = Depth(&self.depth);
         let host = RefCell::new(host);
         self.lua.scope(|scope| {
             let rt = scope.create_function(|lua, (op, args): (String, Variadic<LuaValue>)| {
@@ -471,7 +502,7 @@ impl ScriptEngine {
                 }
                 let r = host.borrow_mut().call(&ctx, &op, jargs).map_err(mlua::Error::external)?;
                 // JSON null is nil in Lua (mlua would give its null sentinel userdata)
-                if r.is_null() { Ok(LuaValue::Nil) } else { lua.to_value(&r) }
+                if r.is_null() { Ok(LuaValue::Nil) } else { to_lua(lua, &r) }
             })?;
             self.lua.globals().set("_rt", rt)?;
             body(&self.lua)
@@ -517,7 +548,7 @@ impl ScriptEngine {
     pub fn resume(&self, host: &mut dyn Host, ctx: Ctx, thread: &Thread, answer: Value) -> Result<Outcome> {
         self.guard_thread(thread);
         let ret = self
-            .with_host(host, ctx, |lua| thread.resume::<mlua::MultiValue>(lua.to_value(&answer)?))
+            .with_host(host, ctx, |lua| thread.resume::<mlua::MultiValue>(to_lua(lua, &answer)?))
             .map_err(|e| anyhow!("{e}"))?;
         self.outcome(thread, ret)
     }
@@ -529,7 +560,7 @@ impl ScriptEngine {
             .with_host(host, ctx, |lua| {
                 let mut lv = Vec::new();
                 for a in &args {
-                    lv.push(lua.to_value(a)?);
+                    lv.push(to_lua(lua, a)?);
                 }
                 f.call::<LuaValue>(mlua::MultiValue::from_vec(lv))
             })
@@ -573,6 +604,17 @@ impl ScriptEngine {
         })
     }
 
+    /// Call `rules.<name>(arg)` with the world bound (`_rt` works): battle
+    /// and skill rules. None if undefined. Must not be called from inside
+    /// another script call (the game defers such calls).
+    pub fn rule_host(&self, host: &mut dyn Host, ctx: Ctx, name: &str, arg: &Value) -> Result<Option<Value>> {
+        let rules: Option<Table> = self.lua.globals().get("rules").ah()?;
+        let Some(rules) = rules else { return Ok(None) };
+        let f: Option<Function> = rules.get(name).ah()?;
+        let Some(f) = f else { return Ok(None) };
+        self.call(host, ctx, &f, vec![arg.clone()]).map(Some).map_err(|e| anyhow!("rules.{name}: {e}"))
+    }
+
     /// Call `rules.<name>(arg)` (pure functions: formulas). None if undefined.
     pub fn rule(&self, name: &str, arg: &Value) -> Result<Option<Value>> {
         let rules: Option<Table> = self.lua.globals().get("rules").ah()?;
@@ -580,7 +622,7 @@ impl ScriptEngine {
         let f: Option<Function> = rules.get(name).ah()?;
         let Some(f) = f else { return Ok(None) };
         self.guard_main();
-        let v: LuaValue = f.call(self.lua.to_value(arg).ah()?).map_err(|e| anyhow!("rules.{name}: {e}"))?;
+        let v: LuaValue = f.call(to_lua(&self.lua, arg).ah()?).map_err(|e| anyhow!("rules.{name}: {e}"))?;
         Ok(Some(self.lua.from_value(v).ah()?))
     }
 }

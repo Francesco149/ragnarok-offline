@@ -205,6 +205,18 @@ impl Game {
     }
 
     /// Owner leaves the world: the pet goes away but stays out for next login.
+    /// The owner died: the pet out of its egg loses `die` intimacy (mod0631 pc.c:2832).
+    pub(crate) fn pet_owner_died(&mut self, unit: u32) {
+        let Some(pet) = self.active_pet(unit) else { return };
+        let Some(die) = self.db.pet_by_mob(pet.mob).map(|d| d.die) else { return };
+        let mut now = 0;
+        if let Some(p) = self.char_of_unit_mut(unit).and_then(|c| c.pets.get_mut(&pet.id)) {
+            p.intimate = (p.intimate - die).max(0);
+            now = p.intimate;
+        }
+        self.pet_data(unit, 1, now as u32);
+    }
+
     pub(crate) fn pet_owner_left(&mut self, unit: u32) {
         if let Some(pu) = self.pet_unit(unit) {
             self.despawn(pu, 0);

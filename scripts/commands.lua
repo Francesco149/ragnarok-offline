@@ -6,7 +6,45 @@ local function words(s) local t = {} for w in s:gmatch("%S+") do t[#t + 1] = w e
 
 command("help", function()
   return "@warp <map> [x y], @go <town>, @where, @item <id|name> [n], @zeny <n>, @lvup [n], @joblvup [n], " ..
-         "@job <id>, @heal, @monster <id|name> [n], @save, @stats, @reload"
+         "@job <id>, @heal, @monster <id|name> [n], @save, @stats, @reload, @allskill, @useskill <id|NAME> [lv]"
+end)
+
+-- Every skill of the current job at its top level (quest skills too).
+command("allskill", function()
+  local n = 0
+  for _, s in ipairs(SKILL_DB) do
+    if not s.npc and s.id < 10000 and _rt("skill_in_tree", s.id) then
+      give_skill(s.id, s.max)
+      n = n + 1
+    end
+  end
+  return n .. " skills"
+end)
+
+-- Use a skill the way the client would: on the nearest monster, on yourself,
+-- or on the nearest monster's cell, as the skill's target type says.
+command("useskill", function(args)
+  local a = words(args)
+  local id = tonumber(a[1]) or SK[(a[1] or ""):upper()]
+  local s = id and skill_db[id]
+  if not s then return "usage: @useskill <id|NAME> [level]" end
+  local lv = tonumber(a[2]) or math.max(1, skill_level(id))
+  local target, tx, ty = player.id, player.x, player.y
+  local best
+  for _, u in ipairs(nearby(14)) do
+    if u.kind == "mob" then
+      local d = math.max(math.abs(u.x - player.x), math.abs(u.y - player.y))
+      if not best or d < best then best, target, tx, ty = d, u.id, u.x, u.y end
+    end
+  end
+  if (s.inf & 2) ~= 0 then
+    _rt("skill_request", player.id, id, lv, 0, tx, ty)
+  elseif (s.inf & 1) ~= 0 then
+    if not best then return "no monster in sight" end
+    _rt("skill_request", player.id, id, lv, target, 0, 0)
+  else
+    _rt("skill_request", player.id, id, lv, player.id, 0, 0)
+  end
 end)
 
 command("where", function()
