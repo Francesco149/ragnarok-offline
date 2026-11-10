@@ -33,11 +33,11 @@ period source). Research behind the tiers: `research/notes/mechanics-sources.md`
 | Damage, hit chance, criticals, DEF | mod0631 `map/battle.c` battle_calc_weapon_attack (no element/size/cards yet) | athena2003 |
 | Natural regen | mod0631 `map/pc.c` natural heal (4 s HP / 8 s SP clocks) | athena2003 |
 | Death penalty 1%, respawn 1 HP | mod0631 `conf/battle_athena.conf` | athena2003 |
-| Start point `new_zone01 53,111` | Athena's `new_1-1 53,111` on this client's older training map (cell verified walkable) | guess |
+| Start point `new_zone01 53,111` | Map: the client redirects `new_1-1` to `new_zone01` itself (`data\\resnametable.txt`). Cell: `start_point: new_1-1.gat,53,111` of every Athena config of 2003–04 (jAthena //0307); where they got it is unknown (THREADS.md #6) | client (map) / athena2003 (cell) |
 | Monster AI | simplified Athena behaviour (aggressive pick-up, chase, random walk) | guess |
 | NPC scripts (611 NPCs: towns, job quests, training ground, guides, refiners, quests) | eAthena 817 `npc/` (2004-02-19), translated by `tools/import/athena_npc.py`; each NPC's `src` gives file:line; source bugs kept, fixes in `scripts/npc/` (DEVIATIONS.md) | athena2003 |
-| Kafra service (`scripts/npc/kafra.lua`) | 817 places/sprites/save cells/destinations; fares as 817's menus showed them; storage rule from the client's Basic Skill description | athena2003 / client |
-| Map names of the training ground and test maps | NPC/warp cells of the scripts checked against the client's `.gat` (`tools/import/maps.py`) | client |
+| Kafra service (`scripts/npc/kafra.lua`) | 817 places/sprites/save cells/destinations and wording; fares as 817's menus and mod0631 show them; storage fee per place, Comodo and Al De Baran routes, Izlude's save cell and six more Kafras from mod0631 `conf/npc_town_kafra.txt` (jRO lineage, archived 2003-12-18); storage rule from the client's Basic Skill description | athena2003 / client |
+| Map names of the training ground and test maps | The client's own `data\\resnametable.txt` (`new_1-1.gat#new_zone01.gat#` ...); before that, NPC/warp cells of the scripts checked against the client's `.gat` (`tools/import/maps.py`) | client |
 | Skill tree, max levels, targets | mod0631 `db/skill_db.txt`, `db/skill_tree.txt` (quest flag from 817) | athena2003 |
 | Skill SP per level | the client's `leveluseskillspamount.txt` (read from the GRF at start); skills.toml as fallback | client |
 | Basic Skill unlocks (sit 3, emote 2, storage 6...) | the client's `skilldesctable.txt` | client |
@@ -47,6 +47,7 @@ period source). Research behind the tiers: `research/notes/mechanics-sources.md`
 | Status changes (so far: speed potions 30 min, attack delay 90/85/80%) | mod0631 `map/skill.c` skill_status_change_start, `map/pc.c:895` (`scripts/rules/status_change.lua`, `status.lua`) | athena2003 |
 | Pets: tameable monsters, taming items, eggs, food, accessories, hunger and intimacy numbers; catch chance and feeding rules | mod0631 `db/pet_db.txt` (`data/db/pets.toml`), `map/pet.c` | athena2003 |
 | Map flags (noteleport, nobranch, nopenalty, nosave; nomemo and pvp recorded) | mod0631 `conf/mapflag.txt` and the mapflag lines of its NPC files (`data/db/mapflags.toml`) | athena2003 |
+| Monsters in ownerless guild castles | eAthena 817 `npc/mobs/gvg.txt` (2004-02-19); kRO notices of 2004-02-10/17 say such monsters existed and were then removed. When they appear (each server start) is ours | athena2003 / guess |
 | Old Blue/Violet Box, Card Album, Gift Box contents; Dead Branch monsters | mod0631 `db/item_*box.txt`, `item_cardalbum.txt`, `mob_branch.txt` (`data/db/random.toml`); picking as mod0631 `itemdb_searchrandomid` / `mob_once_spawn` (branch monster not above your level) | athena2003 |
 | `@go` coordinates | rAthena | later |
 | Client first-run settings written by `RagnarokOffline.exe` (registry) | the value set the client's own `Setup.exe` writes (observed on Windows 11); 800×600×16 fullscreen picked by us | client / guess |
@@ -61,7 +62,8 @@ vs 668k in Feb 2004; the official iRO element table differs from emulators on
 the level-1 Poison row; party EXP bonus +25% per member (kRO 2003-02) vs +10%
 (2004 iRO guide); Kafra teleport fares changed 2004-02-24; Phracon 2000z
 (iRO page) vs 200z (data); armor DEF per refine recorded as 1, 5 and 0.7 in
-different emulator versions. When you pick one, record which and why.
+different emulator versions, and as "1 defense" on the iRO page of 2004-06,
+which also gives level-4 weapons the level-3 fee and bonus (5,000z, +5). When you pick one, record which and why.
 
 ## euRO specifics
 

@@ -24,13 +24,13 @@ questions that could change an entry here are in
 | Area | Period behaviour | Here | Why / how to change |
 |---|---|---|---|
 | Parties | /organize, /join, EXP share | Not available; `party_name()` is "" | Nobody to party with. Party-only quests: none imported so far |
-| Guilds, War of Emperium | Guild castles, flags, treasure, guild dungeons (WoE from open beta, Sundays) | Castle NPCs not imported; the castle maps and their warps exist but nobody owns them | Needs guilds and opponents. Single-player stand-in is a research thread (THREADS.md #17) |
+| Guilds, War of Emperium | Guild castles, flags, treasure, guild dungeons (WoE from open beta, Sundays) | Castle NPCs not imported. Nobody owns a castle, so each holds the monsters 817 called into ownerless castles at WoE start (`scripts/npc/castles.lua`); every server start counts as a WoE start. No Emperium, treasure or guild-dungeon access | Needs guilds and opponents. The monsters are period behaviour (kRO until 2004-02-10, 817 `mobs/gvg.txt`); the timing is ours. `castle_monsters = false` empties the castles. The rest is open (THREADS.md #17) |
 | PvP | PvP rooms (Prontera/Izlude) | The imported PvP NPCs are off (`[content] pvp = false`) | Empty rooms. Turn it on to visit them |
 | Trading, vending to players | Trade window, merchant shops | No other players. The client's buttons do nothing | — |
 | Chat rooms | Player chat rooms; NPC "waiting rooms" (arena, PvP queues) | Not drawn; NPCs that open one log a notice | Player rooms are pointless. NPC waiting rooms are a TODO (ROADMAP) |
 | Whisper, friends | — | Whispers get "not online" | — |
 | Announcements | Server-wide broadcasts | Shown to you (`announce` and friends) | — |
-| Arena (Izlude time attack) | Solo monster rooms | Imported as is | Solo by design: no change |
+| Arena (time attack) | Not open: kRO added the Izlude arena on 2004-10-12 | 817's arena (entered from mid-Prontera, its own placement) is imported but off | `arena = true` to visit it. THREADS.md R5 |
 
 ## Meta and convenience
 
@@ -55,6 +55,8 @@ Jan–Feb 2004.
 | `jobs2_2` | off | Crusader, Monk, Sage, Rogue, Alchemist, Bard/Dancer job quests (euRO: 2004-06-09) |
 | `pvp` | off | PvP room NPCs |
 | `events` | off | Seasonal and national events from 817: Ice Cream Maker (Aug 2003), Mr. Smile, Bunny Band festival |
+| `arena` | off | 817's monster time-attack arena and its entrance NPC in Prontera (kRO opened the arena, in Izlude, on 2004-10-12) |
+| `castle_monsters` | on | Monsters in the guild castles, which have no owner (kRO until 2004-02-10; 817) |
 
 ## NPC scripts: what we changed relative to the period emulators
 
@@ -77,10 +79,18 @@ eAthena 817 (2004-02-19), bugs included. The translator is
   The list, with reasons, is in `SKIP`/`SKIP_NPC` of the translator.
 * **Japanese-only events** (Momotaro, the Gonryun tournament, Valentine) are
   not imported.
-* **Kafra** (`scripts/npc/kafra.lua` replaces all 18 town and dungeon
-  Kafras):
+* **Kafra** (`scripts/npc/kafra.lua` replaces 18 of 817's town and dungeon
+  Kafras and adds 6 it did not have):
   * Fares are the ones 817's menus *showed*. Its code charged other fares in
-    places: Prontera→Geffen showed 1400 and took 1800.
+    places: Prontera→Geffen showed 1400 and took 1800. mod0631's Kafra
+    script of December 2003 shows and takes the menu fares.
+  * From mod0631 (`conf/npc_town_kafra.txt`), because 817 had less: the
+    storage fee per place (30 to 80z; 817 took 30 everywhere), Comodo as a
+    destination from Prontera (2000z) and Morroc (1500z), Al De Baran's
+    teleports (Geffen 1600z, Mt. Mjolnir 1700z), and the Kafras of Comodo
+    (town, inn, Pharos beach), Mt. Mjolnir and Prontera's east and west
+    gates. Their wording is 817's; mod0631's text is Japanese. mod0631
+    follows jRO: research/notes/round1-review.md.
   * A cart costs 800z only when you get one. 817 took the money twice and
     then jumped to a missing label, so no cart.
   * Storage needs Basic Skill 6, as the client's own Basic Skill description
@@ -90,12 +100,13 @@ eAthena 817 (2004-02-19), bugs included. The translator is
     and 817's was "Under development".
   * "Cancel" and "Other Information Check" work (817 pointed them at missing
     labels). The location tip marks the town's Kafras.
-  * Izlude's "Save inside City" saved nothing in 817. It now saves at
-    izlude 91,105, where every era Kafra teleport lands.
+  * Izlude's "Save inside City" saved nothing in 817. It saves at izlude
+    94,103, as in mod0631 and jAthena (2004-01).
   * Typos in the Kafra lines are fixed. The wording is otherwise 817's.
 * **Removed outright:** 817's Kafra-points exchange in Al De Baran. Its menu
-  never worked: labels starting with digits parse as numbers in 817. Whether
-  Kafra points existed in Dec 2003 is THREADS.md #4.
+  never worked: labels starting with digits parse as numbers in 817. Kafra
+  points did exist (kRO notice of 2004-02-10); what they bought is
+  THREADS.md #4.
 * **Commands 817's scripts used but its engine lacked**, where the meaning
   is unmistakable. 817 stopped the script at each of them; we run them:
   * `releaseall` (unequip everything) comes right before `jobchange` in the

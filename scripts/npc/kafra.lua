@@ -4,7 +4,14 @@
 -- sprites, cut-ins, save points, destinations and the wording are 817's
 -- (tier athena2003). What changed, and why (docs/DEVIATIONS.md, "Kafra"):
 --   * fares are the ones 817's menus showed; its code charged different ones
---     in places (Prontera->Geffen showed 1400, took 1800);
+--     in places (Prontera->Geffen showed 1400, took 1800). mod0631's Kafra
+--     script (conf/npc_town_kafra.txt, archived 2003-12-18) shows and takes
+--     the same fares as 817's menus, with Alberta->Prontera at 2100;
+--   * what 817 lacked comes from mod0631, file:line in M631 below: the storage
+--     fee per place (817: 30z everywhere), Comodo as a destination, Al De
+--     Baran's teleport service, the Kafras of Comodo, the Pharos lighthouse,
+--     Mt. Mjolnir, Byalan Island and Prontera's east and west gates, and
+--     Izlude's save cell;
 --   * a cart is charged only when one is given: 817 took 800z, then jumped to
 --     a label that didn't exist (merchants paid for nothing) - and took it twice;
 --   * storage needs Basic Skill 6, as the client's own skill description says
@@ -13,10 +20,12 @@
 --     2003-05-20, and 817's was "Under development";
 --   * "Cancel" and "Other Information Check" work (817 pointed them at
 --     missing labels); the location tip marks this town's Kafras.
--- Pre-2004-02-24 fares are period-emulator values: research/THREADS.md.
+-- Pre-2004-02-24 fares are period-emulator values (research/THREADS.md #3,
+-- research/notes/round1-review.md). kRO's own notice of 2004-02-24 lists only
+-- the fares that replaced them.
 
-local STORAGE_FEE = 30 -- 817 kafra.txt; research/notes/mechanics-sources.md section 7
-local CART_FEE = 800 -- 817 kafra.txt
+local STORAGE_FEE = 30 -- 817 kafra.txt, where mod0631 has no Kafra at that place
+local CART_FEE = 800 -- 817 kafra.txt and mod0631 (every Kafra that rents one)
 
 local function bye(cut)
   cutin(cut, 255)
@@ -35,7 +44,7 @@ local function kafra(k)
     if k.save then add("Save", "save") end
     add("Use Storage", "storage")
     if k.tele then add("Use Teleport Service", "tele") end
-    add("Rent a Cart", "cart")
+    if not k.no_cart then add("Rent a Cart", "cart") end
     add("Other Information Check", "info")
     add("Cancel", "cancel")
     local act = acts[menu(opts)]
@@ -56,12 +65,13 @@ local function kafra(k)
         mes "I am sorry, but you need Basic Skill level 6 to use the storage."
         return bye(cut)
       end
-      if player.zeny < STORAGE_FEE then
+      local fee = k.storage or STORAGE_FEE
+      if player.zeny < fee then
         mes "[Kafra]"
-        mes("Dear, you don't have enough money. The storage fee is " .. STORAGE_FEE .. " Zeny.")
+        mes("Dear, you don't have enough money. The storage fee is " .. fee .. " Zeny.")
         return bye(cut)
       end
-      player.zeny = player.zeny - STORAGE_FEE
+      player.zeny = player.zeny - fee
       open_storage()
       return bye(cut)
 
@@ -133,74 +143,110 @@ local function kafra(k)
   end
 end
 
--- src, place, sprite, cut-in, save point, destinations {name, fare, map, x, y}.
+-- src, place, sprite, cut-in, save point, storage fee, destinations {name, fare, map, x, y}.
+-- `src` is the 817 NPC this one replaces (place, sprite, cut-in and save cells are 817's).
+-- `m631` is the line of the same Kafra in mod0631's conf/npc_town_kafra.txt, the
+-- source of `storage` and of the destinations 817 did not have. Entries with
+-- `m631` and no `src` exist only in mod0631: place, sprite, cut-in and save
+-- cells are its own.
 KAFRA_LIST = {
-  -- Prontera (817's third Prontera Kafra, 29,207, was the 'FGM RO' server's own)
-  { src = "817:other/kafra.txt:2474", map = "prontera", x = 146, y = 89, dir = 6, sprite = 115, cutin = "kafra_03",
-    save = { "prontera", 117, 73 },
+  -- Prontera
+  { src = "817:other/kafra.txt:2474", m631 = 129, map = "prontera", x = 146, y = 89, dir = 6, sprite = 115, cutin = "kafra_03",
+    save = { "prontera", 117, 73 }, storage = 40,
     tele = { { "Izlude", 900, "izlude", 91, 105 }, { "Geffen", 1400, "geffen", 120, 39 }, { "Payon", 1700, "payon", 69, 100 },
-             { "Morroc", 1800, "morocc", 156, 46 }, { "Orc Dungeon", 1700, "gef_fild10", 52, 326 } } },
-  { src = "817:other/kafra.txt:2622", map = "prontera", x = 151, y = 29, dir = 8, sprite = 115, cutin = "kafra_03",
-    save_out = { "prt_fild08", 170, 369 }, save = { "prontera", 150, 33 },
+             { "Morroc", 1800, "morocc", 156, 46 }, { "Comodo", 2000, "comodo", 209, 143 },
+             { "Orc Dungeon", 1700, "gef_fild10", 52, 326 } } },
+  { src = "817:other/kafra.txt:2622", m631 = 630, map = "prontera", x = 151, y = 29, dir = 8, sprite = 115, cutin = "kafra_03",
+    save_out = { "prt_fild08", 170, 369 }, save = { "prontera", 150, 33 }, storage = 40,
     tele = { { "Izlude", 900, "izlude", 91, 105 }, { "Geffen", 1400, "geffen", 120, 39 }, { "Payon", 1700, "payon", 69, 100 },
-             { "Morroc", 1800, "morocc", 156, 46 }, { "Orc Dungeon", 1700, "gef_fild10", 52, 326 } } },
-  -- Izlude: 817's "Save inside City" said so but saved nothing; the inside cell is
-  -- where every era Kafra teleport lands in Izlude (91,105 in 659, 715, 817, 0.5.2)
-  { src = "817:other/kafra.txt:1667", map = "izlude", x = 124, y = 115, dir = 6, sprite = 117, cutin = "kafra_01",
-    save_out = { "prt_fild08", 349, 202 }, save = { "izlude", 91, 105 },
+             { "Morroc", 1800, "morocc", 156, 46 }, { "Comodo", 2000, "comodo", 209, 143 },
+             { "Orc Dungeon", 1700, "gef_fild10", 52, 326 } } },
+  -- east and west gates: mod0631 only. 817 had none in the east, and in the west only
+  -- the 'FGM Kafra' of a private server (not imported), on mod0631's cell 29,207
+  { m631 = 377, map = "prontera", x = 282, y = 200, dir = 2, sprite = 114, cutin = "kafra_04",
+    save_out = { "prt_fild06", 33, 192 }, save = { "prontera", 279, 200 }, storage = 40,
+    tele = { { "Izlude", 900, "izlude", 91, 105 }, { "Geffen", 1400, "geffen", 120, 39 }, { "Payon", 1700, "payon", 69, 100 },
+             { "Morroc", 1800, "morocc", 156, 46 }, { "Comodo", 2000, "comodo", 209, 143 },
+             { "Orc Dungeon", 1700, "gef_fild10", 52, 326 } } },
+  { m631 = 883, map = "prontera", x = 29, y = 207, dir = 6, sprite = 113, cutin = "kafra_05",
+    save_out = { "prt_fild05", 368, 205 }, save = { "prontera", 33, 207 }, storage = 40,
+    tele = { { "Izlude", 900, "izlude", 91, 105 }, { "Geffen", 1400, "geffen", 120, 39 }, { "Payon", 1700, "payon", 69, 100 },
+             { "Morroc", 1800, "morocc", 156, 46 }, { "Comodo", 2000, "comodo", 209, 143 },
+             { "Orc Dungeon", 1700, "gef_fild10", 52, 326 } } },
+  -- Izlude: 817's "Save inside City" said so but saved nothing. mod0631:1532 and
+  -- jAthena (2004-01-31) save at 94,103; teleports land on 91,105 in all of them
+  { src = "817:other/kafra.txt:1667", m631 = 1512, map = "izlude", x = 124, y = 115, dir = 6, sprite = 117, cutin = "kafra_01",
+    save_out = { "prt_fild08", 349, 202 }, save = { "izlude", 94, 103 }, storage = 30,
     tele = { { "Prontera", 900, "prontera", 116, 72 }, { "Payon", 1700, "payon", 69, 100 }, { "Geffen", 1800, "geffen", 120, 39 } } },
   -- Geffen
-  { src = "817:other/kafra.txt:1381", map = "geffen", x = 120, y = 62, dir = 8, sprite = 115, cutin = "kafra_03",
-    save = { "geffen", 119, 40 },
+  { src = "817:other/kafra.txt:1381", m631 = 1976, map = "geffen", x = 120, y = 62, dir = 8, sprite = 115, cutin = "kafra_03",
+    save = { "geffen", 119, 40 }, storage = 30,
     tele = { { "Prontera", 1400, "prontera", 116, 72 }, { "Izlude", 1800, "izlude", 91, 105 },
              { "Al De Baran", 2100, "aldebaran", 143, 110 }, { "Morroc", 2200, "morocc", 156, 46 } } },
-  { src = "817:other/kafra.txt:1519", map = "geffen", x = 203, y = 123, dir = 3, sprite = 114, cutin = "kafra_04",
-    save_out = { "gef_fild00", 51, 194 }, save = { "geffen", 200, 124 },
+  { src = "817:other/kafra.txt:1519", m631 = 2204, map = "geffen", x = 203, y = 123, dir = 3, sprite = 114, cutin = "kafra_04",
+    save_out = { "gef_fild00", 51, 194 }, save = { "geffen", 200, 124 }, storage = 30,
     tele = { { "Prontera", 1400, "prontera", 116, 72 }, { "Izlude", 1800, "izlude", 91, 105 },
              { "Al De Baran", 2100, "aldebaran", 143, 110 }, { "Morroc", 2200, "morocc", 156, 46 } } },
   -- Payon
-  { src = "817:other/kafra.txt:2086", map = "payon", x = 99, y = 116, dir = 4, sprite = 113, cutin = "kafra_05",
-    save_out = { "pay_fild01", 340, 347 }, save = { "payon", 69, 100 },
+  { src = "817:other/kafra.txt:2086", m631 = 3671, map = "payon", x = 99, y = 116, dir = 4, sprite = 113, cutin = "kafra_05",
+    save_out = { "pay_fild01", 340, 347 }, save = { "payon", 69, 100 }, storage = 40,
     tele = { { "Alberta", 1300, "alberta", 117, 56 }, { "Prontera", 1800, "prontera", 116, 72 }, { "Morroc", 1800, "morocc", 156, 46 } } },
   -- Morroc
-  { src = "817:other/kafra.txt:1808", map = "morocc", x = 156, y = 97, dir = 4, sprite = 115, cutin = "kafra_03",
-    save = { "morocc", 156, 46 },
-    tele = { { "Prontera", 1800, "prontera", 116, 72 }, { "Payon", 1800, "payon", 69, 100 },
+  { src = "817:other/kafra.txt:1808", m631 = 2437, map = "morocc", x = 156, y = 97, dir = 4, sprite = 115, cutin = "kafra_03",
+    save = { "morocc", 156, 46 }, storage = 40,
+    tele = { { "Comodo", 1500, "comodo", 209, 143 }, { "Prontera", 1800, "prontera", 116, 72 }, { "Payon", 1800, "payon", 69, 100 },
              { "Alberta", 2200, "alberta", 117, 56 }, { "Geffen", 2200, "geffen", 120, 39 } } },
-  { src = "817:other/kafra.txt:1944", map = "morocc", x = 163, y = 260, dir = 4, sprite = 114, cutin = "kafra_04",
-    save_out = { "moc_fild07", 212, 30 }, save = { "morocc", 187, 281 },
-    tele = { { "Prontera", 1800, "prontera", 116, 72 }, { "Payon", 1800, "payon", 69, 100 },
+  { src = "817:other/kafra.txt:1944", m631 = 2673, map = "morocc", x = 163, y = 260, dir = 4, sprite = 114, cutin = "kafra_04",
+    save_out = { "moc_fild07", 212, 30 }, save = { "morocc", 187, 281 }, storage = 40,
+    tele = { { "Comodo", 1500, "comodo", 209, 143 }, { "Prontera", 1800, "prontera", 116, 72 }, { "Payon", 1800, "payon", 69, 100 },
              { "Alberta", 2200, "alberta", 117, 56 }, { "Geffen", 2200, "geffen", 120, 39 } } },
-  -- Alberta (the two 817 Alberta Kafras showed 1800 and 2100 to Prontera and both took 2100)
-  { src = "817:other/kafra.txt:584", map = "alberta", x = 28, y = 229, dir = 8, sprite = 115, cutin = "kafra_02",
-    save_out = { "pay_fild03", 386, 76 }, save = { "alberta", 31, 231 },
+  -- Alberta (the two 817 Alberta Kafras showed 1800 and 2100 to Prontera and both took 2100;
+  -- mod0631 shows and takes 2100 at both)
+  { src = "817:other/kafra.txt:584", m631 = 3070, map = "alberta", x = 28, y = 229, dir = 8, sprite = 115, cutin = "kafra_02",
+    save_out = { "pay_fild03", 386, 76 }, save = { "alberta", 31, 231 }, storage = 50,
     tele = { { "Payon", 1300, "payon", 69, 100 }, { "Prontera", 2100, "prontera", 116, 72 }, { "Morroc", 2200, "morocc", 156, 46 } } },
-  { src = "817:other/kafra.txt:721", map = "alberta", x = 113, y = 60, dir = 5, sprite = 112, cutin = "kafra_06",
-    save = { "alberta", 117, 57 },
+  { src = "817:other/kafra.txt:721", m631 = 3295, map = "alberta", x = 113, y = 60, dir = 5, sprite = 112, cutin = "kafra_06",
+    save = { "alberta", 117, 57 }, storage = 50,
     tele = { { "Payon", 1300, "payon", 69, 100 }, { "Prontera", 2100, "prontera", 116, 72 }, { "Morroc", 2200, "morocc", 156, 46 } } },
-  -- Al De Baran (817: no teleport service)
-  { src = "817:other/kafra.txt:1309", map = "aldebaran", x = 143, y = 119, dir = 4, sprite = 113, cutin = "kafra_05",
-    save = { "aldebaran", 143, 109 } },
+  -- Al De Baran (817: no teleport service; mod0631:4028 has these two)
+  { src = "817:other/kafra.txt:1309", m631 = 4028, map = "aldebaran", x = 143, y = 119, dir = 4, sprite = 113, cutin = "kafra_05",
+    save = { "aldebaran", 143, 109 }, storage = 40,
+    tele = { { "Geffen", 1600, "geffen", 120, 39 }, { "Mjolnir Dead Pit", 1700, "mjolnir_02", 99, 351 } } },
   { src = "817:other/kafra.txt:1197", map = "aldeba_in", x = 96, y = 181, dir = 4, sprite = 113, cutin = "kafra_05",
     save = { "aldeba_in", 96, 179 } },
-  -- dungeons and fields
-  { src = "817:other/kafra.txt:2", map = "gef_fild10", x = 73, y = 340, dir = 4, sprite = 115, cutin = "kafra_02",
-    save = { "gef_fild10", 54, 232 } },
-  { src = "817:other/kafra.txt:284", map = "moc_ruins", x = 61, y = 156, dir = 5, sprite = 114, cutin = "kafra_04",
-    save = { "moc_ruins", 41, 141 } },
-  { src = "817:other/kafra.txt:375", map = "prt_fild01", x = 198, y = 47, dir = 8, sprite = 112, cutin = "kafra_06",
-    save = { "prt_fild01", 197, 50 } },
-  { src = "817:other/kafra.txt:481", map = "prt_fild05", x = 290, y = 224, dir = 1, sprite = 114, cutin = "kafra_04",
-    save = { "prt_fild05", 274, 243 } },
-  { src = "817:other/kafra.txt:853", map = "alb2trea", x = 59, y = 69, dir = 1, sprite = 117, cutin = "kafra_03",
-    save = { "alb2trea", 92, 64 } },
-  { src = "817:other/kafra.txt:2225", map = "pay_arche", x = 55, y = 123, dir = 8, sprite = 117, cutin = "kafra_01",
-    save = { "pay_arche", 49, 144 } },
+  -- Comodo, the beach and the Pharos lighthouse: mod0631 only (sprite 721 is the
+  -- client's Comodo Kafra; the two in Comodo rent no cart)
+  { m631 = 4598, map = "comodo", x = 195, y = 150, dir = 4, sprite = 721, cutin = "kafra_07",
+    save = { "comodo", 180, 151 }, storage = 80, no_cart = true,
+    tele = { { "Pharos Lighthouse", 800, "cmd_fild07", 127, 134 }, { "Morroc", 1500, "morocc", 156, 46 } } },
+  { m631 = 4216, map = "cmd_in02", x = 146, y = 180, dir = 4, sprite = 721, cutin = "kafra_07",
+    save = { "comodo", 209, 143 }, storage = 40, no_cart = true,
+    tele = { { "Pharos Lighthouse", 800, "cmd_fild07", 127, 134 }, { "Morroc", 2000, "morocc", 156, 46 } } },
+  { m631 = 4407, map = "cmd_fild07", x = 136, y = 134, dir = 4, sprite = 721, cutin = "kafra_07",
+    save = { "cmd_fild07", 127, 134 }, storage = 80,
+    tele = { { "Comodo", 500, "comodo", 209, 143 }, { "Morroc", 2500, "morocc", 156, 46 } } },
+  -- dungeons and fields. kRO's notice of 2004-02-24 ended the save service at the
+  -- Mjolnir mine, the Orc Dungeon, the Pyramid, the Sunken Ship, Byalan and the
+  -- Archer Village: until then these Kafras saved, as they do here
+  { src = "817:other/kafra.txt:2", m631 = 4789, map = "gef_fild10", x = 73, y = 340, dir = 4, sprite = 115, cutin = "kafra_02",
+    save = { "gef_fild10", 54, 232 }, storage = 55 },
+  { src = "817:other/kafra.txt:284", m631 = 2914, map = "moc_ruins", x = 61, y = 156, dir = 5, sprite = 114, cutin = "kafra_04",
+    save = { "moc_ruins", 41, 141 }, storage = 55 },
+  { src = "817:other/kafra.txt:375", m631 = 1136, map = "prt_fild01", x = 198, y = 47, dir = 8, sprite = 112, cutin = "kafra_06",
+    save = { "prt_fild01", 197, 50 }, storage = 40 },
+  { src = "817:other/kafra.txt:481", m631 = 1356, map = "prt_fild05", x = 290, y = 224, dir = 1, sprite = 114, cutin = "kafra_04",
+    save = { "prt_fild05", 274, 243 }, storage = 30 },
+  { src = "817:other/kafra.txt:853", m631 = 3515, map = "alb2trea", x = 59, y = 69, dir = 1, sprite = 117, cutin = "kafra_03",
+    save = { "alb2trea", 92, 64 }, storage = 55 },
+  { src = "817:other/kafra.txt:2225", m631 = 3872, map = "pay_arche", x = 55, y = 123, dir = 8, sprite = 117, cutin = "kafra_01",
+    save = { "pay_arche", 49, 144 }, storage = 45 },
+  { m631 = 4946, map = "mjolnir_02", x = 84, y = 362, dir = 4, sprite = 117, cutin = "kafra_01",
+    save = { "mjolnir_02", 98, 351 }, storage = 55 },
 }
 
 for _, k in ipairs(KAFRA_LIST) do
   npc {
     map = k.map, x = k.x, y = k.y, dir = k.dir, sprite = k.sprite, name = "Kafra",
-    replaces = k.src, on_click = kafra(k),
+    replaces = k.src, src = not k.src and ("m631:conf/npc_town_kafra.txt:" .. k.m631) or nil, on_click = kafra(k),
   }
 end
