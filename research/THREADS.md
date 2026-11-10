@@ -182,6 +182,20 @@ items). First known difference: Moving HP Recovery is a Rocker Doll and 500
 Empty Bottles in 817 and on RODataZone, 200 bottles and another item in
 mod0631. First Aid and Play Dead (Nami, the Chivalry member, the Nursing
 Instructor) are in mod0631 and on RODataZone and not in our import.
+**Round 3:** NPC, cell and job level of every quest skill in the three
+witnesses are rows now (`research/agy-threads/r3/rows/q.jsonl`, checked in
+research/notes/round3-review.md). 817 and mod0631 agree on every cell
+outside the Thief's; RODataZone gives the same cells for the Archer,
+Acolyte and Merchant skills, none for the Mage's, and other numbers on its
+Swordman page (`214,129`, `46,345`, `178,185`: not read yet). Job levels
+differ for Arrow Crafting (817: 35; mod0631, RODataZone: 30), Cart
+Revolution (817, RODataZone: 35; mod0631: 30) and Stone Fling (emulators:
+15; RODataZone: 20). The emulators' item lists were not compared. First
+Aid and Play Dead are confirmed on the same cells by mod0631 and
+RODataZone's Novice page of 2003-12-15, and are in the game
+(`scripts/npc/novice_skills.lua`, DEVIATIONS).
+**Open:** the item lists of the other jobs' quests side by side, starting
+with Moving HP Recovery (mod0631: 200 Empty Bottles and item 1058).
 
 ### 8. Wizard (and other 2-1) job quests
 817's wizard.txt is an unfinished conversion that 817 couldn't run (later
@@ -203,6 +217,10 @@ eAthena's data and old data from elsewhere") is for `job_wiz` too, and its
 Knight, Blacksmith, Hunter and Assassin quests date from September 2004.
 817's Priest test does fit this client's `job_priest` (4 of 4 cells). A
 Wizard test here would have to be laid out by us.
+**Round 3:** nothing new. The round's Wizard rows quote jAthena //1046
+(2004-09-12), again for `job_wiz`: of its three room cells, `116,171` and
+`46,99` are blocked on `job_wizard`. No dated walkthrough of any 2-1 test
+was found; RODataZone's Wizard and Knight pages on Wayback are empty.
 
 ### 9. Refining details
 Phracon price (iRO page 2000z vs data 200z), armor DEF per refine (1, 5 or
@@ -273,6 +291,11 @@ Merchants in every other town. mod0631 has those three tamers
 (`scripts/npc/monster_tamers.lua`). The page has no table of pets: the
 per-pet items are still only the emulators', and the Rune-Midgarts Library
 pages (`libraryListItem.asp?Category=7`) are the next thing to load.
+**Round 3:** loaded (capture 2004-06-05). Its item texts name the monster
+each taming item lures, and all 25 agree with `data/db/pets.toml`. It lists
+25 pet eggs, Bongun's included, against the guide's "24 monsters": whether
+Bongun could be tamed in early 2004 is the one open point. Food and
+accessories were not compared.
 
 ### 15. euRO-specific content
 Loading screens, event NPCs (Squad Tournament July 2004, King of the Hill
@@ -336,6 +359,33 @@ the treasure count or the investment cost: the round's figures are from
 GungHo's guide of today and a Japanese wiki (tier later), and its summary
 attributes them to the iRO page, which does not have them. jAthena's first
 steward (2004-02-12) takes a flat 10,000z in a test script.
+
+**Round 3** (research/notes/round3-review.md; rows in
+`research/agy-threads/r3/rows/w*.jsonl`):
+* kRO's notices to 2004-06 are read in full: 23 rules and fixes, none with
+  a number. The Emperium became Holy/Angel only on 2004-04-27.
+* 817's code: skills do nothing to the Emperium, nor does a player without
+  a guild that has Official Guild Approval; no knock-back on siege maps;
+  Endure, Teleport, Warp Portal, Ice Wall and Back Slide are refused.
+* 817 has the forty treasure boxes in `mob_db.txt` and **no script that
+  puts one in a castle**, so which box belongs to which castle, and how
+  many appear, has no period source. Still no period number for investment
+  beyond the test steward's 10,000z, twice a period.
+* 817's Emperium cells fit this client's maps in 19 of 20 castles
+  (`prtg_cas02 158,174` is blocked), and every guild dungeon switch target
+  is walkable. The round's own castle rows have wrong Emperium cells: use
+  817's scripts, not those rows.
+* euRO: ownership and investment were live in the open beta by 2004-04-08;
+  treasure, Emperium and guild dungeons were off from 2004-09-03 and WoE
+  back on 2004-09-22.
+* "What it was like", in numbers, from another official server
+  (research/notes/woe-mro-2004.md): a fan site's takeover record of
+  Malaysia's servers, 2004-03-18 to 06-07. Sieges on Wednesdays and
+  Saturdays; a contested castle changed hands a median of 3 times in a
+  siege and up to 24; three holders in four lost it by the next siege; the
+  longest hold on record is three weeks. Its siege commentary topics are
+  not on Wayback. Still nothing first-hand on numbers of players, where the
+  fighting was, or treasure; euRO's own news of 2004 is listed and unread.
 **Impact:** castle treasure, guild dungeons, guild-only drops.
 **Look:** kRO notices on WoE rules; the iRO guide's guild/WoE pages; euRO
 WoE news (Apr and Sep 2004: "treasure boxes and guild dungeons disabled");

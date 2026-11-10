@@ -1,0 +1,186 @@
+{
+  "RO Patch (2003 Jun. 10)": {
+    "lines": [
+      ":- 공성을 수요일 21:00 ~ 23:00, 일요일 19:00 ~ 21:00 사이에만 할 수 있도록 정상 수정되었습니다."
+    ],
+    "saved_page": "fandom_RO_Patch_2003_Jun_10.json",
+    "url": "https://ragnarok.fandom.com/api.php?action=parse&page=RO_Patch_%282003_Jun._10%29&prop=wikitext&format=json&utf8=1"
+  },
+  "RO Patch (2003 Jul. 29)": {
+    "lines": [
+      ":- 길드 보물상자에 길드 마스터 외의 플레이어가 접근 가능한 점을 수정하였습니다."
+    ],
+    "saved_page": "fandom_RO_Patch_2003_Jul_29.json",
+    "url": "https://ragnarok.fandom.com/api.php?action=parse&page=RO_Patch_%282003_Jul._29%29&prop=wikitext&format=json&utf8=1"
+  },
+  "RO Patch (2003 Aug. 05)": {
+    "lines": [
+      ":- 공성필드 및 각 마을의 깃발 수정이 수정되었습니다.",
+      "::* 길드 깃발이 각 아지트의 고유한 명칭으로 변경되었습니다.",
+      "::* 각 아지트 정문깃발에서 길드원 워프기능을 추가하였습니다.",
+      ":- 공성필드 및 각 마을의 깃발 수정이 수정되었습니다.",
+      "::* 길드 깃발이 각 아지트의 고유한 명칭으로 변경되었습니다.",
+      "::* 각 아지트 정문깃발에서 길드원 워프기능을 추가하였습니다."
+    ],
+    "saved_page": "fandom_RO_Patch_2003_Aug_05.json",
+    "url": "https://ragnarok.fandom.com/api.php?action=parse&page=RO_Patch_%282003_Aug._05%29&prop=wikitext&format=json&utf8=1"
+  },
+  "RO Patch (2003 Sept. 08)": {
+    "lines": [
+      ":- 아지트 내부 카프라의 공간이동 서비스와 관련된 문제점이 수정되었습니다.",
+      ":- 아지트 내부 카프라의 공간이동 서비스와 관련된 문제점이 수정되었습니다."
+    ],
+    "saved_page": "fandom_RO_Patch_2003_Sept_08.json",
+    "url": "https://ragnarok.fandom.com/api.php?action=parse&page=RO_Patch_%282003_Sept._08%29&prop=wikitext&format=json&utf8=1"
+  },
+  "RO Patch (2003 Oct. 07)": {
+    "lines": [
+      ":- 공성 시간중에는 길드간의 동맹 결성 및 해체가 되지 않도록 수정하였습니다."
+    ],
+    "saved_page": "fandom_RO_Patch_2003_Oct_07.json",
+    "url": "https://ragnarok.fandom.com/api.php?action=parse&page=RO_Patch_%282003_Oct._07%29&prop=wikitext&format=json&utf8=1"
+  },
+  "RO Patch (2003 Dec. 02)": {
+    "lines": [
+      ":- 가디언들에게 위자드의 몬스터정보를 사용하면 클라이언트가 멈추던 문제가 해결되었습니다.",
+      ":- 가디언들에게 위자드의 몬스터정보를 사용하면 클라이언트가 멈추던 문제가 해결되었습니다."
+    ],
+    "saved_page": "fandom_RO_Patch_2003_Dec_02.json",
+    "url": "https://ragnarok.fandom.com/api.php?action=parse&page=RO_Patch_%282003_Dec._02%29&prop=wikitext&format=json&utf8=1"
+  },
+  "RO Patch (2003 Dec. 26)": {
+    "lines": [
+      ":- 마을과 공성전맵에서의 고목나무가지 아이템 사용이 제한됩니다.",
+      ":- 길드 던전내에서 길드 PvP기능이 정상적으로 작동하지 않던 문제점을 수정하였습니다."
+    ],
+    "saved_page": "fandom_RO_Patch_2003_Dec_26.json",
+    "url": "https://ragnarok.fandom.com/api.php?action=parse&page=RO_Patch_%282003_Dec._26%29&prop=wikitext&format=json&utf8=1"
+  },
+  "RO Patch (2003 Dec. 30)": {
+    "lines": [
+      ":- 공성시 길드 깃발을 이용하여 진입을 막을 수 있었던 문제점이 수정되었습니다.",
+      ":- 공성시 길드 깃발을 이용하여 진입을 막을 수 있었던 문제점이 수정되었습니다."
+    ],
+    "saved_page": "fandom_RO_Patch_2003_Dec_30.json",
+    "url": "https://ragnarok.fandom.com/api.php?action=parse&page=RO_Patch_%282003_Dec._30%29&prop=wikitext&format=json&utf8=1"
+  },
+  "RO Patch (2004 Jan. 08)": {
+    "lines": [
+      ":- 길드던전에서 재접속시 기억되어 있는 장소로 이동하게 되었습니다."
+    ],
+    "saved_page": "fandom_RO_Patch_2004_Jan_08.json",
+    "url": "https://ragnarok.fandom.com/api.php?action=parse&page=RO_Patch_%282004_Jan._08%29&prop=wikitext&format=json&utf8=1"
+  },
+  "RO Patch (2004 Jan. 27)": {
+    "lines": [
+      ":- 길드던전에서 재접속시 기억되어 있는 장소로 이동하게 되었습니다."
+    ],
+    "saved_page": "fandom_RO_Patch_2004_Jan_27.json",
+    "url": "https://ragnarok.fandom.com/api.php?action=parse&page=RO_Patch_%282004_Jan._27%29&prop=wikitext&format=json&utf8=1"
+  },
+  "RO Patch (2004 Feb. 03)": {
+    "lines": [
+      ":- 알케미스트가 소환한 플로라와 마린스피어의 공격으로 더 이상 엠펠리움을 부수지 못합니다."
+    ],
+    "saved_page": "fandom_RO_Patch_2004_Feb_03.json",
+    "url": "https://ragnarok.fandom.com/api.php?action=parse&page=RO_Patch_%282004_Feb._03%29&prop=wikitext&format=json&utf8=1"
+  },
+  "RO Patch (2004 Feb. 10)": {
+    "lines": [
+      ":- 아지트를 소유했던 길드가 해체했을 경우 관리하던 아지트에 몬스터들이 대거 등장했었습니다.",
+      "::이제 아지트를 소유한 길드가 길드를 해체하더라도 아지트에 몬스터가 소환되지 않게 되었습니다."
+    ],
+    "saved_page": "fandom_RO_Patch_2004_Feb_10.json",
+    "url": "https://ragnarok.fandom.com/api.php?action=parse&page=RO_Patch_%282004_Feb._10%29&prop=wikitext&format=json&utf8=1"
+  },
+  "RO Patch (2004 Feb. 17)": {
+    "lines": [
+      ":- 일부 길드가 아지트를 차지한 다음에 포기를 할 경우 길드 아지트에 몹들이 소환되는 점을 악용하여 불법적인 아이템 취득 및 레벨업을 진행했었습니다.",
+      "::이 부분에 대해서 아지트를 포기하더라도 몬스터는 더이상 소환되지 않도록 하였습니다."
+    ],
+    "saved_page": "fandom_RO_Patch_2004_Feb_17.json",
+    "url": "https://ragnarok.fandom.com/api.php?action=parse&page=RO_Patch_%282004_Feb._17%29&prop=wikitext&format=json&utf8=1"
+  },
+  "RO Patch (2004 Mar. 16)": {
+    "lines": [
+      "::공성시 거래요청을 원하시지 않으신 분들은 사용해 주시기 바랍니다."
+    ],
+    "saved_page": "fandom_RO_Patch_2004_Mar_16.json",
+    "url": "https://ragnarok.fandom.com/api.php?action=parse&page=RO_Patch_%282004_Mar._16%29&prop=wikitext&format=json&utf8=1"
+  },
+  "RO Patch (2004 Mar. 23)": {
+    "lines": [
+      ":- /notrade 명령어가 추가되었습니다. (/nt로도 사용가능합니다.) 이 명령어를 사용하면 거래 요청을 자동으로 거절합니다. 공성시 거래요청을 원하시지 않으신 분들은 사용해 주시기 바랍니다."
+    ],
+    "saved_page": "fandom_RO_Patch_2004_Mar_23.json",
+    "url": "https://ragnarok.fandom.com/api.php?action=parse&page=RO_Patch_%282004_Mar._23%29&prop=wikitext&format=json&utf8=1"
+  },
+  "RO Patch (2004 Mar. 30)": {
+    "lines": [
+      ":- 길드 아지트를 소유한 길드에게는 릴레이 퀘스트가 진행됩니다."
+    ],
+    "saved_page": "fandom_RO_Patch_2004_Mar_30.json",
+    "url": "https://ragnarok.fandom.com/api.php?action=parse&page=RO_Patch_%282004_Mar._30%29&prop=wikitext&format=json&utf8=1"
+  },
+  "RO Patch (2004 Apr. 07)": {
+    "lines": [
+      ":- 노비스 공성전 엠블렘 휘날리며~ 이벤트가 시작되었습니다.",
+      "::노비스 공성전에 대한 자세한 내용은 홈페이지를 참고해 주시기 바랍니다.",
+      ":- 노비스 공성전 엠블렘 휘날리며~ 이벤트가 시작되었습니다.",
+      "::노비스 공성전에 대한 자세한 내용은 홈페이지를 참고해 주시기 바랍니다."
+    ],
+    "saved_page": "fandom_RO_Patch_2004_Apr_07.json",
+    "url": "https://ragnarok.fandom.com/api.php?action=parse&page=RO_Patch_%282004_Apr._07%29&prop=wikitext&format=json&utf8=1"
+  },
+  "RO Patch (2004 Apr. 27)": {
+    "lines": [
+      ":- 엠펠리움의 속성이 성속성 / 천사형으로 변경되었습니다.",
+      ":- 공성때는 /noctrl 을 써도 자동공격이 되지 않게 됩니다.",
+      ":- 엠펠리움의 속성이 성속성 / 천사형으로 변경되었습니다.",
+      ":- 공성모드 시에 /noctrl 을 사용하여도 자동공격이 되지 않습니다."
+    ],
+    "saved_page": "fandom_RO_Patch_2004_Apr_27.json",
+    "url": "https://ragnarok.fandom.com/api.php?action=parse&page=RO_Patch_%282004_Apr._27%29&prop=wikitext&format=json&utf8=1"
+  },
+  "RO Patch (2004 May 04)": {
+    "lines": [
+      ":- 공성전에서 나오던 방송에 각 아지트의 공식명칭이 추가적으로 붙어서 방송됩니다.",
+      "::아지트의 명칭을 익혀두시면 보다 즐거운 공성전과 공성전 관람이 되실 것으로 생각됩니다."
+    ],
+    "saved_page": "fandom_RO_Patch_2004_May_04.json",
+    "url": "https://ragnarok.fandom.com/api.php?action=parse&page=RO_Patch_%282004_May_04%29&prop=wikitext&format=json&utf8=1"
+  },
+  "RO Patch (2004 May 18)": {
+    "lines": [
+      ":- 노비스 공성전 이벤트가 종료되었습니다.",
+      ":- 노비스 공성전 이벤트가 종료되었습니다."
+    ],
+    "saved_page": "fandom_RO_Patch_2004_May_18.json",
+    "url": "https://ragnarok.fandom.com/api.php?action=parse&page=RO_Patch_%282004_May_18%29&prop=wikitext&format=json&utf8=1"
+  },
+  "RO Patch (2004 Jun. 01)": {
+    "lines": [
+      "::<nowiki>:: :: ::</nowiki>초보자 공성전에 관련하여 최종적으로 승리한 길드의 이름들이 기재되어 있습니다.",
+      "::<nowiki>:: :: ::</nowiki>초보자 공성전에 보내주신 열렬한 성원에 감사드립니다.",
+      "::<nowiki>:: :: ::</nowiki>초보자 공성전에 관련하여 최종적으로 승리한 길드의 이름들이 기재되어져 있습니다.",
+      "::<nowiki>:: :: ::</nowiki>초보자 공성전에 보내주신 열렬한 성원에 감사드립니다."
+    ],
+    "saved_page": "fandom_RO_Patch_2004_Jun_01.json",
+    "url": "https://ragnarok.fandom.com/api.php?action=parse&page=RO_Patch_%282004_Jun._01%29&prop=wikitext&format=json&utf8=1"
+  },
+  "RO Patch (2004 Jun. 15)": {
+    "lines": [
+      "::아지트를 소유한 길드분들께서는 보다 강화된 퀘스트를 맛보시기 바랍니다."
+    ],
+    "saved_page": "fandom_RO_Patch_2004_Jun_15.json",
+    "url": "https://ragnarok.fandom.com/api.php?action=parse&page=RO_Patch_%282004_Jun._15%29&prop=wikitext&format=json&utf8=1"
+  },
+  "RO Patch (2004 Jun. 29)": {
+    "lines": [
+      ":- 공성시 타 길드가 깃발을 통해 성으로 진입하는 문제점이 수정되었습니다.",
+      "::아지트를 소유한 길드분들께서는 보다 강화된 퀘스트를 맛보시기 바랍니다."
+    ],
+    "saved_page": "fandom_RO_Patch_2004_Jun_29.json",
+    "url": "https://ragnarok.fandom.com/api.php?action=parse&page=RO_Patch_%282004_Jun._29%29&prop=wikitext&format=json&utf8=1"
+  }
+}

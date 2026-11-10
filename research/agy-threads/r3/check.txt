@@ -1,0 +1,258 @@
+NONE	D-WD-MAHN	
+NONE	D-WD-MARE	
+NONE	D-WD-SYRA	
+NONE	D-WD-KAFR	
+NONE	D-WD-HOLL	
+NONE	D-WD-PECO	
+PASS	D-BUG-1609	
+PASS	D-BUG-1610	
+PASS	D-BUG-1611	
+PASS	D-BUG-1618	
+PASS	D-BUG-2259	
+PASS	D-NPC-HOLL	
+PASS	D-NPC-KAFR	
+PASS	J-WIZ-MAP-A	
+PASS	J-WIZ-MAP-B	
+PASS	J-WIZ-MAP-C	
+PASS	J-WIZ-WATER	
+PASS	J-WIZ-EARTH	
+PASS	J-WIZ-FIRE	
+PASS	J-WIZ-BYPASS	
+PASS	J-PRI-MAP-A	
+PASS	J-PRI-SCRIPT	
+PASS	J-PRI-ALTAR	
+PASS	J-HUN-MAP-A	
+PASS	J-HUN-SCRIPT	
+PASS	J-KNI-MAP-A	
+PASS	J-KNI-NPC	
+PASS	J-BS-NPC	
+PASS	J-ASN-SCRIPT	
+NONE	J-ASN-MAP	
+NONE	J-BS-MAP	
+PASS	J-KRO-21NPC	
+PASS	K-PTS-WARP	
+PASS	K-STOR-FEE	
+PASS	K-PTS-CHECK	
+PASS	K-PTS-KRO	
+PASS	M-KRO-HP-DEF	
+PASS	M-COMODO-PT6	
+PASS	M-BAPHOMET-MOD	
+PASS	M-BAPHOMET-817	
+PASS	P-TOTAL-24	
+PASS	P-BAPHOMET_Jr	
+PASS	P-BON_GUN	
+PASS	P-CHONCHON	
+PASS	P-DESERT_WOLF_B	
+PASS	P-DEVIRUCHI	
+PASS	P-DOKEBI	
+PASS	P-DROPS	
+PASS	P-HUNTER_FLY	
+PASS	P-ISIS	
+WARN	P-LUNATIC	could not load it again (URLError: <urlopen error [Errno 111] Connection refused>)
+WARN	P-MUNAK	could not load it again (URLError: <urlopen error [Errno 111] Connection refused>)
+WARN	P-ORC_WARRIOR	could not load it again (URLError: <urlopen error [Errno 111] Connection refused>)
+WARN	P-PECOPECO	could not load it again (URLError: <urlopen error [Errno 111] Connection refused>)
+WARN	P-PETIT	could not load it again (URLError: <urlopen error [Errno 111] Connection refused>)
+WARN	P-PICKY	could not load it again (URLError: <urlopen error [Errno 111] Connection refused>)
+WARN	P-POISON_SPORE	could not load it again (URLError: <urlopen error [Errno 111] Connection refused>)
+WARN	P-POPORING	could not load it again (URLError: <urlopen error [Errno 111] Connection refused>)
+WARN	P-PORING	could not load it again (URLError: <urlopen error [Errno 111] Connection refused>)
+WARN	P-ROCKER	could not load it again (URLError: <urlopen error [Errno 111] Connection refused>)
+WARN	P-SAVAGE_BABE	could not load it again (URLError: <urlopen error [Errno 111] Connection refused>)
+WARN	P-SHOEE	could not load it again (URLError: <urlopen error [Errno 111] Connection refused>)
+WARN	P-SMOKIE	could not load it again (URLError: <urlopen error [Errno 111] Connection refused>)
+WARN	P-SPORE	could not load it again (URLError: <urlopen error [Errno 111] Connection refused>)
+WARN	P-STEEL_CHONCHON	could not load it again (URLError: <urlopen error [Errno 111] Connection refused>)
+WARN	P-YOYO	could not load it again (URLError: <urlopen error [Errno 111] Connection refused>)
+NONE	Q-NV-FA-A	
+PASS	Q-NV-FA-B	
+WARN	Q-NV-FA-C	could not load it again (URLError: <urlopen error [Errno 111] Connection refused>)
+NONE	Q-NV-PD-A	
+PASS	Q-NV-PD-B	
+WARN	Q-NV-PD-C	could not load it again (URLError: <urlopen error [Errno 111] Connection refused>)
+PASS	Q-SM-MH-A	
+PASS	Q-SM-MH-B	
+WARN	Q-SM-MH-C	could not load it again (URLError: <urlopen error [Errno 111] Connection refused>)
+PASS	Q-SM-FB-A	
+PASS	Q-SM-FB-B	
+WARN	Q-SM-FB-C	could not load it again (URLError: <urlopen error [Errno 111] Connection refused>)
+PASS	Q-SM-AB-A	
+PASS	Q-SM-AB-B	
+WARN	Q-SM-AB-C	could not load it again (URLError: <urlopen error [Errno 111] Connection refused>)
+PASS	Q-MG-EC-A	
+PASS	Q-MG-EC-B	
+WARN	Q-MG-EC-C	could not load it again (URLError: <urlopen error [Errno 111] Connection refused>)
+PASS	Q-AC-AC-A	
+PASS	Q-AC-AC-B	
+WARN	Q-AC-AC-C	could not load it again (URLError: <urlopen error [Errno 111] Connection refused>)
+PASS	Q-AC-CA-A	
+PASS	Q-AC-CA-B	
+WARN	Q-AC-CA-C	could not load it again (URLError: <urlopen error [Errno 111] Connection refused>)
+PASS	Q-AL-HL-A	
+PASS	Q-AL-HL-B	
+WARN	Q-AL-HL-C	could not load it again (URLError: <urlopen error [Errno 111] Connection refused>)
+PASS	Q-MC-CR-A	
+PASS	Q-MC-CR-B	
+WARN	Q-MC-CR-C	could not load it again (URLError: <urlopen error [Errno 111] Connection refused>)
+PASS	Q-MC-CC-A	
+PASS	Q-MC-CC-B	
+WARN	Q-MC-CC-C	could not load it again (URLError: <urlopen error [Errno 111] Connection refused>)
+PASS	Q-MC-LD-A	
+PASS	Q-MC-LD-B	
+WARN	Q-MC-LD-C	could not load it again (URLError: <urlopen error [Errno 111] Connection refused>)
+NONE	Q-TF-SA-A	
+PASS	Q-TF-SA-B	
+WARN	Q-TF-SA-C	could not load it again (URLError: <urlopen error [Errno 111] Connection refused>)
+PASS	Q-TF-BS-A	
+PASS	Q-TF-BS-B	
+WARN	Q-TF-BS-C	could not load it again (URLError: <urlopen error [Errno 111] Connection refused>)
+PASS	Q-TF-FS-A	
+PASS	Q-TF-FS-B	
+WARN	Q-TF-FS-C	could not load it again (URLError: <urlopen error [Errno 111] Connection refused>)
+PASS	Q-TF-SF-A	
+PASS	Q-TF-SF-B	
+WARN	Q-TF-SF-C	could not load it again (URLError: <urlopen error [Errno 111] Connection refused>)
+PASS	R-KRO-DEF-NERF	
+PASS	R-KRO-ATK-LV4	
+PASS	R-KRO-OVERREF	
+PASS	R-817-REF-DB	
+PASS	R-817-REF-PC	
+PASS	W1-001	
+PASS	W1-002	
+PASS	W1-003	
+PASS	W1-004	
+PASS	W1-005	
+PASS	W1-006	
+PASS	W1-007	
+PASS	W1-008	
+PASS	W1-009	
+PASS	W1-010	
+PASS	W1-011	
+PASS	W1-012	
+PASS	W1-013	
+PASS	W1-014	
+PASS	W1-015	
+PASS	W1-016	
+PASS	W1-017	
+PASS	W1-018	
+PASS	W1-019	
+PASS	W1-020	
+PASS	W1-021	
+PASS	W1-022	
+PASS	W1-023	
+PASS	W2-001	
+PASS	W2-002	
+PASS	W2-003	
+PASS	W2-004	
+PASS	W2-005	
+PASS	W2-006	
+PASS	W2-007	
+PASS	W2-008	
+PASS	W2-009	
+PASS	W2-010	
+PASS	W2-011	
+PASS	W2-012	
+PASS	W2-013	
+PASS	W2-014	
+PASS	W2-015	
+PASS	W2-016	
+PASS	W2-017	
+PASS	W2-018	
+PASS	W2-019	
+PASS	W2-020	
+PASS	W3-MOB-ARCHER	
+PASS	W3-MOB-KNIGHT	
+PASS	W3-MOB-SOLDIER	
+PASS	W3-MOB-EMPELIUM	
+PASS	W3-BOX-01	
+PASS	W3-BOX-02	
+PASS	W3-BOX-03	
+PASS	W3-BOX-04	
+PASS	W3-BOX-05	
+PASS	W3-BOX-06	
+PASS	W3-BOX-07	
+PASS	W3-BOX-08	
+PASS	W3-BOX-09	
+PASS	W3-BOX-10	
+PASS	W3-BOX-11	
+PASS	W3-BOX-12	
+PASS	W3-BOX-13	
+PASS	W3-BOX-14	
+PASS	W3-BOX-15	
+PASS	W3-BOX-16	
+PASS	W3-BOX-17	
+PASS	W3-BOX-18	
+PASS	W3-BOX-19	
+PASS	W3-BOX-20	
+PASS	W3-BOX-21	
+PASS	W3-BOX-22	
+PASS	W3-BOX-23	
+PASS	W3-BOX-24	
+PASS	W3-BOX-25	
+PASS	W3-BOX-26	
+PASS	W3-BOX-27	
+PASS	W3-BOX-28	
+PASS	W3-BOX-29	
+PASS	W3-BOX-30	
+PASS	W3-BOX-31	
+PASS	W3-BOX-32	
+PASS	W3-BOX-33	
+PASS	W3-BOX-34	
+PASS	W3-BOX-35	
+PASS	W3-BOX-36	
+PASS	W3-BOX-37	
+PASS	W3-BOX-38	
+PASS	W3-BOX-39	
+PASS	W3-BOX-40	
+NONE	W3-BOX-CASTLE-NONE	
+PASS	W3-CASTLE-DB	
+PASS	W3-EXP-GUILD	
+PASS	W3-SKILL-APPROVAL	
+PASS	W3-SKILL-KAFRA	
+PASS	W3-SKILL-GUARD	
+PASS	W3-SKILL-CHARISMA	
+PASS	W3-SKILL-EXTENSION	
+PASS	W3-MSG-FUNDS	
+PASS	W4-ALDEG-01	
+PASS	W4-ALDEG-02	
+PASS	W4-ALDEG-03	
+PASS	W4-ALDEG-04	
+PASS	W4-ALDEG-05	
+PASS	W4-GEFG-01	
+PASS	W4-GEFG-02	
+PASS	W4-GEFG-03	
+PASS	W4-GEFG-04	
+PASS	W4-GEFG-05	
+PASS	W4-PAYG-01	
+PASS	W4-PAYG-02	
+PASS	W4-PAYG-03	
+PASS	W4-PAYG-04	
+PASS	W4-PAYG-05	
+PASS	W4-PRTG-01	
+PASS	W4-PRTG-02	
+PASS	W4-PRTG-03	
+PASS	W4-PRTG-04	
+PASS	W4-PRTG-05	
+PASS	W4-DUN-01	
+PASS	W4-DUN-02	
+PASS	W4-DUN-03	
+PASS	W4-DUN-04	
+WARN	W5-001	could not load it again (URLError: <urlopen error [Errno 111] Connection refused>)
+WARN	W5-002	could not load it again (URLError: <urlopen error [Errno 111] Connection refused>)
+PASS	W5-003	
+NONE	W5-004	
+NONE	W5-005	
+NONE	W5-006	
+NONE	W5-007	
+WARN	W6-001	could not load it again (URLError: <urlopen error [Errno 111] Connection refused>)
+WARN	W6-002	could not load it again (URLError: <urlopen error [Errno 111] Connection refused>)
+WARN	W6-003	could not load it again (URLError: <urlopen error [Errno 111] Connection refused>)
+WARN	W6-004	could not load it again (URLError: <urlopen error [Errno 111] Connection refused>)
+WARN	W6-005	could not load it again (URLError: <urlopen error [Errno 111] Connection refused>)
+WARN	W6-006	could not load it again (URLError: <urlopen error [Errno 111] Connection refused>)
+WARN	W6-007	could not load it again (URLError: <urlopen error [Errno 111] Connection refused>)
+WARN	W6-008	could not load it again (URLError: <urlopen error [Errno 111] Connection refused>)
+WARN	W7-001	could not load it again (URLError: <urlopen error [Errno 111] Connection refused>)
+WARN	W7-002	could not load it again (URLError: <urlopen error [Errno 111] Connection refused>)
+WARN	W7-003	could not load it again (URLError: <urlopen error [Errno 111] Connection refused>)
+WARN	W7-004	could not load it again (URLError: <urlopen error [Errno 111] Connection refused>)

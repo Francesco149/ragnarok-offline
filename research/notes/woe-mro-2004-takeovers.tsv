@@ -1,0 +1,99 @@
+# Castle takeovers per siege on the Malaysian servers, spring 2004, from Ro-Guardians "Castle Takeover History" pages.
+# Page: web.archive.org/web/<capture>/http://sskl.host.sk/ro-guardians/<server>/guildCastles.php?act=castleHist&townID=guild_<town>&castleID=<n>
+# names_listed: guild names in the entry (each a takeover); distinct: different names among them. Guild names are left out.
+server	town	n	castle	siege_date	weekday	names_listed	distinct	held_for	capture
+chaos	geffen	2	Geffen II	2004-03-18	Thu	1	1	2 days	20040627050159
+chaos	geffen	2	Geffen II	2004-03-20	Sat	1	1	10 days	20040627050159
+chaos	geffen	2	Geffen II	2004-03-31	Wed	4	4	3 days	20040627050159
+chaos	geffen	2	Geffen II	2004-04-03	Sat	9	6	4 days	20040627050159
+chaos	geffen	2	Geffen II	2004-04-07	Wed	2	2	21 days	20040627050159
+chaos	geffen	2	Geffen II	2004-04-28	Wed	5	4	3 days	20040627050159
+chaos	geffen	2	Geffen II	2004-05-01	Sat	3	2	4 days	20040627050159
+chaos	geffen	2	Geffen II	2004-05-05	Wed	7	6	7 days	20040627050159
+chaos	geffen	2	Geffen II	2004-05-12	Wed	1	1	3 days	20040627050159
+chaos	geffen	2	Geffen II	2004-05-15	Sat	9	4	4 days	20040627050159
+chaos	geffen	2	Geffen II	2004-05-19	Wed	7	7	3 days	20040627050159
+chaos	geffen	2	Geffen II	2004-05-22	Sat	5	4	4 days	20040627050159
+chaos	geffen	2	Geffen II	2004-05-26	Wed	8	5	3 days	20040627050159
+chaos	geffen	2	Geffen II	2004-05-29	Sat	5	4	4 days	20040627050159
+chaos	geffen	2	Geffen II	2004-06-02	Wed	3	3	3 days	20040627050159
+chaos	geffen	2	Geffen II	2004-06-05	Sat	9	4	22 days and counting	20040627050159
+chaos	prontera	4	Prontera IV	2004-03-18	Thu	1	1	2 days	20040629025940
+chaos	prontera	4	Prontera IV	2004-03-20	Sat	5	5	4 days	20040629025940
+chaos	prontera	4	Prontera IV	2004-03-24	Wed	8	4	6 days	20040629025940
+chaos	prontera	4	Prontera IV	2004-03-31	Wed	1	1	14 days	20040629025940
+chaos	prontera	4	Prontera IV	2004-04-14	Wed	2	2	3 days	20040629025940
+chaos	prontera	4	Prontera IV	2004-04-17	Sat	8	5	4 days	20040629025940
+chaos	prontera	4	Prontera IV	2004-04-21	Wed	4	3	3 days	20040629025940
+chaos	prontera	4	Prontera IV	2004-04-24	Sat	2	2	7 days	20040629025940
+chaos	prontera	4	Prontera IV	2004-05-01	Sat	2	2	4 days	20040629025940
+chaos	prontera	4	Prontera IV	2004-05-05	Wed	1	1	10 days	20040629025940
+chaos	prontera	4	Prontera IV	2004-05-15	Sat	2	2	7 days	20040629025940
+chaos	prontera	4	Prontera IV	2004-05-22	Sat	5	4	4 days	20040629025940
+chaos	prontera	4	Prontera IV	2004-05-26	Wed	5	4	7 days	20040629025940
+chaos	prontera	4	Prontera IV	2004-06-02	Wed	1	1	3 days	20040629025940
+chaos	prontera	4	Prontera IV	2004-06-05	Sat	3	3	24 days and counting	20040629025940
+irisi	aldebaran	5	Al De Baran V	2004-03-18	Thu	1	1	12 days	20040705015847
+irisi	aldebaran	5	Al De Baran V	2004-03-31	Wed	1	1	3 days	20040705015847
+irisi	aldebaran	5	Al De Baran V	2004-04-03	Sat	4	3	11 days	20040705015847
+irisi	aldebaran	5	Al De Baran V	2004-04-14	Wed	7	3	3 days	20040705015847
+irisi	aldebaran	5	Al De Baran V	2004-04-17	Sat	5	4	4 days	20040705015847
+irisi	aldebaran	5	Al De Baran V	2004-04-21	Wed	6	5	3 days	20040705015847
+irisi	aldebaran	5	Al De Baran V	2004-04-24	Sat	1	1	7 days	20040705015847
+irisi	aldebaran	5	Al De Baran V	2004-05-01	Sat	1	1	4 days	20040705015847
+irisi	aldebaran	5	Al De Baran V	2004-05-05	Wed	1	1	3 days	20040705015847
+irisi	aldebaran	5	Al De Baran V	2004-05-08	Sat	3	3	4 days	20040705015847
+irisi	aldebaran	5	Al De Baran V	2004-05-12	Wed	8	6	3 days	20040705015847
+irisi	aldebaran	5	Al De Baran V	2004-05-15	Sat	4	3	4 days	20040705015847
+irisi	aldebaran	5	Al De Baran V	2004-05-19	Wed	5	5	3 days	20040705015847
+irisi	aldebaran	5	Al De Baran V	2004-05-22	Sat	2	2	7 days	20040705015847
+irisi	aldebaran	5	Al De Baran V	2004-05-29	Sat	2	2	4 days	20040705015847
+irisi	aldebaran	5	Al De Baran V	2004-06-02	Wed	4	3	3 days	20040705015847
+irisi	aldebaran	5	Al De Baran V	2004-06-05	Sat	2	2	30 days and counting	20040705015847
+irisi	prontera	2	Prontera II	2004-03-18	Thu	1	1	2 days	20040705184226
+irisi	prontera	2	Prontera II	2004-03-20	Sat	2	2	4 days	20040705184226
+irisi	prontera	2	Prontera II	2004-03-24	Wed	1	1	3 days	20040705184226
+irisi	prontera	2	Prontera II	2004-03-27	Sat	1	1	3 days	20040705184226
+irisi	prontera	2	Prontera II	2004-03-31	Wed	1	1	7 days	20040705184226
+irisi	prontera	2	Prontera II	2004-04-07	Wed	1	1	14 days	20040705184226
+irisi	prontera	2	Prontera II	2004-04-21	Wed	2	2	14 days	20040705184226
+irisi	prontera	2	Prontera II	2004-05-05	Wed	2	2	14 days	20040705184226
+irisi	prontera	2	Prontera II	2004-05-19	Wed	12	6	3 days	20040705184226
+irisi	prontera	2	Prontera II	2004-05-22	Sat	13	8	4 days	20040705184226
+irisi	prontera	2	Prontera II	2004-05-26	Wed	14	9	3 days	20040705184226
+irisi	prontera	2	Prontera II	2004-05-29	Sat	9	6	4 days	20040705184226
+irisi	prontera	2	Prontera II	2004-06-02	Wed	5	3	3 days	20040705184226
+irisi	prontera	2	Prontera II	2004-06-05	Sat	24	14	30 days and counting	20040705184226
+irisii	geffen	4	Geffen IV	2004-06-07	Mon	1	1	37 days and counting	20040714025132
+lidia	geffen	2	Geffen II	2004-06-02	Wed	1	1	44 days and counting	20040716150009
+lidia	geffen	3	Geffen III	2004-06-02	Wed	1	1	44 days and counting	20040716143902
+lidia	geffen	4	Geffen IV	2004-06-02	Wed	1	1	44 days and counting	20040716145447
+lidia	geffen	5	Geffen V	2004-06-05	Sat	1	1	41 days and counting	20040716143531
+lidia	payon	1	Payon I	2004-06-05	Sat	6	4	41 days and counting	20040716150136
+lidia	payon	2	Payon II	2004-06-05	Sat	1	1	41 days and counting	20040716143919
+lidia	payon	3	Payon III	2004-06-05	Sat	3	3	41 days and counting	20040716145751
+lidia	payon	4	Payon IV	2004-06-05	Sat	2	2	41 days and counting	20040716143224
+lidia	payon	5	Payon V	2004-06-05	Sat	4	4	41 days and counting	20040716150048
+lidia	prontera	1	Prontera I	2004-06-05	Sat	2	2	41 days and counting	20040716144350
+lidia	prontera	2	Prontera II	2004-06-05	Sat	2	2	41 days and counting	20040716150045
+lidia	prontera	4	Prontera IV	2004-06-02	Wed	1	1	45 days and counting	20040717061238
+loki	aldebaran	3	Al De Baran III	2004-06-05	Sat	2	2	32 days and counting	20040707120138
+loki	payon	5	Payon V	2004-06-05	Sat	4	4	33 days and counting	20040707225636
+odin	aldebaran	1	Al De Baran I	2004-05-29	Sat	1	1	4 days	20040708173355
+odin	aldebaran	1	Al De Baran I	2004-06-02	Wed	3	3	3 days	20040708173355
+odin	aldebaran	1	Al De Baran I	2004-06-05	Sat	4	4	33 days and counting	20040708173355
+odin	payon	3	Payon III	2004-05-29	Sat	1	1	4 days	20040708220057
+odin	payon	3	Payon III	2004-06-02	Wed	3	3	3 days	20040708220057
+odin	payon	3	Payon III	2004-06-05	Sat	3	3	34 days and counting	20040708220057
+penril	payon	1	Payon I	2004-04-21	Wed	4	3	3 days	20040711064806
+penril	payon	1	Payon I	2004-04-24	Sat	3	3	4 days	20040711064806
+penril	payon	1	Payon I	2004-04-28	Wed	7	6	3 days	20040711064806
+penril	payon	1	Payon I	2004-05-01	Sat	5	5	4 days	20040711064806
+penril	payon	1	Payon I	2004-05-05	Wed	1	1	3 days	20040711064806
+penril	payon	1	Payon I	2004-05-08	Sat	2	2	11 days	20040711064806
+penril	payon	1	Payon I	2004-05-19	Wed	4	2	3 days	20040711064806
+penril	payon	1	Payon I	2004-05-22	Sat	8	6	4 days	20040711064806
+penril	payon	1	Payon I	2004-05-26	Wed	8	5	3 days	20040711064806
+penril	payon	1	Payon I	2004-05-29	Sat	1	1	4 days	20040711064806
+penril	payon	1	Payon I	2004-06-02	Wed	9	7	3 days	20040711064806
+penril	payon	1	Payon I	2004-06-05	Sat	8	5	36 days and counting	20040711064806
