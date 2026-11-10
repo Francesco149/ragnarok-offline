@@ -21,7 +21,10 @@ and the local period sources first, above all mod0631's own NPC scripts.
 Its output is `research/agy-threads/r2/`; **read
 `research/notes/round2-review.md` first**: the summary report there invents
 quotes and references, the sub-agents' notes under it mostly hold. Below,
-"round 2" marks what that review confirmed from the source.
+"round 2" marks what that review confirmed from the source. Round 3 is
+briefed in `research/agy-threads/HANDOFF-r3.md`: War of Emperium in depth
+first, and findings only as rows that `research/check_rows.py` can check
+against the cited file, revision or saved page.
 
 Ruled out as a source: leaked Gravity server packages (Aegis binaries and
 scripts). They are not ours to use or redistribute, and nothing here may be
@@ -298,6 +301,13 @@ yet they hold mini-bosses and an Eddga.
 
 Whatever we build gets a DEVIATIONS.md entry saying what is period
 behaviour and what is invented.
+
+**Decided (owner, 2026-11-10):** part 2 it is. Once we know how the
+original worked, exactly, the castles are reworked into something a single
+player can do that keeps the feel of the content, as with anything else
+that needed other people. So the research comes first: mechanics, numbers,
+and what a siege and a held castle were like (round 3, tasks W1–W7). The
+options below are the round-1 sketches, not the design.
 
 **Round 1, done:** a castle without an owner held monsters. kRO's notices
 of 2004-02-10 and -17 describe it (and remove it); 817's `mobs/gvg.txt`

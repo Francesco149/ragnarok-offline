@@ -25,3 +25,5 @@ __pycache__/
 # (Gravity's text), row for row
 /research/agy-threads/r2/t5-official-text.tsv
 /research/agy-threads/r2/frames/
+# round 3: the web pages its rows cite, as fetched (third-party content; the rows quote what matters)
+/research/agy-threads/r3/pages/
