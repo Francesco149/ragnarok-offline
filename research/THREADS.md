@@ -430,7 +430,9 @@ placeholder lengths, no Curse, poison without HP loss. eAthena 817
 (2004-02): chances and lengths fall with MDEF / VIT / INT / LUK, lengths
 per skill level in `cast_db.txt`, poison takes HP down to a quarter, Storm
 Gust freezes on the third hit. We follow 817 (DEVIATIONS.md). Neither says
-where its numbers came from.
+where its numbers came from. 817 sends opt1 = 6 for the five seconds of
+turning to stone; we keep it server-side and send nothing until the stone
+sets: does the Dec-2003 client draw opt1 6 (look for it in the exe)?
 **Impact:** `skill_additional_effect` and the ailment part of
 `skill_status_change_start` in `scripts/rules/`.
 **Look:** period player guides on stun and freeze resistance ("VIT 97
