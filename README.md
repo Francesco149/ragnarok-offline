@@ -27,7 +27,7 @@ the client's own resolution).
 | | |
 |---|---|
 | ![Character creation](docs/img/character-creation.png) | ![Novice training ground](docs/img/novice-ground.png) |
-| Character creation | The novice training ground this client ships (`new_zone01`–`04`), an older layout than the `new_1-x` maps the 2004 emulators were written for |
+| Character creation | The novice training ground as this client has it (`new_zone01`–`04`). Servers of the time called it `new_1-1`; the client maps one name to the other itself |
 | ![Kafra in Payon](docs/img/payon-kafra.png) | ![Fighting a Poring](docs/img/poring.png) |
 | Payon as it was before the town was rebuilt, and its Kafra: save, storage, teleport, cart rental | The first Poring. Melee combat, EXP, drops and monster spawns follow December 2003 emulator data |
 | ![Interface, pushcart and pet](docs/img/interface.png) | ![Alberta docks](docs/img/alberta.png) |
@@ -57,8 +57,8 @@ Full identification, with evidence: [docs/CLIENT.md](docs/CLIENT.md). In short:
   `packet_ver 5`). The packet length table used here was read out of the exe.
 - **269 maps**: Prontera, Geffen, Payon, Morroc, Alberta, Izlude, Al De Baran,
   Comodo, Lutie, Glast Heim, plus Turtle Island and Juno shipped as un-merged
-  patch files. It has the older novice training ground. euRO itself only
-  opened Juno and the 2-2 jobs on 2004-06-09, so they are off by default here.
+  patch files. euRO itself only opened Juno and the 2-2 jobs on 2004-06-09,
+  so they are off by default here.
 - The CD itself is most likely a magazine cover disc (CHIP Italia, June
   2004) carrying the December 2003 build. [docs/PRESERVATION.md](docs/PRESERVATION.md)
   records the rip and how the disc was identified.
@@ -92,7 +92,8 @@ Not yet:
 Out of scope because nobody else is there: parties, guilds, trading, vending
 and PvP. What to do with War of Emperium and the guild dungeons in a
 single-player game is an open design question
-([research/THREADS.md](research/THREADS.md) #17).
+([research/THREADS.md](research/THREADS.md) #17). For now the guild castles
+hold what an ownerless castle held in early 2004: monsters.
 
 Next steps, in order: [docs/ROADMAP.md](docs/ROADMAP.md).
 

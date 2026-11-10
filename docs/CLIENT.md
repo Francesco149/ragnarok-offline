@@ -36,10 +36,12 @@ fails its zlib checksum identically in `data.grf` and in the Juno patch.
 
 The client data contains Prontera/Geffen/Payon/Morroc/Alberta/Izlude/
 Aldebaran/Comodo/Lutie (xmas)/Glast Heim, Turtle Island (patch) and Juno
-(patch): 269 maps after merging. It has the *older* novice training ground
-`new_zone01..04`, not the 2004 `new_1-x` maps the Athena servers of the time
-used. euRO itself only opened Juno and the 2-2 jobs on 2004-06-09, so a
-faithful "closed beta" world would keep Juno closed (see ROADMAP).
+(patch): 269 maps after merging. Its novice training ground is
+`new_zone01..04`. Servers of the time called it `new_1-1..4`, and the client
+maps one name to the other itself (`data\resnametable.txt`:
+`new_1-1.gat#new_zone01.gat#`). euRO itself only opened Juno and the 2-2
+jobs on 2004-06-09, so a faithful "closed beta" world would keep Juno closed
+(see ROADMAP).
 
 ## Redirecting it (no exe patch)
 
