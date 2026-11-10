@@ -144,9 +144,9 @@ impl T {
     }
 }
 
-const MAPS: [&str; 12] = [
+const MAPS: [&str; 13] = [
     "prontera", "izlude", "aldeba_in", "moc_prydb1", "payon", "alberta_in", "morocc", "prt_in", "prt_castle", "geffen",
-    "geffen_in", "morocc_in",
+    "geffen_in", "morocc_in", "alberta",
 ];
 
 fn setup(tag: &str) -> T {
@@ -384,4 +384,19 @@ fn dye_chain() {
     assert_eq!(t.eval("return player.hair_color .. ' ' .. player.zeny"), "3 3000");
     t.talk("prt_in", 284, 168, &[2]);
     assert_eq!(t.eval("return player.clothes_color"), "0");
+}
+
+/// 817's sailor sold passage to Amatsu and Gonryun, which this client does
+/// not have: the fare went and the ship did not.
+#[test]
+fn alberta_sailor() {
+    let mut t = setup("alberta_sailor");
+    t.eval("player.zeny = 1000");
+    let menus = t.talk("alberta", 189, 151, &[2]);
+    assert_eq!(menus[0], "Sunken Ship -> 250 Zeny.:Izlude Marina -> 500 Zeny:Turtle Island -> 800 Zeny:Quit");
+    assert_eq!(t.eval("return player.map .. ' ' .. player.zeny"), "izlude 500");
+    // Turtle Island is not among this test's maps: nothing sails, nothing is paid
+    t.eval("player.zeny = 1000");
+    t.talk("alberta", 189, 151, &[3]);
+    assert_eq!(t.eval("return player.map .. ' ' .. player.zeny"), "alberta 1000");
 }

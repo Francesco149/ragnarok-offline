@@ -478,6 +478,30 @@ cells, 25% chance to switch target, looters, assist within 13 cells.
 that list skills (RODataZone, RO Empire); later official data is tier
 later but shows which monster has which skill at all.
 
+### 24. Turtle Island: how one got there, and mod0631's NPCs we lack
+817's Alberta sailor (`alberta 189,151`) takes anyone to Turtle Island for
+800z, in one menu with the Sunken Ship and Izlude. mod0631
+(`conf/npc_turtle.txt`, 1,084 lines, Dec 2003) has what reads like the
+official quest: an old man in Alberta (`alberta_in 23,104`) tells the
+story, after which the sailor Gotanblue (`alberta 247,122`) takes 10000z
+for the trip to `tur_dun01 157,39`; a scholar and a logbook on the quay
+(`alberta 248,89`, `248,94`) start a second quest among four objects on
+the island, and a sailor there (`tur_dun01 165,29`) brings you back. We
+have 817's sailor; mod0631's chain is not ported. The island's maps are
+not in the CD's base GRF: they come with its `2003-04-30gdata_turtle_ph`
+patch, which the launcher merges.
+Other NPC files mod0631 loads and 817 has nothing of: the cursed swords
+(`npc_event_ma_sword.txt`: a gloomy man at `pay_fild08 218,283`, Gatu at
+`prt_in 163,12`, Nine at `izlude_in 160,129`, for Mysteltainn, Executioner
+and Grimtooth), the doll child of Alberta (`npc_event_doll.txt`, `alberta
+117,134`) and two arrow makers in Payon (`npc_event_arrow.txt`, `payon
+98,57` and `100,121`).
+**Impact:** whether Turtle Island is a 800z ferry or a 10000z expedition
+with a story; three item quests.
+**Look:** was Turtle Island open on euRO in Dec 2003 to Feb 2004 (iRO:
+2003-12-16), and the fare; RODataZone and iRO guide pages on the island and
+on the cursed-sword quest; then port mod0631's files.
+
 ## Resolved
 
 ### R1. Basic Skill levels

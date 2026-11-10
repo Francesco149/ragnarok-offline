@@ -158,6 +158,10 @@ eAthena 817 (2004-02-19), bugs included. The translator is
     does it. Which palette is which colour is read from the client's files;
   * showing Louitz the solutions a second time does not make the chemist
     forget you (mod0631 sets the quest back to its first step).
+* **Alberta's sailor** (`scripts/npc/alberta_sailor.lua`) no longer sells
+  passage to Amatsu and Gonryun: the client has neither map (they are later
+  additions 817 took from jAthena), so the fare went and the ship did not.
+  A voyage is paid for once it has begun.
 * **Peco Peco Breeder** (`scripts/npc/peco_keeper.lua`): mod0631's keeper
   by Prontera's north-west wall (`prontera 55,350`), 2500z a bird for a
   Knight; the Crusaders' keeper (`232,318`) comes with `jobs2_2`. 817 has
