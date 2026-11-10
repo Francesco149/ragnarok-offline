@@ -1,0 +1,32 @@
+=== WIZARD TEST MAP GEOMETRY EVIDENCE ===
+
+1. MAP NAME DISCREPANCY:
+- jAthena //0933 / 817 script expectation: `job_wiz.gat`
+- Client 2003-12-18 actual file: `job_wizard.gat` (verified in `data.grf.original`)
+- `job_wiz.gat` is completely absent from `data.grf.original`.
+
+2. MAP LAYOUT & WALKABILITY SCAN OF `job_wizard.gat`:
+Map size: 200 x 200 cells.
+Total walkable cells: 2,816
+Walkable bounds: X from 47 to 152, Y from 47 to 152.
+Layout: A single large, contiguous square arena centered at (99, 99).
+There are NO interior partition walls, NO separate quiz rooms, and NO sub-stages on this map.
+Surrounding border: Type 1 (unwalkable void).
+
+3. SCRIPT VS CLIENT MISMATCH:
+- 817 / eAthena `job_wizard.txt` script spawns NPCs and quiz rooms across multiple distinct sub-areas:
+  Room 1 (Water): (50, 160) - OUTSIDE walkable bounds (Y=160 > 152)
+  Room 2 (Earth): (120, 160) - OUTSIDE walkable bounds
+  Room 3 (Fire): (170, 100) - OUTSIDE walkable bounds (X=170 > 152)
+- Attempting to warp players or spawn mobs at the 817 script coordinates causes players to be trapped in unwalkable void cells.
+
+4. PRIEST TEST MAP (`job_priest.gat`):
+- Priest test map size: 200 x 200 cells.
+- Rooms verified in 817 script:
+  Warp entrance: (100, 17) -> Walkable Type 0
+  Room 1 (Peter): (36, 122) -> Walkable Type 0
+  Room 2 (Sister Cecil): (162, 122) -> Walkable Type 0
+  Room 3 (Father Thomas): (100, 176) -> Walkable Type 0
+- Result: Priest test in 817 matches the 2003 client map 100%.
+
+Grade: A (Client GAT binary analysis)

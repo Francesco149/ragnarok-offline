@@ -1,0 +1,416 @@
+m631_file	m631_line	map	x	y	sprite	name_ja	name_en	role	ours	same_cell	differences	cells_ok
+npc_event_skillget.txt	8	izlude_in	175	130	98	騎士デトマソ	Knight De Tomaso	Quest Skill (id 144)	817:skillquests/movinghp.txt:5	yes	items: [('2312', '1'), ('713', '500'), ('752', '1')] -> [('1058', '1'), ('713', '200')]	yes
+npc_event_skillget.txt	146	prt_in	75	88	85	レオ=フォン=フリッシュ	レオ=フォン=フリッシュ	Quest Skill (id 145)	817:skillquests/fatalblow.txt:5	yes	none	yes
+npc_event_skillget.txt	304	prt_in	94	57	85	ファン	ファン	Quest Skill (id 146)	817:skillquests/autoberserk.txt:5	yes	job_lv: ['30'] -> ['10', '30']	yes
+npc_event_skillget.txt	476	morocc	121	109	88	ギョルナリ	ギョルナリ	Quest Skill (id 147)	817:skillquests/arrowcraft.txt:5	yes	job_lv: ['35'] -> ['30']; items: [('1019', '13'), ('501', '1'), ('7033', '7'), ('906', '41'), ('924', '35')] -> [('1019', '13'), ('501', '1'), ('7033', '7'), ('906', '41'), ('907', '20')]	yes
+npc_event_skillget.txt	610	payon	30	94	88	カイゴ	カイゴ	Quest Skill (id 148)	817:skillquests/arrowrepel.txt:5	yes	none	yes
+npc_event_skillget.txt	732	alberta	83	96	98	ネコ	ネコ	Quest Skill (id 155)	817:skillquests/loud.txt:3	yes	none	yes
+npc_event_skillget.txt	894	alberta	119	221	107	シャイロン	シャイロン	Quest Skill (id 154)	817:skillquests/changecart.txt:5	yes	none	yes
+npc_event_skillget.txt	1045	alberta	232	106	57	コサンス	コサンス	Quest Skill (id 153)	817:skillquests/cartrevolution.txt:5	yes	job_lv: ['35'] -> ['30']; items: [('533', '2'), ('601', '20'), ('938', '30'), ('962', '5'), ('998', '15')] -> [('532', '1'), ('533', '2'), ('601', '15'), ('601', '20'), ('601', '23'), ('938', '25'), ('938', '30'), ('938', '32'), ('962', '5'), ('962', '6'), ('998', '15'), ('998', '20'), ('998', '23')]	yes
+npc_event_skillget.txt	1295	prt_church	173	23	79	主任アコライト	主任アコライト	Quest Skill (id 156)	817:skillquests/holylight.txt:5	yes	none	yes
+npc_event_skillget.txt	1392	geffen_in	151	119	64	大魔道師	大魔道師	Quest Skill (id 157)	817:skillquests/energycoat.txt:5	yes	none	yes
+npc_event_skillget.txt	1538	prt_in	234	133	66	ナミ	ナミ	Quest Skill (id 142)	none	no	mod0631 only: reqs=[('507', '3'), ('705', '3')] zeny=[] job=['3']	yes
+npc_event_skillget.txt	1717	prt_in	73	87	65	プロンテラ騎士団員	プロンテラ騎士団員	Quest Skill	none	no	mod0631 only: reqs=[] zeny=[] job=['7']	yes
+npc_event_skillget.txt	1890	prt_castle	175	146	50	看護将校	看護将校	Quest Skill	none	no	mod0631 only: reqs=[] zeny=[] job=[]	yes
+npc_event_skillget.txt	2004	moc_prydb1	154	128	118	アルコスク	Alcouskou	Quest Skill (id 149,150,151,152)	none	no	mod0631 only: reqs=[('7041', '5'), ('908', '5'), ('910', '2'), ('911', '2'), ('912', '1'), ('940', '20'), ('948', '1')] zeny=[] job=['15', '20', '25', '35']	yes
+npc_event_skillget.txt	2443	payon	30	120	99	ポケット販売商人	ポケット販売Merchant	Quest Skill	none	no	mod0631 only: reqs=[('1025', '1'), ('1055', '1'), ('952', '1')] zeny=[] job=[]	yes
+npc_job_1st.txt	5	moc_prydb1	39	129	69	ギルド関係者	ギルド関係者	Job Change / Test	817:jobs/thief.txt:128	yes	none	no
+npc_job_1st.txt	48	alberta_in	53	43	86	商人組合員	Merchant組合員	Job Change / Test	817:jobs/merchant.txt:3	yes	zeny: ['1000', '500'] -> []	no
+npc_job_1st.txt	92	prt_church	184	41	69	ギルド関係者	ギルド関係者	Job Change / Test	817:jobs/acolyte.txt:4	yes	none	yes
+npc_job_1st.txt	136	payon_in02	62	71	86	ギルド関係者	ギルド関係者	Job Change / Test	none	no	mod0631 only: reqs=[] zeny=[] job=['10']	yes
+npc_job_1st.txt	180	geffen_in	162	124	69	ギルド関係者	ギルド関係者	Job Change / Test	none	no	mod0631 only: reqs=[] zeny=[] job=['10']	yes
+npc_job_1st.txt	224	izlude_in	74	172	86	剣士ギルド関係者	剣士ギルド関係者	Job Change / Test	817:jobs/swordsman.txt:118	yes	job_lv: ['9'] -> ['10']	yes
+npc_job_2nd.txt	5	prt_in	88	101	56	騎士団員	騎士団員	Job Change / Test	817:jobs/knight.txt:3	yes	none	yes
+npc_job_2nd.txt	83	prt_church	16	41	60	神父	Priest	Job Change / Test	817:jobs/priest.txt:14	yes	none	yes
+npc_job_2nd.txt	161	in_hunter	100	99	98	ギルド関係者	ギルド関係者	Job Change / Test	none	no	mod0631 only: reqs=[] zeny=[] job=['40']	yes
+npc_job_2nd.txt	253	geffen_in	110	170	63	ギルド関係者	ギルド関係者	Job Change / Test	817:jobs/blacksmith.txt:3	yes	none	yes
+npc_job_2nd.txt	331	in_moc_16	71	88	99	ギルド関係者	ギルド関係者	Job Change / Test	817:jobs/assassin.txt:2	yes	none	yes
+npc_job_2nd.txt	409	gef_tower	111	37	70	ギルド関係者	ギルド関係者	Job Change / Test	659:jobs/npc_wizard.txt:5	yes	none	yes
+npc_job_2nd.txt	487	pay_fild10	148	252	98	ギルド関係者	ギルド関係者	Job Change / Test	none	no	mod0631 only: reqs=[] zeny=[] job=[]	yes
+npc_job_aco.txt	6	prt_church	184	41	60	聖堂神父	聖堂Priest	Job Change / Test	817:jobs/acolyte.txt:4	yes	none	yes
+npc_job_aco.txt	86	prt_fild03	365	255	89	修行中の神父	修行中のPriest	Job Change / Test	817:jobs/acolyte.txt:175	yes	none	yes
+npc_job_aco.txt	104	moc_fild07	41	355	95	修行中のシスター	修行中のNun	Job Change / Test	817:jobs/acolyte.txt:225	yes	none	yes
+npc_job_aco.txt	122	prt_fild00	208	255	98	修行中の神父	修行中のPriest	Job Change / Test	none	no	mod0631 only: reqs=[] zeny=[] job=[]	no
+npc_job_merchant.txt	5	alberta_in	53	43	86	商人組合員	Merchant組合員	Job Change / Test	817:jobs/merchant.txt:3	yes	job_lv: ['10'] -> []; zeny: ['1000', '500'] -> ['500']; rewards: [] -> [('1072', '1')]	no
+npc_job_merchant.txt	420	alberta_in	28	29	83	商人組合員	Merchant組合員	Job Change / Test	817:jobs/merchant.txt:354	yes	items: [] -> [('1081', '1'), ('1082', '1'), ('1083', '1'), ('1091', '1')]; rewards: [] -> [('1081', '1'), ('1082', '1'), ('1091', '1')]	yes
+npc_job_merchant.txt	766	geffen_in	155	122	47	ギルド関係者	ギルド関係者	Job Change / Test	817:jobs/merchant.txt:712	yes	items: [] -> [('1081', '1'), ('1082', '1'), ('1091', '1')]; rewards: [] -> [('1075', '1'), ('1076', '1')]	yes
+npc_job_merchant.txt	841	morocc_in	140	102	86	見習生	見習生	Job Change / Test	817:jobs/merchant.txt:779	yes	items: [] -> [('1081', '1'), ('1082', '1'), ('1091', '1')]; rewards: [] -> [('1077', '1'), ('1078', '1')]	yes
+npc_job_thief.txt	5	moc_prydb1	39	129	69	ギルド関係者	ギルド関係者	Job Change / Test	817:jobs/thief.txt:128	yes	job_lv: ['10'] -> []	no
+npc_job_thief.txt	240	moc_prydb1	42	133	118	ギルド関係者	ギルド関係者	Job Change / Test	817:jobs/thief.txt:390	yes	items: [] -> [('1069', '1'), ('1070', '1')]	no
+npc_job_thief.txt	457	moc_ruins	141	125	83	怪しい奴	怪しい奴	Job Change / Test	817:jobs/thief.txt:13	yes	none	yes
+npc_job_newbie.txt	13	new_1-1	66	114	111	看板	看板	Job Change / Test	none	no	mod0631 only: reqs=[] zeny=[] job=[]	no
+npc_job_newbie.txt	20	new_1-1	117	116	105	警備員	警備員	Job Change / Test	none	no	mod0631 only: reqs=[] zeny=[] job=[]	yes
+npc_job_newbie.txt	28	new_1-1	117	107	105	警備員	警備員	Job Change / Test	none	no	mod0631 only: reqs=[] zeny=[] job=[]	yes
+npc_job_newbie.txt	46	new_1-2	100	29	86	初心者修練場受付要員	初心者修練場Receptionist要員	Job Change / Test	none	no	mod0631 only: reqs=[] zeny=[] job=[]	yes
+npc_job_newbie.txt	193	new_1-2	100	113	97	案内要員	Guide	Town Guide	817:other/guide.txt:7	no	none	yes
+npc_job_newbie.txt	255	new_1-2	81	110	84	初心者教育講師	初心者教育講師	Job Change / Test	none	no	mod0631 only: reqs=[] zeny=[] job=[]	yes
+npc_job_newbie.txt	455	new_1-2	84	115	85	初心者講師	初心者講師	Job Change / Test	none	no	mod0631 only: reqs=[] zeny=[] job=[]	yes
+npc_job_newbie.txt	1192	new_1-2	160	183	83	進行要員	進行要員	Job Change / Test	none	no	mod0631 only: reqs=[] zeny=[] job=[]	yes
+npc_job_newbie.txt	1368	new_1-2	158	158	94	カプラ職員	Kafra Employee	Kafra Service	none	no	mod0631 only: reqs=[] zeny=[] job=[]	yes
+npc_job_newbie.txt	1373	new_1-2	160	158	105	案内要員	Guide	Town Guide	817:other/guide.txt:7	no	none	yes
+npc_job_newbie.txt	1378	new_1-2	183	183	95	進行要員	進行要員	Job Change / Test	none	no	mod0631 only: reqs=[] zeny=[] job=[]	yes
+npc_job_newbie.txt	1633	new_1-2	78	101	105	進行要員	進行要員	Job Change / Test	none	no	mod0631 only: reqs=[] zeny=[] job=[]	yes
+npc_job_newbie.txt	1652	new_1-2	39	183	92	進行要員	進行要員	Job Change / Test	none	no	mod0631 only: reqs=[] zeny=[] job=[]	yes
+npc_job_newbie.txt	1687	new_1-2	16	183	84	進行要員	進行要員	Job Change / Test	none	no	mod0631 only: reqs=[] zeny=[] job=[]	yes
+npc_job_newbie.txt	1783	new_1-4	100	29	54	進行要員	進行要員	Job Change / Test	none	no	mod0631 only: reqs=[] zeny=[] job=[]	no
+npc_job_newbie.txt	1806	new_1-4	20	69	67	進行要員	進行要員	Job Change / Test	none	no	mod0631 only: reqs=[] zeny=[] job=[]	yes
+npc_job_newbie.txt	1955	new_1-4	20	109	48	進行要員	進行要員	Job Change / Test	none	no	mod0631 only: reqs=[] zeny=[] job=[]	yes
+npc_job_newbie.txt	2091	new_1-4	60	149	55	進行要員	進行要員	Job Change / Test	none	no	mod0631 only: reqs=[] zeny=[] job=[]	yes
+npc_job_newbie.txt	2461	new_1-4	19	186	105	進行要員	進行要員	Job Change / Test	none	no	mod0631 only: reqs=[] zeny=[] job=[]	yes
+npc_job_newbie.txt	2496	new_1-4	59	186	105	進行要員	進行要員	Job Change / Test	none	no	mod0631 only: reqs=[] zeny=[] job=[]	yes
+npc_job_newbie.txt	2527	new_1-4	99	186	105	進行要員	進行要員	Job Change / Test	none	no	mod0631 only: reqs=[] zeny=[] job=[]	yes
+npc_job_newbie.txt	2558	new_1-4	139	186	105	進行要員	進行要員	Job Change / Test	none	no	mod0631 only: reqs=[] zeny=[] job=[]	yes
+npc_job_newbie.txt	2587	new_1-4	179	186	105	進行要員	進行要員	Job Change / Test	none	no	mod0631 only: reqs=[] zeny=[] job=[]	yes
+npc_job_newbie.txt	2618	new_1-4	179	146	105	進行要員	進行要員	Job Change / Test	none	no	mod0631 only: reqs=[] zeny=[] job=[]	yes
+npc_job_newbie.txt	2647	new_1-2	115	115	93	モンスター学者	モンスター学者	Job Change / Test	none	no	mod0631 only: reqs=[] zeny=[] job=[]	yes
+npc_job_newbie.txt	2687	new_1-2	99	156	105	案内要員	Guide	Town Guide	817:other/guide.txt:7	no	none	yes
+npc_job_newbie.txt	2695	new_1-1	157	124	56	修練場所長	修練場所長	Job Change / Test	none	no	mod0631 only: reqs=[] zeny=[] job=[]	yes
+npc_town_refine.txt	4	alberta_in	21	63	84	ゼノフォン	ゼノフォン	Equipment Refine	817:other/refine.txt:370	yes	rewards: [] -> [('984', '1'), ('985', '1')]	yes
+npc_town_refine.txt	61	alberta_in	13	71	86	カラマンリス	カラマンリス	Equipment Refine	none	no	mod0631 only: reqs=[] zeny=[] job=[]	yes
+npc_town_refine.txt	151	alberta_in	28	58	85	フレドリック	フレドリック	Equipment Refine	817:other/refine.txt:1193	yes	none	yes
+npc_town_refine.txt	407	prt_in	63	69	84	ディートリヒ	ディートリヒ	Equipment Refine	817:other/refine.txt:196	yes	rewards: [] -> [('984', '1'), ('985', '1')]	yes
+npc_town_refine.txt	464	prt_in	56	68	86	ブルウェル	ブルウェル	Equipment Refine	none	no	mod0631 only: reqs=[] zeny=[] job=[]	yes
+npc_town_refine.txt	554	prt_in	63	60	85	ホルグレン	ホルグレン	Equipment Refine	817:other/refine.txt:491	yes	none	yes
+npc_town_refine.txt	810	morocc_in	72	32	85	アブドゥル	アブドゥル	Equipment Refine	817:other/refine.txt:312	yes	rewards: [] -> [('984', '1'), ('985', '1')]	yes
+npc_town_refine.txt	867	morocc_in	63	32	85	サド	サド	Equipment Refine	none	no	mod0631 only: reqs=[] zeny=[] job=[]	yes
+npc_town_refine.txt	957	morocc_in	73	38	85	アラガム	アラガム	Equipment Refine	817:other/refine.txt:725	yes	none	yes
+npc_town_refine.txt	1210	payon_in01	81	31	88	ハキム	ハキム	Equipment Refine	817:other/refine.txt:254	yes	rewards: [] -> [('984', '1'), ('985', '1')]	yes
+npc_town_refine.txt	1267	payon_in01	95	19	88	ベグナド	ベグナド	Equipment Refine	none	no	mod0631 only: reqs=[] zeny=[] job=[]	yes
+npc_town_refine.txt	1357	payon_in01	90	31	88	アントニオ	アントニオ	Equipment Refine	817:other/refine.txt:959	yes	none	yes
+npc_town_refine.txt	1593	yuno_in01	164	27	84	ティルレイ	ティルレイ	Equipment Refine	none	no	mod0631 only: reqs=[] zeny=[] job=[]	no
+npc_town_refine.txt	1650	yuno_in01	171	27	86	ティルレマ	ティルレマ	Equipment Refine	none	no	mod0631 only: reqs=[] zeny=[] job=[]	no
+npc_town_refine.txt	1741	yuno_in01	171	21	85	ティスタブ	ティスタブ	Equipment Refine	none	no	mod0631 only: reqs=[] zeny=[] job=[]	no
+npc_town_guide.txt	7	prontera	154	187	105	案内要員	Guide	Town Guide	817:other/guide.txt:7	yes	none	yes
+npc_town_guide.txt	195	prontera	282	208	105	東門-案内要員	東門-Guide	Town Guide	817:other/guide.txt:143	yes	none	yes
+npc_town_guide.txt	383	prontera	29	200	105	西門-案内要員	西門-Guide	Town Guide	817:other/guide.txt:279	yes	none	yes
+npc_town_guide.txt	571	prontera	160	29	105	南門-案内要員	南門-Guide	Town Guide	817:other/guide.txt:415	yes	none	yes
+npc_town_guide.txt	759	prontera	151	330	105	北門-案内要員	北門-Guide	Town Guide	817:other/guide.txt:551	yes	none	yes
+npc_town_guide.txt	949	izlude	123	87	105	案内要員	Guide	Town Guide	817:other/guide.txt:689	yes	none	yes
+npc_town_guide.txt	1070	geffen	203	116	705	案内要員	Guide	Town Guide	817:other/guide.txt:778	yes	none	yes
+npc_town_guide.txt	1189	geffen	118	62	705	案内要員	Guide	Town Guide	817:other/guide.txt:865	yes	none	yes
+npc_town_guide.txt	1310	payon	82	116	708	案内要員	Guide	Town Guide	817:other/guide.txt:954	yes	none	yes
+npc_town_guide.txt	1420	pay_arche	85	30	708	案内要員	Guide	Town Guide	817:other/guide.txt:1035	yes	none	yes
+npc_town_guide.txt	1516	alberta	23	238	105	案内要員	Guide	Town Guide	817:other/guide.txt:1117	yes	none	yes
+npc_town_guide.txt	1616	alberta	120	60	105	案内要員	Guide	Town Guide	817:other/guide.txt:1189	yes	none	yes
+npc_town_guide.txt	1718	morocc	153	286	707	案内要員	Guide	Town Guide	817:other/guide.txt:1263	yes	none	yes
+npc_town_guide.txt	1824	morocc	54	97	707	案内要員	Guide	Town Guide	817:other/guide.txt:1344	yes	none	yes
+npc_town_guide.txt	1932	comodo	322	178	700	コモドガイド	コモドガイド	Town Guide	817:other/guide.txt:1429	yes	none	yes
+npc_town_guide.txt	2022	comodo	176	350	700	コモドガイド	コモドガイド	Town Guide	817:other/guide.txt:1505	yes	none	yes
+npc_town_guide.txt	2113	comodo	37	219	700	コモドガイド	コモドガイド	Town Guide	817:other/guide.txt:1582	yes	none	yes
+npc_town_guide.txt	2205	yuno	153	47	700	"""ジュノーガイド"""	"""ジュノーガイド"""	Town Guide	817:other/guide.txt:1660	yes	none	no
+npc_town_guide.txt	2270	amatsu	207	91	758	ミス･アマツ	ミス･アマツ	Town Guide	lua:scripts/import/npc/other/guide.lua	yes	none	no
+npc_town_guide.txt	2323	amatsu	251	283	767	案内人	案内人	Town Guide	817:other/guide.txt:1768	yes	none	no
+npc_town_alberta.txt	9	alberta	53	39	100	商人	Merchant	Town / Quest NPC	817:cities/alberta.txt:344	yes	none	yes
+npc_town_alberta.txt	20	alberta	97	51	84	商人	Merchant	Town / Quest NPC	817:cities/alberta.txt:420	yes	none	yes
+npc_town_alberta.txt	36	alberta_in	20	183	49	青年	青年	Town / Quest NPC	817:cities/alberta.txt:316	yes	none	yes
+npc_town_alberta.txt	46	alberta	189	151	100	船員	船員	Town / Quest NPC	817:cities/alberta.txt:479	yes	warps: [('alb2trea', '43', '53'), ('amatsu', '197', '82'), ('gon_fild01', '258', '85'), ('izlude', '176', '182'), ('tur_dun01', '154', '242')] -> [('alb2trea', '43', '53'), ('cmd_fild07', '82', '121'), ('izlude', '176', '182')]	yes
+npc_town_alberta.txt	77	alb2trea	39	50	100	船員	船員	Town / Quest NPC	817:cities/alberta.txt:2	yes	none	yes
+npc_town_aldebaran.txt	11	aldebaran	113	70	48	精錬工マンスタ	精錬工マンスタ	Equipment Refine	817:cities/aldebaran.txt:454	yes	none	yes
+npc_town_aldebaran.txt	59	aldebaran	64	104	55	精錬ジジ	精錬ジジ	Equipment Refine	817:cities/aldebaran.txt:252	yes	none	yes
+npc_town_aldebaran.txt	94	aldebaran	49	93	83	武器レベル青年	武器レベル青年	Town / Quest NPC	817:cities/aldebaran.txt:211	yes	none	yes
+npc_town_aldebaran.txt	111	aldebaran	81	61	101	貝狩り少女	貝狩りGirl	Town / Quest NPC	817:cities/aldebaran.txt:331	yes	none	yes
+npc_town_aldebaran.txt	150	aldebaran	46	129	97	運河青年	運河青年	Town / Quest NPC	817:cities/aldebaran.txt:183	yes	none	yes
+npc_town_aldebaran.txt	188	aldebaran	67	154	98	山道青年	山道青年	Town / Quest NPC	817:cities/aldebaran.txt:278	yes	none	yes
+npc_town_aldebaran.txt	267	aldebaran	90	170	47	スロット青年	スロット青年	Town / Quest NPC	817:cities/aldebaran.txt:398	yes	none	yes
+npc_town_aldebaran.txt	306	aldebaran	117	181	48	プラコン青年	プラコン青年	Town / Quest NPC	817:cities/aldebaran.txt:488	yes	none	yes
+npc_town_aldebaran.txt	370	aldebaran	121	231	49	錬金術青年	錬金術青年	Town / Quest NPC	817:cities/aldebaran.txt:525	yes	none	yes
+npc_town_aldebaran.txt	478	aldebaran	86	228	62	子供	子供	Town / Quest NPC	none	no	mod0631 only: reqs=[] zeny=[] job=[]	yes
+npc_town_aldebaran.txt	532	aldebaran	159	242	119	昆虫ジジ	昆虫ジジ	Town / Quest NPC	817:cities/aldebaran.txt:659	yes	none	yes
+npc_town_aldebaran.txt	592	aldeba_in	232	241	48	市民	市民	Town / Quest NPC	none	no	mod0631 only: reqs=[] zeny=[] job=[]	yes
+npc_town_aldebaran.txt	656	aldeba_in	223	121	63	強面なおじさん	強面なおじさん	Town / Quest NPC	817:cities/aldebaran.txt:133	yes	none	yes
+npc_town_aldebaran.txt	720	aldeba_in	219	61	109	紳士風なおじさん	紳士風なおじさん	Town / Quest NPC	817:cities/aldebaran.txt:121	yes	none	yes
+npc_town_aldebaran.txt	737	aldeba_in	152	47	97	おおげさ青年	おおげさ青年	Town / Quest NPC	817:cities/aldebaran.txt:2	yes	none	yes
+npc_town_aldebaran.txt	772	aldeba_in	156	179	61	マスター	マスター	Town / Quest NPC	817:cities/aldebaran.txt:32	yes	none	yes
+npc_town_aldebaran.txt	884	aldeba_in	84	166	117	カプラサービス	Kafraサービス	Kafra Service	none	no	mod0631 only: reqs=[] zeny=[] job=[]	yes
+npc_town_aldebaran.txt	961	aldeba_in	83	233	116	カプラサービス	Kafraサービス	Kafra Service	none	no	mod0631 only: reqs=[] zeny=[] job=[]	yes
+npc_town_aldebaran.txt	1000	aldeba_in	28	238	115	カプラサービス	Kafraサービス	Kafra Service	none	no	mod0631 only: reqs=[] zeny=[] job=[]	yes
+npc_town_aldebaran.txt	1044	aldeba_in	142	238	114	カプラサービス	Kafraサービス	Kafra Service	817:other/kafra.txt:1272	yes	none	yes
+npc_town_aldebaran.txt	1092	aldeba_in	96	181	113	カプラサービス	Kafraサービス	Kafra Service	817:other/kafra.txt:1197	yes	job_lv: ['6'] -> []	yes
+npc_town_aldebaran.txt	1120	aldeba_in	91	244	112	カプラサービス	Kafraサービス	Kafra Service	817:other/kafra.txt:1168	yes	none	yes
+npc_town_aldebaran.txt	1153	aldebaran	60	70	69	乙女	乙女	Town / Quest NPC	817:cities/aldebaran.txt:221	yes	none	yes
+npc_town_aldebaran.txt	1196	aldebaran	93	80	48	足の長い青年	足の長い青年	Town / Quest NPC	817:cities/aldebaran.txt:423	yes	none	yes
+npc_town_aldebaran.txt	1240	aldebaran	180	46	88	東洋人	東洋人	Town / Quest NPC	817:cities/aldebaran.txt:694	yes	none	yes
+npc_town_aldebaran.txt	1281	aldebaran	212	122	97	アルデバラン市民	アルデバラン市民	Town / Quest NPC	817:cities/aldebaran.txt:726	yes	none	no
+npc_town_aldebaran.txt	1322	aldebaran	145	123	101	村の少女	村のGirl	Town / Quest NPC	none	no	mod0631 only: reqs=[] zeny=[] job=[]	yes
+npc_town_aldebaran.txt	1361	aldebaran	139	63	105	兵士	Soldier	Town / Quest NPC	817:other/guide.txt:1870	yes	none	yes
+npc_town_aldebaran.txt	1393	aldebaran	241	136	105	兵士	Soldier	Town / Quest NPC	817:other/guide.txt:1870	no	none	yes
+npc_town_aldebaran.txt	1436	aldebaran	143	136	89	管理人怪人A	管理人怪人A	Town / Quest NPC	817:cities/aldebaran.txt:583	yes	none	yes
+npc_town_amatsu.txt	7	alberta	245	93	709	貿易船船長	貿易船Captain	Town / Quest NPC	none	no	mod0631 only: reqs=[] zeny=[] job=[]	yes
+npc_town_amatsu.txt	110	amatsu	194	79	709	貿易船船長	貿易船Captain	Town / Quest NPC	none	no	mod0631 only: reqs=[] zeny=[] job=[]	no
+npc_town_amatsu.txt	134	amatsu	179	107	86	ヨハネ	ヨハネ	Town / Quest NPC	none	no	mod0631 only: reqs=[] zeny=[] job=[]	no
+npc_town_amatsu.txt	185	amatsu	185	116	765	酔ったお爺さん	酔ったお爺さん	Town / Quest NPC	none	no	mod0631 only: reqs=[] zeny=[] job=[]	no
+npc_town_amatsu.txt	229	amatsu	217	179	760	お婆さん	お婆さん	Town / Quest NPC	none	no	mod0631 only: reqs=[] zeny=[] job=[]	no
+npc_town_amatsu.txt	244	ama_in01	162	17	765	寿司職人	寿司職人	Town / Quest NPC	none	no	mod0631 only: reqs=[('964', '10')] zeny=[] job=[]	no
+npc_town_amatsu.txt	365	amatsu	189	166	764	浩次	浩次	Town / Quest NPC	none	no	mod0631 only: reqs=[] zeny=[] job=[]	no
+npc_town_amatsu.txt	382	amatsu	205	163	759	真美	真美	Town / Quest NPC	none	no	mod0631 only: reqs=[] zeny=[] job=[]	no
+npc_town_amatsu.txt	400	amatsu	230	160	757	水を汲む娘	水を汲む娘	Town / Quest NPC	none	no	mod0631 only: reqs=[] zeny=[] job=[]	no
+npc_town_amatsu.txt	413	amatsu	171	174	767	門番兵	Gatekeeper兵	Town / Quest NPC	none	no	mod0631 only: reqs=[] zeny=[] job=[]	no
+npc_town_amatsu.txt	428	amatsu	164	174	767	門番兵	Gatekeeper兵	Town / Quest NPC	none	no	mod0631 only: reqs=[] zeny=[] job=[]	no
+npc_town_amatsu.txt	436	amatsu	119	164	767	門番兵	Gatekeeper兵	Town / Quest NPC	none	no	mod0631 only: reqs=[] zeny=[] job=[]	no
+npc_town_amatsu.txt	452	amatsu	112	164	767	門番兵	Gatekeeper兵	Town / Quest NPC	none	no	mod0631 only: reqs=[] zeny=[] job=[]	no
+npc_town_amatsu.txt	468	ama_in01	22	111	761	お婆さん	お婆さん	Town / Quest NPC	none	no	mod0631 only: reqs=[] zeny=[] job=[]	no
+npc_town_amatsu.txt	484	ama_in02	207	40	767	門番兵	Gatekeeper兵	Town / Quest NPC	none	no	mod0631 only: reqs=[] zeny=[] job=[]	no
+npc_town_amatsu.txt	497	ama_in02	207	49	767	門番兵	Gatekeeper兵	Town / Quest NPC	none	no	mod0631 only: reqs=[] zeny=[] job=[]	no
+npc_town_amatsu.txt	516	ama_in02	187	57	767	兵士	Soldier	Town / Quest NPC	817:other/guide.txt:1870	no	none	no
+npc_town_amatsu.txt	534	ama_in02	170	62	767	兵士	Soldier	Town / Quest NPC	817:other/guide.txt:1870	no	none	no
+npc_town_amatsu.txt	565	ama_in02	37	157	767	兵士	Soldier	Town / Quest NPC	817:other/guide.txt:1870	no	none	no
+npc_town_amatsu.txt	593	ama_in02	32	51	767	兵士	Soldier	Town / Quest NPC	817:other/guide.txt:1870	no	none	no
+npc_town_amatsu.txt	607	ama_in02	40	167	767	兵士	Soldier	Town / Quest NPC	817:other/guide.txt:1870	no	none	no
+npc_town_amatsu.txt	637	ama_in02	32	167	767	兵士	Soldier	Town / Quest NPC	817:other/guide.txt:1870	no	none	no
+npc_town_amatsu.txt	659	ama_in02	42	34	767	兵士	Soldier	Town / Quest NPC	817:other/guide.txt:1870	no	none	no
+npc_town_amatsu.txt	676	ama_in02	203	156	767	兵士	Soldier	Town / Quest NPC	817:other/guide.txt:1870	no	none	no
+npc_town_amatsu.txt	692	ama_in02	195	156	767	兵士	Soldier	Town / Quest NPC	817:other/guide.txt:1870	no	none	no
+npc_town_amatsu.txt	707	ama_in02	115	177	767	兵士	Soldier	Town / Quest NPC	817:other/guide.txt:1870	no	none	no
+npc_town_amatsu.txt	731	ama_in02	200	176	768	城主	城主	Town / Quest NPC	none	no	mod0631 only: reqs=[] zeny=[] job=[]	no
+npc_town_amatsu.txt	746	amatsu	223	235	763	出版社職員	出版社職員	Town / Quest NPC	none	no	mod0631 only: reqs=[] zeny=[] job=[]	no
+npc_town_amatsu.txt	834	ama_test	52	44	109	待機室担当者	待機室担当者	Town / Quest NPC	none	no	mod0631 only: reqs=[] zeny=[] job=[]	no
+npc_town_comodo.txt	15	comodo	206	310	704	キャンプ族青年	キャンプ族青年	Town / Quest NPC	817:cities/comodo.txt:992	yes	none	yes
+npc_town_comodo.txt	197	comodo	204	310	65	キャンプ族青年	キャンプ族青年	Town / Quest NPC	817:cities/comodo.txt:949	yes	none	yes
+npc_town_comodo.txt	312	comodo	209	305	71	キャンプ族お嬢さん	キャンプ族お嬢さん	Town / Quest NPC	817:cities/comodo.txt:1105	yes	none	yes
+npc_town_comodo.txt	393	comodo	209	314	706	キャンプ族少年	キャンプ族Boy	Town / Quest NPC	817:cities/comodo.txt:1168	yes	none	yes
+npc_town_comodo.txt	474	comodo	221	310	86	バーベキュー恋人	バーベキュー恋人	Town / Quest NPC	817:cities/comodo.txt:1252	yes	none	yes
+npc_town_comodo.txt	492	comodo	218	309	90	バーベキュー恋人	バーベキュー恋人	Town / Quest NPC	817:cities/comodo.txt:1239	yes	none	yes
+npc_town_comodo.txt	511	comodo	216	310	50	バーベキューお父さん	バーベキューお父さん	Town / Quest NPC	817:cities/comodo.txt:1207	yes	none	yes
+npc_town_comodo.txt	549	comodo	215	307	74	バーベキューお母さん	バーベキューお母さん	Town / Quest NPC	817:cities/comodo.txt:1201	yes	none	yes
+npc_town_comodo.txt	587	comodo	213	310	706	バーベキューちびっこ	バーベキューちびっこ	Town / Quest NPC	817:cities/comodo.txt:1195	yes	none	yes
+npc_town_comodo.txt	625	cmd_in02	32	140	49	村長	村長	Town / Quest NPC	817:cities/comodo.txt:332	yes	none	yes
+npc_town_comodo.txt	788	cmd_in02	73	81	48	マーティン	マーティン	Town / Quest NPC	817:cities/comodo.txt:445	yes	none	yes
+npc_town_comodo.txt	816	cmd_in02	48	55	51	スコールサジ	スコールサジ	Town / Quest NPC	817:cities/comodo.txt:427	yes	none	yes
+npc_town_comodo.txt	835	cmd_in02	64	43	709	ロベルト	ロベルト	Town / Quest NPC	817:cities/comodo.txt:439	yes	none	yes
+npc_town_comodo.txt	848	cmd_in02	89	72	89	デニローズ	デニローズ	Town / Quest NPC	817:cities/comodo.txt:451	yes	none	yes
+npc_town_comodo.txt	872	cmd_in02	178	92	101	シャローン	シャローン	Town / Quest NPC	817:cities/comodo.txt:538	yes	none	yes
+npc_town_comodo.txt	889	cmd_in02	178	86	98	ストナエ	ストナエ	Town / Quest NPC	817:cities/comodo.txt:527	yes	none	yes
+npc_town_comodo.txt	902	cmd_in02	172	105	86	ジー・ジェイ	ジー・ジェイ	Town / Quest NPC	817:cities/comodo.txt:457	yes	none	yes
+npc_town_comodo.txt	946	cmd_in02	174	126	81	ローヤー	ローヤー	Town / Quest NPC	817:cities/comodo.txt:485	yes	none	yes
+npc_town_comodo.txt	1007	cmd_in02	57	62	109	ムー	ムー	Town / Quest NPC	817:cities/comodo.txt:433	yes	none	yes
+npc_town_comodo.txt	1046	cmd_fild04	188	74	93	海女さん	海女さん	Town / Quest NPC	817:cities/comodo.txt:195	yes	none	yes
+npc_town_comodo.txt	1070	cmd_fild04	248	86	709	漁夫	漁夫	Town / Quest NPC	817:cities/comodo.txt:201	yes	none	yes
+npc_town_comodo.txt	1096	cmd_fild04	267	137	703	海辺子供	海辺子供	Town / Quest NPC	817:cities/comodo.txt:207	yes	none	yes
+npc_town_comodo.txt	1109	moc_fild12	35	303	59	サンダルマン要塞ガイド	サンダルマン要塞ガイド	Town / Quest NPC	817:cities/comodo.txt:1286	yes	none	yes
+npc_town_comodo.txt	1179	cmd_fild07	192	58	100	燈台ガイド	燈台ガイド	Town / Quest NPC	817:cities/comodo.txt:264	yes	none	yes
+npc_town_comodo.txt	1217	cmd_fild07	52	280	100	燈台ガイド	燈台ガイド	Town / Quest NPC	817:cities/comodo.txt:213	yes	none	yes
+npc_town_comodo.txt	1235	cmd_fild07	299	83	100	快速船員	快速船員	Town / Quest NPC	817:cities/comodo.txt:293	yes	zeny: [] -> ['600']	yes
+npc_town_comodo.txt	1272	cmd_fild07	94	134	100	快速船員	快速船員	Town / Quest NPC	817:cities/comodo.txt:225	yes	zeny: [] -> ['600']	yes
+npc_town_comodo.txt	1311	comodo	88	97	109	チーズマニア	チーズマニア	Town / Quest NPC	817:cities/comodo.txt:611	yes	none	yes
+npc_town_comodo.txt	1439	comodo	164	291	73	コモド住民	コモド住民	Town / Quest NPC	817:cities/comodo.txt:739	yes	none	yes
+npc_town_comodo.txt	1494	comodo	169	284	98	コモド住民	コモド住民	Town / Quest NPC	817:cities/comodo.txt:766	yes	none	yes
+npc_town_comodo.txt	1540	comodo	163	280	55	酔っ払い客	酔っ払い客	Town / Quest NPC	817:cities/comodo.txt:687	yes	none	yes
+npc_town_comodo.txt	1611	cmd_in02	189	99	85	カジノ師	カジノ師	Town / Quest NPC	817:cities/comodo.txt:552	yes	none	yes
+npc_town_comodo.txt	1701	comodo	187	153	701	フラおばさん	フラおばさん	Town / Quest NPC	817:cities/comodo.txt:795	yes	none	yes
+npc_town_comodo.txt	1934	beach_dun3	30	220	704	修練中の魔術師	修練中の魔術師	Town / Quest NPC	817:cities/comodo.txt:22	yes	none	yes
+npc_town_comodo.txt	2236	aldebaran	44	53	64	修行中の魔術師	修行中の魔術師	Town / Quest NPC	817:cities/comodo.txt:2	yes	none	yes
+npc_town_comodo.txt	2620	morocc	201	30	99	モロク遊牧民	モロク遊牧民	Town / Quest NPC	817:cities/comodo.txt:1339	yes	none	yes
+npc_town_comodo.txt	2925	comodo	232	87	106	渡り者剣士	渡り者剣士	Town / Quest NPC	817:cities/comodo.txt:1263	yes	none	yes
+npc_town_geffen.txt	13	geffen	59	143	91	女性	女性	Town / Quest NPC	817:cities/geffen.txt:213	yes	none	yes
+npc_town_geffen.txt	21	geffen	156	190	82	青年	青年	Town / Quest NPC	817:cities/geffen.txt:237	yes	none	yes
+npc_town_geffen.txt	29	geffen_in	164	109	64	魔道師	魔道師	Town / Quest NPC	817:cities/geffen.txt:199	yes	none	yes
+npc_town_geffen.txt	39	geffen	147	26	97	青年	青年	Town / Quest NPC	none	no	mod0631 only: reqs=[] zeny=[] job=[]	yes
+npc_town_geffen.txt	47	geffen	111	48	101	女性	女性	Town / Quest NPC	817:cities/geffen.txt:226	yes	none	yes
+npc_town_geffen.txt	55	geffen_in	34	170	47	青年	青年	Town / Quest NPC	none	no	mod0631 only: reqs=[] zeny=[] job=[]	yes
+npc_town_geffen.txt	63	geffen_in	110	172	63	クリストファー	クリストファー	Town / Quest NPC	817:cities/geffen.txt:2	yes	rewards: [] -> [('984', '1'), ('985', '1'), ('986', '1'), ('987', '1'), ('988', '1')]	yes
+npc_town_izlude.txt	10	izlude	201	181	100	船員	船員	Town / Quest NPC	817:cities/izlude.txt:332	yes	none	yes
+npc_town_izlude.txt	39	izlu2dun	108	27	100	船員	船員	Town / Quest NPC	817:cities/izlude.txt:2	yes	none	yes
+npc_town_kafra.txt	9	prontera	248	42	116	カプラ職員	Kafra Employee	Kafra Service	817:jobs/merchant.txt:846	yes	zeny: [] -> ['900']; items: [] -> [('1081', '1'), ('1082', '1'), ('1084', '1'), ('1091', '1')]; rewards: [] -> [('1073', '1'), ('1074', '1')]; warps: [('izlude', '91', '105')] -> [('izlude', '94', '103')]	yes
+npc_town_kafra.txt	129	prontera	146	89	117	カプラ職員	Kafra Employee	Kafra Service	817:other/kafra.txt:2474	yes	job_lv: ['6'] -> []; zeny: [] -> ['40', '800']; items: [] -> [('1084', '1')]; warps: [('gef_fild10', '52', '326'), ('geffen', '120', '39'), ('izlude', '91', '105'), ('morocc', '156', '46'), ('payon', '69', '100')] -> [('comodo', '209', '143'), ('gef_fild10', '52', '326'), ('geffen', '120', '39'), ('izlude', '91', '105'), ('morocc', '156', '46'), ('payon', '69', '100')]	yes
+npc_town_kafra.txt	377	prontera	282	200	114	カプラ職員	Kafra Employee	Kafra Service	none	no	mod0631 only: reqs=[('1084', '1')] zeny=['40', '800'] job=[]	yes
+npc_town_kafra.txt	630	prontera	151	29	115	カプラ職員	Kafra Employee	Kafra Service	817:other/kafra.txt:2622	yes	job_lv: ['6'] -> []; zeny: [] -> ['40', '800']; items: [] -> [('1084', '1')]; warps: [('gef_fild10', '52', '326'), ('geffen', '120', '39'), ('izlude', '91', '105'), ('morocc', '156', '46'), ('payon', '69', '100')] -> [('comodo', '209', '143'), ('gef_fild10', '52', '326'), ('geffen', '120', '39'), ('izlude', '91', '105'), ('morocc', '156', '46'), ('payon', '69', '100')]	yes
+npc_town_kafra.txt	883	prontera	29	207	113	カプラ職員	Kafra Employee	Kafra Service	none	no	mod0631 only: reqs=[('1084', '1')] zeny=['40', '800'] job=[]	yes
+npc_town_kafra.txt	1136	prt_fild01	198	47	112	カプラ職員	Kafra Employee	Kafra Service	817:other/kafra.txt:375	yes	job_lv: ['6'] -> []; zeny: [] -> ['40', '800']; items: [] -> [('1084', '1')]; warps: [] -> [('comodo', '209', '143'), ('gef_fild10', '52', '326'), ('geffen', '120', '39'), ('izlude', '91', '105'), ('morocc', '156', '46'), ('payon', '69', '100')]	yes
+npc_town_kafra.txt	1356	prt_fild05	290	224	114	カプラ職員	Kafra Employee	Kafra Service	817:other/kafra.txt:481	yes	job_lv: ['6'] -> []; zeny: [] -> ['30', '800']; items: [] -> [('1084', '1')]	yes
+npc_town_kafra.txt	1512	izlude	136	88	115	カプラ職員	Kafra Employee	Kafra Service	none	no	mod0631 only: reqs=[('1084', '1')] zeny=['30', '800'] job=[]	yes
+npc_town_kafra.txt	1735	izlu2dun	106	58	116	カプラ職員	Kafra Employee	Kafra Service	817:other/kafra.txt:91	yes	job_lv: ['6'] -> []; zeny: [] -> ['35', '800']; items: [] -> [('1081', '1'), ('1082', '1'), ('1084', '1'), ('1091', '1')]; rewards: [] -> [('1079', '1'), ('1080', '1'), ('512', '3'), ('513', '3')]	yes
+npc_town_kafra.txt	1976	geffen	120	62	115	カプラ職員	Kafra Employee	Kafra Service	817:other/kafra.txt:1381	yes	job_lv: ['6'] -> []; zeny: [] -> ['30', '800']; items: [] -> [('1084', '1')]	yes
+npc_town_kafra.txt	2204	geffen	203	123	114	カプラ職員	Kafra Employee	Kafra Service	817:other/kafra.txt:1519	yes	job_lv: ['6'] -> []; zeny: [] -> ['30', '800']; items: [] -> [('1084', '1')]	yes
+npc_town_kafra.txt	2437	morocc	156	97	113	カプラ職員	Kafra Employee	Kafra Service	817:other/kafra.txt:1808	yes	job_lv: ['6'] -> []; zeny: [] -> ['40', '800']; items: [] -> [('1084', '1')]; warps: [('alberta', '117', '56'), ('geffen', '120', '39'), ('payon', '69', '100'), ('prontera', '116', '72')] -> [('alberta', '117', '56'), ('comodo', '209', '143'), ('geffen', '120', '39'), ('payon', '69', '100'), ('prontera', '116', '72')]	yes
+npc_town_kafra.txt	2673	morocc	160	258	114	カプラ職員	Kafra Employee	Kafra Service	none	no	mod0631 only: reqs=[('1084', '1')] zeny=['40', '800'] job=[]	yes
+npc_town_kafra.txt	2914	moc_ruins	59	157	117	カプラ職員	Kafra Employee	Kafra Service	none	no	mod0631 only: reqs=[('1084', '1')] zeny=['55', '800'] job=[]	yes
+npc_town_kafra.txt	3070	alberta	28	229	116	カプラ職員	Kafra Employee	Kafra Service	817:other/kafra.txt:584	yes	job_lv: ['6'] -> []; zeny: [] -> ['50', '800']; items: [] -> [('1084', '1')]; warps: [('morocc', '120', '39'), ('payon', '69', '100'), ('prontera', '116', '72')] -> [('morocc', '156', '46'), ('payon', '69', '100'), ('prontera', '116', '72')]	yes
+npc_town_kafra.txt	3295	alberta	113	60	112	カプラ職員	Kafra Employee	Kafra Service	817:other/kafra.txt:721	yes	job_lv: ['6'] -> []; zeny: [] -> ['50', '800']; items: [] -> [('1084', '1')]	yes
+npc_town_kafra.txt	3515	alb2trea	59	69	117	カプラ職員	Kafra Employee	Kafra Service	817:other/kafra.txt:853	yes	job_lv: ['6'] -> []; zeny: [] -> ['55', '800']; items: [] -> [('1084', '1')]	yes
+npc_town_kafra.txt	3671	payon	99	116	113	カプラ職員	Kafra Employee	Kafra Service	817:other/kafra.txt:2086	yes	job_lv: ['6'] -> []; zeny: [] -> ['40', '800']; items: [] -> [('1084', '1')]	yes
+npc_town_kafra.txt	3872	pay_arche	55	123	114	カプラ職員	Kafra Employee	Kafra Service	817:other/kafra.txt:2225	yes	job_lv: ['6'] -> []; zeny: [] -> ['45', '800']; items: [] -> [('1084', '1')]	yes
+npc_town_kafra.txt	4028	aldebaran	143	119	113	カプラ職員	Kafra Employee	Kafra Service	817:other/kafra.txt:1309	yes	job_lv: ['6'] -> []; zeny: [] -> ['40', '800']; items: [] -> [('1084', '1')]; warps: [] -> [('geffen', '120', '39'), ('mjolnir_02', '99', '351')]	yes
+npc_town_kafra.txt	4216	cmd_in02	146	180	721	カプラ職員	Kafra Employee	Kafra Service	none	no	mod0631 only: reqs=[('1084', '1')] zeny=['40', '800'] job=[]	yes
+npc_town_kafra.txt	4407	cmd_fild07	136	134	721	カプラ職員	Kafra Employee	Kafra Service	none	no	mod0631 only: reqs=[('1084', '1')] zeny=['80', '800'] job=[]	yes
+npc_town_kafra.txt	4598	comodo	195	150	721	カプラ職員	Kafra Employee	Kafra Service	none	no	mod0631 only: reqs=[('1084', '1')] zeny=['80', '800'] job=[]	yes
+npc_town_kafra.txt	4789	gef_fild10	73	340	117	カプラ職員	Kafra Employee	Kafra Service	817:other/kafra.txt:2	yes	job_lv: ['6'] -> []; zeny: [] -> ['55', '800']; items: [] -> [('1084', '1')]	yes
+npc_town_kafra.txt	4946	mjolnir_02	84	362	117	カプラ職員	Kafra Employee	Kafra Service	none	no	mod0631 only: reqs=[('1084', '1')] zeny=['55', '800'] job=[]	yes
+npc_town_kafra.txt	5103	yuno	152	187	113	カプラ職員	Kafra Employee	Kafra Service	none	no	mod0631 only: reqs=[('1084', '1')] zeny=['40', '800'] job=[]	no
+npc_town_kafra.txt	5314	yuno	328	109	113	カプラ職員	Kafra Employee	Kafra Service	none	no	mod0631 only: reqs=[('1084', '1')] zeny=['40', '800'] job=[]	no
+npc_town_kafra.txt	5525	yuno	276	222	113	カプラ職員	Kafra Employee	Kafra Service	none	no	mod0631 only: reqs=[('1084', '1')] zeny=['40', '800'] job=[]	no
+npc_town_kafra.txt	5740	amatsu	102	149	116	カプラ職員	Kafra Employee	Kafra Service	none	no	mod0631 only: reqs=[('1084', '1')] zeny=['40', '800'] job=[]	no
+npc_town_lutie.txt	10	aldebaran	168	168	718	リンクサンタ	リンクサンタ	Town / Quest NPC	817:cities/lutie.txt:2	yes	warps: [('xmas_fild01', '78', '68')] -> [('xmas_fild01.gat', '68', '152')]	yes
+npc_town_lutie.txt	71	xmas	134	112	710	雪だるま	雪だるま	Town / Quest NPC	817:cities/lutie.txt:345	yes	none	yes
+npc_town_lutie.txt	148	xmas	117	304	713	クリスマス青年	クリスマス青年	Town / Quest NPC	817:cities/lutie.txt:293	yes	none	yes
+npc_town_lutie.txt	180	xmas	115	297	111	自動販売機	自動販売機	Town / Quest NPC	none	no	mod0631 only: reqs=[] zeny=[] job=[]	no
+npc_town_lutie.txt	182	xmas	117	295	704	自動販売機屋	自動販売機屋	Town / Quest NPC	none	no	mod0631 only: reqs=[] zeny=[] job=[]	yes
+npc_town_lutie.txt	304	xmas	176	236	712	毛深いおじさん	毛深いおじさん	Town / Quest NPC	817:cities/lutie.txt:720	yes	none	yes
+npc_town_lutie.txt	349	xmas	146	136	715	クリスマス芸人	クリスマス芸人	Town / Quest NPC	817:cities/lutie.txt:633	yes	none	yes
+npc_town_lutie.txt	414	xmas	206	168	706	ちびっこ少年	ちびっこBoy	Town / Quest NPC	817:cities/lutie.txt:859	yes	none	yes
+npc_town_lutie.txt	453	xmas	208	168	703	ちびっこ少女	ちびっこGirl	Town / Quest NPC	817:cities/lutie.txt:904	yes	none	yes
+npc_town_lutie.txt	495	xmas_in	100	96	718	サンタジジ	サンタジジ	Town / Quest NPC	817:cities/lutie.txt:187	yes	none	yes
+npc_town_lutie.txt	502	xmas_in	165	174	711	クリスマス少女	クリスマスGirl	Town / Quest NPC	817:cities/lutie.txt:211	yes	none	no
+npc_town_lutie.txt	574	xmas_in	27	103	701	太っちょおばさん	太っちょおばさん	Town / Quest NPC	817:cities/lutie.txt:59	yes	none	no
+npc_town_morocc.txt	20	morocc	68	260	99	青年	青年	Town / Quest NPC	817:cities/morroc.txt:93	yes	none	yes
+npc_town_morocc.txt	29	morocc_in	112	122	61	じじい	じじい	Town / Quest NPC	817:cities/morroc.txt:69	yes	none	yes
+npc_town_morocc.txt	36	morocc	116	266	85	青年	青年	Town / Quest NPC	none	no	mod0631 only: reqs=[] zeny=[] job=[]	yes
+npc_town_morocc.txt	41	morocc	208	85	83	青年	青年	Town / Quest NPC	817:cities/morroc.txt:294	yes	none	yes
+npc_town_morocc.txt	51	morocc	150	50	85	青年	青年	Town / Quest NPC	817:cities/morroc.txt:240	yes	none	yes
+npc_town_morocc.txt	60	morocc	44	180	89	青年	青年	Town / Quest NPC	817:cities/morroc.txt:78	yes	none	yes
+npc_town_payon.txt	11	payon	163	139	90	お嫁さん	お嫁さん	Town / Quest NPC	817:cities/payon.txt:700	yes	none	yes
+npc_town_payon.txt	18	payon	29	115	88	青年	青年	Town / Quest NPC	none	no	mod0631 only: reqs=[] zeny=[] job=[]	yes
+npc_town_prontera.txt	25	prontera	54	240	97	男	男	Town / Quest NPC	817:cities/prontera.txt:2	yes	none	yes
+npc_town_prontera.txt	44	prontera	101	288	98	男	男	Town / Quest NPC	none	no	mod0631 only: reqs=[] zeny=[] job=[]	yes
+npc_town_prontera.txt	64	prontera	106	116	91	乙女	乙女	Town / Quest NPC	none	no	mod0631 only: reqs=[] zeny=[] job=[]	yes
+npc_town_prontera.txt	88	prt_in	178	92	57	図書館管理人	図書館管理人	Town / Quest NPC	817:cities/prontera.txt:529	yes	none	yes
+npc_town_prontera.txt	103	prt_in	175	50	71	アルバイト	Part-timer	Town / Quest NPC	817:cities/prontera.txt:488	yes	none	yes
+npc_town_prontera.txt	115	prt_in	88	105	105	騎士団募集官	騎士団募集官	Town / Quest NPC	817:cities/prontera.txt:601	yes	rewards: [] -> [('501', '3'), ('502', '1'), ('519', '1')]	yes
+npc_town_prontera.txt	190	prt_church	27	24	79	修道女	修道女	Town / Quest NPC	817:cities/prontera.txt:115	yes	none	yes
+npc_town_prontera.txt	233	prt_in	47	141	56	おじさん	おじさん	Town / Quest NPC	none	no	mod0631 only: reqs=[] zeny=[] job=[]	yes
+npc_town_prontera.txt	248	prt_in	26	31	54	おじさん	おじさん	Town / Quest NPC	none	no	mod0631 only: reqs=[] zeny=[] job=[]	yes
+npc_town_prontera.txt	274	prt_in	244	135	53	旅館従業員	旅館従業員	Town / Quest NPC	817:cities/prontera.txt:586	yes	none	yes
+npc_town_prontera.txt	292	prt_in	61	141	94	旅館従業員	旅館従業員	Town / Quest NPC	817:cities/prontera.txt:393	yes	none	yes
+npc_town_prontera.txt	312	prontera	160	330	105	警備兵	Guard	Town / Quest NPC	817:other/guide.txt:1959	yes	none	yes
+npc_town_prontera.txt	317	prontera	229	104	105	兵士	Soldier	Town / Quest NPC	817:other/guide.txt:1968	yes	none	yes
+npc_town_prontera.txt	322	prontera	223	99	105	兵士	Soldier	Town / Quest NPC	817:other/guide.txt:1963	yes	none	yes
+npc_town_prontera.txt	327	prontera	52	344	105	兵士	Soldier	Town / Quest NPC	817:other/guide.txt:1977	yes	none	yes
+npc_town_prontera.txt	332	prontera	47	339	105	兵士	Soldier	Town / Quest NPC	817:other/guide.txt:1972	yes	none	yes
+npc_town_prontera.txt	339	prt_fild05	270	212	105	地下水路管理兵	地下水路管理兵	Town / Quest NPC	817:cities/prontera.txt:655	yes	none	yes
+npc_town_prontera.txt	362	prt_maze02	100	69	105	兵士	Soldier	Town / Quest NPC	817:other/guide.txt:1983	yes	none	yes
+npc_town_prontera.txt	369	prt_maze02	110	69	105	兵士	Soldier	Town / Quest NPC	817:other/guide.txt:1990	yes	none	yes
+npc_town_yuno.txt	16	yuno	157	87	102	ジュノー住民	ジュノー住民	Town / Quest NPC	none	no	mod0631 only: reqs=[] zeny=[] job=[]	no
+npc_town_yuno.txt	50	yuno	165	111	123	賢者	賢者	Town / Quest NPC	none	no	mod0631 only: reqs=[] zeny=[] job=[]	no
+npc_town_yuno.txt	70	yuno	184	173	729	ジュノー民	ジュノー民	Town / Quest NPC	none	no	mod0631 only: reqs=[] zeny=[] job=[]	no
+npc_town_yuno.txt	89	yuno	343	68	730	絶対者	絶対者	Town / Quest NPC	none	no	mod0631 only: reqs=[] zeny=[] job=[]	no
+npc_town_yuno.txt	110	yuno	328	239	732	武道家	武道家	Town / Quest NPC	none	no	mod0631 only: reqs=[] zeny=[] job=[]	no
+npc_town_yuno.txt	135	yuno	337	227	103	預言者	預言者	Town / Quest NPC	none	no	mod0631 only: reqs=[] zeny=[] job=[]	no
+npc_town_yuno.txt	163	yuno	157	205	54	物知りじいさん	物知りじいさん	Town / Quest NPC	none	no	mod0631 only: reqs=[] zeny=[] job=[]	no
+npc_town_yuno.txt	229	yuno	163	328	735	賢者エスクラ	賢者エスクラ	Town / Quest NPC	none	no	mod0631 only: reqs=[] zeny=[] job=[]	no
+npc_town_yuno.txt	273	yuno	305	207	735	賢者シクルラ	賢者シクルラ	Town / Quest NPC	none	no	mod0631 only: reqs=[] zeny=[] job=[]	no
+npc_town_yuno.txt	302	yuno	261	99	735	賢者イクルラ	賢者イクルラ	Town / Quest NPC	none	no	mod0631 only: reqs=[] zeny=[] job=[]	no
+npc_town_yuno.txt	326	yuno_in02	38	61	743	魔法アカデミー学長	魔法アカデミー学長	Town / Quest NPC	none	no	mod0631 only: reqs=[] zeny=[] job=[]	no
+npc_town_yuno.txt	345	yuno_in03	32	102	755	生物学教授	生物学教授	Town / Quest NPC	none	no	mod0631 only: reqs=[] zeny=[] job=[]	no
+npc_town_yuno.txt	364	yuno	334	182	105	ジュノー兵士	ジュノーSoldier	Town / Quest NPC	none	no	mod0631 only: reqs=[] zeny=[] job=[]	no
+npc_town_yuno.txt	379	yuno	263	320	105	ジュノー兵士	ジュノーSoldier	Town / Quest NPC	none	no	mod0631 only: reqs=[] zeny=[] job=[]	no
+npc_town_yuno.txt	398	yuno	228	291	105	ジュノー兵士	ジュノーSoldier	Town / Quest NPC	none	no	mod0631 only: reqs=[] zeny=[] job=[]	no
+npc_town_yuno.txt	417	yuno	165	283	105	ジュノー兵士	ジュノーSoldier	Town / Quest NPC	817:other/guide.txt:2068	yes	none	no
+npc_town_yuno.txt	435	yuno	150	283	105	ジュノー兵士	ジュノーSoldier	Town / Quest NPC	817:other/guide.txt:2051	yes	none	no
+npc_town_yuno.txt	455	yuno	165	228	105	ジュノー兵士	ジュノーSoldier	Town / Quest NPC	817:other/guide.txt:2019	yes	none	no
+npc_town_yuno.txt	474	yuno	150	228	105	ジュノー兵士	ジュノーSoldier	Town / Quest NPC	817:other/guide.txt:2013	yes	none	no
+npc_town_yuno.txt	492	yuno_in03	244	31	120	物理学教授	物理学教授	Town / Quest NPC	none	no	mod0631 only: reqs=[] zeny=[] job=[]	no
+npc_town_yuno.txt	510	yuno_in01	103	157	98	バーン	バーン	Town / Quest NPC	none	no	mod0631 only: reqs=[] zeny=[] job=[]	no
+npc_town_yuno.txt	570	yuno	100	153	47	バジン	バジン	Town / Quest NPC	none	no	mod0631 only: reqs=[] zeny=[] job=[]	no
+npc_town_yuno.txt	600	yuno_in03	154	35	742	アカデミー関係者	アカデミー関係者	Town / Quest NPC	none	no	mod0631 only: reqs=[] zeny=[] job=[]	no
+npc_town_yuno.txt	624	yuno_in03	169	180	755	実技試験教授	実技試験教授	Town / Quest NPC	none	no	mod0631 only: reqs=[] zeny=[] job=[]	no
+npc_town_yuno.txt	642	yuno_in03	62	176	109	史学教授	史学教授	Town / Quest NPC	none	no	mod0631 only: reqs=[] zeny=[] job=[]	no
+npc_town_yuno.txt	658	yuno_in03	105	177	754	筆記試験教授	筆記試験教授	Town / Quest NPC	none	no	mod0631 only: reqs=[] zeny=[] job=[]	no
+npc_event_arrow.txt	7	payon	98	57	86	ラウリィ	ラウリィ	Town / Quest NPC	none	no	mod0631 only: reqs=[] zeny=[] job=[]	yes
+npc_event_arrow.txt	47	payon	100	121	85	バドラック	バドラック	Town / Quest NPC	none	no	mod0631 only: reqs=[] zeny=[] job=[]	yes
+npc_event_bunny.txt	8	prontera	146	87	83	カプラ職員	Kafra Employee	Kafra Service	817:quests/bunnyband.txt:2	yes	rewards: [] -> [('2214', '1')]	yes
+npc_event_bunny.txt	97	geffen	116	62	83	カプラ職員	Kafra Employee	Kafra Service	817:quests/bunnyband.txt:87	yes	rewards: [] -> [('2214', '1')]	yes
+npc_event_bunny.txt	186	morocc	154	97	83	カプラ職員	Kafra Employee	Kafra Service	817:quests/bunnyband.txt:172	yes	rewards: [] -> [('2214', '1')]	yes
+npc_event_bunny.txt	275	alberta	26	229	83	カプラ職員	Kafra Employee	Kafra Service	817:quests/bunnyband.txt:257	yes	rewards: [] -> [('2214', '1')]	yes
+npc_event_bunny.txt	364	payon	97	116	83	カプラ職員	Kafra Employee	Kafra Service	817:quests/bunnyband.txt:342	yes	rewards: [] -> [('2214', '1')]	yes
+npc_event_carnival.txt	1	izlude	139	93	82	(有)闇転送	(有)闇転送	Town / Quest NPC	none	no	mod0631 only: reqs=[] zeny=[] job=[]	yes
+npc_event_doll.txt	2	alberta	117	134	96	ちびっこ	ちびっこ	Town / Quest NPC	none	no	mod0631 only: reqs=[] zeny=[] job=[]	yes
+npc_event_dye.txt	5	alberta_in	133	55	84	ルイツ	ルイツ	Town / Quest NPC	817:cities/alberta.txt:322	yes	none	yes
+npc_event_dye.txt	92	geffen	184	114	82	アウルディフォン	アウルディフォン	Town / Quest NPC	none	no	mod0631 only: reqs=[] zeny=[] job=[]	yes
+npc_event_dye.txt	146	geffen_in	141	140	121	モルゲンシュタイン	モルゲンシュタイン	Town / Quest NPC	817:cities/geffen.txt:190	yes	zeny: [] -> ['3000', '4000']; rewards: [] -> [('973', '1'), ('974', '1')]	yes
+npc_event_dye.txt	308	prontera	78	150	90	ダイレン	ダイレン	Town / Quest NPC	817:cities/prontera.txt:55	yes	none	yes
+npc_event_dye.txt	329	morocc_in	146	99	58	ザバドリハン	ザバドリハン	Town / Quest NPC	none	no	mod0631 only: reqs=[] zeny=['3000', '3500', '5000', '7000'] job=[]	yes
+npc_event_dye.txt	622	prt_in	284	168	55	ジネダインレフル	ジネダインレフル	Town / Quest NPC	none	no	mod0631 only: reqs=[] zeny=[] job=[]	no
+npc_event_dye.txt	653	prt_in	243	168	91	ヨボビチ	ヨボビチ	Town / Quest NPC	none	no	mod0631 only: reqs=[] zeny=[] job=[]	yes
+npc_event_ice.txt	5	morocc	160	143	85	アイスクリーム商人	アイスクリームMerchant	Town / Quest NPC	none	no	mod0631 only: reqs=[] zeny=[] job=[]	yes
+npc_event_ice.txt	89	alberta	106	65	85	アイスクリーム商人	アイスクリームMerchant	Town / Quest NPC	none	no	mod0631 only: reqs=[] zeny=[] job=[]	yes
+npc_event_ice.txt	173	moc_fild16	88	304	85	アイスクリーム商人	アイスクリームMerchant	Town / Quest NPC	817:other/IceCream.txt:51	yes	none	yes
+npc_event_ma_sword.txt	1	pay_fild08	218	283	89	陰気な男	陰気な男	Town / Quest NPC	none	no	mod0631 only: reqs=[] zeny=[] job=[]	yes
+npc_event_ma_sword.txt	329	prt_in	163	12	86	ガトゥ	ガトゥ	Town / Quest NPC	none	no	mod0631 only: reqs=[] zeny=[] job=[]	yes
+npc_event_ma_sword.txt	375	izlude_in	160	129	102	ナイン	ナイン	Town / Quest NPC	none	no	mod0631 only: reqs=[] zeny=[] job=[]	yes
+npc_event_ma_sword.txt	406	morocc	281	178	97	セツ	セツ	Town / Quest NPC	817:cities/morroc.txt:373	yes	none	yes
+npc_event_ma_sword.txt	438	prontera	197	188	50	ビヨップ	ビヨップ	Town / Quest NPC	817:cities/prontera.txt:104	yes	none	yes
+npc_event_making.txt	9	payon_in01	103	111	103	おばあさん	Old Woman	Town / Quest NPC	817:quests/headgearquest.txt:3	yes	rewards: [] -> [('2293', '1')]	yes
+npc_event_making.txt	55	geffen_in	144	166	63	鍛冶屋さん	Blacksmithさん	Town / Quest NPC	817:quests/headgearquest.txt:47	yes	rewards: [] -> [('2292', '1')]	yes
+npc_event_making.txt	134	payon_in01	103	79	76	不思議な乙女	不思議な乙女	Town / Quest NPC	817:quests/headgearquest.txt:102	yes	rewards: [] -> [('2283', '1')]	yes
+npc_event_making.txt	182	alberta_in	122	53	47	青年	青年	Town / Quest NPC	817:quests/headgearquest.txt:149	yes	rewards: [] -> [('2284', '1')]	yes
+npc_event_making.txt	226	morocc_in	142	100	89	ステアー	ステアー	Town / Quest NPC	817:quests/headgearquest.txt:185	yes	rewards: [] -> [('2272', '1')]	yes
+npc_event_making.txt	277	aldeba_in	152	166	86	ある商人	あるMerchant	Town / Quest NPC	817:quests/headgearquest.txt:230	yes	rewards: [] -> [('2273', '1'), ('2280', '1'), ('2281', '1'), ('5018', '1')]	yes
+npc_event_making.txt	370	alberta_in	59	139	120	学生帽爺	学生帽爺	Town / Quest NPC	817:quests/headgearquest.txt:293	yes	rewards: [] -> [('5016', '1')]	yes
+npc_event_making.txt	454	prt_in	38	108	53	学者帽先生	学者帽先生	Town / Quest NPC	817:quests/headgearquest.txt:372	yes	rewards: [] -> [('5012', '1')]	yes
+npc_event_making.txt	539	payon_in02	25	71	86	酸素マスク青年	酸素マスク青年	Town / Quest NPC	817:quests/headgearquest.txt:446	yes	rewards: [] -> [('5004', '1')]	yes
+npc_event_making.txt	620	geffen_in	30	71	83	ゼンハイザ	ゼンハイザ	Town / Quest NPC	817:quests/headgearquest.txt:528	yes	rewards: [] -> [('5001', '1')]	yes
+npc_event_making.txt	719	morocc_in	76	163	64	錬金術師	錬金術師	Town / Quest NPC	817:quests/headgearquest.txt:632	yes	rewards: [] -> [('2296', '1')]	yes
+npc_event_making.txt	788	prt_in	79	94	119	騎士団兵器係	騎士団兵器係	Town / Quest NPC	none	no	mod0631 only: reqs=[] zeny=[] job=[]	yes
+npc_event_mobtim.txt	9	alberta_in	173	76	125	モンスターテイマー	モンスターテイマー	Town / Quest NPC	none	no	mod0631 only: reqs=[] zeny=[] job=[]	yes
+npc_event_mobtim.txt	182	izlude_in	129	64	125	モンスターテイマー	モンスターテイマー	Town / Quest NPC	none	no	mod0631 only: reqs=[] zeny=[] job=[]	yes
+npc_event_mobtim.txt	357	aldeba_in	168	175	125	モンスターテイマー	モンスターテイマー	Town / Quest NPC	none	no	mod0631 only: reqs=[] zeny=[] job=[]	yes
+npc_event_potion.txt	5	prontera	73	140	86	牛乳商人	牛乳Merchant	Town / Quest NPC	817:cities/prontera.txt:15	yes	items: [] -> [('713', '1')]	yes
+npc_event_potion.txt	50	prt_in	49	172	53	マリエヌ	マリエヌ	Town / Quest NPC	817:cities/prontera.txt:350	yes	none	yes
+npc_event_potion.txt	105	prt_in	47	173	97	モリスン	モリスン	Town / Quest NPC	817:cities/prontera.txt:284	yes	rewards: [] -> [('529', '3'), ('530', '1')]	yes
+npc_event_potion.txt	171	payon_in01	174	113	86	マルクハンセン	マルクハンセン	Town / Quest NPC	817:cities/payon.txt:393	yes	none	yes
+npc_event_potion.txt	294	alberta_in	16	28	61	薬師おじいさん	薬師おじいさん	Town / Quest NPC	817:cities/alberta.txt:15	yes	none	yes
+npc_event_pumpkin.txt	15	prt_monk	225	180	89	助教	助教	Town / Quest NPC	none	no	mod0631 only: reqs=[] zeny=[] job=[]	yes
+npc_event_pumpkin.txt	39	gef_fild00	77	212	716	生意気な子	生意気な子	Town / Quest NPC	none	no	mod0631 only: reqs=[] zeny=[] job=[]	yes
+npc_event_pumpkin.txt	48	pvp_2vs2	40	30	67	臆病者	臆病者	Town / Quest NPC	none	no	mod0631 only: reqs=[] zeny=[] job=[]	yes
+npc_event_pumpkin.txt	58	prt_monk	218	175	49	修道士	Monk	Town / Quest NPC	none	no	mod0631 only: reqs=[] zeny=[] job=[]	yes
+npc_event_pumpkin.txt	115	prt_monk	227	162	753	修行僧	修行僧	Town / Quest NPC	none	no	mod0631 only: reqs=[] zeny=[] job=[]	yes
+npc_event_pumpkin.txt	149	gef_fild00	73	209	715	聖なるピエロ	聖なるピエロ	Town / Quest NPC	none	no	mod0631 only: reqs=[('530', '1'), ('536', '1')] zeny=[] job=[]	yes
+npc_event_rental.txt	5	prontera	55	350	105	ペコペコ管理兵	ペコペコ管理兵	Town / Quest NPC	none	no	mod0631 only: reqs=[] zeny=['2500'] job=[]	yes
+npc_event_rental.txt	37	in_hunter	146	99	105	ファルコン管理兵	ファルコン管理兵	Town / Quest NPC	none	no	mod0631 only: reqs=[] zeny=['2500'] job=[]	no
+npc_event_rental.txt	66	prontera	232	318	105	ペコペコ管理兵	ペコペコ管理兵	Town / Quest NPC	none	no	mod0631 only: reqs=[] zeny=['2500'] job=[]	yes
+npc_event_smilegirl.txt	1	prontera	157	187	92	スマイルマスク職員	Mr. Smileマスク職員	Town / Quest NPC	817:other/MrSmile.txt:416	yes	rewards: [] -> [('2278', '1')]	yes
+npc_event_smilegirl.txt	83	aldebaran	136	135	92	スマイルマスク職員	Mr. Smileマスク職員	Town / Quest NPC	817:other/MrSmile.txt:104	yes	rewards: [] -> [('2278', '1')]	yes
+npc_event_smilegirl.txt	165	geffen	119	107	92	スマイルマスク職員	Mr. Smileマスク職員	Town / Quest NPC	817:other/MrSmile.txt:208	yes	rewards: [] -> [('2278', '1')]	yes
+npc_event_smilegirl.txt	247	alberta	113	53	92	スマイルマスク職員	Mr. Smileマスク職員	Town / Quest NPC	817:other/MrSmile.txt:2	yes	rewards: [] -> [('2278', '1')]	yes
+npc_event_smilegirl.txt	329	payon	84	158	92	スマイルマスク職員	Mr. Smileマスク職員	Town / Quest NPC	none	no	mod0631 only: reqs=[] zeny=[] job=[]	yes
+npc_event_smilegirl.txt	411	izlude	129	118	92	スマイルマスク職員	Mr. Smileマスク職員	Town / Quest NPC	817:other/MrSmile.txt:259	yes	rewards: [] -> [('2278', '1')]	yes
+npc_event_smilegirl.txt	493	morocc	158	97	92	スマイルマスク職員	Mr. Smileマスク職員	Town / Quest NPC	817:other/MrSmile.txt:312	yes	rewards: [] -> [('2278', '1')]	yes
+npc_event_yuno.txt	7	yuno_in01	17	30	85	ウェイコン	ウェイコン	Town / Quest NPC	none	no	mod0631 only: reqs=[] zeny=[] job=[]	no
+npc_event_yuno.txt	117	yuno_in03	26	39	709	メト	メト	Town / Quest NPC	none	no	mod0631 only: reqs=[] zeny=[] job=[]	no
+npc_event_yuno.txt	260	yuno_in01	17	95	99	ステンクル	ステンクル	Town / Quest NPC	none	no	mod0631 only: reqs=[] zeny=[] job=[]	no
+npc_event_yuno.txt	321	yuno_in01	19	183	55	カブト	カブト	Town / Quest NPC	none	no	mod0631 only: reqs=[] zeny=[] job=[]	no
+npc_event_yuno.txt	382	yuno_in03	178	43	121	ジジ	ジジ	Town / Quest NPC	none	no	mod0631 only: reqs=[] zeny=[] job=[]	no
+npc_cTower.txt	6	c_tower3	10	249	84	番人	番人	Town / Quest NPC	817:other/ctower.txt:4	yes	items: [] -> [('7026', '1')]; warps: [('c_tower4', '185', '44')] -> [('c_tower4.gat', '185', '44')]	yes
+npc_cTower.txt	112	alde_dun03	264	16	101	番人	番人	Town / Quest NPC	817:other/ctower.txt:120	yes	items: [] -> [('7027', '1')]; warps: [('alde_dun04', '79', '267')] -> [('alde_dun04.gat', '79', '267')]	yes
+npc_turtle.txt	1	alberta	91	70	89	不良食品少年	不良食品Boy	Town / Quest NPC	none	no	mod0631 only: reqs=[] zeny=[] job=[]	yes
+npc_turtle.txt	47	alberta_in	23	104	120	亀爺さん	亀爺さん	Town / Quest NPC	none	no	mod0631 only: reqs=[] zeny=[] job=[]	yes
+npc_turtle.txt	236	alberta	247	122	709	船乗り	Sailor	Town / Quest NPC	817:cities/alberta.txt:479	no	warps: [('alb2trea', '43', '53'), ('amatsu', '197', '82'), ('gon_fild01', '258', '85'), ('izlude', '176', '182'), ('tur_dun01', '154', '242')] -> [('tur_dun01.gat', '157', '39')]	yes
+npc_turtle.txt	520	alberta	248	89	121	タートルアイランド学者	タートルアイランド学者	Town / Quest NPC	none	no	mod0631 only: reqs=[] zeny=[] job=[]	yes
+npc_turtle.txt	597	alberta	248	94	111	航海日誌	航海日誌	Town / Quest NPC	none	no	mod0631 only: reqs=[] zeny=[] job=[]	yes
+npc_turtle.txt	870	tur_dun01	160	81	111	骸骨墓岩	骸骨墓岩	Town / Quest NPC	none	no	mod0631 only: reqs=[] zeny=[] job=[]	no
+npc_turtle.txt	895	tur_dun02	132	251	111	木の根	木の根	Town / Quest NPC	none	no	mod0631 only: reqs=[] zeny=[] job=[]	no
+npc_turtle.txt	950	tur_dun02	46	125	111	亀水晶の山	亀水晶の山	Town / Quest NPC	none	no	mod0631 only: reqs=[] zeny=[] job=[]	no
+npc_turtle.txt	1004	tur_dun02	49	156	111	亀柱	亀柱	Town / Quest NPC	none	no	mod0631 only: reqs=[] zeny=[] job=[]	no
+npc_turtle.txt	1064	tur_dun01	165	29	709	船乗り	Sailor	Town / Quest NPC	817:cities/izlude.txt:2	no	warps: [('izlude', '176', '182')] -> [('alberta.gat', '241', '115')]	no
+npc_pvp.txt	332	alberta_in	62	145	84	PVPガイド	PVPガイド	PvP NPC	none	no	mod0631 only: reqs=[] zeny=[] job=[]	yes
+npc_pvp.txt	479	geffen_in	67	63	84	PVPガイド	PVPガイド	PvP NPC	none	no	mod0631 only: reqs=[] zeny=[] job=[]	yes
+npc_pvp.txt	626	morocc_in	144	138	84	PVPガイド	PVPガイド	PvP NPC	none	no	mod0631 only: reqs=[] zeny=[] job=[]	yes
+npc_pvp.txt	773	payon_in01	172	109	84	PVPガイド	PVPガイド	PvP NPC	none	no	mod0631 only: reqs=[] zeny=[] job=[]	yes
+npc_pvp.txt	920	prt_in	56	140	84	PVPガイド	PVPガイド	PvP NPC	none	no	mod0631 only: reqs=[] zeny=[] job=[]	yes
+npc_pvp.txt	1068	alberta_in	58	145	83	PVPドアマン	PVPドアマン	PvP NPC	none	no	mod0631 only: reqs=[] zeny=[] job=[]	yes
+npc_pvp.txt	1122	geffen_in	63	63	83	PVPドアマン	PVPドアマン	PvP NPC	none	no	mod0631 only: reqs=[] zeny=[] job=[]	yes
+npc_pvp.txt	1176	morocc_in	144	142	83	PVPドアマン	PVPドアマン	PvP NPC	none	no	mod0631 only: reqs=[] zeny=[] job=[]	yes
+npc_pvp.txt	1230	payon_in01	176	107	83	PVPドアマン	PVPドアマン	PvP NPC	none	no	mod0631 only: reqs=[] zeny=[] job=[]	yes
+npc_pvp.txt	1284	prt_in	52	140	83	PVPドアマン	PVPドアマン	PvP NPC	none	no	mod0631 only: reqs=[] zeny=[] job=[]	yes
+npc_pvproom.txt	1	pvp_y_room	30	85	105	試合場 受付::pvpy1r	試合場 Receptionist	PvP NPC	817:other/pvp.txt:13	yes	none	no
+npc_pvproom.txt	46	pvp_y_room	38	85	105	試合場 受付::pvpy2r	試合場 Receptionist	PvP NPC	817:other/pvp.txt:55	yes	none	no
+npc_pvproom.txt	91	pvp_y_room	46	85	105	試合場 受付::pvpy3r	試合場 Receptionist	PvP NPC	817:other/pvp.txt:97	yes	none	no
+npc_pvproom.txt	136	pvp_y_room	54	85	105	試合場 受付::pvpy4r	試合場 Receptionist	PvP NPC	817:other/pvp.txt:139	yes	none	no
+npc_pvproom.txt	181	pvp_y_room	62	85	105	試合場 受付::pvpy5r	試合場 Receptionist	PvP NPC	817:other/pvp.txt:181	yes	none	no
+npc_pvproom.txt	226	pvp_y_room	70	85	105	試合場 受付::pvpy6r	試合場 Receptionist	PvP NPC	817:other/pvp.txt:223	yes	none	no
+npc_pvproom.txt	271	pvp_y_room	78	85	105	試合場 受付::pvpy7r	試合場 Receptionist	PvP NPC	817:other/pvp.txt:265	yes	none	no
+npc_pvproom.txt	315	pvp_y_room	86	85	105	試合場 受付::pvpy8r	試合場 Receptionist	PvP NPC	817:other/pvp.txt:307	yes	none	no
+npc_pvproom.txt	354	pvp_n_room	30	85	105	試合場 受付::pvpn1r	試合場 Receptionist	PvP NPC	817:other/pvp.txt:346	yes	none	no
+npc_pvproom.txt	399	pvp_n_room	38	85	105	試合場 受付::pvpn2r	試合場 Receptionist	PvP NPC	817:other/pvp.txt:388	yes	none	no
+npc_pvproom.txt	444	pvp_n_room	46	85	105	試合場 受付::pvpn3r	試合場 Receptionist	PvP NPC	817:other/pvp.txt:430	yes	none	no
+npc_pvproom.txt	489	pvp_n_room	54	85	105	試合場 受付::pvpn4r	試合場 Receptionist	PvP NPC	817:other/pvp.txt:472	yes	none	no
+npc_pvproom.txt	534	pvp_n_room	62	85	105	試合場 受付::pvpn5r	試合場 Receptionist	PvP NPC	817:other/pvp.txt:514	yes	none	no
+npc_pvproom.txt	579	pvp_n_room	70	85	105	試合場 受付::pvpn6r	試合場 Receptionist	PvP NPC	817:other/pvp.txt:556	yes	none	no
+npc_pvproom.txt	624	pvp_n_room	78	85	105	試合場 受付::pvpn7r	試合場 Receptionist	PvP NPC	817:other/pvp.txt:598	yes	none	no
+npc_pvproom.txt	668	pvp_n_room	86	85	105	試合場 受付::pvpn8r	試合場 Receptionist	PvP NPC	817:other/pvp.txt:640	yes	none	no
+npc_test_arena.txt	19	prontera	160	185	116	アリーナ入り口	アリーナ入り口	Town / Quest NPC	817:other/arena.txt:28	yes	warps: [('prt_are_in', '31', '82')] -> [('prt_are_in.gat', '31', '82')]	yes
+npc_test_arena.txt	31	prt_are_in	29	79	116	タイムアタック１	タイムアタック１	Town / Quest NPC	817:other/arena.txt:40	yes	warps: [('force_map1', '99', '12')] -> [('force_1-1.gat', '99', '12')]	yes
+npc_test_arena.txt	52	force_1-1	99	12	-1	arenatestev0000	arenatestev0000	Town / Quest NPC	none	no	mod0631 only: reqs=[] zeny=[] job=[]	yes
+npc_test_arena.txt	58	force_1-1	99	12	-1	arenatestev0001	arenatestev0001	Town / Quest NPC	none	no	mod0631 only: reqs=[] zeny=[] job=[]	yes
+npc_test_arena.txt	77	force_1-1	25	26	-1	arenatestev1000	arenatestev1000	Town / Quest NPC	none	no	mod0631 only: reqs=[] zeny=[] job=[]	yes
+npc_test_arena.txt	92	force_1-1	25	26	-1	arenatestev8000	arenatestev8000	Town / Quest NPC	none	no	mod0631 only: reqs=[] zeny=[] job=[]	yes
+npc_test_arena.txt	102	force_1-1	25	26	-1	arenatestev9000	arenatestev9000	Town / Quest NPC	none	no	mod0631 only: reqs=[] zeny=[] job=[]	yes

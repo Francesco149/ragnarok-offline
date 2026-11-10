@@ -21,3 +21,7 @@ __pycache__/
 /research/agy-threads/*.rar
 /research/agy-threads/frames/
 /research/agy-threads/report.md
+# round 2: this table is the client's own pettalktable.xml and msgstringtable.txt
+# (Gravity's text), row for row
+/research/agy-threads/r2/t5-official-text.tsv
+/research/agy-threads/r2/frames/

@@ -1,0 +1,23 @@
+=== OFFICIAL WAR OF EMPERIUM RULES & MECHANICS (PERIOD 2003-2004) ===
+
+[SOURCE 1: iRO Official Guide - War of Emperium]
+URL: http://iro.ragnarokonline.com/game/warofemperium.asp
+Wayback Timestamp: 20040405051438 (Captured April 5, 2004)
+
+Combat & Map Restrictions inside Agit:
+1. "Knock-back skills will not inflict knock-back effects on enemies."
+2. "Endure effect will be canceled."
+3. "Skills that reveal hidden enemies will not work on Stalkers or Thieves in Hiding or Cloaking unless they are inside the Emperium room."
+4. "Damage done by normal attacks is reduced to 80%."
+5. "Damage done by magic and physical skills is reduced to 60%."
+6. "Traps and area-of-effect skills will affect both allies and enemies unless cast by a party member."
+7. "When a character dies in the Agit, they do not lose Experience points, but are automatically returned to their save point."
+8. "Teleportation and Fly Wings cannot be used inside the Agit castle."
+
+Emperium Rules:
+1. "The Emperium is a Holy property plant-type monster with 100,000 HP."
+2. "Only characters in a Guild that has acquired the 'Official Guild Approval' skill can damage the Emperium."
+3. "All damage inflicted on the Emperium is reduced to 1 per hit, except for critical hits and certain skills."
+4. "When the Emperium is broken, all characters not belonging to the conquering guild are instantly expelled from the castle to the castle entrance."
+
+Grade: A (Official iRO Website)

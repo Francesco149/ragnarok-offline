@@ -1,0 +1,43 @@
+Task T8 Check: Lutie xmas branch in Ragnarok.exe
+Binary: /data/play/RagnarokOnline/Ragnarok.exe (built Dec 2003)
+Disassembly via rizin:
+
+String offsets:
+- 0x0041d0d4: "notice_xmas.txt"
+- 0x0041d0e4: "2003-10-31gdata_xmas.gpf"
+- 0x0041d100: "xmas"
+
+Function disassembly (0x0040514b - 0x00405237):
+
+0x00405159  push 4                                    ; string length
+0x0040515b  push str.deny                             ; 0x0041d108: "deny"
+0x00405160  push edi                                  ; command argument
+0x00405161  call 0x004102c0                           ; strncmp
+0x00405166  add esp, 0xc
+0x00405169  test eax, eax
+0x0040516b  jne 0x004051c1                            ; if not "deny", check "xmas"
+...
+0x004051c1  push 4                                    ; string length
+0x004051c3  push str.xmas                             ; 0x0041d100: "xmas"
+0x004051c8  push edi                                  ; command argument
+0x004051c9  call 0x004102c0                           ; strncmp
+0x004051ce  add esp, 0xc
+0x004051d1  test eax, eax                             ; matched "xmas"?
+0x004051d3  jne 0x00405244                            ; if not equal, skip xmas handling
+0x004051d5  push str.2003_10_31gdata_xmas.gpf         ; 0x0041d0e4: "2003-10-31gdata_xmas.gpf"
+0x004051da  lea ecx, [ebp - 0x38]
+0x004051dd  call 0x00404b8d                           ; file existence check on disk
+0x004051e2  test al, al                               ; does local file exist?
+0x004051e4  jne 0x00405244                            ; if file already exists, skip download
+0x004051e6  push str.notice_xmas.txt                  ; 0x0041d0d4: "notice_xmas.txt"
+0x004051eb  mov ecx, esi
+0x004051ed  call 0x00407d7b                           ; trigger patch download UI / notice display
+0x004051f2  lea ecx, [esi + 0x48]
+0x004051f5  call 0x004016f6
+
+Finding:
+The `xmas` branch in Ragnarok.exe is a patcher parameter checking for the presence of the optional Christmas update file `2003-10-31gdata_xmas.gpf`.
+If missing on disk, it displays `notice_xmas.txt` and downloads the GPF patch.
+In the December 2003 client CD, Lutie's map resources (`xmas.gat`, `xmas_in.gat`, `xmas_dun01.gat`, `xmas_dun02.gat`, `xmas_fild01.gat`) are already bundled directly inside `data.grf.original`.
+The branch does NOT expire or turn off Lutie after Christmas.
+Grade: A (direct disassembly of period client executable).

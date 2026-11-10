@@ -1,0 +1,41 @@
+=== JATHENA 2-1 JOB CHANGE QUEST HISTORY ===
+
+1. INITIAL 2-1 IMPLEMENTATION (//0505 - 2003-10-30):
+Commit: e2d6ca50 (2003-10-30 09:50:37 +0000)
+Author: ［布］
+Message: //0505
+Changes:
+- Added `conf/npc_job_2nd.txt`
+- Implemented simple job changes for Knight, Priest, Wizard, Blacksmith, Hunter, Assassin.
+- Requirements: Job Level >= 40, No skill points remaining.
+- No exams, no item turn-ins, no multi-stage tests. If Job Level 40 was met, the NPC immediately executed `jobchange <ID>`.
+
+2. MOD0631 IMPLEMENTATION (2003-07-28):
+File: conf/npc_job_2nd.txt
+Contains exact same simple Job 40 jobchange logic:
+- Knight: prt_in 88,101 (Syracuse)
+- Priest: prt_church 16,41 (Bishop Paul)
+- Wizard: geffen_in 164,124 (Wizard Guildsman)
+- Blacksmith: geffen_in 110,169 (Altiregen)
+- Hunter: hu_in01 386,373 (Hunter Guildsman)
+- Assassin: moc_in 12,25 (Assassin Guildsman)
+
+3. FULL MULTI-STAGE TESTS INTRODUCTION (//0933 - 2004-04-09):
+Commit: 4744d0ec (2004-04-09 13:58:19 +0000)
+Author: 胡蝶蘭
+Message: //0933 eA0.5.20からの取り込み、修正
+Changes:
+- Imported full 2-1 job quests from eAthena 0.5.20.
+- Replaced simple `npc_job_2nd.txt` with dedicated quest files:
+  `npc/quest/job_knight.txt`
+  `npc/quest/job_priest.txt`
+  `npc/quest/job_wizard.txt`
+  `npc/quest/job_hunter.txt`
+  `npc/quest/job_blacksmith.txt`
+  `npc/quest/job_assassin.txt`
+- Required maps:
+  `job_priest.gat` (existed in 2003 client: 3 rooms verified 100% walkable)
+  `job_wiz.gat` (DOES NOT EXIST in 2003 client! The 2003 client only has `job_wizard.gat`!)
+
+Conclusion:
+In December 2003 (euRO launch), 2-1 job change quests were either instant (jAthena //0505) or the eAthena multi-stage tests were not yet ported to jAthena. The Wizard test written in //0933 and 817 assumed `job_wiz.gat`, which crashes or fails on the 2003-12-18 client.

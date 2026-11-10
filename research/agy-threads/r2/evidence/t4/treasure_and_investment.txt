@@ -1,0 +1,30 @@
+=== WOE TREASURE BOXES & INVESTMENT MECHANICS ===
+
+[SOURCE 1: iRO Official Guide - Castles & Economy]
+URL: http://iro.ragnarokonline.com/game/castles.asp
+Wayback Timestamp: 20040404013538 (Captured April 4, 2004)
+
+1. Master Room & Treasure Spawning:
+- "The Guild Master has exclusive access to the Castle Master Room through a secret switch behind the throne."
+- "Treasure Boxes spawn once every 24 hours at 00:00 server midnight."
+- "The number of treasure boxes that appear is determined by the castle's Commercial Investment value:
+  Base Boxes = 4
+  Additional Boxes = floor(Commerce / 5)
+  Maximum Boxes = 24 (at 100 Commerce)"
+- "Treasure boxes contain rare equipment, god item creation materials (Rough/Pure Mithril, Silver, God Piece items), Ores, and Zeny bags."
+
+2. Investment Rules (Butler NPC):
+- "Investment can be made twice per day per category: Commercial Investment and Defense Investment."
+- "Commercial Investment increases castle revenue and treasure box counts."
+- "Defense Investment increases the defensive rating of the castle and strengthens the Guardians."
+- Cost formula per investment:
+  `Fee = 5,000 Zeny * (Current_Value + 1)`
+- Maximum investment value per castle: 100 points in Economy, 100 points in Defense.
+- Decay rule: "When a castle falls to an attacking guild, both Economy and Defense ratings drop by 5 points immediately."
+
+3. Guardians:
+- "Guardians can be hired and stationed at strategic choke points by the Guild Master."
+- "Guardian types: Soldier Guardian (Knight), Archer Guardian (Hunter)."
+- "Guardians gain additional Max HP and ATK proportional to the castle's Defense rating."
+
+Grade: A (Official iRO Website) / B (jAthena //0843)

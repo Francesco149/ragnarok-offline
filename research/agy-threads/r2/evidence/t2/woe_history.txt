@@ -1,0 +1,32 @@
+=== JATHENA WAR OF EMPERIUM SCRIPT & ENGINE EVOLUTION ===
+
+1. FIRST WOE SCRIPT COMMIT (//0795 - 2004-02-12):
+Commit: eae18a51 (2004-02-12 18:24:06 +0000)
+Author: Kalen
+Message: //0795 Weiss時代のアジト関連スクリプトを取り込み。
+Summary: Imported Agit / Castle scripts preserved from the "Weiss" emulator era.
+Files added:
+- `conf/npc_guild.txt` (Initial Emperium breaking, castle warp, Kafra inside castle)
+
+2. CORE AGIT ENGINE & COMBAT SYSTEM (//0800 - 2004-02-13):
+Commit: f7138077 (2004-02-13 14:00:23 +0000)
+Author: Michael_Huang
+Message: //0800 GvG（アジト戦）機能の実装。
+Summary: Full implementation of GvG map flags, Emperium damage routines, Guild skill checks, and Castle ownership structures in the C core (`src/map/guild.c`, `src/map/battle.c`).
+
+3. CASTLE ECONOMY, GUARDIANS & INVESTMENT (//0843 - 2004-02-28):
+Commit: 7f763a45 (2004-02-28 11:15:38 +0000)
+Author: Kalen
+Message: //0843 アジトの商業値、防衛値の投資NPC追加。
+Summary: Added Butler NPC scripts (`npc_agit_butler.txt`) handling:
+- Daily investment limits (2 investments per day per category)
+- Commercial investment (5,000z * (current + 1)) -> increases treasure box spawns
+- Defense investment -> increases Guardian HP/DEF
+- Guardian summoning and maintenance
+
+4. CHINESE-BIG5 OFFICIAL LEAK CONVERSION (//1035 - 2004-06-28):
+Commit: d404b9c1 (2004-06-28 12:44:07 +0000)
+Author: Michael
+Message: //1035 台湾公式スクリプトからのGvGスクリプト移植 (Aegis converted)
+Summary: First appearance in jAthena of official Gravity/Aegis Chinese-Big5 script structures.
+Note: Prior to //1035, all jAthena WoE scripts were community reverse-engineered reconstructions (Grade B). //1035 marked the entry of leaked official scripts into the open-source emulator scene.

@@ -1,0 +1,47 @@
+euRO Closed Beta Rates and Player Leveling Reports Evidence
+
+1. BHI-OE Launch Notice (2003-12-20)
+URL: http://web.archive.org/web/20031223001708/http://euro.bhi-oe.de:80/
+Quote:
+"VERSION The version of the Closed Beta includes Comodo and Q-Pet.
+RULES In order to have a successful beta test, we need to set some rules.
+1. As we are testing with higher experience, we will delete all characters and/or accounts at the end of the Closed Beta."
+Sign-off: Imdat Solak (PerrI), 2003-12-20 17:07 CET.
+
+2. Official Forum Thread (Languages, Post 1720) (2003-12-24)
+URL: http://web.archive.org/web/20031227055437/http://forum.euro.bhi-oe.de:80/viewtopic.php?p=2187&amp
+Quote:
+"Posted: Wed Dec 24, 2003 12:00 am    Post subject:
+...
+_________________
+Nick: -Barak-
+Job: Knight
+Level: 64/34"
+Context: Player Barak registered on launch day (20 Dec 2003) and achieved Knight Level 64/34 within 4 days.
+
+3. Forum 3 Topic Index (2003-12-22 to 2003-12-25)
+URL: http://web.archive.org/web/20031227055051/http://forum.euro.bhi-oe.de:80/viewforum.php?f=3&amp
+Topics:
+- Topic 89 by Ryoshin (Tue Dec 23, 2003 7:17 am): "Just became Assassin... Am I the first one on euRO? *ggg*"
+- Topic 125 by =Takeda= (Mon Dec 22, 2003 6:25 pm): "Lvl area for a 48/35 thief?"
+- Topic 67 by Kuja (Thu Dec 25, 2003 10:44 pm): "what's the exactly exp/Droprate atm?"
+- Topic 80 by hentaifreak03 (Wed Dec 24, 2003 9:29 am): "[ Poll ] Exp and Droprate : Higher or high enough :D?"
+
+4. Ragnarok no Seishi / Gamona Community Statements (2004-01-27)
+URL: https://web.archive.org/web/20040213093633/http://ragnarok.gamona.de/forum/index.php?act=ST&f=31&t=9857
+Quotes:
+- Pandaroc (2004-01-27, 21:24):
+  "Nein Exp und Droprate bleibt nicht wie sie in der closed war (nämlich 3fach). Sie wird ganz normal einfach sein ..."
+- Astartus (Site Admin, 2004-01-27, 21:43):
+  "Die Closed Beta Accounts werden sie sicher nicht versuchen zu übernehmen, da die Zeit einfach zu kurz, und die EXP und Drop Rate zu hoch war."
+
+5. Official Wipe Announcement (2004-01-27)
+URL: http://web.archive.org/web/20040405184353/http://forum.euro.bhi-oe.de:80/viewtopic.php?t=2400
+Quote:
+"During the preparation, we will wipe (delete) all characters, items, and accounts. You will need to re-register starting on Monday, February 2nd, 2004." (PerrI, Director BHI-OE)
+
+6. Open Beta Carryover Confirmation (2004-04-08)
+URL: http://web.archive.org/web/20040423025155/http://www.euro-ro.net:80/news/eu/00054/
+Quote:
+"Prontera Tourism Office announces today that the Open Beta characters will not be deleted... all characters will have the items and Zeny inventory of today (8th of April) 9 am CET."
+Proves Open Beta and commercial service were strictly stock 1x rates.

@@ -1,0 +1,23 @@
+=== NOVICE START CELL & MAP EVIDENCE ===
+
+1. MAP NAME VERIFICATION:
+- In the client binary (`Ragexe.exe`), strings and `resnametable.txt`:
+  The novice training grounds map is named `new_zone01`.
+  File in `data.grf.original`: `new_zone01.gat`, `new_zone01.rsw`, `new_zone01.gnd`.
+
+2. SPAWN COORDINATE EVIDENCE:
+- jAthena `src/char/char.c` (commits //0300 through //0631 and mod0631 `char.c:116`):
+  Default starting coordinates:
+  `map: new_zone01, x: 53, y: 111`
+- Map Walkability Check on `new_zone01.gat`:
+  Coordinate (53, 111):
+  Cell type: 0 (WALKABLE | SNIPEABLE)
+  Altitude: 0.0
+  Surrounding area: Open cobblestone square directly in front of the Novice Receptionist building.
+
+3. YOUTUBE VIDEO SCRUTINY:
+- Several YouTube "2003 RO nostalgic" videos show players spawning at `new_zone01 100, 100` or `prontera 156, 180`.
+- Scrutiny: These videos were captured from later private servers (Athena / eAthena / Cronus / rAthena) running custom config start points, or later renewal tutorial islands (`iz_ac01`, `novice_intro`).
+- Authentic 2003 client and emulator primary evidence firmly establishes `new_zone01 53, 111` as the genuine default start point.
+
+Grade: A (Client GAT binary + resnametable) / B (jAthena char.c default)

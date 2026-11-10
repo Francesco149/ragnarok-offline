@@ -1,0 +1,71 @@
+Kafra Fares and Teleportation System Evidence
+
+1. kRO Patch Notice 1182 (2004-02-23 / 2004-02-24)
+URL: https://ro.gnjoy.com/news/notice/View.asp?BBSMode=10001&seq=1182&curpage=562
+Quote:
+"- 사크라이 서버에서 테스트를 진행했던 카프라 요금 체계와 이동지역이 본서버에 업데이트 됩니다."
+"- 묘르닐 폐광던전, 오크던전, 피라미드, 난파선, 바이아란, 궁수마을에서는 더 이상 카프라가 저장 서비스를 하지 않게 되었습니다."
+Standardized fares:
+- Adjacent towns: 1200z
+- Major connections: 1800z
+- Dungeon outposts: 1700z
+- Satellite Izlude from Prontera: 600z
+- Abolished save points at all dungeon/satellite Kafras.
+
+2. Authentic Pre-Overhaul Teleport Fare Table from jAthena v2.1 (Snapshot //0676, 2004-01-01)
+Source: jathena_kafra.txt (script/npc/town/npc_town_kafra.txt)
+Routes and Deductions:
+- Prontera:
+  * Izlude: 900z
+  * Geffen: 1400z
+  * Payon: 1700z
+  * Morroc: 1800z
+  * Comodo: 2000z
+  * Orc Dungeon: 1700z
+- Izlude:
+  * Prontera: 900z
+  * Payon: 1700z
+  * Geffen: 1800z
+- Geffen:
+  * Prontera: 1400z
+  * Izlude: 1800z
+  * Aldebaran: 2100z
+  * Morroc: 2200z
+- Morroc:
+  * Comodo: 1500z
+  * Prontera: 1800z
+  * Payon: 1800z
+  * Alberta: 2200z
+  * Geffen: 2200z
+- Alberta:
+  * Payon: 1300z
+  * Prontera: 2100z
+  * Morroc: 2200z
+- Payon:
+  * Alberta: 1300z
+  * Prontera: 1800z
+  * Morroc: 1800z
+- Aldebaran:
+  * Geffen: 1600z
+  * Mjolnir Mine: 1700z
+- Comodo:
+  * Pharos Lighthouse: 800z
+  * Morroc: 1500z
+- Pharos Lighthouse (cmd_fild07):
+  * Comodo: 500z
+  * Morroc: 2500z
+- Yuno (Pre-Overhaul):
+  * Aldebaran: 1000z
+  * Izlude: 3000z
+
+3. eAthena 817 Teleport Table Bugs (Feb 2004)
+Source: eathena-npc.rar (npc/other/kafra.txt)
+- Prontera: Displays "Geffen -> 1400 Zeny.", deducts 1800z (copy-paste error from Morroc).
+- Alberta (28, 229): Displays "Prontera -> 1800 z", deducts 2100z.
+- Geffen (120, 62): Displays "Al De Baren -> 2100 z", deducts 1800z.
+- Retained active savepoint at dungeon Kafras (e.g. gef_fild10.gat Orc Dungeon: savepoint "gef_fild10.gat",54,232).
+
+4. euRO Timeline for Kafra Overhaul
+- Official Updateplan (2004-04-01): `https://web.archive.org/web/20040406030155/http://www.euro-ro.net:80/news/eu/00010/`
+- euRO ran the December 2003 Comodo client through Closed Beta (Dec 2003 - Jan 2004), Open Beta (Feb 2004 - Apr 2004), and commercial launch (April 15, 2004).
+- The Juno update (which brought the Episode 8 engine and new Kafra tables to Western servers) was scheduled for June 2004. euRO maintained the authentic pre-2004-02-24 fare table until the Juno update.

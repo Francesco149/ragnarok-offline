@@ -18,6 +18,10 @@ still only the report's word. Below, "round 1" marks what that pass
 confirmed. Round 2 is briefed in `research/agy-threads/HANDOFF-r2.md`: the
 same questions with a stricter method (one graded, quoted row per claim)
 and the local period sources first, above all mod0631's own NPC scripts.
+Its output is `research/agy-threads/r2/`; **read
+`research/notes/round2-review.md` first**: the summary report there invents
+quotes and references, the sub-agents' notes under it mostly hold. Below,
+"round 2" marks what that review confirmed from the source.
 
 Ruled out as a source: leaked Gravity server packages (Aegis binaries and
 scripts). They are not ours to use or redistribute, and nothing here may be
@@ -39,6 +43,12 @@ a Gamona staff post of 2004-01-27 calls the closed beta's "EXP und Drop
 Rate zu hoch" (`ragnarok.gamona.de/forum/index.php?act=ST&f=31&t=9857`,
 capture 20040213093633); players reached level 64 in four days. Next:
 load those captures, then IRC logs of `#bhi-oe`.
+**Round 2:** the captures were loaded. A player in that Gamona thread,
+2004-01-27: the rate will not stay "wie sie in der closed war (nämlich
+3fach)". Nobody from BHI-OE confirms the 3x. It fits what the euRO forum
+shows: an Assassin three days after the start (2003-12-23), a Knight at
+64/34 within a week. The default stays 1x; DEVIATIONS names the 3x. Still
+unarchived: forum topics t=67 and t=80.
 
 ### 2. Official English NPC dialogue, iRO/euRO 2003–04
 Our dialogue is the emulator authors' (817), often a fan translation or
@@ -51,6 +61,15 @@ paraphrase. euRO used Gravity's English text, very likely iRO's.
 * OpenKore 2004 `tables/` and logs (npc names and positions).
 * rAthena `npc/pre-re` (official transcriptions, but ~2006+: tier later).
   Use it only where the period text is clearly a paraphrase, and mark it.
+
+**Round 2:** nothing found. The round's text table is the client's own
+`pettalktable.xml` and `msgstringtable.txt` plus eight bug-board lines whose
+captures do not load; its quoted NPC lines are not on the pages it cites.
+What it did find: RODataZone's job pages (2003-10 to 2004-02 on Wayback)
+give NPC names as the international servers showed them (Alcouskou, Nami,
+Leon von Frich, Necko...), though no dialogue. GameFAQs was blocked for the
+agent (HTTP 403); its 2003–04 guides are still the best lead for dialogue
+and need a browser.
 
 ### 3. Kafra fares before 2004-02-24 on iRO and euRO
 Round 1 settled the emulator side (see R4): mod0631 and jAthena agree with
@@ -72,9 +91,18 @@ seller in the Al De Baran HQ. kRO removed the *voucher* menu on 2003-05-20.
 points to the Al De Baran headquarters". jAthena (2004-01-31) adds a tenth
 of each teleport fare to `KF_PIT` and has a "check Kafra points" menu
 entry. (The round-1 report says the opposite; it is wrong here.)
-**Open:** what the points bought before and after 2004-02-10, and whether
-iRO/euRO had them. Then: accrue points in `kafra.lua` and bring back the
-exchange NPC.
+**Round 2, done:** mod0631 has the rule (our brief said it had none; it has
+131 uses of `KF_PIT`): a tenth of every teleport fare, nothing for storage,
+and a "check points" entry that calls it a mileage programme redeemable at
+the head office. The only prize list in a period file is 817's counter at
+`aldeba_in 79,161`: Sweet Potatoes for 100–900p, Red Potions for
+1100–2800p, a lottery at 1000p and 3000p. `kafra.lua` now earns the points
+and the counter hands out the potatoes and potions.
+**Open:** the lottery prizes (817 names none); the "other windows" 817's
+counter mentions; what kRO "improved" on 2004-02-10; whether iRO/euRO had
+points at all. And the voucher: mod0631 and 817 both still sell the Kafra
+Pass (2000z, one conversation of free services) months after kRO dropped
+its menu. We follow kRO: no pass.
 **Impact:** the Aldebaran Kafra HQ NPCs; "Other Information Check".
 **Look:** jAthena's Al De Baran scripts of 2004 (`KF_PIT`), kRO notices of
 2003, iRO guide pages (2004).
@@ -92,6 +120,13 @@ forum, iRO 2003-12 notices.
 a Job into a Knight", job level 40, no test). 817 (2004-02-19) adds the
 Priest and Hunter quests. The emulator authors followed the official
 servers, so this agrees with euRO's "quests came with New Comodo".
+**Round 2: settled for the closed beta.** The New Comodo list was loaded
+(Gamona, 2004-01-18, quoting euro.bhi-oe.de): "2. added 2nd job quest",
+"3. added monster skills", "6. adjusted monsters HP / Exp". The euRO forum
+had an Assassin on 2003-12-23 and a Knight by 2003-12-27, before that
+patch; mod0631 changes job at job level 40 with no test. So December's
+closed beta had 2-1 jobs without quests. Our baseline is New Comodo, so
+the open part is #8: which quests, on which maps.
 
 ### 6. The start cell and the novice training ground on this client
 The client has `new_zone01-04` under older names; 817's `new_1-1..4`
@@ -128,6 +163,22 @@ never loaded them. Were the other platinum quests (Arrow Crafting, Charge
 Arrow, First Aid…) on iRO/euRO by Jan 2004?
 **Impact:** `scripts/import/npc/skillquests`.
 **Look:** iRO guide skill pages (2004-03/04), kRO notices.
+**Round 2, Thief skills done:** mod0631 has one NPC for all four,
+"アルコスク" in the Thief guild (`moc_prydb1 154,128`), with a pouch maker
+in Payon for Sand Attack, and the client ships that quest's two items.
+`scripts/npc/thief_skills.lua` replaces 817's lone Stone Fling NPC.
+RODataZone's Thief page of 2003-12-04 says the same in English ("Alcouskou
+... (moc_prydb1, 154/128)", same items), so this is how the international
+servers had it too. It puts the Bag Seller at `payon 28/121` (mod0631:
+30,120) and Stone Fling at Thief job 20 (mod0631, 817: 15); we keep
+mod0631's.
+**Open:** the other jobs. Three witnesses to read side by side: 817 (ours),
+mod0631's `npc_event_skillget.txt` (15 NPCs), and RODataZone's job pages of
+late 2003 (`www.rodatazone.com/jobs/<n>/<job>.php` on Wayback: names, cells,
+items). First known difference: Moving HP Recovery is a Rocker Doll and 500
+Empty Bottles in 817 and on RODataZone, 200 bottles and another item in
+mod0631. First Aid and Play Dead (Nami, the Chivalry member, the Nursing
+Instructor) are in mod0631 and on RODataZone and not in our import.
 
 ### 8. Wizard (and other 2-1) job quests
 817's wizard.txt is an unfinished conversion that 817 couldn't run (later
@@ -142,6 +193,13 @@ walkthroughs (#2).
 three-stage script, but it runs on `job_wiz`, a later map: this client's
 test map is `job_wizard` (its `wizard_1-1`), and the cells do not match
 (3 of 10). A port has to find the three rooms on the older map first.
+**Round 2:** this client's `job_wizard` is a cross of five rooms: a centre
+room and one at the end of each arm (`job_knight` has the same plan). No
+script for it turned up: jAthena's first Wizard test (2004-04-09, "from
+eAthena's data and old data from elsewhere") is for `job_wiz` too, and its
+Knight, Blacksmith, Hunter and Assassin quests date from September 2004.
+817's Priest test does fit this client's `job_priest` (4 of 4 cells). A
+Wizard test here would have to be laid out by us.
 
 ### 9. Refining details
 Phracon price (iRO page 2000z vs data 200z), armor DEF per refine (1, 5 or
@@ -158,6 +216,14 @@ damage per level; armor "+1 adds 1 defense"; safe to +7 / +6 / +5 / +4,
 armor +4. Its level-4 row repeats level 3's, so the page is not careful,
 but it is the only official statement found. Cards: settled. The rest
 stays a recorded disagreement (PROVENANCE).
+**Round 2: mostly settled.** The page corrected itself: Phracon is 200 zeny
+in the capture of 2004-08-10, and level 4 is 20,000 zeny and +7 in that of
+2004-12-05. kRO's notice of 2003-02-04 already had level 4 at +7 per
+refine and safe to +4, armor safe to +4, and "DEF from refining is less
+efficient than the armor's own DEF". mod0631's refiners charge ten times
+817's fees: that is jRO.
+**Open:** how much DEF a refine level gives (not 1, by kRO's notice; no
+official number), and the size of the random bonus above the safe limit.
 
 ### 10. Monster spawns, Dec 2003
 mod0631's spawn lists are the closest in time. Some kRO spawn rebalances
@@ -197,6 +263,13 @@ The closed beta "includes Comodo and Q-Pet". Which monsters were tameable,
 with which items, and the pet food and accessory list.
 **Impact:** the pet system (ROADMAP).
 **Look:** iRO `qpetsystem.asp` (2004-03, 24 tameable), 817 `db/pet_db.txt`.
+**Round 2:** the iRO page (capture 2004-06-05) was loaded: 24 pets, Monster
+Tamers "in the buildings of Alberta, Izlude, and Al De Baran", Taming
+Merchants in every other town. mod0631 has those three tamers
+(`npc_event_mobtim.txt`); they are in the game now
+(`scripts/npc/monster_tamers.lua`). The page has no table of pets: the
+per-pet items are still only the emulators', and the Rune-Midgarts Library
+pages (`libraryListItem.asp?Category=7`) are the next thing to load.
 
 ### 15. euRO-specific content
 Loading screens, event NPCs (Squad Tournament July 2004, King of the Hill
@@ -242,9 +315,17 @@ mostly tier later; research/notes/round1-review.md):
 * C. A timed trial modelled on kRO's later novice/training WoE. Later
   inspiration only.
 
-Before any of them: load the iRO guide pages of 2004-04
-(`game/warofemperium.asp`, `game/guildsystem.asp`) for what the master
-room gave, and find period numbers for treasure and investment.
+**Round 2:** the iRO pages were loaded; every rule on them is quoted in
+research/notes/round2-review.md. For this decision: the master room gives
+"1 rare item ... once a day, depending on the Commerce Development
+Investment"; an emptied castle "becomes filled with monsters" (iRO, April
+2004: what our castles do); the owners "recover their HP/SP faster".
+kRO's notices date treasure boxes to before 2003-07-29 and PvP in the
+guild dungeon to before 2003-12-26. **No period source gives a number** for
+the treasure count or the investment cost: the round's figures are from
+GungHo's guide of today and a Japanese wiki (tier later), and its summary
+attributes them to the iRO page, which does not have them. jAthena's first
+steward (2004-02-12) takes a flat 10,000z in a test script.
 **Impact:** castle treasure, guild dungeons, guild-only drops.
 **Look:** kRO notices on WoE rules; the iRO guide's guild/WoE pages; euRO
 WoE news (Apr and Sep 2004: "treasure boxes and guild dungeons disabled");

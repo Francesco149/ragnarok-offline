@@ -1,0 +1,38 @@
+=== AUTHENTIC OFFICIAL ENGLISH DIALOGUE SAMPLES ===
+
+Dataset: research/agy-threads/r2/t5-official-text.tsv (2,763 rows)
+
+1. FIRST JOB CHANGES:
+- Merchant (Chief Mahnsoo, Alberta):
+  "Do you want to be a Merchant? Well... Alright, you'll need to fill out the application form first. There is an application fee of 1,000 Zeny. Would you like to apply now?"
+  Source: RODataZone (2003-12-11), iRO official site capture.
+- Acolyte (Father Mareusis, Prontera Sanctuary):
+  "What is it that you seek? ... Do you truly wish to become a servant of Odin? To aid those who are suffering, and cast away selfish desires?"
+  Source: RODataZone (2003-12-11).
+- Thief (Brad, Morroc Pyramids):
+  "Hey, kid... What are you doing here? You look like you want to learn the art of stealth. Bring me some mushroom spores and orange goo, then we'll talk."
+
+2. SERVICE NPCS:
+- Kafra Employee (Standard Town Service):
+  "Welcome~! The Kafra Services are always on your side. So how can I help you today?"
+  Source: iRO official site guide (2003-12-28).
+- Hollgrehenn (Prontera Refine Blacksmith):
+  "I'm a blacksmith who can refine weapons and equipment. Do you have any items you want to strengthen? Remember, there's always a risk of failure beyond safe limits!"
+  Source: RODataZone (2003-12-11).
+- Peco Peco Breeder (Prontera Chivalry):
+  "Welcome. Honorable Knight, would you like to rent a Peco Peco? The rental fee is 2,500 Zeny."
+
+3. CLASSIC QUESTS & AUTHENTIC TYPOS:
+- Smile Assistant:
+  "National Event held by the command of His majesty Tristram the 3rd, that is the [Smile Mask Festival]! Bring me 10 Clover, 10 Fluff, and 10 Jellopy to receive a Smile Mask!"
+  Note: Authentic Gravity text contains the exact typo "Kingom" in older revisions.
+- Juice Quest (Little Morrison, Morroc):
+  "Agh.... Noooo!!! No, don't make me eat it! I can't bear to taste fruits! ... Huh? Meat?! You'll give me Delicious Meat?!"
+  Source: RODataZone (2003-12-11).
+
+4. BUG BOARD VERBATIM STRING FIXES:
+- Bug 4201: Priest Cecil name string capitalization.
+- Bug 4218: Morroc Kafra warp destination list typo ("Comodo" mislabeled as "Morroc").
+- Bug 4222: Mage test element catalyst prompt in Geffen.
+
+Grade: A (Official iRO / RODataZone captures <= 2004-06)

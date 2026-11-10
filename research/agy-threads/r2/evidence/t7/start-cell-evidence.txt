@@ -1,0 +1,45 @@
+Novice Start Cell and Training Ground Evidence
+
+1. Client Map Redirection in data.grf (2003-12-18 Client CD)
+File: data/resnametable.txt
+Content:
+new_1-1.gat#new_zone01.gat#
+new_2-1.gat#new_zone01.gat#
+new_3-1.gat#new_zone01.gat#
+new_4-1.gat#new_zone01.gat#
+new_5-1.gat#new_zone01.gat#
+new_1-2.gat#new_zone02.gat#
+new_1-3.gat#new_zone03.gat#
+new_1-4.gat#new_zone04.gat#
+
+File: data/mapnametable.txt
+new_1-1.rsw#Training Ground#
+new_2-1.rsw#Training Ground#
+new_3-1.rsw#Training Ground#
+
+2. Geometry of new_zone01.gat
+Dimensions: 200x200 cells.
+Platform: Western grassy bridgehead platform spans x=45..66, y=109..118 surrounded by water.
+Cell (53, 111): Walkable (type 0, altitude -7.81). Center of western platform aligned with the east-west bridge axis (y=111).
+Cell (66, 114): Bulletin board at bridge railing (type 1 non-walkable wall).
+
+3. Placement of Tutorial NPC Sprakki (Episode 12, 2004-06-01)
+Source: kRO Notice seq 1447 / Aegis 10.3 tutorial scripts
+NPC: new_zone01.gat, 53, 114, 4 script Sprakki
+Significance: Facing South (dir 4) directly at (53, 111), exactly 3 cells away, designed to engage the player immediately upon spawn.
+
+4. jAthena Emulator Lineage
+Source: jAthena Readme Snapshot //0305 & //0307
+- //0305: "新規PCの位置を初心者修練場に変更。" (Changed new PC location to Novice Training Ground by Ido)
+- //0307: "start_point: new_1-1.gat,53,111" (by Phalaenopsis)
+- Snapshot //0631 (2003-12-18) in src/char/char.c:
+  struct point start_point={"new_1-1.gat",53,111};
+  Starting items: 1x Knife (ID 1201), 1x Cotton Shirt (ID 2301).
+
+5. Gameplay Videos Analysis
+- Video GJO1B9ogKXY (Vishal, 2017-02-20): Frames 0:39-1:14 show Novice spawn on western island and walk eastward across wooden bridge to castle gate. Description states: "This tutorial is made in eos Ragnarok online." (Private server / circular emulator evidence).
+- Video Xf74xcQkHGA (Play Ragnarok 2004, 2020+): Frames 1:19-2:49 show Novice at western bridgehead island. Frames 0:00-0:59 show private server splash banner "PLAY RAGNAROK 2004 SERVER". (Private server / circular emulator evidence).
+
+6. Official Period Screenshots (/where chat command)
+Search results across web archive crawls of official site galleries (iro.ragnarokonline.com, ragnarok.gamona.de, roempire.com):
+Players in 2002–2003 captured promotional art, town plazas, and combat milestones, but no surviving authentic screenshot preserves the text output of the /where command on a 0-second newly created Novice. The coordinate (53, 111) is corroborated by client file redirection, walkable map geometry, and official NPC facing coordinates, but independent empirical verification via an authentic 2003 screenshot of /where remains an unpreserved negative result in web archives.

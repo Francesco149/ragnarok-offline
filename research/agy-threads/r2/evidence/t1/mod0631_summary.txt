@@ -1,0 +1,31 @@
+=== MOD0631 VS 817 COMPARISON SUMMARY ===
+
+Dataset: research/agy-threads/r2/t1-mod0631-vs-817.tsv
+Total mod0631 script NPC definitions scanned: 415
+
+Breakdown:
+1. Exact Position Matches (mod0631 == 817):
+   Count: 233 NPCs
+   Walkability on client GATs: 228 walkable (Type 0), 5 non-walkable.
+   Includes: Core town guides, Kafra staff, weapon/armor shops, classic dungeons.
+
+2. Mod0631-Only NPCs (in mod0631, missing/unmatched in 817):
+   Count: 166 NPCs
+   Walkability on client GATs: 83 walkable, 83 non-walkable.
+   Note: The 83 non-walkable NPCs in mod0631 are almost entirely situated on Episode 4/5 maps (Yuno, Amatsu, Kunlun) or PvP rooms whose GATs on the 2003-12-18 client differ from later eAthena/jAthena versions.
+   Key walkable mod0631-only NPCs:
+   - moc_prydb1 154,128: Alcouskou (Thief Quest Skills)
+   - alberta 63,42: Pharmacist / Potion Quest
+   - aldeba_in 93,54: Diforte (Kafra Head Office)
+   - morocc 160,258: Dye Maker / Tailor
+
+3. Coordinate Shifts between mod0631 and 817:
+   Count: 16 NPCs
+   Examples:
+   - payon 174,136 vs 175,136 (Payon Kafra)
+   - prontera 151,29 vs 151,28 (Prontera South Gate Kafra)
+   Both positions in these minor shifts are walkable.
+
+4. Walkability Summary:
+   Total Walkable on client GATs: 311 / 415 (74.9%)
+   Total Blocked on client GATs: 104 / 415 (25.1%)

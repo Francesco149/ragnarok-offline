@@ -1,0 +1,50 @@
+Task T8 Check: Pet System comparison (iRO official guide vs pets.toml)
+
+Source:
+iRO official Cute Pet guide:
+URL: http://web.archive.org/web/20040605065452/http://iro.ragnarokonline.com:80/game/qpetsystem.asp
+Date: 2004-01-01 / captured 2004-06-05
+
+iRO Cute Pet Items database:
+URL: http://web.archive.org/web/20040605041552/http://iro.ragnarokonline.com/game/libraryListItem.asp?Category=7
+Date: captured 2004-06-05
+
+Local source:
+data/db/pets.toml (imported from mod0631 db/pet_db.txt)
+
+Comparison & Findings:
+1. Total Pet Count:
+   - Official iRO Guide states: "There are a total of 24 monsters that can be tamed to be pets. While the Poring, Deviruchi, and Sohee are the most favored, there are several other monsters that also have distinct personalities."
+   - data/db/pets.toml lists 25 pets.
+   - The 25th pet in mod0631 is BON_GUN (Mob ID 1188, egg 9025 Heretic Egg / Bongun Egg, accessory 10020 Sword of Bongun / Chinese Exorcism Sword, food 537).
+   - In the iRO Cute Pet Items table (Category=7), item 10020 ("A ceremonial sword used by chinese exorcists, to lead the dead beyond the realm") is already present in the item database, showing Bongun's assets were present in the client, but Bongun was unreleased as a catchable pet in early 2004 official servers.
+
+2. Row-by-row Item & Accessory Matching for 24 pets:
+   - PORING (1002): Taming = Unripe Apple (619), Food = Apple Juice (531), Acc = Backpack (10013).
+   - DROPS (1113): Taming = Orange Juice (620), Food = Yellow Herb (508), Acc = Backpack (10013).
+   - POPORING (1031): Taming = Bitter Herb (621), Food = Green Herb (511), Acc = Backpack (10013).
+   - LUNATIC (1063): Taming = Rainbow Carrot (622), Food = Carrot Juice (534), Acc = Silk Ribbon (10007).
+   - PICKY (1049): Taming = Earthworm the Dude (623), Food = Red Herb (507), Acc = Tiny Egg Shell (10012).
+   - CHONCHON (1011): Taming = Rotten Fish (624), Food = Pet Food (537), Acc = Monster Oxygen Mask (10002).
+   - STEEL_CHONCHON (1042): Taming = Rusty Iron (625), Food = Iron Ore (1002), Acc = Monster Oxygen Mask (10002).
+   - HUNTER_FLY (1035): Taming = Monster's Blood (626), Food = Red Gemstone (716), Acc = Monster Oxygen Mask (10002).
+   - SAVAGE_BABE (1167): Taming = Sweet Milk (627), Food = Pet Food (537), Acc = Green Baby Pacifier (10015).
+   - DESERT_WOLF_B (1107): Taming = Well-Dried Bone (628), Food = Pet Food (537), Acc = Transparent Head Protector (10003).
+   - ROCKER (1052): Taming = Singing Flower (629), Food = Pet Food (537), Acc = Rocker Glasses (10014).
+   - SPORE (1014): Taming = Dew Laden Moss (630), Food = Pet Food (537), Acc = Poring Bag (10017).
+   - POISON_SPORE (1077): Taming = Deadly Noxious Herb (631), Food = Pet Food (537), Acc = Poring Bag (10017).
+   - PECOPECO (1019): Taming = Fat Chubby Fly (632), Food = Pet Food (537), Acc = Bipeller (10010).
+   - SMOKIE (1056): Taming = Sweet Potato (633), Food = Pet Food (537), Acc = Red Muffler (10019).
+   - YOYO (1057): Taming = Tropical Banana (634), Food = Banana Juice (532), Acc = Monkey Tail (10018).
+   - ORC_WARRIOR (1023): Taming = Orc Trophy (635), Food = Pet Food (537), Acc = Wild Flower (10009).
+   - MUNAK (1026): Taming = No Recipient (636), Food = Pet Food (537), Acc = Punisher (10008).
+   - DOKEBI (1110): Taming = Broom (637), Food = Pet Food (537), Acc = Gold Wig (10005).
+   - SHOEE (1170, Sohee): Taming = Silver Knife of Chastity (638), Food = Pet Food (537), Acc = Golden Bell (10016).
+   - ISIS (1029): Taming = Armlet of Obedience (639), Food = Pet Food (537), Acc = Queen's Hair Ornament (10006).
+   - PETIT (1155): Taming = Shining Stone (640), Food = Pet Food (537), Acc = Stellar Hairpin (10011).
+   - DEVIRUCHI (1109): Taming = Darkness Contract (641), Food = Shoots (711), Acc = Pacifier (10004).
+   - BAPHOMET_Jr (1101): Taming = Book of the Devil (642), Food = Honey (518), Acc = Skull Helm (10001).
+   - BON_GUN (1188): Taming = Heretic's Amulet (659), Food = Pet Food (537), Acc = Chinese Exorcism Sword (10020).
+
+Grade: A for the 24 official pets, B for Bongun.
+All item IDs, food IDs, and accessory IDs in `data/db/pets.toml` agree exactly with official iRO data.

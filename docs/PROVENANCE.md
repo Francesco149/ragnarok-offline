@@ -60,14 +60,26 @@ period source). Research behind the tiers: `research/notes/mechanics-sources.md`
 From `research/notes/mechanics-sources.md`: Baphomet 568k HP in Dec 2003 data
 vs 668k in Feb 2004; the official iRO element table differs from emulators on
 the level-1 Poison row; party EXP bonus +25% per member (kRO 2003-02) vs +10%
-(2004 iRO guide); Kafra teleport fares changed 2004-02-24; Phracon 2000z
-(iRO page) vs 200z (data); armor DEF per refine recorded as 1, 5 and 0.7 in
-different emulator versions, and as "1 defense" on the iRO page of 2004-06,
-which also gives level-4 weapons the level-3 fee and bonus (5,000z, +5). When you pick one, record which and why.
+(2004 iRO guide); Kafra teleport fares changed 2004-02-24; armor DEF per
+refine recorded as 1, 5 and 0.7 in different emulator versions and as "1
+defense" on the iRO page, while kRO's notice of 2003-02-04 says refine DEF
+counts for less than the armor's own; refine fees ten times higher in
+mod0631 (jRO) than in 817 and on the iRO page. When you pick one, record
+which and why.
+
+Settled since (research/notes/round2-review.md): the iRO refine page of
+2004-06 had Phracon at 2000z and level-4 weapons at the level-3 fee and
+bonus; Gravity corrected both on the page itself (200z by 2004-08-10;
+20,000z and +7 by 2004-12-05), and kRO's notice of 2003-02-04 gives level 4
+its +7. The data was right.
+
+mod0631 follows jRO. Its zeny amounts (refine fees, the per-place storage
+fees we took from it) are jRO's and may not have been euRO's.
 
 ## euRO specifics
 
 euRO ran 1x rates (licence forbade modification; no rate was ever published),
 max level 99, three character slots, WoE from open beta, and opened Juno/2-2
-jobs only on 2004-06-09. The closed beta (this disc) had "higher experience"
-of unknown size. Details and sources: `research/notes/euro-history.md`.
+jobs only on 2004-06-09. The closed beta (this disc) had "higher experience";
+one player's post of 2004-01-27 puts EXP and drops at 3x, and 2-1 jobs came
+without quests until "New Comodo" in January 2004 (round2-review.md). Details and sources: `research/notes/euro-history.md`.

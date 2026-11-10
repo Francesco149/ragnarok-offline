@@ -1,0 +1,29 @@
+=== KAFRA SPECIAL RESERVE POINTS EVIDENCE ===
+
+1. DEBUNKING THE ABSENCE PREMISE:
+- Prior belief: mod0631 had no Kafra Special Reserve Points (`KF_PIT`), and points were only introduced in 2004.
+- Actual fact: `jAthena-mod0631/conf/npc_town_kafra.txt` contains 131 occurrences of `KF_PIT`.
+- Every teleport option in mod0631 rewards `KF_PIT` points equal to exactly 10% of the Zeny fare.
+  Example (mod0631 `npc_town_kafra.txt:28`):
+  Prontera to Izlude: Cost 600z -> `set KF_PIT, KF_PIT + 60;`
+  Prontera to Geffen: Cost 1200z -> `set KF_PIT, KF_PIT + 120;`
+  Prontera to Morroc: Cost 1200z -> `set KF_PIT, KF_PIT + 120;`
+  Prontera to Payon: Cost 1200z -> `set KF_PIT, KF_PIT + 120;`
+- Storage opening also rewards points:
+  `set KF_PIT, KF_PIT + 4;` (Prontera storage fee 40z)
+- This matches jAthena //0587 (2003-11-28) verbatim.
+
+2. HEADQUARTERS REDEMPTION NPC:
+- Location in mod0631: `aldeba_in.gat,93,54,4` (Diforte, Kafra Head Office Staff).
+- Function: Offers the Kafra Pass (カプラパス) for 2,000 Zeny or points.
+- Official kRO Notice `seq=1154` (2004-02-10):
+  Officially opened the Kafra Special Reserve Point Redemption Counter in Aldebaran Headquarters:
+  - 500 Points: 1 Sweet Potato / 1 Red Potion
+  - 1,000 Points: 1 Kafra Lottery Ticket
+  - 5,000 Points: Kafra Headband / Special Prize Draw
+- Imported 817 script:
+  `scripts/import/817/npc/kafra/kafra_point.txt` placed at `aldeba_in,79,161,4` matches the kRO 2004-02-10 redemption scheme.
+
+Conclusion:
+Kafra points were accrued by the official game throughout 2003 (10% of warp fare, 10% of storage fee), but the redemption prize counter was formally opened in February 2004.
+Grade: A (kRO official patch notice) / B (jAthena mod0631 & //0587)

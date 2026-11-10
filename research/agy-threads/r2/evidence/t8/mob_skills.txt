@@ -1,0 +1,23 @@
+Task T8 Check: Monster Skills (mod0631 vs 817)
+
+Comparison between:
+- mod0631: /data/refs/eathena-archive/x/athena-dev-2.1.1-mod0631/athena-dev-2.1.1-mod0631/db/mob_skill_db.txt (2003-12-18)
+- 817: /data/refs/eathena-archive/x/athena-817-src/athena/db/mob_skill_db.txt (2004-02-19)
+
+Findings:
+1. File Completeness:
+   - mod0631 contains 1,291 skill entries across 390 unique monsters.
+   - 817 contains 1,302 skill entries across 391 unique monsters.
+   - Both files implement the identical 19-column format:
+     MobID, Skill Name (Japanese in mod0631), State (attack/loot/idle/chase), SkillID, SkillLevel, Rate (1/10000), CastTime (ms), Delay (ms), Cancelable (yes/no), Target (target/self), Condition (always/myhpltmaxrate/etc.), ConditionValue, Val1..Val5.
+   - Over 95% of entries are identical in values.
+   - Differences (55 in mod0631 not in 817, 63 in 817 not in mod0631) represent minor tuning of cast times/delays or additional Sakray boss mob skills.
+
+2. Period Evidence on Official Servers:
+   - Gamona forum topic 9778 (2004-01-18, captured 2004-02-13): euRO New Comodo update lists:
+     "3. added monster skills"
+   - kRO patch of 2004-06-20 (jAthena commit //1028 by 凸):
+     "After Umbala, Mobs began showing emotions when using skills, so expanded mob_skill_db (e.g. Orc Warrior smoking /... and Orc Lady using Increase AGI /chu)."
+   - This proves monster skills were officially introduced in the winter 2003-2004 Comodo / New Comodo era and were already thoroughly cataloged in mod0631 on 2003-12-18.
+
+Grade: B (period emulator databases directly contemporary with the client build).

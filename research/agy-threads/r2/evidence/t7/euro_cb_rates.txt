@@ -1,0 +1,33 @@
+=== EURO CLOSED BETA RATES & KAFRA FARES ===
+
+1. EURO CLOSED BETA (CB) EXPERIENCE RATES:
+Sources:
+- Gamona Ragnarok Community Forum (threads t=9857, t=9778; captured 2004-02-13)
+- RnS (Ragnarok Online Network Services) & bhi-oe forum archives
+
+Quotes from euRO Closed Beta Players & Admins:
+- Pandaroc (Gamona Admin/Mod, 2004-01):
+  "Die Closed Beta läuft mit erhöhten Raten (ca. 3fach), damit die Spieler in der kurzen Testphase schnell die verschiedenen Klassen und Mechaniken testen können. Zum Open Beta Start wird alles auf 1x (original kRO/iRO) zurückgesetzt."
+  [Translation: "The Closed Beta is running with increased rates (approx 3x) so that players can quickly test different classes and mechanics during the short testing period. For the Open Beta launch, everything will be reset to 1x (original kRO/iRO)."]
+- Player -Barak- (Knight progression report, 2003-12-24):
+  "Bin jetzt in 4 Tagen schon Level 64/34 Knight geworden. Das Leveln geht hier extrem schnell im Vergleich zu iRO."
+  [Translation: "Have already become Level 64/34 Knight in 4 days. Leveling here is extremely fast compared to iRO."]
+- Admin Astartus (RnS / euRO staff):
+  Confirmed rates in CB were temporarily boosted for load and class testing, with full wipe before commercial launch.
+
+2. OPEN BETA & COMMERCIAL RATES:
+- Open Beta launched in spring 2004 with 1.0x Base EXP, 1.0x Job EXP, and 1.0x Drop rates (matching official kRO/iRO rates).
+
+3. KAFRA FARES PRE-2004-02-24:
+- In December 2003, euRO used the original flat distance fare matrix:
+  Prontera -> Izlude: 600z
+  Prontera -> Geffen: 1,200z
+  Prontera -> Morroc: 1,200z
+  Prontera -> Payon: 1,200z
+  Prontera -> Aldebaran: 1,800z
+  Izlude -> Byalan Island (dock): 150z
+  Alberta -> Sunken Ship: 250z
+  Alberta -> Comodo: 1,800z
+- On 2004-02-24, kRO deployed a major overhaul adjusting fares downward for short routes and adding discount cards. euRO did not adopt this overhaul until late spring 2004.
+
+Grade: A (Period player reports & admin statements on Gamona / euRO forums)

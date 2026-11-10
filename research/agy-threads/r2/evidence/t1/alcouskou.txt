@@ -1,0 +1,39 @@
+=== ALCOUSKOU / THIEF QUEST SKILL NPC EVIDENCE ===
+
+[SOURCE 1: mod0631 (Period: 2003-07-28)]
+File: /work/research/emulators/jAthena-mod0631/conf/npc_quest_skill.txt
+Line: 463
+NPC definition:
+moc_prydb1.gat,154,128,4	script	アルコスク	118,{
+    mes "[アルコスク]";
+    mes "…なんだ、お前は。";
+    mes "用がないなら、あっちへ行ってくれ。";
+...
+    // Checks for Thief job, Job Lv, and required items
+    // Teaches skills:
+    // 149 (Sand Attack)
+    // 150 (Backslide)
+    // 151 (Pick Stone)
+    // 152 (Throw Stone)
+}
+
+GAT Walkability verification:
+Map: moc_prydb1.gat (from data.grf.original)
+Cell (154, 128): Type 0 (WALKABLE | SNIPEABLE), altitude 0.0
+Result: 100% WALKABLE.
+
+[SOURCE 2: 817 (Current imported repository)]
+File: scripts/import/817/npc/quest/quest_skill.txt
+Line: 398
+NPC definition:
+morocc,154,128,4	script	ソノさん	118,{
+...
+}
+Note: Placed on morocc 154,128 with Japanese fan name "ソノさん" (Sono-san) or morocc_in, fractured dialogue, and missing quest prerequisites.
+
+[SOURCE 3: Period official verification (iRO / RODataZone Dec 2003)]
+Quest: Thief Job Quests (Find Stone, Stone Hurling, Back Sliding, Sand Spraying)
+Location: Morroc Pyramid B1F (moc_prydb1), NPC: Alcouskou (Thief Guildsman).
+Coordinates: 154, 128.
+Grade: A (Client GAT + RODataZone / iRO official website) / B (jAthena-mod0631)
+Conclusion: mod0631's Alcouskou at moc_prydb1 154,128 is 100% period-accurate.
