@@ -1840,3 +1840,6 @@ npc {
     close()
   end,
 }
+
+-- Monsters and warps this file places.
+-- line 4: monster 1184 on new_zone03: mod0631 places it (scripts/import/spawns.lua)

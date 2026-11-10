@@ -3,6 +3,7 @@
 -- the emulator authors' (often fan-translated), not Gravity's. GPL, like its source.
 -- Don't edit: override in scripts/npc/ (npc{replaces=}, wrap_npc, remove_npc) and list the
 -- change in docs/DEVIATIONS.md.
+-- source fix (jobs/merchant.txt:103): if(@TEMP !=0) goto R10; -> if(@TEMP !=0) goto R11;: the label jumped to itself for ever (one application in eight hung 817); R11 is the second serial number, as in R00/R01, R20/R21, R30/R31
 
 -- warning (jobs/merchant.txt:3): goto M0jobmercE9NZ: no such label (Athena ends the script here)
 npc {
@@ -107,7 +108,7 @@ npc {
     tmp.TEMP = rand(2)
     goto R10
     ::R10::
-    if tmp.TEMP ~= 0 then goto R10 end
+    if tmp.TEMP ~= 0 then goto R11 end
     mes "Its Serial Numbers are 2989396."
     v.job_merchant_q2 = 3
     next()

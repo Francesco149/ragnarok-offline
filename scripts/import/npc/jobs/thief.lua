@@ -526,3 +526,9 @@ npc {
     close()
   end,
 }
+
+-- Monsters and warps this file places.
+-- line 5: monster 1182 on job_thief1: mod0631 places it (scripts/import/spawns.lua)
+-- line 6: monster 1184 on job_thief1: mod0631 places it (scripts/import/spawns.lua)
+-- line 7: monster 1183 on job_thief1: mod0631 places it (scripts/import/spawns.lua)
+-- line 8: monster 1014 on job_thief1: mod0631 places it (scripts/import/spawns.lua)

@@ -111,3 +111,6 @@ npc {
     close()
   end,
 }
+
+-- Monsters and warps this file places.
+-- line 109: warp at in_hunter 100,16 to pay_fild10: mod0631 has this exit within 3 cells (scripts/import/warps.lua)

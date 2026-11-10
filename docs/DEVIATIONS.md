@@ -156,6 +156,18 @@ eAthena 817 (2004-02-19), bugs included. The translator is
   817's Wizard quest is an unfinished conversion it couldn't run; we use
   Athena 659's simple Wizard guild NPC (job level 40, no test) instead
   (THREADS.md #8).
+* **The Merchant quest's endless loop.** One label in 817's Merchant guild
+  script jumps to itself (`R10: if(@TEMP !=0) goto R10;`), so one
+  application in eight hung the server. It goes to `R11`, the second serial
+  number, like its three sister branches. This is the one fix made in the
+  translator (`SOURCE_FIXES`) rather than in an override: the NPC is 350
+  lines long.
+* **Monsters and warps of the job tests.** The world's monsters and warps
+  are mod0631's. 817's job files place some of their own, and those are
+  taken where mod0631 has none: the Chonchons along the Swordman course and
+  the three warps that bridge its gaps (mod0631 has Fabres on the same
+  cells, under a map name with a typo that kept them from loading), and the
+  ten Wraiths of the Priest test.
 * **First job needs Basic Skill 9** (`scripts/npc/jobs.lua`). The client's
   skill description says so; 817's guild NPCs checked only the job level, so
   a Novice could carry 9 unspent points into the new job. The refusal line is

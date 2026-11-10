@@ -2711,3 +2711,25 @@ npc {
     if tmp.TEMP == 4 then warp("job_sword1", 196, 116) end
   end,
 }
+
+-- Monsters and warps this file places.
+warp { map = "job_sword1", x = 193, y = 244, span = { 1, 1 }, to = { "job_sword1", 214, 243 } } -- jobs/swordsman.txt:9
+warp { map = "job_sword1", x = 193, y = 206, span = { 1, 1 }, to = { "job_sword1", 214, 205 } } -- jobs/swordsman.txt:10
+warp { map = "job_sword1", x = 193, y = 168, span = { 1, 1 }, to = { "job_sword1", 214, 167 } } -- jobs/swordsman.txt:11
+spawn { map = "job_sword1", x = 35, y = 78, xs = 0, ys = 0, mob = 1183, count = 3, delay = 60000, delay2 = 30000 } -- jobs/swordsman.txt:320
+spawn { map = "job_sword1", x = 50, y = 108, xs = 0, ys = 0, mob = 1183, count = 3, delay = 60000, delay2 = 30000 } -- jobs/swordsman.txt:321
+spawn { map = "job_sword1", x = 61, y = 28, xs = 0, ys = 0, mob = 1183, count = 3, delay = 60000, delay2 = 30000 } -- jobs/swordsman.txt:322
+spawn { map = "job_sword1", x = 61, y = 92, xs = 0, ys = 0, mob = 1183, count = 3, delay = 60000, delay2 = 30000 } -- jobs/swordsman.txt:323
+spawn { map = "job_sword1", x = 110, y = 112, xs = 0, ys = 0, mob = 1183, count = 2, delay = 60000, delay2 = 30000 } -- jobs/swordsman.txt:324
+spawn { map = "job_sword1", x = 161, y = 94, xs = 0, ys = 0, mob = 1183, count = 2, delay = 60000, delay2 = 30000 } -- jobs/swordsman.txt:325
+spawn { map = "job_sword1", x = 130, y = 76, xs = 0, ys = 0, mob = 1183, count = 2, delay = 60000, delay2 = 30000 } -- jobs/swordsman.txt:326
+spawn { map = "job_sword1", x = 103, y = 58, xs = 0, ys = 0, mob = 1183, count = 2, delay = 60000, delay2 = 30000 } -- jobs/swordsman.txt:327
+spawn { map = "job_sword1", x = 130, y = 24, xs = 0, ys = 0, mob = 1183, count = 5, delay = 60000, delay2 = 30000 } -- jobs/swordsman.txt:328
+spawn { map = "job_sword1", x = 201, y = 36, xs = 0, ys = 0, mob = 1183, count = 2, delay = 60000, delay2 = 30000 } -- jobs/swordsman.txt:329
+spawn { map = "job_sword1", x = 201, y = 16, xs = 0, ys = 0, mob = 1183, count = 2, delay = 60000, delay2 = 30000 } -- jobs/swordsman.txt:330
+spawn { map = "job_sword1", x = 239, y = 44, xs = 0, ys = 0, mob = 1183, count = 3, delay = 60000, delay2 = 30000 } -- jobs/swordsman.txt:331
+spawn { map = "job_sword1", x = 239, y = 76, xs = 0, ys = 0, mob = 1183, count = 2, delay = 60000, delay2 = 30000 } -- jobs/swordsman.txt:332
+spawn { map = "job_sword1", x = 231, y = 101, xs = 0, ys = 0, mob = 1183, count = 2, delay = 60000, delay2 = 30000 } -- jobs/swordsman.txt:333
+spawn { map = "job_sword1", x = 234, y = 117, xs = 0, ys = 0, mob = 1183, count = 2, delay = 60000, delay2 = 30000 } -- jobs/swordsman.txt:334
+spawn { map = "job_sword1", x = 198, y = 91, xs = 0, ys = 0, mob = 1183, count = 2, delay = 60000, delay2 = 30000 } -- jobs/swordsman.txt:335
+spawn { map = "job_sword1", x = 200, y = 63, xs = 0, ys = 0, mob = 1183, count = 2, delay = 60000, delay2 = 30000 } -- jobs/swordsman.txt:336

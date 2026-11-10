@@ -1063,3 +1063,9 @@ npc {
     close()
   end,
 }
+
+-- Monsters and warps this file places.
+warp { map = "prt_are_in", x = 32, y = 95, span = { 1, 1 }, to = { "pvp_y_room", 52, 23 } } -- other/pvp.txt:960
+warp { map = "prt_are_in", x = 170, y = 95, span = { 1, 1 }, to = { "pvp_n_room", 52, 23 } } -- other/pvp.txt:961
+warp { map = "pvp_y_room", x = 52, y = 18, span = { 1, 1 }, to = { "prt_are_in", 32, 92 } } -- other/pvp.txt:962
+warp { map = "pvp_n_room", x = 52, y = 18, span = { 1, 1 }, to = { "prt_are_in", 170, 92 } } -- other/pvp.txt:963

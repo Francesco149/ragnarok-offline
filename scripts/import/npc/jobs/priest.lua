@@ -578,3 +578,8 @@ npc {
     close()
   end,
 }
+
+-- Monsters and warps this file places.
+spawn { map = "job_priest", x = 0, y = 0, xs = 0, ys = 0, mob = 1192, count = 10, delay = 0, delay2 = 0 } -- jobs/priest.txt:532
+-- line 533: monster 1192 on priest_2-1: a parallel copy of the map (tools/import/maps.py)
+-- line 534: monster 1192 on priest_3-1: a parallel copy of the map (tools/import/maps.py)
