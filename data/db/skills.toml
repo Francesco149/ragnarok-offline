@@ -1945,7 +1945,7 @@ quest = true
 
 [[skill]]
 id = 158
-name = "npc_piercingatt：単体攻撃（レンジ2？）"
+name = "NPC_PIERCINGATT"
 max = 10
 inf = 1
 range = 2
@@ -1957,7 +1957,7 @@ npc = true
 
 [[skill]]
 id = 159
-name = "npc_mentalbreaker：SP減少攻撃"
+name = "NPC_MENTALBREAKER"
 max = 10
 inf = 1
 range = 1
@@ -1969,7 +1969,7 @@ npc = true
 
 [[skill]]
 id = 160
-name = "npc_rangeattack：遠距離攻撃"
+name = "NPC_RANGEATTACK"
 max = 10
 inf = 1
 range = 9
@@ -1981,7 +1981,7 @@ npc = true
 
 [[skill]]
 id = 161
-name = "npc_attrichange：ランダム属性変化"
+name = "NPC_ATTRICHANGE"
 max = 10
 inf = 4
 range = 0
@@ -1993,7 +1993,7 @@ npc = true
 
 [[skill]]
 id = 162
-name = "npc_changewater：水属性変化"
+name = "NPC_CHANGEWATER"
 max = 10
 inf = 4
 range = 0
@@ -2005,7 +2005,7 @@ npc = true
 
 [[skill]]
 id = 163
-name = "npc_changeground：地属性変化"
+name = "NPC_CHANGEGROUND"
 max = 10
 inf = 4
 range = 0
@@ -2017,7 +2017,7 @@ npc = true
 
 [[skill]]
 id = 164
-name = "npc_changefire：火属性変化"
+name = "NPC_CHANGEFIRE"
 max = 10
 inf = 4
 range = 0
@@ -2029,7 +2029,7 @@ npc = true
 
 [[skill]]
 id = 165
-name = "npc_changewind：風属性変化"
+name = "NPC_CHANGEWIND"
 max = 10
 inf = 4
 range = 0
@@ -2041,7 +2041,7 @@ npc = true
 
 [[skill]]
 id = 166
-name = "npc_changepoison：毒属性変化"
+name = "NPC_CHANGEPOISON"
 max = 10
 inf = 4
 range = 0
@@ -2053,7 +2053,7 @@ npc = true
 
 [[skill]]
 id = 167
-name = "npc_changeholy：聖属性変化"
+name = "NPC_CHANGEHOLY"
 max = 10
 inf = 4
 range = 0
@@ -2065,7 +2065,7 @@ npc = true
 
 [[skill]]
 id = 168
-name = "npc_changetelekinesis：念属性変化"
+name = "NPC_CHANGEDARKNESS"
 max = 10
 inf = 4
 range = 0
@@ -2077,7 +2077,7 @@ npc = true
 
 [[skill]]
 id = 169
-name = "<skill not defined !!>：闇属性変化？"
+name = "NPC_CHANGETELEKINESIS"
 max = 10
 inf = 4
 range = 0
@@ -2089,7 +2089,7 @@ npc = true
 
 [[skill]]
 id = 170
-name = "npc_criticalslash：防御無視攻撃"
+name = "NPC_CRITICALSLASH"
 max = 10
 inf = 1
 range = 1
@@ -2101,7 +2101,7 @@ npc = true
 
 [[skill]]
 id = 171
-name = "npc_comboattack：多段攻撃"
+name = "NPC_COMBOATTACK"
 max = 10
 inf = 1
 range = 1
@@ -2114,7 +2114,7 @@ npc = true
 
 [[skill]]
 id = 172
-name = "npc_guideattack：必中攻撃"
+name = "NPC_GUIDEDATTACK"
 max = 10
 inf = 1
 range = 1
@@ -2126,7 +2126,7 @@ npc = true
 
 [[skill]]
 id = 173
-name = "npc_selfdestruction：自爆"
+name = "NPC_SELFDESTRUCTION"
 max = 10
 inf = 4
 range = 1
@@ -2138,7 +2138,7 @@ npc = true
 
 [[skill]]
 id = 174
-name = "npc_splashattack：範囲攻撃"
+name = "NPC_SPLASHATTACK"
 max = 10
 inf = 1
 range = 1
@@ -2150,7 +2150,7 @@ npc = true
 
 [[skill]]
 id = 175
-name = "npc_suicide：自決"
+name = "NPC_SUICIDE"
 max = 10
 inf = 4
 range = 0
@@ -2162,7 +2162,7 @@ npc = true
 
 [[skill]]
 id = 176
-name = "npc_poison：毒攻撃"
+name = "NPC_POISON"
 max = 10
 inf = 1
 range = 1
@@ -2175,7 +2175,7 @@ npc = true
 
 [[skill]]
 id = 177
-name = "npc_blindattack：暗闇攻撃"
+name = "NPC_BLINDATTACK"
 max = 10
 inf = 1
 range = 1
@@ -2188,7 +2188,7 @@ npc = true
 
 [[skill]]
 id = 178
-name = "npc_silenceattack：沈黙攻撃"
+name = "NPC_SILENCEATTACK"
 max = 10
 inf = 1
 range = 1
@@ -2201,7 +2201,7 @@ npc = true
 
 [[skill]]
 id = 179
-name = "npc_stunattack：スタン攻撃"
+name = "NPC_STUNATTACK"
 max = 10
 inf = 1
 range = 1
@@ -2214,7 +2214,7 @@ npc = true
 
 [[skill]]
 id = 180
-name = "npc_petrifyattack：石化攻撃"
+name = "NPC_PETRIFYATTACK"
 max = 10
 inf = 1
 range = 1
@@ -2227,7 +2227,7 @@ npc = true
 
 [[skill]]
 id = 181
-name = "npc_curseattack：呪い攻撃"
+name = "NPC_CURSEATTACK"
 max = 10
 inf = 1
 range = 1
@@ -2240,7 +2240,7 @@ npc = true
 
 [[skill]]
 id = 182
-name = "npc_sleepattack：睡眠攻撃"
+name = "NPC_SLEEPATTACK"
 max = 10
 inf = 1
 range = 1
@@ -2253,7 +2253,7 @@ npc = true
 
 [[skill]]
 id = 183
-name = "npc_randomattack：ランダムATK攻撃"
+name = "NPC_RANDOMATTACK"
 max = 10
 inf = 1
 range = 1
@@ -2265,7 +2265,7 @@ npc = true
 
 [[skill]]
 id = 184
-name = "npc_waterattack：水属性攻撃"
+name = "NPC_WATERATTACK"
 max = 10
 inf = 1
 range = 1
@@ -2277,7 +2277,7 @@ npc = true
 
 [[skill]]
 id = 185
-name = "npc_groundattack：地属性攻撃"
+name = "NPC_GROUNDATTACK"
 max = 10
 inf = 1
 range = 1
@@ -2289,7 +2289,7 @@ npc = true
 
 [[skill]]
 id = 186
-name = "npc_fireattack：火属性攻撃"
+name = "NPC_FIREATTACK"
 max = 10
 inf = 1
 range = 1
@@ -2301,7 +2301,7 @@ npc = true
 
 [[skill]]
 id = 187
-name = "npc_windattack：風属性攻撃"
+name = "NPC_WINDATTACK"
 max = 10
 inf = 1
 range = 1
@@ -2313,7 +2313,7 @@ npc = true
 
 [[skill]]
 id = 188
-name = "npc_poisonattack：毒属性攻撃"
+name = "NPC_POISONATTACK"
 max = 10
 inf = 1
 range = 1
@@ -2325,7 +2325,7 @@ npc = true
 
 [[skill]]
 id = 189
-name = "npc_holyattack：聖属性攻撃"
+name = "NPC_HOLYATTACK"
 max = 10
 inf = 1
 range = 1
@@ -2337,7 +2337,7 @@ npc = true
 
 [[skill]]
 id = 190
-name = "npc_darknessattack：闇属性攻撃"
+name = "NPC_DARKNESSATTACK"
 max = 10
 inf = 1
 range = 1
@@ -2349,7 +2349,7 @@ npc = true
 
 [[skill]]
 id = 191
-name = "npc_telekinesisattack：念属性攻撃"
+name = "NPC_TELEKINESISATTACK"
 max = 10
 inf = 1
 range = 1
@@ -2361,7 +2361,7 @@ npc = true
 
 [[skill]]
 id = 192
-name = "npc_magicalattack：魔法打撃攻撃"
+name = "NPC_MAGICALATTACK"
 max = 10
 inf = 1
 range = 1
@@ -2373,7 +2373,7 @@ npc = true
 
 [[skill]]
 id = 193
-name = "npc_metamorphosis：孵化or成長"
+name = "NPC_METAMORPHOSIS"
 max = 10
 inf = 4
 range = 0
@@ -2385,7 +2385,7 @@ npc = true
 
 [[skill]]
 id = 194
-name = "npc_provocation：挑発"
+name = "NPC_PROVOCATION"
 max = 10
 inf = 4
 range = 0
@@ -2397,7 +2397,7 @@ npc = true
 
 [[skill]]
 id = 195
-name = "npc_smoking：タバコを吸う"
+name = "NPC_SMOKING"
 max = 10
 inf = 4
 range = 0
@@ -2409,7 +2409,7 @@ npc = true
 
 [[skill]]
 id = 196
-name = "npc_summonslave：取り巻き召還"
+name = "NPC_SUMMONSLAVE"
 max = 10
 inf = 4
 range = 0
@@ -2421,7 +2421,7 @@ npc = true
 
 [[skill]]
 id = 197
-name = "npc_emotion：エモを出す"
+name = "NPC_EMOTION"
 max = 10
 inf = 4
 range = 0
@@ -2433,7 +2433,7 @@ npc = true
 
 [[skill]]
 id = 198
-name = "npc_transformation：？"
+name = "NPC_TRANSFORMATION"
 max = 10
 inf = 0
 range = 0
@@ -2445,7 +2445,7 @@ npc = true
 
 [[skill]]
 id = 199
-name = "npc_blooddrain：HP吸収"
+name = "NPC_BLOODDRAIN"
 max = 10
 inf = 1
 range = 1
@@ -2457,7 +2457,7 @@ npc = true
 
 [[skill]]
 id = 200
-name = "npc_energydrain：HP吸収（魔法打撃）"
+name = "NPC_ENERGYDRAIN"
 max = 10
 inf = 1
 range = 1
@@ -2469,7 +2469,7 @@ npc = true
 
 [[skill]]
 id = 201
-name = "npc_keeping：一定時間、非移動非反撃"
+name = "NPC_KEEPING"
 max = 10
 inf = 4
 range = 0
@@ -2481,7 +2481,7 @@ npc = true
 
 [[skill]]
 id = 202
-name = "npc_darkbreath：？"
+name = "NPC_DARKBREATH"
 max = 10
 inf = 1
 range = 1
@@ -2493,7 +2493,7 @@ npc = true
 
 [[skill]]
 id = 203
-name = "npc_darkblessing：一定の確率でHP半減"
+name = "NPC_DARKBLESSING"
 max = 10
 inf = 1
 range = 0
@@ -2505,7 +2505,7 @@ npc = true
 
 [[skill]]
 id = 204
-name = "npc_barrier：一定時間、非移動非反撃(MDEF100)"
+name = "NPC_BARRIER"
 max = 10
 inf = 4
 range = 0
@@ -2517,7 +2517,7 @@ npc = true
 
 [[skill]]
 id = 205
-name = "npc_defender：？"
+name = "NPC_DEFENDER"
 max = 10
 inf = 0
 range = 0
@@ -2529,7 +2529,7 @@ npc = true
 
 [[skill]]
 id = 206
-name = "npc_lick：SP減少攻撃（追加スタン？）"
+name = "NPC_LICK"
 max = 10
 inf = 1
 range = 1
@@ -2541,7 +2541,7 @@ npc = true
 
 [[skill]]
 id = 207
-name = "npc_hallucination：錯覚"
+name = "NPC_HALLUCINATION"
 max = 10
 inf = 1
 range = 0
@@ -2553,7 +2553,7 @@ npc = true
 
 [[skill]]
 id = 208
-name = "npc_rebirth：？"
+name = "NPC_REBIRTH"
 max = 10
 inf = 0
 range = 0
@@ -2565,7 +2565,7 @@ npc = true
 
 [[skill]]
 id = 209
-name = "npc_summonmonster：モンスター召還"
+name = "NPC_SUMMONMONSTER"
 max = 10
 inf = 4
 range = 0

@@ -213,7 +213,7 @@ research should check is in research/THREADS.md #20–#23.
   cart cannot be had without. Same result; the condition is gone.
 * **Attack speed.** Not mod0631's slip but ours, fixed now: the server
   attacked twice as fast as the status window's ASPD says. The delay between
-  two attacks is twice the "aspd" value (`pc.c:2461`).
+  two attacks is twice the "aspd" value (`pc.c:2458`).
 
 **Taken from eAthena 817 because mod0631 leaves it unfinished:**
 

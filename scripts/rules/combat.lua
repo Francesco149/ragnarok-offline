@@ -41,7 +41,7 @@ function rules.regen(t)
   else
     if t.sitting then r.hp_clock, r.sp_clock = 200, 200 end
     if sc[tostring(SC.MAGNIFICAT)] then r.sp_clock = r.sp_clock * 2 end
-    if sc[tostring(SC.EXPLOSIONSPIRITS)] then r.sp_clock = 0 end -- pc.c:3936
+    if sc[tostring(SC.EXPLOSIONSPIRITS)] then r.sp_clock = 0 end -- pc.c:3933
     if t.walking then
       -- pc.c:3846: only Moving HP Recovery heals on the move, a quarter as much
       if skill(SK.SM_MOVINGRECOVERY) > 0 then

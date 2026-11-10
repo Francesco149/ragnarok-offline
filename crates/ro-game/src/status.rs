@@ -82,7 +82,7 @@ impl Derived {
             flee: g("flee"),
             flee2: g("flee2"),
             crit: g("crit"),
-            amotion: g("amotion").max(100),
+            amotion: g("amotion").max(20),
             max_weight: g("max_weight"),
             range: g("range").max(1),
             speed: match g("speed") {

@@ -56,7 +56,7 @@ function battle.agi(bl) -- battle.c:60
   end
   local t = sc(bl, SC.DECREASEAGI)
   if t then agi = agi - (2 + t.val1) end
-  if sc(bl, SC.QUAGMIRE) then agi = floor(agi / 2) end
+  if sc(bl, SC.QUAGMIRE) then agi = agi < 0 and -floor(-agi / 2) or floor(agi / 2) end -- C rounds toward zero
   return agi
 end
 function battle.vit(bl) return bl.kind == "mob" and bl.db.vit or bl.st.vit end
@@ -129,7 +129,8 @@ end
 function battle.def(bl)
   if bl.kind ~= "mob" then return bl.st.def end
   local def = bl.db.def
-  -- Signum Crucis: eAthena 817 battle.c:502 (mod0631 never starts the status)
+  -- Signum Crucis: eAthena 817 battle.c:502 (mod0631 never starts the status).
+  -- Plants keep their DEF of 10000+ (mod0631's "one damage a hit" value).
   local t = sc(bl, SC.SIGNUMCRUCIS)
   if t and def < 10000 then def = floor(def * (100 - t.val2) / 100) end
   return def
@@ -512,6 +513,7 @@ function battle.calc_weapon_attack(src, target, skill_num, skill_lv, wflag, opt)
         damage, hitrate, div, blewcount, s_ele, s_ele_ = r.damage, r.hitrate, r.div, r.blewcount, r.s_ele, r.s_ele_
       end
     end
+    -- (Auto Counter's blow ignores DEF: eAthena 817 battle.c:2643)
     if skill_num ~= SK.NPC_CRITICALSLASH and skill_num ~= SK.KN_AUTOCOUNTER then
       -- battle.c:1180 defence: equipment DEF in percent, then VIT with its random part
       if skill_num ~= SK.MO_INVESTIGATE and skill_num ~= SK.MO_EXTREMITYFIST then
@@ -552,6 +554,7 @@ function battle.calc_weapon_attack(src, target, skill_num, skill_lv, wflag, opt)
   if hitrate < 100000 then
     if sd then hitrate = math.max(5, hitrate) else hitrate = math.max(5, math.min(95, hitrate)) end
   end
+  -- (Auto Counter's blow always lands: eAthena 817 battle.c:2458)
   if skill_num == SK.NPC_GUIDEDATTACK or skill_num == SK.RG_BACKSTAP or skill_num == SK.KN_AUTOCOUNTER or hitrate >= 100000
     or sc(target, SC.SLEEP) or sc(target, SC.STAN) or sc(target, SC.FREEZE) then
     hitrate = 100
@@ -604,8 +607,8 @@ function battle.calc_weapon_attack(src, target, skill_num, skill_lv, wflag, opt)
       div, type = 2, 0x08
       damage = damage * 2
     end
-    if st.weapontype1 == 16 and damage > 0 then
-      -- Katar: an extra hit of 1% + 2% per Double Attack level
+    if st.weapontype1 == 16 then
+      -- Katar: an extra hit of 1% + 2% per Double Attack level (1 at least, even after a miss)
       damage2 = floor(damage * (1 + checkskill(sd, SK.TF_DOUBLE) * 2) / 100)
       if damage2 < 1 then damage2 = 1 end
     end
@@ -614,7 +617,7 @@ function battle.calc_weapon_attack(src, target, skill_num, skill_lv, wflag, opt)
 
   -- battle.c:1336 perfect dodge
   if skill_num == 0 and tsd and rnd(100) < tsd.st.flee2 then
-    damage, damage2 = 0, 0
+    damage = 0
     type = 0x0b
   end
 
@@ -658,7 +661,7 @@ battle.weapon_skill = {
   [SK.KN_SPEARSTAB] = function(w) w.blewcount = 6; return pct(w, 100 + 15 * w.lv) end,
   [SK.KN_SPEARBOOMERANG] = function(w) return pct(w, 100 + 50 * w.lv) end,
   [SK.KN_BOWLINGBASH] = function(w) return pct(w, 100 + 50 * w.lv) end,
-  -- Brandish Spear is not in mod0631's battle.c. eAthena 817 battle.c:1834:
+  -- Brandish Spear is not in mod0631's battle.c. eAthena 817 battle.c:2435:
   -- 100% + 20% per level, and more for the cells nearer the knight (wflag 1..3 = the row)
   [SK.KN_BRANDISHSPEAR] = function(w)
     pct(w, 100 + 20 * w.lv)
@@ -672,7 +675,7 @@ battle.weapon_skill = {
     w.damage = d + extra
     return w
   end,
-  -- Venom Splasher: 817 battle.c:1855 (not in mod0631)
+  -- Venom Splasher: 817 battle.c:2470 (not in mod0631)
   [SK.AS_SPLASHER] = function(w) w.div = 6; return pct(w, 200 + 20 * w.lv) end,
   [SK.AS_SONICBLOW] = function(w) w.div = 8; return pct(w, 300 + 50 * w.lv) end,
   [SK.AC_CHARGEARROW] = function(w) w.blewcount = 6; return w end,
@@ -714,7 +717,7 @@ battle.weapon_skill[-1] = nil
 
 -- ------------------------------------------------------------ magic
 
--- skill.h:86 skill_calc_heal
+-- skill.h:83 skill_calc_heal
 function battle.calc_heal(bl, skill_lv)
   return floor((battle.lv(bl) + battle.int(bl)) / 8) * (4 + skill_lv * 8)
 end
@@ -847,7 +850,7 @@ function rules.weapon_attack(a)
   if not battle.is_enemy(src, target) then return false end
   local adelay
   if src.kind == "player" then
-    adelay = src.st.aspd * 2 -- pc.c:2461
+    adelay = src.st.aspd * 2 -- pc.c:2458
     -- a bow needs an arrow for every shot (battle.c:1687)
     if src.st.weapontype1 == 11 then
       if not src.st.ammo then
@@ -870,8 +873,9 @@ function rules.weapon_attack(a)
     local dist = battle.distance(src, target)
     if dist <= 0 or battle.check_dir(battle.calc_dir(src, target.x, target.y), target.dir) then
       local reach = target.kind == "player" and target.st.attackrange or target.db.range
-      local bow = target.kind == "player" and target.st.weapon == 11
-      counter = not sc(src, SC.AUTOCOUNTER) and not bow and dist <= reach + 1
+      -- 817 battle.c:2126: not with a bow; a monster only if its reach is 3 or less
+      local able = (target.kind == "player" and target.st.weapon ~= 11) or (target.kind == "mob" and reach <= 3)
+      counter = not sc(src, SC.AUTOCOUNTER) and able and dist <= reach + 1
       _rt("clif_damage", src.id, target.id, battle.amotion(src), battle.dmotion(target), 0, 1, 0, 0)
       skill_status_change_end(target.id, SC.AUTOCOUNTER)
       if counter then
@@ -888,6 +892,11 @@ function rules.weapon_attack(a)
   if src.kind == "player" and src.st.weapontype1 == 11 then _rt("pc_ammo_use", src.id) end
   local div = wd.div == 255 and 3 or wd.div
   _rt("clif_damage", src.id, target.id, wd.amotion, wd.dmotion, wd.damage, div, wd.type, math.max(0, wd.damage2))
+  if wd.damage2 == -1 then
+    -- the second hand (or the Katar's follow-up) missed: shown a moment later (battle.c:1709)
+    local s, t, am, dm = src.id, target.id, wd.amotion, wd.dmotion
+    battle.after(200, function() _rt("clif_damage", s, t, am, dm, 0, 1, 0, 0) end)
+  end
   local total = wd.damage + math.max(0, wd.damage2)
   battle.damage(src.id, target.id, total)
   if total > 0 then skill_additional_effect(src.id, target.id, 0, 0) end

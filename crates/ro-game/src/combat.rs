@@ -262,7 +262,7 @@ impl Game {
             u.head_dir = 0;
         }
         let r = self.rule_call("weapon_attack", json!({"src": id, "target": intent.target}));
-        // pc.c:2461: the next attack comes after twice the "aspd" value
+        // pc.c:2458: the next attack comes after twice the "aspd" value
         let delay = r.as_ref().and_then(|v| v.get("adelay")).and_then(crate::status::lua_u64).unwrap_or(d.amotion as u64 * 2).max(100);
         if let Some(p) = self.world.units.get_mut(&id).and_then(|u| u.player_mut()) {
             p.next_attack_at = now + delay;
@@ -995,7 +995,7 @@ impl Game {
                         "regen",
                         &json!({"max_hp": d.max_hp, "max_sp": d.max_sp, "vit": c.stats[2] as i32 + d.bonus[2], "int": c.stats[3] as i32 + d.bonus[3],
                                 "sitting": sitting, "walking": walking, "weight": self.weight_of(&c), "max_weight": d.max_weight,
-                                "hiding": option & 2 != 0, "skills": c.skills.iter().map(|(k, v)| (k.to_string(), json!(v))).collect::<serde_json::Map<_, _>>(),
+                                "hiding": option & 6 != 0, "skills": c.skills.iter().map(|(k, v)| (k.to_string(), json!(v))).collect::<serde_json::Map<_, _>>(),
                                 "sc": c.sc.keys().map(|k| (k.to_string(), json!(true))).collect::<serde_json::Map<_, _>>()}),
                     )
                     .ok()

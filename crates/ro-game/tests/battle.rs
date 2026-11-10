@@ -121,6 +121,9 @@ impl T {
     /// Fail on any script error the server noted.
     fn check(&mut self) {
         self.g.tick(); // surfaces errors from read-only paths
+        // a rule named a skill the database does not have
+        let missing = self.g.console_eval("(function() local t = {} for k in pairs(SK_MISSING) do t[#t + 1] = k end return table.concat(t, ' ') end)()", self.me);
+        assert!(missing.trim().is_empty(), "unknown skill names in the rules: {missing}");
         let n = std::mem::take(&mut self.g.notices);
         assert!(n.is_empty(), "{} script errors, first: {}", n.len(), n[0]);
     }
@@ -642,4 +645,28 @@ fn forging() {
     w.u16(idx).u16(0);
     t.send(w);
     assert_eq!(t.st("atk_ele"), 3);
+}
+
+/// The monsters' own skills are wired to their names (they were not: the
+/// skill table's comments name them in free text).
+#[test]
+fn monster_skill_names_resolve() {
+    let mut t = T::new();
+    for name in ["NPC_COMBOATTACK", "NPC_FIREATTACK", "NPC_RANDOMATTACK"] {
+        assert_eq!(t.lua(&format!("battle.weapon_skill[SK.{name}] ~= nil")).trim(), "true", "{name}");
+    }
+    assert_eq!(t.lua("SK.NPC_POISON").trim(), "176");
+    assert_eq!(t.lua("SK.NPC_SUMMONSLAVE").trim(), "196");
+    // a three-hit combo attack shows three hits
+    t.lua("player.base_level = 50; player.vit = 1; heal(9999, 9999)");
+    let s = t.spawn(26, 25, 1001);
+    let me = t.me;
+    t.lua(&format!("skill_castend_damage_id({s}, {me}, SK.NPC_COMBOATTACK, 3)"));
+    let hit = t.packets(0x01de);
+    assert_eq!(hit.len(), 1);
+    assert_eq!(u16_at(&hit[0], 30), skill_num(&mut t, "NPC_COMBOATTACK", 3), "hit count from the skill table");
+}
+
+fn skill_num(t: &mut T, name: &str, lv: u16) -> u16 {
+    t.lua(&format!("skill_get_num(SK.{name}, {lv})")).trim().parse().unwrap()
 }

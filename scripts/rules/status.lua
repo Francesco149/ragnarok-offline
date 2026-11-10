@@ -169,7 +169,7 @@ function rules.status(c)
       list[#list + 1] = card.id
     end
   end
-  -- pc.c:780: status.weapon, the combined type of two weapons
+  -- pc.c:3538 (pc_equipitem): status.weapon, the combined type of two weapons
   local w1, w2 = s.weapontype1, s.weapontype2
   local weapon = w1
   if w2 ~= 0 then
@@ -251,7 +251,8 @@ function rules.status(c)
   local aspd
   if weapon <= 16 then aspd = aspd_of(weapon)
   else aspd = floor((aspd_of(w1) + aspd_of(w2)) * 140 / 200) end
-  if aspd < 100 then aspd = 100 end -- ASPD 190
+  if aspd < 100 then aspd = 100 end -- ASPD 190; the only cap (pc.c:936): what follows may go below it
+  s.amotion = aspd                  -- pc.c:937: the attack motion is taken here, before riding and status changes
   s.dmotion = math.max(400, 800 - agi * 4)
   -- pc.c:942 Cavalier Mastery takes the Peco penalty back
   if riding then aspd = floor(aspd * (100 + 10 * (5 - skill(SK.KN_CAVALIERMASTERY))) / 100) end
@@ -272,7 +273,7 @@ function rules.status(c)
   if cart then
     s.speed = s.speed + floor((10 - skill(SK.MC_PUSHCART)) * 0.1 * 150)
   elseif riding then
-    s.speed = s.speed - floor(0.17 * 150)
+    s.speed = floor(s.speed - 0.17 * 150) -- 124.5, cut to 124 as C does
   end
   if skill(SK.CR_TRUST) > 0 then
     s.max_hp = s.max_hp + skill(SK.CR_TRUST) * 200
@@ -355,8 +356,7 @@ function rules.status(c)
     s.speed = floor(s.speed * (175 - skill(SK.SA_FREECAST) * 5) / 100)
   end
 
-  s.aspd = math.max(100, aspd)
-  s.amotion = s.aspd
+  s.aspd = aspd
   -- pc.c:690 max_weight = job base + str*300 (tenths; the character's own STR), +1000 per Enlarge Weight Limit
   s.max_weight = job.weight + c.str * 300 + skill(SK.MC_INCCARRY) * 1000
 
@@ -382,10 +382,11 @@ end
 -- What the server itself keeps of a character's status (the status window,
 -- walk and attack speed, weight limit, attack range).
 local VIEW = { "max_hp", "max_sp", "atk", "atk2", "matk_min", "matk_max", "def", "def2", "mdef", "mdef2", "hit", "flee",
-               "flee2", "crit", "amotion", "max_weight", "range", "speed", "bstr", "bagi", "bvit", "bint", "bdex", "bluk" }
+               "flee2", "crit", "max_weight", "range", "speed", "bstr", "bagi", "bvit", "bint", "bdex", "bluk" }
 function rules.status_view(c)
   local s = rules.status(c)
   local v = {}
   for _, k in ipairs(VIEW) do v[k] = s[k] end
+  v.amotion = s.aspd -- the window's ASPD and the attack delay are both sd->aspd (clif.c:1432, pc.c:2458)
   return v
 end

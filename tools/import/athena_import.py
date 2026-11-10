@@ -380,14 +380,41 @@ def import_skills():
         v = v * mx if len(v) == 1 else v + [v[-1]] * (mx - len(v))
         return ", ".join(map(str, v[:max(mx, 1)]))
 
+    # Names: the enum of map/skill.h is what the emulator's code calls each skill. skill_db.txt's
+    # comments agree for the players' skills and are free text for the monsters' ("npc_poison：...").
+    enum_names = {}
+    text = (M631 / "map/skill.h").read_bytes().decode("cp932", "replace")
+    body = text[text.index("NV_BASIC"):]
+    body = body[:body.index("};")]
+    nxt = None
+    for tok in re.split(r"[,\s]+", re.sub(r"//[^\n]*", "", body)):
+        m = re.fullmatch(r"([A-Z][A-Z0-9]*_[A-Z0-9_]+)(?:=(\d+))?", tok)
+        if not m:
+            m2 = re.fullmatch(r"=?(\d+)", tok)
+            if m2 and nxt is not None and pending:
+                enum_names.pop(nxt - 1, None)
+                nxt = int(m2.group(1))
+                enum_names[nxt] = pending
+                nxt += 1
+            continue
+        pending = m.group(1)
+        if m.group(2):
+            nxt = int(m.group(2))
+        elif nxt is None:
+            nxt = 1
+        enum_names[nxt] = pending
+        nxt += 1
+
     skills = []
     for line in csv_records(M631 / "db/skill_db.txt"):
         body, _, comment = line.partition("//")
         cols = [c.strip() for c in body.split(",")]
         if len(cols) < 9 or not cols[0].isdigit():
             continue
-        name = comment.strip().split("#")[0].strip()
         sid, rng, hit, inf, ele, nk, mx = (num(c) for c in cols[:7])
+        name = comment.strip().split("#")[0].strip()
+        if not re.fullmatch(r"[A-Z][A-Z0-9]*_[A-Z0-9_]+", name):
+            name = enum_names.get(sid, name)
         sp = [num(x) for x in cols[7].split(":")]
         if len(sp) == 1:
             sp = sp * mx

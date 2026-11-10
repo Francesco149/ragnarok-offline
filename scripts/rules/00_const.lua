@@ -38,8 +38,11 @@ for _, s in ipairs(SKILL_DB or {}) do
   skill_db[s.id] = s
   SK[s.name] = s.id
 end
--- a missing name reads as an id nothing has, so tables keyed by it stay valid
-setmetatable(SK, { __index = function(_, k) return -1 end })
+-- A missing name reads as an id nothing has, so tables keyed by it stay
+-- valid; it is noted in SK_MISSING (a rule naming a skill the database
+-- does not have is a mistake: the tests check that this stays empty).
+SK_MISSING = {}
+setmetatable(SK, { __index = function(_, k) SK_MISSING[k] = true; return -1 end })
 
 local function per_level(list, lv, default)
   if type(list) ~= "table" or #list == 0 then return default end
