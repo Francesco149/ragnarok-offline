@@ -1,7 +1,7 @@
 //! The NPCs taken from mod0631 in research rounds 2 and 3, on their success
 //! paths: Kafra points (earned by teleporting, spent in the head office), the
 //! Thief quest skills from Alcouskou, a Monster Tamer's recipe, and the
-//! Novice's First Aid and Play Dead. The crawler
+//! Novice's First Aid and Play Dead, and the Peco Peco keeper. The crawler
 //! (npc_crawl.rs) only takes random paths through them. Repo scripts,
 //! synthetic all-walkable maps, no client files.
 
@@ -314,4 +314,28 @@ fn novice_quest_skills() {
     assert_eq!(t.eval("return skill_level(143)"), "1");
     assert_eq!(t.eval("return count_item(7039)"), "0");
     assert_eq!(t.eval("return v.skill_nov"), "6");
+}
+
+#[test]
+fn peco_keeper() {
+    let mut t = setup("peco_keeper");
+    t.eval("player.zeny = 6000; job_change(1); player.job_level = 50");
+    // a Swordman is turned away
+    assert!(t.talk("prontera", 55, 350, &[]).is_empty());
+    t.eval("job_change(7)");
+    t.talk("prontera", 55, 350, &[2]);
+    assert_eq!(t.eval("return player.zeny"), "6000", "never mind");
+    // without Riding the money goes and no bird comes: the keeper says so
+    t.talk("prontera", 55, 350, &[1, 1]);
+    assert_eq!(t.eval("return player.zeny"), "3500");
+    assert_eq!(t.eval("return check_option(0x20)"), "0");
+    t.eval("give_skill(63, 1, 0)");
+    t.talk("prontera", 55, 350, &[1, 1]);
+    assert_eq!(t.eval("return player.zeny"), "1000");
+    assert_eq!(t.eval("return check_option(0x20)"), "1");
+    // 1000z is not enough for another
+    t.talk("prontera", 55, 350, &[1]);
+    assert_eq!(t.eval("return player.zeny"), "1000");
+    // the Crusaders' keeper comes with the 2-2 jobs
+    assert!(!t.g.world.units.values().any(|u| u.map == "prontera" && u.x == 232 && u.y == 318));
 }

@@ -144,6 +144,13 @@ eAthena 817 (2004-02-19), bugs included. The translator is
   items and pet accessories. The guide says "available for purchase";
   mod0631's take no zeny, and we follow mod0631. The English is ours, one
   template for all three.
+* **Peco Peco Breeder** (`scripts/npc/peco_keeper.lua`): mod0631's keeper
+  by Prontera's north-west wall (`prontera 55,350`), 2500z a bird for a
+  Knight; the Crusaders' keeper (`232,318`) comes with `jobs2_2`. 817 has
+  only its "Universal Rental" convenience, which is not imported, so a
+  Knight could not get a mount. As in mod0631, a Knight without the Riding
+  skill loses the money and gets no bird; the keeper warns of it. The
+  English and the name are ours.
 * **Commands 817's scripts used but its engine lacked**, where the meaning
   is unmistakable. 817 stopped the script at each of them; we run them:
   * `releaseall` (unequip everything) comes right before `jobchange` in the
