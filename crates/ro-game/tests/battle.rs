@@ -546,8 +546,9 @@ fn newcomers_are_left_alone() {
     t.run(2500);
     assert_eq!(t.hp(), hp, "half-way in: the Zombie has not noticed");
     assert!(t.g.world.units[&z].mob().unwrap().target.is_none());
-    t.run(6000);
-    assert!(t.hp() < hp, "after five it attacks");
+    t.run(4000);
+    // (its blows may miss: look at what it is after, not at our HP)
+    assert_eq!(t.g.world.units[&z].mob().unwrap().target, Some(t.me), "after five it turns on us");
     // again, but drinking a potion ends the peace at once
     t.lua(&format!("_rt('mob_kill', {z}); heal(9999, 0); warp('testmap', 25, 25)"));
     t.send(Writer::new(0x007d));

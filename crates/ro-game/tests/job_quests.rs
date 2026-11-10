@@ -132,6 +132,12 @@ fn read_quest(root: &std::path::Path, files: &[&str]) -> (Vec<(String, u16, u16,
     (npcs, items)
 }
 
+/// "priest_2-1": the second to ninth copy of a map.
+fn is_copy(map: &str) -> bool {
+    let b = map.as_bytes();
+    b.len() > 4 && b[b.len() - 4] == b'_' && (b'2'..=b'9').contains(&b[b.len() - 3]) && b[b.len() - 2] == b'-' && b[b.len() - 1].is_ascii_digit()
+}
+
 struct Quest {
     name: &'static str,
     files: &'static [&'static str],
@@ -201,12 +207,17 @@ fn play(q: &Quest, seed: u64, limit: usize) -> Result<Option<usize>, String> {
     let mut maps: Vec<String> = g.script_maps();
     maps.sort();
     maps.dedup();
+    // Not the parallel copies of a test map ("priest_2-1", "sword_3-1"): the
+    // client has each such map once (tools/import/maps.py), and a quest that
+    // sends the player to a copy must fail here as it would in the game.
+    maps.retain(|m| !is_copy(m));
     for m in &maps {
         g.res.vfs.add_memory_file(&format!("data\\{m}.gat"), gat(400, 400));
         g.res.maps.insert(m.clone());
     }
     let me = enter(&mut g, &cap);
-    let (npcs, items) = read_quest(&root, q.files);
+    let (mut npcs, items) = read_quest(&root, q.files);
+    npcs.retain(|n| !is_copy(&n.0));
     assert!(!npcs.is_empty(), "{}: no NPCs", q.name);
     for (m, ..) in &npcs {
         g.ensure_map(m);

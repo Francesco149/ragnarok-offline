@@ -158,6 +158,12 @@ eAthena 817 (2004-02-19), bugs included. The translator is
     does it. Which palette is which colour is read from the client's files;
   * showing Louitz the solutions a second time does not make the chemist
     forget you (mod0631 sets the quest back to its first step).
+* **The Priest test on one map** (`scripts/npc/priest_test.lua`). 817 runs
+  its three rounds on `priest_1-1`, `priest_2-1` and `priest_3-1`. This
+  client has that map once (`job_priest`), so the first Nun's warp failed
+  and nobody could become a Priest through the test. The three rounds are
+  played on `job_priest` in turn; the map's flags (no teleport, no memo, no
+  death penalty, logging out puts you in Prontera) are 817's.
 * **Alberta's sailor** (`scripts/npc/alberta_sailor.lua`) no longer sells
   passage to Amatsu and Gonryun: the client has neither map (they are later
   additions 817 took from jAthena), so the fare went and the ship did not.

@@ -216,7 +216,10 @@ script for it turned up: jAthena's first Wizard test (2004-04-09, "from
 eAthena's data and old data from elsewhere") is for `job_wiz` too, and its
 Knight, Blacksmith, Hunter and Assassin quests date from September 2004.
 817's Priest test does fit this client's `job_priest` (4 of 4 cells). A
-Wizard test here would have to be laid out by us.
+Wizard test here would have to be laid out by us. (2026-11-10: the cells
+fit, but 817 plays the test's three rounds on three copies of the map and
+this client has one; they are played on `job_priest` in turn,
+`scripts/npc/priest_test.lua`.)
 **Round 3:** nothing new. The round's Wizard rows quote jAthena //1046
 (2004-09-12), again for `job_wiz`: of its three room cells, `116,171` and
 `46,99` are blocked on `job_wizard`. No dated walkthrough of any 2-1 test
