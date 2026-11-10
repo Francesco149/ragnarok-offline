@@ -307,52 +307,62 @@ impl Game {
         }
     }
 
-    /// Add EXP (already rate-adjusted); handles level ups.
+    /// Add EXP (already rate-adjusted); handles level ups (mod0631 pc.c
+    /// pc_gainexp, pc_checkbaselevelup, pc_checkjoblevelup): a base level
+    /// gives (level + 14) / 5 status points (22 at 99) and heals fully, a job
+    /// level one skill point. The dead gain nothing.
     pub(crate) fn gain_exp(&mut self, unit: u32, base: u64, job: u64) {
-        let Some(sid) = self.sid_of(unit) else { return };
-        let (mut base_up, mut job_up) = (false, false);
-        {
-            let (nb, nj) = match self.char_of_unit(unit) {
-                Some(c) => self.exp_next(c),
-                None => return,
-            };
-            let _ = (nb, nj);
+        if self.sid_of(unit).is_none() || self.world.units.get(&unit).is_none_or(|u| u.state == 1) {
+            return;
         }
+        let Some(c) = self.char_of_unit_mut(unit) else { return };
+        c.base_exp += base;
+        c.job_exp += job;
+        let (mut base_ups, mut job_ups) = (0, 0);
         loop {
             let Some(c) = self.char_of_unit(unit) else { return };
             let (nb, _) = self.exp_next(c);
-            let c = self.char_of_unit_mut(unit).unwrap();
-            if base > 0 && !base_up {
-                c.base_exp += base;
-            }
-            base_up = true;
             if nb == 0 || c.base_exp < nb || c.base_level >= 99 {
                 break;
             }
+            let c = self.char_of_unit_mut(unit).unwrap();
             c.base_exp -= nb;
             c.base_level += 1;
-            // Athena mod0631 pc.c: status_point += (base_level + 14) / 5
-            c.status_point += (c.base_level + 14) / 5;
-            self.area_send(unit, ro_proto::Writer::new(0x019b).u32(unit).u32(0).finish(), true);
+            c.status_point += if c.base_level >= 99 { 22 } else { (c.base_level + 14) / 5 };
+            base_ups += 1;
         }
         loop {
             let Some(c) = self.char_of_unit(unit) else { return };
             let (_, nj) = self.exp_next(c);
-            let c = self.char_of_unit_mut(unit).unwrap();
-            if job > 0 && !job_up {
-                c.job_exp += job;
-            }
-            job_up = true;
             if nj == 0 || c.job_exp < nj {
                 break;
             }
+            let c = self.char_of_unit_mut(unit).unwrap();
             c.job_exp -= nj;
             c.job_level += 1;
             c.skill_point += 1;
-            self.area_send(unit, ro_proto::Writer::new(0x019b).u32(unit).u32(1).finish(), true);
+            job_ups += 1;
         }
-        let _ = sid;
+        if base_ups > 0 {
+            // pc_heal(sd, max_hp, max_sp) with the new level's maxima
+            let c = self.char_of_unit(unit).cloned().unwrap();
+            let d = self.derive(&c);
+            if let Some(cm) = self.char_of_unit_mut(unit) {
+                cm.hp = d.max_hp;
+                cm.sp = d.max_sp;
+            }
+        }
+        for _ in 0..base_ups {
+            self.area_send(unit, packets::misc_effect(unit, 0), true);
+        }
+        for _ in 0..job_ups {
+            self.area_send(unit, packets::misc_effect(unit, 1), true);
+        }
         self.send_full_status(unit);
+        if job_ups > 0 {
+            // the new point can be spent: the skill window's arrows
+            self.send_skill_list(unit);
+        }
     }
 }
 

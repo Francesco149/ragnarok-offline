@@ -735,6 +735,19 @@ fn exp_levels_up() {
     assert_eq!(c.status_point, sp0 + (2 + 14) / 5);
     assert_eq!(c.skill_point, kp0 + 1);
     assert!(!t.packets(0x019b).is_empty(), "level-up effect");
+    // a base level heals fully (pc.c:2531)
+    t.lua("player.hp = 1");
+    t.lua("give_exp(16, 0)");
+    let max = t.st("max_hp") as u32;
+    assert_eq!((t.g.store.chars[&t.cid].base_level, t.hp()), (3, max));
+    // the dead gain nothing
+    let me = t.me;
+    t.lua(&format!("_rt('bl_damage', 0, {me}, 99999); give_exp(1000, 1000)"));
+    assert_eq!(t.g.store.chars[&t.cid].base_level, 3);
+    let mut w = Writer::new(0x00b2);
+    w.u8(0);
+    t.send(w);
+    t.send(Writer::new(0x007d));
     // a Poring's 2 EXP (mobs.toml) by killing it
     let before = t.g.store.chars[&t.cid].base_exp;
     let mob = t.spawn(26, 25, 1002);
