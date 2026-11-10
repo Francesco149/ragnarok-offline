@@ -41,7 +41,8 @@ period source). Research behind the tiers: `research/notes/mechanics-sources.md`
 | Natural regen, Increase HP/SP Recovery, Moving HP Recovery, no regen at half weight or hidden | mod0631 `map/pc.c` pc_natural_heal_hp / _sp (4 s HP / 8 s SP clocks; 10 s skill clocks) | athena2003 |
 | Arrows: one a shot, element from the arrow, no ATK of their own | mod0631 `map/battle.c:1687`, `map/pc.c:854` (its arrow ATK line is commented out) | athena2003 |
 | Steal, Steal Coin | mod0631 `map/pc.c` pc_steal_item, pc_steal_coin | athena2003 |
-| Arrow Crafting and forge recipes | mod0631 `db/create_arrow_db.txt`, `db/produce_db.txt` (`scripts/import/craft.lua`; forging itself is not built) | athena2003 |
+| Arrow Crafting and forge recipes; forging success rates, anvils, Star Crumbs and elemental stones | mod0631 `db/create_arrow_db.txt`, `db/produce_db.txt` (`scripts/import/craft.lua`), `map/skill.c` skill_produce_mix (`scripts/rules/produce.lua`) | athena2003 |
+| Discount, Overcharge; healing items scaled by VIT / INT and the recovery skills; overweight icons at 50% and 90% | mod0631 `map/pc.c` pc_modifybuyvalue, pc_modifysellvalue, pc_itemheal, pc_checkweighticon | athena2003 |
 | Death penalty 1%, respawn 1 HP | mod0631 `conf/battle_athena.conf` | athena2003 |
 | Start point `new_zone01 53,111` | Map: the client redirects `new_1-1` to `new_zone01` itself (`data\\resnametable.txt`). Cell: `start_point: new_1-1.gat,53,111` of every Athena config of 2003–04 (jAthena //0307); where they got it is unknown (THREADS.md #6) | client (map) / athena2003 (cell) |
 | Monster AI: targets, chase, attack, assist, looting, slaves, random walk | mod0631 `map/mob.c` mob_ai_sub_hard and friends (`crates/ro-game/src/combat.rs`). Maps nobody is on stand still (DEVIATIONS.md) | athena2003 |

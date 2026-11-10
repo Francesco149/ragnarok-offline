@@ -110,12 +110,20 @@ def translate_use(script):
             a, b = (lua_expr(x) for x in split_args(m.group(2)))
             if a is None or b is None:
                 return None
-            fn = "heal" if m.group(1) == "itemheal" else "percent_heal"
+            fn = "item_heal" if m.group(1) == "itemheal" else "percent_heal"
             out.append(f"{fn}({a}, {b})")
             continue
         m = re.fullmatch(r"sc_end\s+(SC_\w+)", stmt)
-        if m and sc_const(m.group(1)) is not None:
-            out.append(f"sc_end({sc_const(m.group(1))}) --[[{m.group(1)}]]")
+        if m:
+            # mod0631's item_db spells Poison "SC_Posion" on Panacea and Royal Jelly: no such
+            # constant, so its script ended nothing. The item text says they cure poison.
+            name = "SC_Poison" if m.group(1) == "SC_Posion" else m.group(1)
+            if sc_const(name) is not None:
+                out.append(f"sc_end({sc_const(name)}) --[[{name}]]")
+                continue
+        m = re.fullmatch(r"set\s+Zeny\s*,\s*Zeny\s*\+\s*(rand\(\s*\d+\s*,\s*\d+\s*\))", stmt)  # Gold Coin pouches
+        if m:
+            out.append(f"player.zeny = player.zeny + {lua_expr(m.group(1))}")
             continue
         m = re.fullmatch(r"sc_start\s+(SC_\w+)\s*,\s*(-?\d+)\s*,\s*(-?\d+)", stmt)
         if m and sc_const(m.group(1)) is not None:

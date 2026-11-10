@@ -569,3 +569,77 @@ fn auto_counter() {
     let crit = t.packets(0x008a).iter().any(|p| u32_at(p, 2) == me && p[26] == 0x0a);
     assert!(crit, "with a critical");
 }
+
+/// Merchant prices, potions scaled by VIT, the overweight icons.
+#[test]
+fn trade_potions_and_weight() {
+    let mut t = T::new();
+    // Discount 10: 24% off; Overcharge 10: 24% more; level 1: 7%
+    assert_eq!(t.lua("rules.buy_price{price = 1000, skills = {[tostring(SK.MC_DISCOUNT)] = 10}}").trim(), "760");
+    assert_eq!(t.lua("rules.buy_price{price = 1000, skills = {[tostring(SK.MC_DISCOUNT)] = 1}}").trim(), "930");
+    assert_eq!(t.lua("rules.sell_price{price = 1000, skills = {[tostring(SK.MC_OVERCHARGE)] = 10}}").trim(), "1240");
+    assert_eq!(t.lua("rules.buy_price{price = 1000, skills = {}}").trim(), "1000");
+    // a Red Potion heals 45..64, more with VIT (1% a point)
+    t.lua("player.base_level = 50; player.vit = 99; heal(9999, 9999); player.hp = 1; give_item(501, 1)");
+    let idx = t.inv(501);
+    let mut w = Writer::new(0x00a7);
+    w.u16(idx).u32(t.me);
+    t.send(w);
+    let got = t.hp() - 1;
+    assert!((89..=128).contains(&got), "Red Potion with 99 VIT healed {got}");
+    // half the weight limit: icon 35; nine tenths: 36
+    let c = &t.g.store.chars[&t.cid];
+    let _ = c;
+    let max = t.st("max_weight");
+    let n = max / 2 / 10 + 5; // Jellopy weighs 1.0
+    t.lua(&format!("give_item(909, {n})"));
+    assert!(t.packets(0x0196).iter().any(|p| u16_at(p, 2) == 35 && p[8] == 1), "50% icon");
+    t.lua(&format!("give_item(909, {})", max * 4 / 10 / 10));
+    assert!(t.packets(0x0196).iter().any(|p| u16_at(p, 2) == 36 && p[8] == 1), "90% icon");
+    // overweight: no natural recovery (pc.c:4036)
+    t.lua("player.hp = 1");
+    t.run(20_000);
+    assert_eq!(t.hp(), 1);
+}
+
+/// Forging: the hammer lists what the smith can make, the materials go,
+/// and a made weapon carries its maker and element.
+#[test]
+fn forging() {
+    let mut t = T::new();
+    t.lua("job_change(10); player.base_level = 99; player.dex = 99; player.luk = 99");
+    t.learn("BS_DAGGER", 3);
+    t.learn("BS_IRON", 5);
+    // a Knife takes 1 Iron and 10 Jellopy (produce_db)
+    t.lua("give_item(998, 40); give_item(909, 400); give_item(613, 1); give_item(994, 40); give_item(986, 1)");
+    let idx = t.inv(613); // Iron Hammer: produce(1)
+    let mut w = Writer::new(0x00a7);
+    w.u16(idx).u32(t.me);
+    t.send(w);
+    let list = t.packets(0x018d);
+    assert_eq!(list.len(), 1, "forge window opened");
+    let ids: Vec<u16> = list[0][4..].chunks(8).map(|c| u16_at(c, 0)).collect();
+    assert!(ids.contains(&1201), "a Knife can be forged: {ids:?}");
+    assert!(!ids.contains(&998), "no ores with a hammer");
+    // forge Knives with a Flame Heart until one succeeds
+    let mut made = None;
+    for _ in 0..40 {
+        let mut w = Writer::new(0x018e);
+        w.u16(1201).u16(994).u16(0).u16(0);
+        t.send(w);
+        if let Some(k) = t.g.store.chars[&t.cid].inventory.iter().find(|i| i.nameid == 1201 && i.cards[0] != 0) {
+            made = Some(k.clone());
+            break;
+        }
+    }
+    let k = made.expect("a Knife was forged in 40 tries");
+    assert_eq!(k.cards[0], 0x00ff);
+    assert_eq!(k.cards[1] & 0x0f, 3, "fire");
+    assert_eq!(k.cards[2] as u32 | ((k.cards[3] as u32) << 16), t.cid);
+    // worn, it hits with fire
+    let idx = t.g.store.chars[&t.cid].inventory.iter().position(|i| i.cards[0] == 0x00ff).unwrap() as u16 + 2;
+    let mut w = Writer::new(0x00a9);
+    w.u16(idx).u16(0);
+    t.send(w);
+    assert_eq!(t.st("atk_ele"), 3);
+}

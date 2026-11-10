@@ -126,7 +126,7 @@ function set_look(kind, val)
 end
 function check_weight(item, n) return _rt("check_weight", item, n or 1) end
 function viewpoint(kind, x, y, id, color) _rt("viewpoint", kind, x, y, id, color) end
-function item_heal(hp, sp) heal(hp, sp) end
+function item_heal(hp, sp) heal(hp, sp) end -- rules/combat.lua replaces it (VIT, INT and skills count)
 -- readparam(n): Athena SP_* numbers
 local params = { [1] = "base_exp", [2] = "job_exp", [5] = "hp", [6] = "max_hp", [7] = "sp", [8] = "max_sp",
   [9] = "status_point", [11] = "base_level", [12] = "skill_point", [13] = "str", [14] = "agi", [15] = "vit",
@@ -194,7 +194,7 @@ function item_skill(id, lv, name) _rt("unimplemented", "itemskill " .. tostring(
 function item_box(flag) return _rt("item_box", flag) end
 -- Dead Branch: a random monster next to you (data/db/random.toml branch list)
 function dead_branch() return _rt("dead_branch") end
-function produce(kind) _rt("unimplemented", "produce") end
+function produce(kind) _rt("unimplemented", "produce") end -- rules/produce.lua replaces it
 
 function monster(map, x, y, name, mob, n, event) return _rt("monster", map, x, y, name, mob, n, event or "") end
 function area_monster(map, x1, y1, x2, y2, name, mob, n, event)

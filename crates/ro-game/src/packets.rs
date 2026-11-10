@@ -254,18 +254,18 @@ pub fn shop_select(npc: u32) -> Vec<u8> {
     Writer::new(ZC_SELECT_DEALTYPE).u32(npc).finish()
 }
 /// 0x00c6: (price, discounted price, client item type, item id) × n
-pub fn shop_buy_list(items: &[(u32, u8, u32)]) -> Vec<u8> {
+pub fn shop_buy_list(items: &[(u32, u32, u8, u32)]) -> Vec<u8> {
     let mut w = Writer::new(ZC_PC_PURCHASE_ITEMLIST);
-    for &(price, kind, id) in items {
-        w.u32(price).u32(price).u8(kind).u16(id as u16);
+    for &(price, discounted, kind, id) in items {
+        w.u32(price).u32(discounted).u8(kind).u16(id as u16);
     }
     w.finish()
 }
 /// 0x00c7: (inventory index, price, overcharged price) × n
-pub fn shop_sell_list(items: &[(u16, u32)]) -> Vec<u8> {
+pub fn shop_sell_list(items: &[(u16, u32, u32)]) -> Vec<u8> {
     let mut w = Writer::new(ZC_PC_SELL_ITEMLIST);
-    for &(idx, price) in items {
-        w.u16(idx).u32(price).u32(price);
+    for &(idx, price, overcharged) in items {
+        w.u16(idx).u32(price).u32(overcharged);
     }
     w.finish()
 }
@@ -786,4 +786,23 @@ pub fn mvp_item(nameid: u16) -> Vec<u8> {
 /// 0x010b: MVP reward EXP.
 pub fn mvp_exp(exp: u32) -> Vec<u8> {
     Writer::new(0x010b).u32(exp).finish()
+}
+
+/// 0x018d: what can be forged or refined now: (item, 0x0012, maker's char id) each.
+pub fn produce_list(ids: &[u16], char_id: u32) -> Vec<u8> {
+    let mut w = Writer::new(0x018d);
+    for i in ids {
+        w.u16(*i).u16(0x0012).u32(char_id);
+    }
+    w.finish()
+}
+
+/// 0x018f: forging result (0 made, 1 failed).
+pub fn produce_effect(flag: u16, nameid: u16) -> Vec<u8> {
+    Writer::new(0x018f).u16(flag).u16(nameid).finish()
+}
+
+/// 0x0194: the name behind a character id (the maker of a forged weapon).
+pub fn char_name(char_id: u32, name: &str) -> Vec<u8> {
+    Writer::new(0x0194).u32(char_id).str_fixed(name, 24).finish()
 }

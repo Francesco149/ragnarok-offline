@@ -116,6 +116,21 @@ impl Game {
         let (w, mw) = (self.weight_of(c), self.derive(c).max_weight);
         self.send(sid, packets::par(crate::status::SP_WEIGHT, w));
         self.send(sid, packets::par(crate::status::SP_MAXWEIGHT, mw));
+        // pc.c:622 pc_checkweighticon: the 50% and 90% icons (35, 36)
+        let flag = if w as u64 * 10 >= mw as u64 * 9 {
+            2
+        } else if w as u64 * 2 >= mw as u64 {
+            1
+        } else {
+            0
+        };
+        if let Some(p) = self.world.units.get_mut(&unit).and_then(|u| u.player_mut()) {
+            let old = std::mem::replace(&mut p.weight_icon, flag);
+            if old != flag {
+                self.send(sid, packets::status_icon(35, unit, flag == 1));
+                self.send(sid, packets::status_icon(36, unit, flag == 2));
+            }
+        }
     }
 
     pub(crate) fn count_item(&self, unit: u32, nameid: u32) -> u32 {
@@ -146,7 +161,11 @@ impl Game {
         let i = idx.wrapping_sub(INV_OFFSET) as usize;
         let Some(it) = self.char_of_unit(unit).and_then(|c| c.inventory.get(i)).cloned() else { return };
         let Some(d) = self.db.item(it.nameid).cloned() else { return };
-        if !matches!(d.kind, 0 | 2 | 11) || self.world.units.get(&unit).is_some_and(|u| u.state == 1) {
+        // pc_isUseitem: the item's sex, level and jobs
+        let (class, lv) = self.char_of_unit(unit).map(|c| (c.class, c.base_level)).unwrap_or((0, 1));
+        let sex = self.world.units.get(&unit).and_then(|u| u.player()).map(|p| p.sex).unwrap_or(1);
+        let allowed = (d.gender == 2 || d.gender == sex) && lv >= d.equip_level as u16 && (d.jobs == 0 || d.jobs & (1u32 << class.min(31)) != 0);
+        if !matches!(d.kind, 0 | 2 | 11) || !allowed || self.world.units.get(&unit).is_some_and(|u| u.state == 1) {
             self.send(sid, packets::use_item_ack(idx, it.amount as u16, false));
             return;
         }
@@ -432,6 +451,19 @@ impl Game {
 
     // ------------------------------------------------------------ shops
 
+    /// A shop price as this character pays or gets it (Discount, Overcharge:
+    /// rules.buy_price / rules.sell_price).
+    fn trade_price(&self, unit: u32, price: u32, buy: bool) -> u32 {
+        let Some(c) = self.char_of_unit(unit) else { return price };
+        let skills: serde_json::Map<String, serde_json::Value> = c.skills.iter().map(|(k, v)| (k.to_string(), serde_json::json!(v))).collect();
+        self.scripts
+            .as_ref()
+            .and_then(|e| e.rule(if buy { "buy_price" } else { "sell_price" }, &serde_json::json!({"price": price, "skills": skills})).ok().flatten())
+            .and_then(|v| crate::status::lua_u64(&v))
+            .map(|v| v as u32)
+            .unwrap_or(price)
+    }
+
     fn shop_items(&self, npc: u32) -> Vec<(u32, u32)> {
         let Some(UnitKind::Npc(n)) = self.world.units.get(&npc).map(|u| &u.kind) else { return vec![] };
         let crate::world::NpcKind::Shop { def } = n.kind else { return vec![] };
@@ -448,17 +480,17 @@ impl Game {
             return;
         }
         if kind == 0 {
-            let list: Vec<(u32, u8, u32)> =
-                self.shop_items(npc).into_iter().map(|(id, price)| (price, self.client_type(id), id)).collect();
+            let list: Vec<(u32, u32, u8, u32)> =
+                self.shop_items(npc).into_iter().map(|(id, price)| (price, self.trade_price(unit, price, true), self.client_type(id), id)).collect();
             self.send(sid, packets::shop_buy_list(&list));
         } else {
             let Some(c) = self.char_of_unit(unit) else { return };
-            let list: Vec<(u16, u32)> = c
+            let list: Vec<(u16, u32, u32)> = c
                 .inventory
                 .iter()
                 .enumerate()
                 .filter(|(_, it)| it.equip == 0)
-                .filter_map(|(i, it)| self.db.item(it.nameid).map(|d| (i as u16 + INV_OFFSET, d.sell_price())))
+                .filter_map(|(i, it)| self.db.item(it.nameid).map(|d| (i as u16 + INV_OFFSET, d.sell_price(), self.trade_price(unit, d.sell_price(), false))))
                 .collect();
             self.send(sid, packets::shop_sell_list(&list));
         }
@@ -471,7 +503,7 @@ impl Game {
         let mut total: u64 = 0;
         for &(id, n) in list {
             match stock.iter().find(|(sid_, _)| *sid_ == id) {
-                Some(&(_, price)) => total += price as u64 * n as u64,
+                Some(&(_, price)) => total += self.trade_price(unit, price, true) as u64 * n as u64,
                 None => {
                     self.send(sid, packets::shop_buy_result(3));
                     return;
@@ -494,7 +526,7 @@ impl Game {
                 self.send(sid, packets::shop_buy_result(2));
                 break;
             }
-            let price = stock.iter().find(|(s, _)| *s == id).map(|(_, p)| *p).unwrap_or(0);
+            let price = stock.iter().find(|(s, _)| *s == id).map(|(_, p)| self.trade_price(unit, *p, true)).unwrap_or(0);
             if let Some(c) = self.char_of_unit_mut(unit) {
                 c.zeny = c.zeny.saturating_sub(price * n);
             }
@@ -512,7 +544,7 @@ impl Game {
         for (idx, n) in list {
             let i = idx.wrapping_sub(INV_OFFSET) as usize;
             let Some(it) = self.char_of_unit(unit).and_then(|c| c.inventory.get(i)).cloned() else { continue };
-            let price = self.db.item(it.nameid).map(|d| d.sell_price()).unwrap_or(0);
+            let price = self.db.item(it.nameid).map(|d| self.trade_price(unit, d.sell_price(), false)).unwrap_or(0);
             if it.equip == 0 && self.remove_item(unit, i, n) {
                 if let Some(c) = self.char_of_unit_mut(unit) {
                     c.zeny = c.zeny.saturating_add(price * n);

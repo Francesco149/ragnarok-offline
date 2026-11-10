@@ -33,13 +33,12 @@ Attack, two weapons, arrows; the skills of the Novice, the six first jobs
 and the six 2-1 jobs with cast times, delays, SP and item costs; ground
 skills; status changes with icons and option words; ailments with
 resistance; natural recovery with its skills; monster AI and monster
-skills; MVP rewards; card insertion and item identification.
+skills; MVP rewards; card insertion and item identification; forging and
+ore refining; Discount and Overcharge; potions scaled by VIT and INT; the
+overweight icons.
 
 Next:
 
-* **Forging** (Blacksmith): `produce_db` is imported (`scripts/import/craft.lua`),
-  the window (0x018d / 0x018e / 0x018f) and the success rates
-  (mod0631 `skill.c:4549`) are not.
 * **Skills left out** (DEVIATIONS.md, THREADS.md #22): Poison React, Venom
   Splasher, Remove Trap, Spring Trap, Talkie Box's text, attacking an Ice
   Wall.

@@ -67,6 +67,8 @@ pub struct PlayerUnit {
     pub inc_hp_acc: u64,
     pub inc_sp_acc: u64,
     pub spirit_acc: u64,
+    /// Overweight icon shown: 0 none, 1 half the limit, 2 nine tenths.
+    pub weight_icon: u8,
 }
 
 #[derive(Debug, Clone, Copy)]

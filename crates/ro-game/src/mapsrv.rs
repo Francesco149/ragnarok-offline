@@ -285,6 +285,13 @@ impl Game {
                 let item = r.u16()?;
                 self.rule_call("arrow_create", serde_json::json!({"src": unit, "item": item}));
             }
+            0x0193 => {
+                // whose char id is this? (the maker's name on a forged weapon)
+                let cid = r.u32()?;
+                if let Some(name) = self.store.chars.get(&cid).map(|c| c.name.clone()) {
+                    self.send(sid, packets::char_name(cid, &name));
+                }
+            }
             0x018e => {
                 // forge / mix: u16 item, 3 x u16 extra materials
                 let item = r.u16()?;
@@ -340,6 +347,7 @@ impl Game {
                 inc_hp_acc: 0,
                 inc_sp_acc: 0,
                 spirit_acc: 0,
+                weight_icon: 0,
             })),
         };
         self.world.add(u);

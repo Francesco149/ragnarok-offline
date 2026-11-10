@@ -13,7 +13,7 @@ buy = 50
 weight = 70
 jobs = 2088959
 gender = 2
-use_script = "heal(rand(45, 64), 0)"
+use_script = "item_heal(rand(45, 64), 0)"
 
 [[item]]
 id = 502
@@ -23,7 +23,7 @@ buy = 200
 weight = 100
 jobs = 2088959
 gender = 2
-use_script = "heal(rand(105, 144), 0)"
+use_script = "item_heal(rand(105, 144), 0)"
 
 [[item]]
 id = 503
@@ -33,7 +33,7 @@ buy = 550
 weight = 130
 jobs = 2088959
 gender = 2
-use_script = "heal(rand(175, 234), 0)"
+use_script = "item_heal(rand(175, 234), 0)"
 
 [[item]]
 id = 504
@@ -43,7 +43,7 @@ buy = 1200
 weight = 150
 jobs = 2088959
 gender = 2
-use_script = "heal(rand(325, 404), 0)"
+use_script = "item_heal(rand(325, 404), 0)"
 
 [[item]]
 id = 505
@@ -53,7 +53,7 @@ buy = 5000
 weight = 150
 jobs = 2088959
 gender = 2
-use_script = "heal(0, rand(40, 59))"
+use_script = "item_heal(0, rand(40, 59))"
 
 [[item]]
 id = 506
@@ -73,7 +73,7 @@ buy = 18
 weight = 30
 jobs = 2088959
 gender = 2
-use_script = "heal(rand(18, 27), 0)"
+use_script = "item_heal(rand(18, 27), 0)"
 
 [[item]]
 id = 508
@@ -83,7 +83,7 @@ buy = 40
 weight = 50
 jobs = 2088959
 gender = 2
-use_script = "heal(rand(38, 57), 0)"
+use_script = "item_heal(rand(38, 57), 0)"
 
 [[item]]
 id = 509
@@ -93,7 +93,7 @@ buy = 120
 weight = 70
 jobs = 2088959
 gender = 2
-use_script = "heal(rand(75, 114), 0)"
+use_script = "item_heal(rand(75, 114), 0)"
 
 [[item]]
 id = 510
@@ -103,7 +103,7 @@ buy = 60
 weight = 70
 jobs = 2088959
 gender = 2
-use_script = "heal(0, rand(15, 29))"
+use_script = "item_heal(0, rand(15, 29))"
 
 [[item]]
 id = 511
@@ -123,7 +123,7 @@ buy = 15
 weight = 20
 jobs = 2088959
 gender = 2
-use_script = "heal(rand(16, 21), 0)"
+use_script = "item_heal(rand(16, 21), 0)"
 
 [[item]]
 id = 513
@@ -133,7 +133,7 @@ buy = 15
 weight = 20
 jobs = 2088959
 gender = 2
-use_script = "heal(rand(17, 20), 0)"
+use_script = "item_heal(rand(17, 20), 0)"
 
 [[item]]
 id = 514
@@ -143,7 +143,7 @@ buy = 200
 weight = 20
 jobs = 2088959
 gender = 2
-use_script = "heal(0, rand(10, 14))"
+use_script = "item_heal(0, rand(10, 14))"
 
 [[item]]
 id = 515
@@ -153,7 +153,7 @@ buy = 15
 weight = 20
 jobs = 2088959
 gender = 2
-use_script = "heal(rand(18, 19), 0)"
+use_script = "item_heal(rand(18, 19), 0)"
 
 [[item]]
 id = 516
@@ -163,7 +163,7 @@ buy = 15
 weight = 20
 jobs = 2088959
 gender = 2
-use_script = "heal(rand(15, 22), 0)"
+use_script = "item_heal(rand(15, 22), 0)"
 
 [[item]]
 id = 517
@@ -173,7 +173,7 @@ buy = 50
 weight = 150
 jobs = 2088959
 gender = 2
-use_script = "heal(rand(70, 99), 0)"
+use_script = "item_heal(rand(70, 99), 0)"
 
 [[item]]
 id = 518
@@ -183,7 +183,7 @@ buy = 500
 weight = 100
 jobs = 2088959
 gender = 2
-use_script = "heal(rand(70, 99), rand(20, 39))"
+use_script = "item_heal(rand(70, 99), rand(20, 39))"
 
 [[item]]
 id = 519
@@ -193,7 +193,7 @@ buy = 25
 weight = 30
 jobs = 2088959
 gender = 2
-use_script = "heal(rand(27, 36), 0)"
+use_script = "item_heal(rand(27, 36), 0)"
 
 [[item]]
 id = 520
@@ -203,7 +203,7 @@ buy = 150
 weight = 10
 jobs = 2088959
 gender = 2
-use_script = "heal(rand(175, 234), 0)"
+use_script = "item_heal(rand(175, 234), 0)"
 
 [[item]]
 id = 521
@@ -213,7 +213,7 @@ buy = 360
 weight = 20
 jobs = 2088959
 gender = 2
-use_script = "heal(rand(325, 404), 0)"
+use_script = "item_heal(rand(325, 404), 0)"
 
 [[item]]
 id = 522
@@ -223,7 +223,7 @@ buy = 840
 weight = 30
 jobs = 2088959
 gender = 2
-use_script = "heal(rand(400, 599), 0)"
+use_script = "item_heal(rand(400, 599), 0)"
 
 [[item]]
 id = 523
@@ -243,7 +243,7 @@ buy = 500
 weight = 100
 jobs = 2088959
 gender = 2
-athena_use = "sc_end SC_Posion; sc_end SC_Silence; sc_end SC_Blind; sc_end SC_Confusion; sc_end SC_Curse;"
+use_script = "sc_end(68) --[[SC_Poison]]; sc_end(70) --[[SC_Silence]]; sc_end(72) --[[SC_Blind]]; sc_end(71) --[[SC_Confusion]]; sc_end(69) --[[SC_Curse]]"
 
 [[item]]
 id = 526
@@ -253,7 +253,7 @@ buy = 7000
 weight = 100
 jobs = 2088959
 gender = 2
-athena_use = "itemheal rand(325,404),rand(40,59); sc_end SC_Posion; sc_end SC_Silence; sc_end SC_Blind; sc_end SC_Confusion; sc_end SC_Curse;"
+use_script = "item_heal(rand(325, 404), rand(40, 59)); sc_end(68) --[[SC_Poison]]; sc_end(70) --[[SC_Silence]]; sc_end(72) --[[SC_Blind]]; sc_end(71) --[[SC_Confusion]]; sc_end(69) --[[SC_Curse]]"
 
 [[item]]
 id = 528
@@ -263,7 +263,7 @@ buy = 60
 weight = 150
 jobs = 2088959
 gender = 2
-use_script = "heal(rand(72, 107), 0)"
+use_script = "item_heal(rand(72, 107), 0)"
 
 [[item]]
 id = 529
@@ -273,7 +273,7 @@ buy = 10
 weight = 30
 jobs = 2088959
 gender = 2
-use_script = "heal(rand(45, 64), 0)"
+use_script = "item_heal(rand(45, 64), 0)"
 
 [[item]]
 id = 530
@@ -283,7 +283,7 @@ buy = 20
 weight = 40
 jobs = 2088959
 gender = 2
-use_script = "heal(rand(105, 144), 0)"
+use_script = "item_heal(rand(105, 144), 0)"
 
 [[item]]
 id = 531
@@ -293,7 +293,7 @@ buy = 20
 weight = 40
 jobs = 2088959
 gender = 2
-use_script = "heal(rand(25, 34), 0)"
+use_script = "item_heal(rand(25, 34), 0)"
 
 [[item]]
 id = 532
@@ -303,7 +303,7 @@ buy = 20
 weight = 40
 jobs = 2088959
 gender = 2
-use_script = "heal(rand(26, 33), 0)"
+use_script = "item_heal(rand(26, 33), 0)"
 
 [[item]]
 id = 533
@@ -313,7 +313,7 @@ buy = 250
 weight = 40
 jobs = 2088959
 gender = 2
-use_script = "heal(0, rand(15, 24))"
+use_script = "item_heal(0, rand(15, 24))"
 
 [[item]]
 id = 534
@@ -323,7 +323,7 @@ buy = 20
 weight = 40
 jobs = 2088959
 gender = 2
-use_script = "heal(rand(27, 32), 0)"
+use_script = "item_heal(rand(27, 32), 0)"
 
 [[item]]
 id = 535
@@ -333,7 +333,7 @@ buy = 15
 weight = 20
 jobs = 2088959
 gender = 2
-use_script = "heal(19, 0)"
+use_script = "item_heal(19, 0)"
 
 [[item]]
 id = 536
@@ -343,7 +343,7 @@ buy = 150
 weight = 80
 jobs = 2088959
 gender = 2
-use_script = "heal(rand(105, 144), 0)"
+use_script = "item_heal(rand(105, 144), 0)"
 
 [[item]]
 id = 537
@@ -353,7 +353,7 @@ buy = 1000
 weight = 10
 jobs = 2088959
 gender = 2
-use_script = "heal(rand(50, 89), 0)"
+use_script = "item_heal(rand(50, 89), 0)"
 
 [[item]]
 id = 538
@@ -363,7 +363,7 @@ buy = 1000
 weight = 30
 jobs = 2088959
 gender = 2
-use_script = "heal(rand(160, 199), 0)"
+use_script = "item_heal(rand(160, 199), 0)"
 
 [[item]]
 id = 539
@@ -373,7 +373,7 @@ buy = 3000
 weight = 100
 jobs = 2088959
 gender = 2
-use_script = "heal(rand(270, 329), 0)"
+use_script = "item_heal(rand(270, 329), 0)"
 
 [[item]]
 id = 540
@@ -399,7 +399,7 @@ buy = 10
 weight = 10
 jobs = 2088959
 gender = 2
-use_script = "heal(rand(325, 404), 0)"
+use_script = "item_heal(rand(325, 404), 0)"
 
 [[item]]
 id = 543
@@ -408,7 +408,7 @@ display = "Festive Rainbow Cake"
 weight = 10
 jobs = 2088959
 gender = 2
-use_script = "heal(rand(325, 404), 0)"
+use_script = "item_heal(rand(325, 404), 0)"
 
 [[item]]
 id = 544
@@ -418,7 +418,7 @@ buy = 35
 weight = 30
 jobs = 2088959
 gender = 2
-use_script = "heal(rand(25, 59), 0)"
+use_script = "item_heal(rand(25, 59), 0)"
 
 [[item]]
 id = 545
@@ -427,7 +427,7 @@ display = "Red Potion Bottle"
 weight = 20
 jobs = 2088959
 gender = 2
-use_script = "heal(rand(45, 64), 0)"
+use_script = "item_heal(rand(45, 64), 0)"
 
 [[item]]
 id = 546
@@ -436,7 +436,7 @@ display = "Yellow Potion  Bottle"
 weight = 30
 jobs = 2088959
 gender = 2
-use_script = "heal(rand(175, 234), 0)"
+use_script = "item_heal(rand(175, 234), 0)"
 
 [[item]]
 id = 547
@@ -445,7 +445,7 @@ display = "White Potion Bottle"
 weight = 50
 jobs = 2088959
 gender = 2
-use_script = "heal(rand(325, 404), 0)"
+use_script = "item_heal(rand(325, 404), 0)"
 
 [[item]]
 id = 548
@@ -463,7 +463,7 @@ buy = 180
 weight = 80
 jobs = 2088959
 gender = 2
-use_script = "heal(rand(50, 99), 0)"
+use_script = "item_heal(rand(50, 99), 0)"
 
 [[item]]
 id = 550
@@ -472,7 +472,7 @@ display = "Rice Popper"
 weight = 10
 jobs = 2088959
 gender = 2
-use_script = "heal(rand(10, 14), 0)"
+use_script = "item_heal(rand(10, 14), 0)"
 
 [[item]]
 id = 551
@@ -482,7 +482,7 @@ buy = 70
 weight = 50
 jobs = 2088959
 gender = 2
-use_script = "heal(rand(50, 60), 0)"
+use_script = "item_heal(rand(50, 60), 0)"
 
 [[item]]
 id = 552
@@ -492,7 +492,7 @@ buy = 50
 weight = 10
 jobs = 10477567
 gender = 2
-use_script = "heal(rand(100, 200), 0)"
+use_script = "item_heal(rand(100, 200), 0)"
 # record only in eAthena 0.5.2
 
 [[item]]
@@ -503,7 +503,7 @@ buy = 50
 weight = 50
 jobs = 10477567
 gender = 2
-use_script = "heal(rand(39, 68), 0)"
+use_script = "item_heal(rand(39, 68), 0)"
 # record only in eAthena 0.5.2
 
 [[item]]
@@ -514,7 +514,7 @@ buy = 50
 weight = 80
 jobs = 10477567
 gender = 2
-use_script = "heal(rand(100, 200), 0)"
+use_script = "item_heal(rand(100, 200), 0)"
 # record only in eAthena 0.5.2
 
 [[item]]
@@ -553,7 +553,7 @@ name = "Chocolate"
 display = "Chocolate"
 buy = 500
 weight = 20
-use_script = "heal(1, 1)"
+use_script = "item_heal(1, 1)"
 gender = 0
 # record only in eAthena 0.5.2
 
@@ -563,7 +563,7 @@ name = "Hand-made_Chocolate"
 display = "Hand-made Chocolate"
 buy = 5000
 weight = 80
-use_script = "heal(50, 50)"
+use_script = "item_heal(50, 50)"
 gender = 0
 # record only in eAthena 0.5.2
 
@@ -1188,7 +1188,7 @@ buy = 1
 weight = 2
 jobs = 10477567
 gender = 2
-athena_use = "set Zeny,Zeny+rand(100,10000);"
+use_script = "player.zeny = player.zeny + rand(100, 10000)"
 # record only in eAthena 0.5.2
 
 [[item]]

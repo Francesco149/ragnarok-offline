@@ -714,6 +714,7 @@ impl Game {
                 let Some(c) = self.store.chars.get(&p.char_id) else { return Value::Null };
                 m.insert("kind".into(), json!("player"));
                 m.insert("name".into(), json!(c.name));
+                m.insert("char_id".into(), json!(c.id));
                 m.insert("sex".into(), json!(p.sex));
                 m.insert("hp".into(), json!(c.hp));
                 m.insert("sp".into(), json!(c.sp));
@@ -1051,13 +1052,17 @@ impl Game {
             "pc_item_count" => json!(self.count_item(id(0), int(a, 1) as u32)),
             "pc_item_take" => json!(self.take_item(id(0), int(a, 1) as u32, int(a, 2).max(1) as u32)),
             "pc_item_add" => {
-                // falls to the floor when it cannot be carried (skill.c AL_HOLYWATER)
+                // unit, item, amount, cards, identified. Falls to the floor when
+                // it cannot be carried (skill.c AL_HOLYWATER)
                 let unit = id(0);
                 let mut item = InvItem::new(int(a, 1) as u32, int(a, 2).max(1) as u32);
                 if let Some(cards) = arg(a, 3).as_array() {
                     for (i, c) in cards.iter().take(4).enumerate() {
                         item.cards[i] = num(c) as u16;
                     }
+                }
+                if arg(a, 4).as_bool() == Some(false) {
+                    item.identify = false;
                 }
                 if !self.add_item(unit, item.clone()) {
                     if let Some((map, x, y)) = self.world.units.get(&unit).map(|u| (u.map.clone(), u.x, u.y)) {
@@ -1085,6 +1090,24 @@ impl Game {
             "skill_request" => {
                 // use a skill as if the client had asked (0x0113 / 0x0116): unit, skill, lv, target, x, y
                 self.battle.skill_requests.push((id(0), int(a, 1) as u16, int(a, 2) as u16, id(3), int(a, 4) as u16, int(a, 5) as u16));
+                Value::Null
+            }
+            "pc_produce_list" => {
+                // forge window (0x018d): the items that can be made now
+                let unit = id(0);
+                let ids: Vec<u16> = arg(a, 1).as_array().map(|v| v.iter().map(|x| num(x) as u16).collect()).unwrap_or_default();
+                let cid = self.char_of_unit(unit).map(|c| c.id).unwrap_or(0);
+                if let Some(sid) = self.sid_of(unit) {
+                    self.send(sid, packets::produce_list(&ids, cid));
+                }
+                Value::Null
+            }
+            "clif_produceeffect" => {
+                let (unit, cid, name) = (id(0), self.char_of_unit(id(0)).map(|c| c.id).unwrap_or(0), self.char_of_unit(id(0)).map(|c| c.name.clone()).unwrap_or_default());
+                if let Some(sid) = self.sid_of(unit) {
+                    self.send(sid, packets::char_name(cid, &name));
+                    self.send(sid, packets::produce_effect(int(a, 1) as u16, int(a, 2) as u16));
+                }
                 Value::Null
             }
             "pc_identify_list" => {

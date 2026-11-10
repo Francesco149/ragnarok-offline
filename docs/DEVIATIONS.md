@@ -183,9 +183,11 @@ eAthena 817 (2004-02-19), bugs included. The translator is
   `l` as temporary. Here only `l<digits>` are temporary: quest variables like
   `lutie_quest` survive logout. Server-wide `$` variables are saved
   (`saves/world.json`); in 817 they were lost on restart.
-* **`produce` (forging), equipment-look `setlook`, card removal.** Scripts
-  that call these continue, and the server logs once that it isn't
-  implemented (ROADMAP).
+* **Equipment-look `setlook`, card removal.** Scripts that call these
+  continue, and the server logs once that it isn't implemented (ROADMAP).
+* **Panacea and Royal Jelly cure poison.** mod0631's item table spells the
+  status `SC_Posion` on both, a name it does not know, so there they cured
+  everything but poison. The importer reads it as Poison.
 
 ## Battle and skills: what we changed relative to the period emulators
 
@@ -255,6 +257,6 @@ research should check is in research/THREADS.md #20–#23.
   wander and warp now and then.
 * **Parties.** Party-wide skills (Angelus, Magnificat, Gloria, Adrenaline
   Rush...) reach the caster only: there is no party.
-* **Not built yet:** the 2-2 jobs' skills, forging, Poison React's counter, Venom Splasher, Talkie Box's text, Remove Trap,
+* **Not built yet:** the 2-2 jobs' skills, Poison React's counter, Venom Splasher, Talkie Box's text, Remove Trap,
   Spring Trap, Repair Weapon (nothing breaks in this era's data), attacking
   an Ice Wall, monsters' "friend" skill targets (mod0631 has none either).

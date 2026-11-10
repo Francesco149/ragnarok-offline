@@ -65,3 +65,41 @@ function rules.regen(t)
   end
   return r
 end
+
+-- pc.c:2992 pc_itemheal: what a healing item gives grows with VIT (HP) or INT
+-- (SP), 1% a point, and with Increase HP / SP Recovery, 10% a level
+-- (Alchemists' Potion Research: 5% a level).
+function item_heal(hp, sp)
+  local sd = battle.get(player.id)
+  if not sd or sd.dead then return end
+  hp, sp = hp or 0, sp or 0
+  local learn = 100 + battle.pc_checkskill(sd, SK.AM_LEARNINGPOTION) * 5
+  if hp > 0 then
+    hp = floor(hp * (sd.st.vit + 100 + battle.pc_checkskill(sd, SK.SM_RECOVERY) * 10) / 100)
+    hp = floor(hp * learn / 100)
+  end
+  if sp > 0 then
+    sp = floor(sp * (sd.st.int + 100 + battle.pc_checkskill(sd, SK.MG_SRECOVERY) * 10) / 100)
+    sp = floor(sp * learn / 100)
+  end
+  heal(hp, sp)
+end
+
+-- pc.c:1409 pc_modifybuyvalue / pc_modifysellvalue: Discount and Overcharge
+-- change shop prices by 7% at level 1, 2% more a level, 24% at level 10.
+-- t: price, skills = {["37"] = level}.
+local function trade_rate(lv) return 5 + lv * 2 - (lv == 10 and 1 or 0) end
+function rules.buy_price(t)
+  local price = t.price
+  local lv = (t.skills or {})[tostring(SK.MC_DISCOUNT)] or 0
+  if lv > 0 then price = price - floor(price * trade_rate(lv) / 100) end
+  lv = (t.skills or {})[tostring(SK.RG_COMPULSION)] or 0
+  if lv > 0 then price = price - floor(price * (5 + lv * 4) / 100) end
+  return price
+end
+function rules.sell_price(t)
+  local price = t.price
+  local lv = (t.skills or {})[tostring(SK.MC_OVERCHARGE)] or 0
+  if lv > 0 then price = price + floor(price * trade_rate(lv) / 100) end
+  return price
+end
