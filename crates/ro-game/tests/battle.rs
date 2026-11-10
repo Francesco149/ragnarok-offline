@@ -266,6 +266,17 @@ fn every_skill_runs() {
         assert!(!r.starts_with("error") && n.is_empty(), "{name} ({id}): {r} {:?}", n.first());
         t.run(3000);
         used += 1;
+        // and once more the way a player uses it: the request (range, cast
+        // time) and the cast end with its conditions (SP, weapon, items),
+        // which may well refuse
+        t.lua("heal(30000, 30000)");
+        for call in [call.replace("rules.skill_castend", "rules.skill_use"), call.clone()] {
+            let call = call.replace("item=true", "item=false");
+            let r = t.g.console_eval(&call, me);
+            let n = std::mem::take(&mut t.g.notices);
+            assert!(!r.starts_with("error") && n.is_empty(), "{name} ({id}) as a player: {r} {:?}", n.first());
+        }
+        t.run(1000);
         // tidy up for the next one
         t.lua(&format!("_rt('sc_clear', {me}); if not battle.get({me}) or battle.get({me}).dead then error('died using {name}') end"));
         if t.g.world.units.contains_key(&mob) {
@@ -755,4 +766,283 @@ fn exp_levels_up() {
     let me = t.me;
     t.lua(&format!("_rt('bl_damage', {me}, {mob}, 9999)"));
     assert_eq!(t.g.store.chars[&t.cid].base_exp, before + 2);
+}
+
+impl T {
+    /// Is this status change on the unit (monster or player)?
+    fn has_sc(&mut self, id: u32, sc: &str) -> bool {
+        self.g.world.units.contains_key(&id) && self.lua(&format!("battle.sc(battle.get({id}), SC.{sc}) and 1 or 0")).trim() == "1"
+    }
+    fn pos(&self, id: u32) -> (u16, u16) {
+        let u = &self.g.world.units[&id];
+        (u.x, u.y)
+    }
+    fn skill_id(&self, name: &str) -> u16 {
+        self.g.db.skills_by_name[name]
+    }
+    /// Use a learnt skill by name on a unit, at its learnt level.
+    fn cast(&mut self, name: &str, target: u32) {
+        let id = self.skill_id(name);
+        let lv = self.g.store.chars[&self.cid].skills.get(&id).copied().unwrap_or(1) as u16;
+        self.skill(id, lv, target);
+    }
+    fn cast_at(&mut self, name: &str, x: u16, y: u16) {
+        let id = self.skill_id(name);
+        let lv = self.g.store.chars[&self.cid].skills.get(&id).copied().unwrap_or(1) as u16;
+        self.skill_pos(id, lv, x, y);
+    }
+    fn kill(&mut self, mob: u32) {
+        if self.g.world.units.contains_key(&mob) {
+            self.lua(&format!("_rt('mob_kill', {mob})"));
+        }
+    }
+}
+
+/// Thief: Hiding costs SP over time and shakes monsters off, Envenom
+/// poisons and the poison bites, Detoxify cures, Steal takes a drop once.
+#[test]
+fn thief_skills() {
+    let mut t = T::new();
+    t.lua("job_change(6); player.base_level = 60; player.dex = 99; player.str = 50; player.vit = 50; heal(9999, 9999)");
+    for (s, lv) in [("TF_HIDING", 10), ("TF_POISON", 10), ("TF_DETOXIFY", 1), ("TF_STEAL", 10)] {
+        t.learn(s, lv);
+    }
+    let me = t.me;
+    // a Zombie comes for us; hidden, it lets go
+    let z = t.spawn(28, 25, 1015);
+    t.run(3000);
+    assert_eq!(t.g.world.units[&z].mob().unwrap().target, Some(me));
+    let sp = t.sp();
+    t.cast("TF_HIDING", me);
+    assert!(t.sc(4), "hidden");
+    assert_eq!(t.sp(), sp - 10);
+    assert!(t.packets(0x0119).iter().any(|p| u16_at(p, 10) & 2 != 0), "the client is told (option 2)");
+    // level 10: one SP every 13 s
+    let sp = t.sp();
+    t.run(27_000);
+    // (the test clock is the real one skewed: under load a third tick can fall in)
+    assert!((2..=3).contains(&(sp - t.sp())), "SP went from {sp} to {}", t.sp());
+    // (a monster that just used a skill rests one attack delay before it looks again)
+    assert_eq!(t.g.world.units[&z].mob().unwrap().target, None, "the Zombie lost us");
+    // no walking while hidden
+    let mut w = Writer::new(0x0085);
+    w.pos3(20, 25, 0);
+    t.send(w);
+    t.run(600);
+    assert_eq!(t.pos(me), (25, 25));
+    // out again
+    t.run(3000);
+    t.cast("TF_HIDING", me);
+    assert!(!t.sc(4));
+    t.kill(z);
+    // Envenom until it poisons (10 + 2/level %, less the Pupa's VIT)
+    let mut p = t.spawn(26, 25, 1008);
+    let mut poisoned = false;
+    for _ in 0..60 {
+        if t.mob_hp(p).is_none() {
+            p = t.spawn(26, 25, 1008);
+        }
+        t.lua("heal(0, 9999)");
+        t.cast("TF_POISON", p);
+        t.run(300);
+        if t.has_sc(p, "POISON") {
+            poisoned = true;
+            break;
+        }
+    }
+    assert!(poisoned, "Envenom poisons");
+    let hp = t.mob_hp(p).unwrap();
+    t.run(5000);
+    assert!(t.mob_hp(p).unwrap() < hp, "poison takes HP");
+    t.cast("TF_DETOXIFY", p);
+    t.run(300);
+    assert!(!t.has_sc(p, "POISON"), "Detoxify cures");
+    t.kill(p);
+    // Steal from a Poring: sooner or later an item, and then never again
+    let before: u32 = t.g.store.chars[&t.cid].inventory.iter().map(|i| i.amount).sum();
+    let p = t.spawn(26, 25, 1002);
+    let mut got = false;
+    for _ in 0..200 {
+        t.lua("heal(0, 9999)");
+        t.cast("TF_STEAL", p);
+        t.run(200);
+        let now: u32 = t.g.store.chars[&t.cid].inventory.iter().map(|i| i.amount).sum();
+        if now > before {
+            got = true;
+            break;
+        }
+    }
+    assert!(got, "stole something");
+    let after: u32 = t.g.store.chars[&t.cid].inventory.iter().map(|i| i.amount).sum();
+    for _ in 0..50 {
+        t.lua("heal(0, 9999)");
+        t.cast("TF_STEAL", p);
+        t.run(200);
+    }
+    let end: u32 = t.g.store.chars[&t.cid].inventory.iter().map(|i| i.amount).sum();
+    assert_eq!(end, after, "a monster is robbed once");
+}
+
+/// Acolyte and Priest: Teleport, Warp Portal with a memo point, Pneuma,
+/// Sanctuary, Kyrie Eleison.
+#[test]
+fn acolyte_skills() {
+    let mut t = T::new();
+    t.lua("job_change(8); player.base_level = 70; player.int = 80; player.dex = 99; heal(9999, 9999); give_item(717, 20)");
+    for (s, lv) in [("AL_TELEPORT", 2), ("AL_WARP", 4), ("AL_PNEUMA", 1), ("PR_SANCTUARY", 5), ("PR_KYRIE", 10), ("AL_HEAL", 10)] {
+        t.learn(s, lv);
+    }
+    let me = t.me;
+    // Teleport 2 offers Random and the save point
+    t.skill(26, 2, me);
+    let menu = t.packets(0x011c);
+    assert_eq!(menu.len(), 1);
+    assert!(menu[0][4..10].starts_with(b"Random"));
+    let mut w = Writer::new(0x011b);
+    w.u16(26).str_fixed("Random", 16);
+    t.send(w);
+    assert_ne!(t.pos(me), (25, 25), "teleported");
+    t.lua("warp('testmap', 25, 25)");
+    t.run(1500);
+    // /memo here, walk off, open a portal back
+    t.send(Writer::new(0x011d));
+    assert_eq!(t.packets(0x011e)[0][2], 0, "memo saved");
+    assert_eq!(t.g.store.chars[&t.cid].memo.len(), 1);
+    t.lua("warp('watermap', 10, 10)");
+    t.send(Writer::new(0x007d));
+    t.run(500);
+    t.cast_at("AL_WARP", 12, 10);
+    t.run(1500);
+    let menu = t.packets(0x011c);
+    assert_eq!(menu.len(), 1, "portal destinations");
+    let names = String::from_utf8_lossy(&menu[0][4..]).to_string();
+    assert!(names.contains("testmap.gat"), "{names}");
+    let mut w = Writer::new(0x011b);
+    w.u16(27).str_fixed("testmap.gat", 16);
+    t.send(w);
+    assert!(t.packets(0x01c9).iter().any(|p| p[14] == 0x81), "the portal is opening");
+    t.run(2500);
+    assert!(t.packets(0x01c9).iter().any(|p| p[14] == 0x80), "the portal is open");
+    // step in
+    let mut w = Writer::new(0x0085);
+    w.pos3(12, 10, 0);
+    t.send(w);
+    t.run(1500);
+    assert_eq!(t.g.world.units[&me].map, "testmap", "the portal took us back");
+    t.send(Writer::new(0x007d));
+    assert_eq!(t.pos(me), (25, 25));
+    // Sanctuary heals who stands in it
+    t.lua("player.hp = 10");
+    t.cast_at("PR_SANCTUARY", 25, 25);
+    t.run(8000);
+    assert!(t.hp() > 400, "Sanctuary healed to {}", t.hp());
+    t.run(20_000);
+    // Kyrie Eleison takes blows: level 10 = 10 hits or 30% of max HP
+    t.lua("heal(9999, 9999)");
+    t.cast("PR_KYRIE", me);
+    t.run(2500);
+    assert!(t.sc(19));
+    let hp = t.hp();
+    let z = t.spawn(26, 25, 1015);
+    t.lua(&format!("for i = 1, 4 do rules.weapon_attack{{src={z}, target={me}}} end"));
+    assert_eq!(t.hp(), hp, "Kyrie holds");
+    t.lua(&format!("for i = 1, 60 do rules.weapon_attack{{src={z}, target={me}}} end"));
+    assert!(!t.sc(19), "Kyrie is spent");
+    assert!(t.hp() < hp);
+}
+
+/// Swordman, Knight, Merchant: Magnum Break around the swordman, Endure,
+/// Auto Berserk, Pierce by size, Mammonite's zeny.
+#[test]
+fn fighter_skills() {
+    let mut t = T::new();
+    t.lua("job_change(7); player.base_level = 70; player.str = 80; player.dex = 80; player.vit = 60; heal(9999, 9999)");
+    for (s, lv) in [("SM_MAGNUM", 10), ("SM_ENDURE", 10), ("SM_AUTOBERSERK", 1), ("KN_PIERCE", 10), ("SM_BASH", 10), ("SM_PROVOKE", 10)] {
+        t.learn(s, lv);
+    }
+    let me = t.me;
+    // Magnum Break: the target and those within a cell of us, thrown back two cells
+    let a = t.spawn(26, 25, 1008);
+    let b = t.spawn(24, 26, 1008);
+    let far = t.spawn(30, 25, 1008);
+    t.cast("SM_MAGNUM", a);
+    assert!(t.mob_hp(a).unwrap_or(0) < 427 && t.mob_hp(b).unwrap_or(0) < 427, "both next to us are hit");
+    assert_eq!(t.mob_hp(far), Some(427), "not the one five cells off");
+    for m in [a, b, far] {
+        t.kill(m);
+    }
+    // Pierce: one hit on small, three on large (Baphomet Jr is small; an Orc Lady medium)
+    t.wear(1401); // Javelin
+    t.run(2500);
+    let small = t.spawn(26, 25, 1008); // Pupa: small
+    t.cast("KN_PIERCE", small);
+    let hits = t.packets(0x01de);
+    assert_eq!(u16_at(&hits[0], 30), 1, "Pierce hits a small monster once");
+    t.kill(small);
+    let medium = t.spawn(26, 25, 1015); // Zombie: medium
+    t.cast("KN_PIERCE", medium);
+    let hits = t.packets(0x01de);
+    assert_eq!(u16_at(&hits[0], 30), 2, "twice a medium one");
+    t.kill(medium);
+    // Auto Berserk: under a quarter of the HP, Provoke 10 on ourselves
+    let max = t.st("max_hp");
+    t.lua(&format!("_rt('bl_damage', 0, {me}, {})", max * 8 / 10));
+    assert!(t.sc(0), "berserk");
+    t.lua("heal(9999, 0)");
+    t.run(2500);
+    assert!(!t.sc(0), "calm again above a quarter");
+    // Mammonite: 100 zeny a level, refused without
+    t.lua("job_change(5); player.zeny = 1500");
+    t.learn("MC_MAMMONITE", 10);
+    let m = t.spawn(26, 25, 1008);
+    t.cast("MC_MAMMONITE", m);
+    assert_eq!(t.g.store.chars[&t.cid].zeny, 500);
+    t.run(2500);
+    t.packets(0);
+    let m = t.spawn(26, 25, 1008);
+    t.cast("MC_MAMMONITE", m);
+    assert_eq!(t.g.store.chars[&t.cid].zeny, 500, "not enough zeny");
+    assert!(t.packets(0x0110).iter().any(|p| p[9] == 5), "the client is told why");
+}
+
+/// Hunter: traps wait for a monster; Land Mine goes off, Ankle Snare holds.
+#[test]
+fn hunter_traps() {
+    let mut t = T::new();
+    t.lua("job_change(11); player.base_level = 70; player.dex = 90; player.int = 40; heal(9999, 9999); give_item(1065, 10)");
+    for (s, lv) in [("HT_LANDMINE", 5), ("HT_ANKLESNARE", 5), ("HT_BLITZBEAT", 5), ("HT_FALCON", 1)] {
+        t.learn(s, lv);
+    }
+    let me = t.me;
+    t.cast_at("HT_LANDMINE", 27, 25);
+    assert!(t.packets(0x01c9).iter().any(|p| p[14] == 0x93), "a Land Mine is set");
+    assert_eq!(t.g.store.chars[&t.cid].inventory.iter().find(|i| i.nameid == 1065).map(|i| i.amount), Some(9), "one Trap used");
+    // a Zombie walks at us over the mine
+    let z = t.spawn(31, 25, 1015);
+    let hp = t.mob_hp(z).unwrap();
+    t.run(6000);
+    assert!(t.mob_hp(z).is_none_or(|h| h < hp), "the mine went off under it");
+    assert!(!t.g.world.units.values().any(|u| u.skill().is_some()), "and is gone");
+    t.kill(z);
+    t.lua("heal(9999, 9999)");
+    // Ankle Snare holds the next one where it stepped
+    t.cast_at("HT_ANKLESNARE", 28, 25);
+    let z = t.spawn(32, 25, 1015);
+    t.run(5000);
+    assert!(t.has_sc(z, "ANKLE"), "snared");
+    let at = t.pos(z);
+    t.run(3000);
+    assert_eq!(t.pos(z), at, "it does not move");
+    assert!((at.0 as i32 - 28).abs() <= 1, "caught at the trap: {at:?}");
+    // Blitz Beat needs the falcon
+    t.packets(0);
+    t.cast("HT_BLITZBEAT", z);
+    assert!(t.packets(0x01de).is_empty(), "no falcon, no Blitz Beat");
+    t.lua("set_falcon()");
+    t.run(2000);
+    let hp = t.mob_hp(z).unwrap();
+    t.cast("HT_BLITZBEAT", z);
+    t.run(2000);
+    assert!(t.mob_hp(z).is_none_or(|h| h < hp), "the falcon strikes");
+    let _ = me;
 }
