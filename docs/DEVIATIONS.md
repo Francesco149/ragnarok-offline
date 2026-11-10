@@ -144,6 +144,20 @@ eAthena 817 (2004-02-19), bugs included. The translator is
   items and pet accessories. The guide says "available for purchase";
   mod0631's take no zeny, and we follow mod0631. The English is ours, one
   template for all three.
+* **Dyes** (`scripts/npc/dyes.lua`). Nothing in 817 makes a dye, though
+  its hat quests ask for them and its Merchant quest names "JavaDullihan,
+  the Dyermaker in Morroc". mod0631 has the whole chain, and we take it:
+  Louitz in Alberta and Aure Dupon in Geffen lead to the chemist
+  Morgenshtein (Counteragent 3000z, Mixture 4000z), JavaDullihan in Morroc
+  (`morocc_in 146,99`) makes the eight dyes for 3000z to 7000z, and
+  Prontera has a clothes dyer who is "too busy" (`prt_in 284,168`) and a
+  hairdresser (`prt_in 243,168`). Where 817 has English for the same lines
+  it is used; the rest is our translation. Two things are not mod0631's:
+  * the hairdresser dyes hair. mod0631's names the terms (one dye of the
+    colour you want and 5000z) and then says "not implemented"; here she
+    does it. Which palette is which colour is read from the client's files;
+  * showing Louitz the solutions a second time does not make the chemist
+    forget you (mod0631 sets the quest back to its first step).
 * **Peco Peco Breeder** (`scripts/npc/peco_keeper.lua`): mod0631's keeper
   by Prontera's north-west wall (`prontera 55,350`), 2500z a bird for a
   Knight; the Crusaders' keeper (`232,318`) comes with `jobs2_2`. 817 has

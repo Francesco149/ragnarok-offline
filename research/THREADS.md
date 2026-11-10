@@ -275,9 +275,20 @@ rendering table; nothing ties it to Teleport. No change.
 817's dyer needs a 77-palette client patch. Which clothes dyes existed in
 Dec 2003? This client ships 5 clothing palettes per job and sex (the default
 plus 4) and 9 hair colours per hairstyle (`data\palette\`, tier client).
-**Impact:** a hand-written dyer (`scripts/npc/dye.lua`, not written yet).
+**Impact:** `scripts/npc/dyes.lua`.
 **Look:** the client GRF's `data\palette\` (tier client); 659's
 `npc_dye.txt`; kRO 2003 notices.
+**Found (2026-11-10):** mod0631's `conf/npc_event_dye.txt` (Dec 2003) has
+the dye makers and both Prontera dyers. Its hairdresser states the terms
+(one dye of the wanted colour, 5000z) and stops at "not implemented"; its
+clothes dyer turns everyone away as "too busy", with the working dialogue
+commented out. The client's hair palettes, read from the GRF (all 38 sets
+agree): 0 red, 1 yellow, 2 violet, 3 orange, 4 green, 5 blue, 6 white,
+7 black, 8 red again (the same file as 0 in 36 sets). Hair dyeing is built
+on that. **Still open:** was clothes dyeing available on euRO/iRO in
+Dec 2003 to Feb 2004, with which materials and price, and which of the four
+extra clothing palettes went with which dye; whether 5000z and one dye were
+the hairdresser's terms outside jRO; the NPCs' official English names.
 
 ### 14. Pets on euRO's closed beta
 The closed beta "includes Comodo and Q-Pet". Which monsters were tameable,

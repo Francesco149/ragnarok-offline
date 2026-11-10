@@ -1,7 +1,7 @@
 //! The NPCs taken from mod0631 in research rounds 2 and 3, on their success
 //! paths: Kafra points (earned by teleporting, spent in the head office), the
 //! Thief quest skills from Alcouskou, a Monster Tamer's recipe, and the
-//! Novice's First Aid and Play Dead, and the Peco Peco keeper. The crawler
+//! Novice's First Aid and Play Dead, the Peco Peco keeper and the dye chain. The crawler
 //! (npc_crawl.rs) only takes random paths through them. Repo scripts,
 //! synthetic all-walkable maps, no client files.
 
@@ -144,8 +144,10 @@ impl T {
     }
 }
 
-const MAPS: [&str; 9] =
-    ["prontera", "izlude", "aldeba_in", "moc_prydb1", "payon", "alberta_in", "morocc", "prt_in", "prt_castle"];
+const MAPS: [&str; 12] = [
+    "prontera", "izlude", "aldeba_in", "moc_prydb1", "payon", "alberta_in", "morocc", "prt_in", "prt_castle", "geffen",
+    "geffen_in", "morocc_in",
+];
 
 fn setup(tag: &str) -> T {
     let root = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../..");
@@ -338,4 +340,48 @@ fn peco_keeper() {
     assert_eq!(t.eval("return player.zeny"), "1000");
     // the Crusaders' keeper comes with the 2-2 jobs
     assert!(!t.g.world.units.values().any(|u| u.map == "prontera" && u.x == 232 && u.y == 318));
+}
+
+#[test]
+fn dye_chain() {
+    let mut t = setup("dye_chain");
+    t.eval("player.zeny = 20000; give_item(970, 2); give_item(971, 1); give_item(972, 1); give_item(713, 3)");
+    // the chemist does not know us yet
+    assert!(t.talk("geffen_in", 141, 140, &[]).is_empty());
+    assert_eq!(t.eval("return count_item(973)"), "0");
+    // Louitz sees the solutions and names him; Aure Dupon says where he lives
+    let menus = t.talk("alberta_in", 133, 55, &[2]);
+    assert_eq!(menus[0], "Talk:Talk about the solutions:Cancel");
+    assert_eq!(t.eval("return v.MOLGENSTAIN"), "1");
+    t.talk("geffen", 181, 114, &[2]);
+    assert_eq!(t.eval("return v.MOLGENSTAIN"), "2");
+    // first visit: he only giggles; then a Counteragent (3000z) and a Mixture (4000z)
+    t.talk("geffen_in", 141, 140, &[2]);
+    assert_eq!(t.eval("return v.MOLGENSTAIN"), "3");
+    assert_eq!(t.eval("return count_item(973)"), "0");
+    t.talk("geffen_in", 141, 140, &[2, 1, 1]);
+    t.talk("geffen_in", 141, 140, &[2, 2, 1]);
+    assert_eq!(t.eval("return count_item(973) .. ' ' .. count_item(974) .. ' ' .. player.zeny"), "1 1 13000");
+    assert_eq!(t.eval("return count_item(970) + count_item(971) + count_item(972)"), "0");
+    assert_eq!(t.eval("return count_item(713)"), "1");
+    // talking to Louitz again does not undo the introduction
+    t.eval("give_item(971, 1)");
+    t.talk("alberta_in", 133, 55, &[2]);
+    assert_eq!(t.eval("return v.MOLGENSTAIN"), "3");
+    // Morroc: Orange (5th) needs 20 Red and 20 Yellow Herbs, both solvents, a bottle, 5000z
+    t.eval("give_item(507, 20); give_item(508, 19)");
+    t.talk("morocc_in", 146, 99, &[2, 5, 1]);
+    assert_eq!(t.eval("return count_item(980)"), "0", "one Yellow Herb short");
+    t.eval("give_item(508, 1)");
+    t.talk("morocc_in", 146, 99, &[2, 5, 1]);
+    assert_eq!(t.eval("return count_item(980) .. ' ' .. player.zeny"), "1 8000");
+    assert_eq!(t.eval("return count_item(507) + count_item(508) + count_item(973) + count_item(974) + count_item(713)"), "0");
+    // Prontera: the hairdresser takes the dye and 5000z; orange is the client's hair palette 3
+    t.talk("prt_in", 243, 168, &[1, 4]);
+    assert_eq!(t.eval("return player.hair_color .. ' ' .. count_item(980) .. ' ' .. player.zeny"), "3 0 3000");
+    // no dye, no dyeing; and the clothes dyer is busy
+    t.talk("prt_in", 243, 168, &[1, 1]);
+    assert_eq!(t.eval("return player.hair_color .. ' ' .. player.zeny"), "3 3000");
+    t.talk("prt_in", 284, 168, &[2]);
+    assert_eq!(t.eval("return player.clothes_color"), "0");
 }

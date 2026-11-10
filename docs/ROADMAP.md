@@ -60,7 +60,8 @@ monsters, refining, storage), a hand-written Kafra service. Next, in order:
   DEVIATIONS.md);
 * hand-port the Wizard quest (817's is in a later dialect; THREADS.md #8);
 * NPC waiting rooms (0x00d7 chat bubbles over arena/PvP NPCs);
-* a period dyer (THREADS.md #13); English shop names from 817 by cell (#11);
+* clothes dyeing (THREADS.md #13: the dye makers and the hairdresser are
+  in, from mod0631); English shop names from 817 by cell (#11);
 * better dialogue where period sources exist (THREADS.md #2).
 
 ## 5. Systems
