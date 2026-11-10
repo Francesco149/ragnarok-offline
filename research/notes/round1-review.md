@@ -57,6 +57,12 @@ in its config. The report's "originated from live observation of jRO" is an
 inference from the changelog, and its video is a 2017 private server. Its
 "Sprakki at 53,114" argument rests on a 2013 rAthena script.
 
+**Corrected (mod0631 `conf/npc_job_newbie.txt:64-66`).** The report calls
+817's usher gift of 150z "an emulator bug" for 50z, because 817's English
+line says "Training Subsidy 50 Zeny supplied". mod0631 gives 150 and says
+150 ("修練補助費、150Zenyを支給します"). 817's number agrees with it; the
+English "50" is the odd one out. Nothing changed: the usher gives 150z.
+
 **New, from C2.** `job_wiz`, `job_knt`, `job_prist` and `job_hunte` (warps
 in mod0631, the Wizard test in eAthena 0.5.2) are *not* this client's
 `job_wizard`, `job_knight`, `job_priest`, `job_hunter`: 3 of 10, 0 of 4,
@@ -86,6 +92,12 @@ priced per place: Prontera 40 (also `prt_fild01`), `prt_fild05` 30, Izlude
 50, the Sunken Ship 55, Payon 40, the Archer Village 45, Al De Baran 40,
 the Orc Dungeon 55, Mt. Mjolnir 55, Comodo 80 (40 in `cmd_in02`), Pharos
 80. 817, 659 and 715 charge 30 everywhere. A cart is 800 at every Kafra that rents one.
+
+A second witness in the same archive: the training ground's instructor
+(mod0631 `conf/npc_job_newbie.txt:717`) tells novices "倉庫の保管料は 30 Zeny
+から 55 Zenyまで 地域ごとに違うから注意してくれ" (the storage fee runs from 30
+to 55 Zeny depending on the region). Comodo's 80 is outside that range:
+the lecture is older than Comodo.
 
 **Confirmed (M1).** Routes 817 lacks: Prontera→Comodo 2000, Morroc→Comodo
 1500, Al De Baran→Geffen 1600 and →Mt. Mjolnir 1700, and Kafras in Comodo
