@@ -7,6 +7,7 @@
 //! Files (all optional; missing ones load empty with a warning):
 //!   data/db/items.toml  data/db/mobs.toml  data/db/exp.toml  data/db/jobs.toml
 //!   data/db/skills.toml  data/db/random.toml  data/db/mapflags.toml  data/db/pets.toml
+//!   data/db/mob_skills.toml
 
 use std::collections::HashMap;
 use std::path::Path;
@@ -181,6 +182,16 @@ pub struct Skill {
     pub nk: u8,
     /// SP per level (index 0 = level 1).
     pub sp: Vec<u16>,
+    /// Hits per level (empty = 1).
+    pub num: Vec<u16>,
+    /// Cast time and after-cast delay per level, ms (empty = 0).
+    pub cast: Vec<u32>,
+    pub delay: Vec<u32>,
+    /// How long the skill and its side effect last, ms per level (817's cast_db).
+    pub time: Vec<u32>,
+    pub time2: Vec<u32>,
+    /// Monster skill (Athena inf2 & 2).
+    pub npc: bool,
     /// Learnt only from NPC quests, never with skill points.
     pub quest: bool,
 }
@@ -193,6 +204,37 @@ pub struct TreeEntry {
     pub max: u8,
     /// (skill, level) prerequisites.
     pub need: Vec<(u16, u8)>,
+}
+
+/// One line of a monster's skill list (Athena mob_skill_db).
+#[derive(Debug, Clone, Default, Serialize, Deserialize)]
+#[serde(default)]
+pub struct MobSkill {
+    pub mob: u32,
+    /// any, idle, walk, attack, dead, loot, chase
+    pub state: String,
+    pub skill: u16,
+    pub lv: u16,
+    /// Chance per 1000 each time the monster thinks.
+    pub rate: u32,
+    pub cast: u32,
+    pub delay: u32,
+    /// Damage interrupts the cast.
+    pub cancel: bool,
+    /// target, self, friend
+    pub target: String,
+    pub cond: String,
+    pub cond_val: i32,
+    /// Skill argument: monster to summon, emotion.
+    pub val: i32,
+}
+
+#[derive(Debug, Default, Serialize, Deserialize)]
+struct MobSkillFile {
+    #[serde(default)]
+    meta: Meta,
+    #[serde(default)]
+    skill: Vec<MobSkill>,
 }
 
 /// A random item source (`getitem -flag`): Old Blue Box, Old Violet Box,
@@ -335,6 +377,8 @@ pub struct Database {
     pub branch: Branch,
     pub mapflags: HashMap<String, MapFlags>,
     pub pets: Vec<PetDef>,
+    /// Monster skill lists by monster id, in file order.
+    pub mob_skills: HashMap<u32, Vec<MobSkill>>,
     pub warnings: Vec<String>,
 }
 
@@ -384,6 +428,9 @@ impl Database {
         let flags: MapFlagFile = read_toml(&dir.join("mapflags.toml"), &mut db.warnings)?;
         db.mapflags = flags.map.into_iter().map(|m| (m.name.clone(), m)).collect();
         db.pets = read_toml::<PetFile>(&dir.join("pets.toml"), &mut db.warnings)?.pet;
+        for ms in read_toml::<MobSkillFile>(&dir.join("mob_skills.toml"), &mut db.warnings)?.skill {
+            db.mob_skills.entry(ms.mob).or_default().push(ms);
+        }
         Ok(db)
     }
 
