@@ -716,6 +716,14 @@ Shelf, `other/books.txt`). **Left as 817 has them, open:**
 * *Mage* (817 only; jAthena's of 2004-03-02 has the same numbers): the
   Mixing Machine checks each solution's own amounts and then takes two
   Jellopy and three Fluff whatever the solution.
+* *Scripts that end without a word* when the player is short of zeny or
+  goods (a jump to a label the source lacks; `research/npc_lint.py` lists
+  them, with the tests that decide nothing): Christopher's smithy in
+  Geffen (`geffen_in 110,172`: `NoZeny`, `inputOW`), the Grampa Pharmacist
+  of Alberta (`alberta_in 16,28`), the headgear Blacksmith of Geffen
+  (`geffen_in 144,166`), the Swordman's Test Hall Staff for a non-novice,
+  Comodo's Camp Ground Boy. Nothing is taken and the window gets its close
+  button; what they should say is not in 817.
 * The Swordman's and the Archer's quests have no second period script
   before jAthena's of 2004-03-02 (`conf/npc/npc_job_swordman.txt`,
   `npc_job_archer.txt`, //0854): not yet read against 817's.

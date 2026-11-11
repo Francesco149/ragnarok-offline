@@ -267,6 +267,10 @@ KAFRA_LIST = {
     save = { "mjolnir_02", 98, 351 }, storage = 55 },
 }
 
+-- For a Kafra another file has to wrap (the Merchant test's parcel on Byalan
+-- Island, scripts/npc/merchant_delivery.lua): the same service by a table.
+KAFRA_SERVICE = kafra
+
 for _, k in ipairs(KAFRA_LIST) do
   npc {
     map = k.map, x = k.x, y = k.y, dir = k.dir, sprite = k.sprite, name = "Kafra",

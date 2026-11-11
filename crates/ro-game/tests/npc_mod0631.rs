@@ -748,6 +748,12 @@ fn merchant_parcels() {
     t.talk("prontera", 248, 42, &[1]);
     assert_eq!(t.eval("return player.map .. ' ' .. player.zeny .. ' ' .. v.KF_PIT"), "izlude 100 90");
 
+    // Byalan's Kafra, off the errand, is an ordinary Kafra: she saves, and stores for 35z
+    t.eval("player.zeny = 100");
+    let menus = t.talk("izlu2dun", 106, 58, &[1]);
+    assert!(menus[0].starts_with("Save:Use Storage:Rent a Cart"), "{menus:?}");
+    assert_eq!(t.eval("return player.save_map"), "izlu2dun");
+
     // Kay changes a parcel with the wrong serial number (817: the branch could not be reached)
     t.eval("v.job_merchant_q = 5; v.job_merchant_q2 = 1; v.job_merchant_q3 = 1; give_item(1083, 1)");
     let menus = t.talk("alberta_in", 28, 29, &[1, 1]);

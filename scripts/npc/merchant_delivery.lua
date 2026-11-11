@@ -18,8 +18,8 @@
 -- number of the pair for the first errand, the second for the second,
 -- nothing else. Every line is 817's (Byalan's Kafra reads the first
 -- parcel's number out as "3012685" in mod0631 too; it is 3318702). A player
--- who is not on the errand gets the Kafra's ordinary service: Byalan's
--- untouched, Prontera's with its purse check (below). docs/DEVIATIONS.md.
+-- who is not on the errand gets the Kafra's ordinary service, mended too
+-- (below). docs/DEVIATIONS.md.
 
 local BOX_1, BOX_2, BOX_WRONG, LETTER = 1081, 1082, 1083, 1072
 
@@ -144,5 +144,12 @@ wrap_npc("817:other/kafra.txt:91", delivery {
     mes "I hope you will help me next time."
     give_item(rand(2) == 0 and 513 or 512, 3)
     bye()
+  end,
+  -- Her ordinary service was 817's own Kafra with its slips (a cart charged
+  -- twice and given without the skill, a pass entry that leads nowhere):
+  -- the one service of scripts/npc/kafra.lua instead, with mod0631's save
+  -- cell (817's too) and storage fee (conf/npc_town_kafra.txt:1746, :1761).
+  service = function()
+    return KAFRA_SERVICE { cutin = "kafra_03", save = { "izlu2dun", 87, 170 }, storage = 35 }()
   end,
 })

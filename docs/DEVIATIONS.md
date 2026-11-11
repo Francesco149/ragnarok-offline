@@ -196,7 +196,10 @@ eAthena 817 (2004-02-19), bugs included. The translator is
   the Chief pays the 100z for the letter when it was delivered (817: to
   everyone sent to Byalan), and being 500z short no longer ends his script
   in mid-air (a misspelt label). Prontera's Kafra, off the errand, sends
-  you to Izlude for 900z only if you have them (817 took them unchecked).
+  you to Izlude for 900z only if you have them (817 took them unchecked);
+  Byalan's, off the errand, gives the one Kafra service of
+  `scripts/npc/kafra.lua` (817's own there charged a cart twice), storage
+  at mod0631's 35z.
 * **The Thief test's weighing.** 817's Comrade told a novice with Orange
   Net Mushrooms and no Orange Gooey ones that the basket was empty (nine
   Net ones are 27 points, a pass); only an empty basket is refused now, as
