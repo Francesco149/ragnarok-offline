@@ -165,6 +165,10 @@ fn full_session() {
     // ---- spawn a Poring next to us and kill it (continuous attack)
     // a new character wears its Knife and Cotton Shirt (mod0631 char/char.c:408-415)
     assert_eq!(g.console_eval("equip(4).name .. ' / ' .. equip(2).name", aid), "Knife / Cotton Shirt");
+    // a hundred arrows arrive as one stack, in one packet (the Archer guild's gift)
+    cap.take(3);
+    g.console_eval("give_item(1750, 100)", aid);
+    assert_eq!(cap.take(3).iter().filter(|p| id_of(p) == 0x00a0).count(), 1);
     let r = g.console_eval("spawn_mob('testmap', 29, 25, 1002, 1)[1]", aid);
     let mob: u32 = r.trim().parse().expect("mob id");
     let mut w = Writer::new(0x0089);

@@ -237,7 +237,9 @@ impl Host for Game {
                 let unit = self.need_player(ctx)?;
                 let id = self.item_id(arg(&a, 0))?;
                 let n = int(&a, 1).max(1) as u32;
-                let equip = self.db.item(id).ok_or(format!("unknown item {id}"))?.is_equip();
+                // equipment comes piece by piece; arrows are worn too but stack
+                let d = self.db.item(id).ok_or(format!("unknown item {id}"))?;
+                let equip = d.is_equip() && d.kind != 10;
                 let ok = if equip { (0..n).all(|_| self.add_item(unit, InvItem::new(id, 1))) } else { self.add_item(unit, InvItem::new(id, n)) };
                 return Ok(json!(ok));
             }
