@@ -1,7 +1,8 @@
 //! The NPCs taken from mod0631 in research rounds 2 and 3, on their success
 //! paths: Kafra points (earned by teleporting, spent in the head office), the
 //! Thief quest skills from Alcouskou, a Monster Tamer's recipe, and the
-//! Novice's First Aid and Play Dead, the Peco Peco keeper and the dye chain. The crawler
+//! Novice's First Aid and Play Dead, the Peco Peco keeper, the dye chain, Turtle
+//! Island, the doomed swords and the doll child. The crawler
 //! (npc_crawl.rs) only takes random paths through them. Repo scripts,
 //! synthetic all-walkable maps, no client files.
 
@@ -144,9 +145,9 @@ impl T {
     }
 }
 
-const MAPS: [&str; 17] = [
+const MAPS: [&str; 18] = [
     "prontera", "izlude", "aldeba_in", "moc_prydb1", "payon", "alberta_in", "morocc", "prt_in", "prt_castle", "geffen",
-    "geffen_in", "morocc_in", "alberta", "tur_dun01", "tur_dun02", "izlude_in", "alb2trea",
+    "geffen_in", "morocc_in", "alberta", "tur_dun01", "tur_dun02", "izlude_in", "alb2trea", "pay_fild08",
 ];
 
 fn setup(tag: &str) -> T {
@@ -486,4 +487,73 @@ fn moving_hp_recovery() {
     // what he asked for is what he takes; no armour is needed, the Moth Wings stay
     assert_eq!(t.eval("return skill_level(144) .. ' ' .. count_item(713) .. ' ' .. count_item(752) .. ' ' .. count_item(1058)"), "1 20 0 1");
     assert!(t.talk("izlude_in", 175, 130, &[]).is_empty());
+}
+
+#[test]
+fn cursed_swords() {
+    let mut t = setup("cursed_swords");
+    let state = "return v.Ma_sword .. ' ' .. v.ex_sword .. ' ' .. v.orga_sword .. ' ' .. v.mys_sword";
+    // strangers get silence from the smith and from Gatu
+    assert!(t.talk("pay_fild08", 218, 283, &[]).is_empty());
+    t.talk("prt_in", 163, 12, &[]);
+    assert_eq!(t.eval(state), "0 0 0 0");
+    // a rumour, then Gatu, then the smith names what he has heard of
+    t.talk("morocc", 281, 178, &[]);
+    assert_eq!(t.eval(state), "1 0 1 0");
+    assert!(t.talk("pay_fild08", 218, 283, &[]).is_empty());
+    t.talk("prt_in", 163, 12, &[]);
+    assert_eq!(t.eval(state), "2 0 1 0");
+    let menus = t.talk("pay_fild08", 218, 283, &[1]);
+    assert_eq!(menus, ["Grimtooth"]);
+    assert_eq!(t.eval(state), "2 0 2 0");
+    // a second and third rumour do not send us back to Gatu, nor undo the recipe
+    t.talk("izlude_in", 173, 88, &[]);
+    t.talk("prontera", 197, 188, &[]);
+    t.talk("morocc", 281, 178, &[]);
+    assert_eq!(t.eval(state), "2 1 2 1");
+    // one ruby short: nothing is taken
+    t.eval("give_item(724, 4); give_item(7023, 10); give_item(7002, 100); give_item(7022, 1); give_item(714, 3)");
+    let menus = t.talk("pay_fild08", 218, 283, &[2]);
+    assert_eq!(menus, ["Executioner:Grimtooth:Mysteltain"]);
+    assert_eq!(t.eval("return count_item(1237) .. ' ' .. count_item(7002)"), "0 100");
+    t.eval("give_item(724, 1)");
+    t.talk("pay_fild08", 218, 283, &[2]);
+    assert_eq!(
+        t.eval("return count_item(1237) .. ' ' .. count_item(724) .. ' ' .. count_item(7023) .. ' ' .. count_item(7002) .. ' ' .. count_item(7022) .. ' ' .. count_item(714)"),
+        "1 0 0 0 0 2"
+    );
+    // the other two: the tale first, the sword on the next visit
+    t.eval("give_item(7017, 2); give_item(1008, 3); give_item(7024, 10); give_item(609, 50)");
+    t.eval("give_item(7018, 2); give_item(7019, 1); give_item(7020, 1); give_item(7021, 1)");
+    t.talk("pay_fild08", 218, 283, &[1]);
+    t.talk("pay_fild08", 218, 283, &[3]);
+    assert_eq!(t.eval("return count_item(1169) .. ' ' .. count_item(1138)"), "0 0");
+    t.talk("pay_fild08", 218, 283, &[1]);
+    t.talk("pay_fild08", 218, 283, &[3]);
+    // one Young Twig is taken, not mod0631's hundred
+    assert_eq!(
+        t.eval("return count_item(1169) .. ' ' .. count_item(1138) .. ' ' .. count_item(7018) .. ' ' .. count_item(609) .. ' ' .. count_item(714)"),
+        "1 1 1 0 0"
+    );
+}
+
+#[test]
+fn doll_child() {
+    let mut t = setup("doll_child");
+    // only talking; then offering a doll we do not have
+    t.talk("alberta", 117, 135, &[1]);
+    let menus = t.talk("alberta", 117, 135, &[2, 9]);
+    assert_eq!(menus[1], "Poring Doll:Chonchon Doll:Puppet:Rocker Doll:Spore Doll:Osiris Doll:Baphomet Doll:Racoon Doll:Yoyo Doll");
+    assert_eq!(t.eval("return count_item(608)"), "0");
+    // each doll for its sweet
+    let trades = [(741, 529, 1), (742, 530, 1), (740, 530, 2), (752, 532, 7), (743, 538, 5), (751, 522, 2), (750, 526, 2), (754, 539, 3), (753, 608, 1)];
+    for (i, (doll, gift, have)) in trades.iter().enumerate() {
+        t.eval(&format!("give_item({doll}, 2)"));
+        t.talk("alberta", 117, 135, &[2, i as u8 + 1]);
+        assert_eq!(t.eval(&format!("return count_item({doll}) .. ' ' .. count_item({gift})")), format!("1 {have}"));
+    }
+    // the same for a girl
+    t.eval("player.sex = 0");
+    t.talk("alberta", 117, 135, &[2, 1]);
+    assert_eq!(t.eval("return count_item(741) .. ' ' .. count_item(529)"), "0 2");
 }

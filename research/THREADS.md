@@ -515,18 +515,27 @@ patch files are entries 400 and 401 of the patch list, after "New Comodo"
 (`research/notes/euro-history.md` §5), so the island was there in our
 period. Its maps are not in the CD's base GRF: they come with the same two
 files (`2003-04-30gdata_turtle_ph`), which the launcher merges.
-Other NPC files mod0631 loads and 817 has nothing of: the cursed swords
+Other NPC files mod0631 loads and 817 has little of: the cursed swords
 (`npc_event_ma_sword.txt`: a gloomy man at `pay_fild08 218,283`, Gatu at
-`prt_in 163,12`, Nine at `izlude_in 160,129`, for Mysteltainn, Executioner
-and Grimtooth), the doll child of Alberta (`npc_event_doll.txt`, `alberta
-117,134`) and two arrow makers in Payon (`npc_event_arrow.txt`, `payon
-98,57` and `100,121`).
+`prt_in 163,12`, and three rumour-tellers 817 has as passers-by, for
+Mysteltain, Executioner and Grimtooth) and the doll child of Alberta
+(`npc_event_doll.txt`, `alberta 117,134`; 817's "Kid" one cell north).
+**Both are in the game** (2026-11-11: `scripts/npc/cursed_swords.lua`,
+`doll_child.lua`, DEVIATIONS). mod0631's smith asks for one list and takes
+another for two of the three swords; we take what he asks for, which is
+unconfirmed for any official server.
+**Not ported, on purpose:** the two arrow makers in Payon
+(`npc_event_arrow.txt`, `payon 98,57` and `100,121`). The file's own
+header says they are its author's ("huge") relief for archers "until the
+arrow-making skill is done", an event rather than a plain shop, with
+prices "made up". They are not from jRO, and Arrow Crafting works here.
 **Impact:** the fare (jRO's zeny amounts are not always the international
 ones: refine fees differ tenfold); three item quests.
 **Look:** who took a player there on iRO or euRO and for how much
 (RODataZone's map and quest pages, player guides of early 2004); the new
-headgear quests the notice speaks of; then port mod0631's other three
-files.
+headgear quests the notice speaks of; whether the doomed-sword smith's
+lists (five Cursed Rubies, ten Blades Lost in Darkness, one Young Twig) are
+what an official server took.
 
 ### 25. What this client can show of the 2-2 jobs
 The exe's packet table (`data/client/packet_lengths.tsv`, 2003-12-18) has

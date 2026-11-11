@@ -189,6 +189,25 @@ eAthena 817 (2004-02-19), bugs included. The translator is
   (2004-05-02). The armour is neither tested nor taken: he says to come
   wearing one, as mod0631's knight does. Not confirmed for the
   international servers (THREADS.md #7).
+* **The doomed swords** (`scripts/npc/cursed_swords.lua`). 817 has three
+  people who tell of Executioner, Grimtooth and Mysteltain and of a
+  blacksmith who left Prontera, and nothing comes of it. mod0631 has the
+  rest, and we take it: a man in Prontera's tavern (`prt_in 163,12`) who
+  knows where the smith went, and the smith himself east of Payon
+  (`pay_fild08 218,283`), who makes each sword from monster drops and an
+  Emperium. The rumours are 817's English; the other two are our retelling.
+  Three things are not mod0631's:
+  * hearing a rumour again, or a second one, does not set the quest back
+    (mod0631 writes the first step over whatever was there);
+  * the smith takes what he asks for: five Cursed Rubies and ten Blades
+    Lost in Darkness for Grimtooth (mod0631 tests for one ruby and takes
+    one of each), one Young Twig for Mysteltain (mod0631 takes a hundred);
+  * his list shows the swords you have heard of.
+* **Alberta's doll child** (`scripts/npc/doll_child.lua`). 817's "Kid"
+  wishes for a monkey doll and that is all. mod0631's takes any of nine
+  dolls and gives a sweet back (a Yoyo Doll brings an Yggdrasil Seed); we
+  take that, on 817's cell, with 817's first two pages and our
+  translation of the rest.
 * **Peco Peco Breeder** (`scripts/npc/peco_keeper.lua`): mod0631's keeper
   by Prontera's north-west wall (`prontera 55,350`), 2500z a bird for a
   Knight; the Crusaders' keeper (`232,318`) comes with `jobs2_2`. 817 has
