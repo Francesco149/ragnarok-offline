@@ -348,6 +348,18 @@ a failure leaves you saved outside the tower, and after five or six
 failures the examiner lets you skip the fight for a Worn Out Scroll.
 Edge's Knight guide (faq 29457, pRO, from 2004-02-08): "Pay a small fee
 and magically you become a Knight": no test there.
+**2026-11-11: the Knight test is in** (`scripts/npc/knight_test.lua`,
+DEVIATIONS), from jAthena //1046 (2004-09-12) with eAthena 1.0's English
+names; played in the client from the application to Sir Edmond's room.
+jAthena and eAthena 1.0 are two separate reconstructions, not a
+translation and its source: they differ in three of Sir James's eight
+questions, in which of Lady Amy's answers count, in Sir Grey's interview
+(eAthena scores it, jAthena passes everyone), in Andrew's lists (eAthena
+picks one of two; its changelog says it added the second), in the arena's
+cells and Sir Edmond's room (eAthena: eight Spores, live Chonchons, 240
+seconds). Open: a player's account of the Knight test before September
+2004 (which questions, which items, and whether it existed at all before
+then: pRO had none in February); what Sir Grey's pass condition was.
 
 ### 9. Refining details
 Phracon price (iRO page 2000z vs data 200z), armor DEF per refine (1, 5 or
@@ -619,6 +631,13 @@ The exe holds no `NPC_` name and `skillnametable.txt` none either, so
 every monster-only skill with a cast time did that. Such casts are now
 sent without the casting bar (DEVIATIONS). Open: what an official server
 sent for a monster-only cast, and what a client of January 2004 showed.
+**Seen again (rig, 2026-11-11, the Knight test's goblins):** the shout
+also comes with the skill's result. The goblins' elemental attacks
+(`NPC_WINDATTACK`, `NPC_FIREATTACK`... 184-188, no cast time) go out as
+0x01de skill damage with that id, and the client puts "Unknown Skill !!"
+over the goblin each time one lands; so does every monster with such an
+attack. Left as it is: whether Aegis sent these as skill damage (named or
+not) or as plain attacks (0x008a) is the same open question.
 **Impact:** how every fight feels; `data/db/mob_skills.toml`.
 **Look:** kRO notices on monster skills (2003); period monster databases
 that list skills (RODataZone, RO Empire); later official data is tier

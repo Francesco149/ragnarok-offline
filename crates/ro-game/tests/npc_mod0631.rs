@@ -181,15 +181,15 @@ impl T {
     }
 }
 
-const MAPS: [&str; 31] = [
+const MAPS: [&str; 32] = [
     "prontera", "izlude", "aldeba_in", "moc_prydb1", "payon", "alberta_in", "morocc", "prt_in", "prt_castle", "geffen",
     "geffen_in", "morocc_in", "alberta", "tur_dun01", "tur_dun02", "izlude_in", "alb2trea", "pay_fild08",
     "gef_tower", "job_wiz", "new_zone02", "new_zone03", "new_zone04", "payon_in02",
-    "izlu2dun", "job_prist", "prt_church", "prt_fild03", "moc_fild07", "prt_fild00", "c_tower2",
+    "izlu2dun", "job_prist", "prt_church", "prt_fild03", "moc_fild07", "prt_fild00", "c_tower2", "prt_fild05",
 ];
 /// Maps no script reaches beyond 260,260: smaller stand-ins, so that the
 /// eighteen tests side by side stay under the workbench's 2 GiB.
-const SMALL_MAPS: [&str; 3] = ["in_hunter", "job_hunte", "pay_fild10"];
+const SMALL_MAPS: [&str; 4] = ["in_hunter", "job_hunte", "pay_fild10", "job_knt"];
 
 fn setup(tag: &str) -> T {
     let slot = Slot::take();
@@ -1052,6 +1052,27 @@ fn wizard_test() {
 }
 
 impl T {
+    /// Go on with a dialogue the server opened by itself (an event with the
+    /// player attached): "next" and "close" pressed, menus answered with 1.
+    fn answer(&mut self) -> Vec<String> {
+        let mut said = Vec::new();
+        for _ in 0..200 {
+            let out = self.cap.take(3);
+            said.extend(out.iter().filter(|p| p[0..2] == [0xb4, 0x00]).map(|p| Reader::new(p).seek(8).str_rest()));
+            let Some(p) = out.iter().rev().find(|p| [[0xb5, 0], [0xb6, 0], [0xb7, 0]].contains(&[p[0], p[1]])) else { break };
+            let at = if p[0] == 0xb7 { 4 } else { 2 }; // 0x00b7 has a length first
+            let npc = u32::from_le_bytes([p[at], p[at + 1], p[at + 2], p[at + 3]]);
+            let mut w = Writer::new(match p[0] { 0xb5 => 0x00b9, 0xb6 => 0x0146, _ => 0x00b8 });
+            w.u32(npc);
+            if p[0] == 0xb7 {
+                w.u8(1);
+            }
+            send(&mut self.g, 3, w);
+            self.g.tick();
+        }
+        said
+    }
+
     /// Kill the monsters on the player's map whose death runs `event`.
     fn slay_by(&mut self, event: &str, n: usize) {
         let map = self.eval("return player.map");
@@ -1141,4 +1162,93 @@ fn hunter_test() {
     assert_eq!(t.eval("return v.hntr_q .. ' ' .. count_item(1007)"), "3 1");
     t.talk(sharon.0, sharon.1, sharon.2, &[]);
     assert_eq!(t.eval("return player.class .. ' ' .. count_item(1007) .. ' ' .. count_item(1710)"), "11 0 1", "a Hunter, with a Cross Bow");
+}
+
+/// The Knight test (scripts/npc/knight_test.lua): the captain's application,
+/// Sir Andrew's errand, Sir James's eight questions, Sir Windsor's three rooms
+/// (out of time, then cleared), Lady Amy's ten, Sir Edmond's room where a kill
+/// fails and patience passes, Sir Grey's talk, and the verdict.
+#[test]
+fn knight_test() {
+    let mut t = setup("knight_test");
+    let herman = ("prt_in", 88, 101);
+    let andrew = ("prt_in", 75, 107);
+    let james = ("prt_in", 71, 91);
+    let windsor = ("prt_in", 79, 94);
+    let arena = ("job_knt", 89, 106);
+    let amy = ("prt_in", 69, 107);
+    let edmond = ("prt_in", 70, 99);
+    let grey = ("prt_in", 87, 92);
+    let q = |t: &mut T| t.eval("return v.change_knight");
+    let at = |t: &mut T| t.eval("return player.map .. ' ' .. player.x .. ' ' .. player.y");
+    t.eval("job_change(1); player.job_level = 39");
+    t.talk(herman.0, herman.1, herman.2, &[1, 1]);
+    assert_eq!(q(&mut t), "0", "Job Level 39");
+    t.eval("player.job_level = 40");
+    t.talk(herman.0, herman.1, herman.2, &[1, 1]);
+    assert_eq!(q(&mut t), "1");
+    // the errand: the list, nothing brought, then five of each
+    t.talk(andrew.0, andrew.1, andrew.2, &[]);
+    assert_eq!(q(&mut t), "2");
+    t.talk(andrew.0, andrew.1, andrew.2, &[]);
+    assert_eq!(q(&mut t), "2", "nothing brought");
+    t.eval("for _, id in ipairs({1042, 950, 1032, 966, 7031, 946}) do give_item(id, 5) end");
+    t.talk(andrew.0, andrew.1, andrew.2, &[]);
+    assert_eq!(t.eval("return v.change_knight .. ' ' .. count_item(7031)"), "5 0");
+    // one wrong answer, then all eight
+    t.talk(james.0, james.1, james.2, &[1, 1]);
+    assert_eq!(q(&mut t), "6");
+    t.talk(james.0, james.1, james.2, &[1, 4, 3, 3, 1, 2, 1, 1, 1]);
+    assert_eq!(q(&mut t), "7");
+    // the arena: out of time in the first room
+    t.talk(windsor.0, windsor.1, windsor.2, &[1]);
+    assert_eq!(at(&mut t), "job_knt 89 101");
+    t.talk(arena.0, arena.1, arena.2, &[1]);
+    assert_eq!(at(&mut t), "job_knt 43 147");
+    let kills = ["knight_windsor::OnKill1", "knight_windsor::OnKill2", "knight_windsor::OnKill3"];
+    assert_eq!(t.eval(&format!("return mob_count('job_knt', '{}')", kills[0])), "12");
+    t.run(181_000);
+    assert_eq!(at(&mut t), "prt_in 80 100", "out of time");
+    assert_eq!(t.eval(&format!("return mob_count('job_knt', '{}')", kills[0])), "0");
+    // then all three rooms, three minutes each
+    t.talk(windsor.0, windsor.1, windsor.2, &[1]);
+    t.talk(arena.0, arena.1, arena.2, &[4]);
+    assert_eq!(t.eval(&format!("return player.map .. ' ' .. mob_count('job_knt', '{}')", kills[0])), "job_knt 0", "lounging");
+    t.talk(arena.0, arena.1, arena.2, &[1]);
+    t.run(170_000);
+    t.slay_by(kills[0], 12);
+    t.answer();
+    assert_eq!(at(&mut t), "job_knt 43 52");
+    t.run(170_000);
+    t.slay_by(kills[1], 12);
+    t.answer();
+    assert_eq!(at(&mut t), "job_knt 143 152");
+    t.slay_by(kills[2], 7);
+    t.answer();
+    assert_eq!(t.eval("return v.change_knight .. ' ' .. player.map"), "9 prt_in");
+    // five of ten is not enough; ten is
+    t.talk(amy.0, amy.1, amy.2, &[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]);
+    assert_eq!(q(&mut t), "10");
+    t.talk(amy.0, amy.1, amy.2, &[1, 2, 1, 1, 1, 3, 2, 3, 1, 1, 2]);
+    assert_eq!(q(&mut t), "11");
+    // restraint: a kill sends you to the field; four and a half minutes pass you
+    t.talk(edmond.0, edmond.1, edmond.2, &[1]);
+    assert_eq!(at(&mut t), "job_knt 143 57");
+    assert_eq!(t.eval("return mob_count('job_knt', 'knight_calm::OnKill')"), "12");
+    t.slay_by("knight_calm::OnKill", 1);
+    assert_eq!(t.eval("return v.change_knight .. ' ' .. player.map"), "12 prt_fild05");
+    t.talk(edmond.0, edmond.1, edmond.2, &[1]);
+    t.run(265_000);
+    assert_eq!(at(&mut t), "job_knt 143 57", "still waiting");
+    t.run(6_000);
+    assert_eq!(t.eval("return v.change_knight .. ' ' .. player.map"), "13 prt_in");
+    // the interview, and the verdict
+    t.talk(grey.0, grey.1, grey.2, &[1, 1, 1, 1, 1]);
+    assert_eq!(q(&mut t), "15");
+    t.talk(herman.0, herman.1, herman.2, &[]);
+    assert_eq!(t.eval("return player.class .. ' ' .. count_item(656) .. ' ' .. v.change_knight"), "7 7 0", "a Knight");
+    // and a Claymore to order
+    t.eval("player.zeny = 80000; give_item(999, 1)");
+    t.talk(grey.0, grey.1, grey.2, &[2]);
+    assert_eq!(t.eval("return count_item(1163) .. ' ' .. count_item(999) .. ' ' .. player.zeny"), "1 0 6000");
 }

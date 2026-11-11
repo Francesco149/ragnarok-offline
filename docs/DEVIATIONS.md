@@ -307,6 +307,30 @@ eAthena 817 (2004-02-19), bugs included. The translator is
   ("to 0,0") are removed; a decoy, a trap or the switch's "Re-test" sends
   you back to the waiting room and clears the room; pages cut to the
   window, eAthena's jokes for other jobs shortened.
+* **The Knight test** (`scripts/npc/knight_test.lua`). 817 changes a
+  Swordman into a Knight at job level 40 with no test (its NPC says
+  "another requirements would be added soon"). The test here is
+  jAthena's of 2004-09-12, the nearest copy of the official script: the
+  captain's application (job level 40, no skill points left), Sir
+  Andrew's six items, Sir James's eight questions (all right), Sir
+  Windsor's three rooms on `job_knt` (12, 12 and 7 monsters, three minutes
+  each), Lady Amy's ten (eight to pass), Sir Edmond's room where you must
+  kill nothing for 270 seconds, Sir Grey's talk, the seven knights'
+  verdict and seven Awakening Potions. No account dates it before
+  September 2004 (THREADS.md #8): it is here because `job_knt` came with
+  the January 2004 patch, as the Hunter's map did. Where jAthena is
+  unfinished: one item list (it names three, fills one); Sir Grey always
+  passes, as its code does ("pass condition unknown"); its "not
+  researched" lines are short pointers to the next knight; Sir Edmond's
+  plants stand on eAthena 1.0's cells (jAthena's are walls on this map).
+  Ours: no chat room (Sir Windsor starts the fight when asked, or lets you
+  lounge); the verdict says "this one" where jAthena's text is written
+  for a woman; one who falls in Sir Edmond's room does not pass when its
+  timer runs out elsewhere (jAthena's player timer would pass them);
+  mod0631's four warp tiles on `job_knt` ("to 0,0") are removed;
+  dialogue in our English of jAthena's Japanese, cut to the window, with
+  eAthena 1.0's English names. Sir Grey makes Knights a Claymore for
+  74,000 zeny and a Steel, as both scripts have it.
 * **Alberta's sailor** (`scripts/npc/alberta_sailor.lua`) no longer sells
   passage to Amatsu and Gonryun: the client has neither map (they are later
   additions 817 took from jAthena), so the fare went and the ship did not.
