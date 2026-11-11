@@ -34,6 +34,10 @@ the client's own resolution).
 | The period interface, a Merchant's pushcart and a pet Poring (euRO announced "Q-Pet" as part of its closed beta) | Alberta's docks |
 | ![Geffen guide](docs/img/geffen-guide.png) | ![Lutie](docs/img/lutie.png) |
 | A Geffen guide. 611 NPCs are translated from a February 2004 emulator release | Lutie |
+| ![Fire Wall](docs/img/fire-wall.png) | ![Ant Hell](docs/img/ant-hell.png) |
+| Fire Wall. The skills of the first and 2-1 jobs work as the December 2003 emulator had them: cast times, SP, ground skills, status changes | Ant Hell, entered through one of the scripted doors of the period warp list (they remember which desert you came from) |
+| ![The Wizard test's waiting room](docs/img/wizard-test.png) | ![An ownerless guild castle](docs/img/castle-monsters.png) |
+| The Wizard test's waiting room on `job_wiz`, a map this CD carries only in a patch file. Candidates once queued here; alone, you may lounge or ask to go in | A guild castle nobody owns. Until February 2004 an ownerless castle filled with monsters; with one player no castle ever has an owner |
 | ![Glast Heim](docs/img/glast-heim.png) | ![The CD's patcher on Windows 11](docs/img/patcher-win11.png) |
 | Glast Heim's entrance | The CD's own patcher on Windows 11, showing euRO's notice (English, German, Italian) from a 2004 Wayback Machine capture served by a local stand-in for euRO's patch server |
 
