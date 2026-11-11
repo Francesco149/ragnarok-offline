@@ -107,5 +107,11 @@ multiplayer (DEVIATIONS.md).
 ## 6. Robustness
 
 Done: `RagnarokOffline.exe` (drop-in launcher) and the all-in-one installer
-(docs/WINDOWS.md); open items there under "Not verified yet". Next: packet fuzz tests against the length table;
-`check` validating that every item/mob id referenced by scripts exists.
+(docs/WINDOWS.md); open items there under "Not verified yet". `check` walks the world on the client's own cells (`crates/ro-game/src/audit.rs`):
+warps onto blocked cells, maps nothing leads to, NPCs out of reach, item
+and monster ids the database lacks. Its first run found Ant Hell, Payon
+Cave 4F and the Clock Tower cut off (fixed); what it still lists is
+THREADS.md #26. Next: packet fuzz tests against the length table; run
+`check` in CI against a client folder; the Tip of the Day and other client
+windows under Wine with the card instead of software drawing
+(DEVELOPMENT.md).

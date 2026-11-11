@@ -7,12 +7,12 @@ unmodified, with no exe patching, and you play alone on your own machine.
 
 ![The December 2003 euRO client's login screen, served by ragnarok-offline](docs/img/login.png)
 
-> **Very early, and not accurate yet.** You can log in, walk the whole 2003
-> world, talk to its NPCs, fight, level, tame pets and push a cart. You cannot
-> use skills yet, and a lot of what the server decides is still an
-> approximation. Nothing of euRO's server survives, so every number, formula
-> and line of dialogue has to be reconstructed from period sources, and most
-> of that research is still ahead. See [Status](#status) and
+> **Playable, and not accurate yet.** You can play a character from the
+> training ground through the first and 2-1 jobs: the period world, its NPCs
+> and quests, skills, monsters that fight back, pets, carts. A lot of what
+> the server decides is still an approximation. Nothing of euRO's server
+> survives, so every number, formula and line of dialogue has to be
+> reconstructed from period sources. See [Status](#status) and
 > [Why accuracy is slow](#why-accuracy-is-slow).
 
 The server is written in Rust. Everything a period server decided (NPCs,
@@ -67,37 +67,52 @@ Full identification, with evidence: [docs/CLIENT.md](docs/CLIENT.md). In short:
 
 ## Status
 
+This is the short version. [docs/ROADMAP.md](docs/ROADMAP.md) is the list
+that is kept current: what is done, what is next, and where each answer
+would come from. [docs/DEVIATIONS.md](docs/DEVIATIONS.md) says where the
+game knowingly differs from the period one.
+
 Working with the real client:
 
 - login, character create/delete/select, saving;
-- every map of the client, walking, 2,038 period warps;
-- 611 period NPCs: towns, the novice training ground, job quests, guides,
-  Kafras, refiners, quests; shops;
-- inventory, equipment, usable items, Kafra storage, pushcarts;
+- every map of the client and the period warps between them, including the
+  random exits of the Clock Tower and Payon Cave. `ragnarok-offline check`
+  walks the client's own map cells from the start point and reports
+  anything a player could not reach;
+- about 600 period NPCs: towns, the novice training ground, job quests,
+  guides, Kafras (fares, storage, saving, carts, points), refiners, dye
+  makers, quests, shops; the Turtle Island chain, the Wizard test on the
+  map this client has for it;
+- inventory, equipment, cards, item identification, usable items, Kafra
+  storage, pushcarts, forging and ore refining;
 - pets: taming, eggs, hunger, intimacy, accessories;
-- the skill tree and skill points;
-- monsters (2,001 period spawn groups) with simple AI, melee combat, EXP and
-  levels, drops, regen, death and respawn;
-- the speed potions, as the first status changes;
+- **skills**: the Novice, the six first jobs and the six 2-1 jobs, with cast
+  times, delays, SP and item costs, ground skills and traps, status changes
+  and ailments with their icons;
+- battle as the period emulators have it: elements, sizes, cards, refine
+  bonuses, criticals, arrows; monsters with their period AI and skills;
+  EXP, drops, MVP rewards;
 - a drop-in Windows launcher that runs the CD's own patcher against a local
   patch server, and an all-in-one installer built from your own disc.
 
-Not yet:
+Not yet, or only in part:
 
-- **using skills**, and almost all status effects;
-- element, size and card modifiers in damage; monster skills; MVP rewards;
-- real monster behaviour (today: a simplified chase and random walk);
-- NPC waiting rooms, the dyer, item identification;
-- a play-through of each job quest in the real client. They were translated
-  mechanically, and only some have been walked end to end.
+- **the 2-2 jobs.** This client's exe knows none of their skills (euRO
+  opened them in June 2004 with a later client), so the ones drafted so far
+  can only be used through a GM command
+  ([research/THREADS.md](research/THREADS.md) #25);
+- the Knight's and Hunter's job tests: the client has their maps, no period
+  script for them is known;
+- a play-through of every job quest in the real client. They pass an
+  automated run on stand-in maps; only some have been walked for real;
+- a handful of skills are drafts from thin evidence (ROADMAP §3), and the
+  NPC dialogue is the emulator authors' fan translation, not Gravity's.
 
 Out of scope because nobody else is there: parties, guilds, trading, vending
 and PvP. What to do with War of Emperium and the guild dungeons in a
-single-player game is an open design question
-([research/THREADS.md](research/THREADS.md) #17). For now the guild castles
-hold what an ownerless castle held in early 2004: monsters.
-
-Next steps, in order: [docs/ROADMAP.md](docs/ROADMAP.md).
+single-player game is decided in principle (rework them for one player once
+the original is understood, THREADS.md #17) and not built. For now the guild
+castles hold what an ownerless castle held in early 2004: monsters.
 
 ## Why accuracy is slow
 
@@ -129,7 +144,7 @@ Moving a value up a tier means finding a period source for it: a Korean patch
 notice, an archived iRO guide page, a 2003 forum post, a magazine scan, a
 screenshot with coordinates in it. That is slow, one question at a time.
 The open questions are numbered in [research/THREADS.md](research/THREADS.md)
-(19 so far: closed-beta EXP rates, the real start cell, Kafra fares before
+(closed-beta EXP rates, the real start cell, Kafra fares before
 2004-02-24, how 2-1 job changes worked before the "New Comodo" update,
 where Gravity's 2003 English NPC text survives, and more). Where the project
 knowingly differs from the period game, mostly because one player is not a

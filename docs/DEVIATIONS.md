@@ -270,6 +270,10 @@ eAthena 817 (2004-02-19), bugs included. The translator is
   skill description says so; 817's guild NPCs checked only the job level, so
   a Novice could carry 9 unspent points into the new job. The refusal line is
   ours (official wording: THREADS.md #2).
+* **The Orc Dungeon Kafra saves at `gef_fild10 54,320`**, mod0631's cell
+  (`npc_town_kafra.txt:4805`). 817 has `54,232`, a hundred cells south and
+  inside a cliff on this client's map: a typing slip, found by
+  `ragnarok-offline check`.
 * **"morroc"** in the Juno Kafras is a typo for `morocc`.
 * **Shop names** come from 817 by cell (mod0631's are Japanese). "Shop" is
   used where 817 has none within 3 cells, or only a Japanese one.
@@ -279,6 +283,12 @@ eAthena 817 (2004-02-19), bugs included. The translator is
   doesn't hang.
 
 ## Engine behaviour relative to Athena 817
+
+* **Cell types.** Only types 1 and 5 block, as in Athena (mod0631
+  `map.c:1052`, `path.c:153`). One map of this client depends on it: the
+  whole floor of `c_tower1` has the type `0x444c74` (some builder's stray
+  bytes). Until 2026-11-11 the server took unknown types for walls, and
+  Clock Tower 1F could not be entered.
 
 * **A Fly Wing (or Dead Branch) refused by a map flag is not used up.** In
   Athena it was spent before its script ran. The client still shows its

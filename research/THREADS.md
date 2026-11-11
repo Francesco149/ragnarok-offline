@@ -616,6 +616,32 @@ six packets (Auto Guard, Defender, Reflect Shield, the Strips, Chemical
 Protection, the Sage's ground skills and Dispell: their numbers are in the
 iRO guide pages, round 4).
 
+### 26. What `check` still lists
+The world audit (`ragnarok-offline check`, 2026-11-11) walks the client's
+cells from the start point through every warp and every destination a
+script names. After its first fixes it still reports:
+* **`tur_dun05`**: mod0631 has three monster groups and two exits there
+  (`npc_warp25.txt:13-14`, to `tur_dun02` and `tur_dun01`) and nothing
+  leading in. Was there a fifth Turtle Island map in play, and from where?
+* **`pay_dun04 193,43`**, one of the four random arrivals from Payon Cave
+  3F (`npc_warp.txt:511`), is a wall on this client's map; `192,43` is
+  floor. As in Athena, the player lands on a random cell of the map
+  instead. An older or newer `pay_dun04`?
+* **`prt_in` 280-285, 36-130**: four exits to Prontera on cells this
+  client's `prt_in` has no room around, and no warp leads to them.
+  Rooms of a later Prontera?
+* **`prt_are_in 31,122` and `169,122`**, **`yuno_in03 104,115`**: warp
+  tiles that cannot be stepped on.
+* **Castles**: `aldeg_cas05 188,49` and `prtg_cas02 184,44` arrive on
+  blocked cells; `prtg_cas02`'s Emperium cell `157,174` is blocked (known,
+  #17).
+* **The guild dungeons** `gld_dun01-04`: nothing leads in (#17).
+* `job_wiz` is entered through a destination the script computes, which
+  the audit cannot see: not a fault.
+**Impact:** small; each is a place a player cannot stand or reach.
+**Look:** 817's and jAthena's warp files for the same cells; the `.gat`
+of each map in `data.grf.original` against the merged one.
+
 ## Resolved
 
 ### R1. Basic Skill levels

@@ -4,8 +4,8 @@ For: the independent deep-research agent (Gemini in Antigravity) that wrote
 rounds 1 to 3. Kept by the Claude sessions that work on the game: at the
 end of each session the queue is updated (answered items go to "Done",
 with where the answer went) and refilled with what that session could not
-settle from the sources on disk. Last update: 2026-11-11 (third session
-of that day: the client knows no 2-2 skill).
+settle from the sources on disk. Last update: 2026-11-11 (fourth session
+of that day: a world audit, `ragnarok-offline check`, and what it lists).
 
 ## How to use it
 
@@ -260,6 +260,18 @@ Sets: `skill_castend_*` for those skills.
   `165,288` and `prtg_cas02 184,44` to `157,140` are the same in mod0631,
   817, eAthena 0.5.2 and jAthena, and both targets are solid on this
   client's maps. Where did those two doors lead?
+* **Places the world audit cannot reach** (thread 26, new on 2026-11-11):
+  `tur_dun05` has monsters and two exits in mod0631 and no way in: was a
+  fifth Turtle Island map in play in 2003/04, and how was it entered?
+  `pay_dun04 193,43` (one of four random arrivals from Payon Cave 3F) is a
+  wall on this client's map: do 817, eAthena 0.5.2 or jAthena have another
+  cell? Four exits on `prt_in` at x 280 to 285 stand where this client's
+  map has no room: which rooms of Prontera were they, and since when?
+  Rows as computed results (`research/gat_cells.py` on the merged GRF,
+  `grep -n` on each emulator's warp file).
+* **The Clock Tower's random warps**: now in the game from mod0631
+  (`conf/npc_warp.txt:1140-1320`, "import from EoR-162"). Any period
+  player description of which warps on which floor were random.
 * **Kafra fares outside jRO** (thread 3), **the start cell** (thread 6),
   **Lutie in January** (thread 19): still open, nothing new to add to the
   round-3 brief.
@@ -296,4 +308,6 @@ that nobody researches them again.
 | Can the Swordman course be walked on this client's map | Yes, each stretch and every pit's cave | `research/course_check.py` |
 | Guard's chances, Defender's percentages, Shield Boomerang's reach | 817 and the iRO guide agree | THREADS.md #25, DEVIATIONS |
 | Does this client ship the 2-2 skills' text | No: neither names nor descriptions, and the exe knows none of the skills (seen in the client) | THREADS.md #25 |
+| How a player gets into Ant Hell, Payon Cave 4F and the upper Clock Tower | Script warp tiles in mod0631's `npc_warp.txt`, which the importer skipped until 2026-11-11 | `scripts/import/warps.lua`, PROVENANCE.md |
+| Why Clock Tower 1F could not be walked | Its cells have a stray type (`0x444c74`); only 1 and 5 block, as in Athena | DEVIATIONS.md "Cell types" |
 | Providence, the endows, Dispell, the Strips, Chemical Protection: the numbers | Drafted from mod0631, 817 and the iRO guide; what is still open is in T7 | DEVIATIONS.md, `scripts/rules/skill_effects.lua` |

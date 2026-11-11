@@ -29,6 +29,7 @@ period source). Research behind the tiers: `research/notes/mechanics-sources.md`
 | Items, monsters, drops | athena-dev-2.1.1-mod0631 `db/` (archived 2003-12-18) — numbers; English names from eAthena 0.5.2 (2004-05) | athena2003 |
 | EXP tables, job HP/SP/weight/ASPD | mod0631 `db/exp.txt`, `job_db1.txt`, `job_db2.txt` | athena2003 |
 | Warps (2,038), spawns (2,001 groups), shops (80) | mod0631 `conf/map_athena.conf` npc list | athena2003 |
+| Warp tiles that are scripts (22): Ant Hell's two doors, Payon Cave 3F→4F, the random exits of the Clock Tower and of `aldeg_cas04` | mod0631 `conf/npc_warp.txt`, `npc_warp25.txt` (`script` entries with sprite 45), generated into `scripts/import/warps.lua`; a `rand(n)` with fewer branches than n falls through to the first, as the source does | athena2003 |
 | HP/SP/ATK/hit/flee/crit/ASPD, job bonuses, equipment and card bonuses, refine bonuses, passive skills | mod0631 `map/pc.c` pc_calcstatus, pc_bonus, pc_bonus2; `db/size_fix.txt`, `db/refine_db.txt`; the items' own scripts (`scripts/rules/status.lua`) | athena2003 |
 | Weapon damage: hit, critical, DEF, masteries, size, cards, elements, two weapons, Double Attack | mod0631 `map/battle.c` battle_calc_weapon_attack, battle_addmastery, `db/attr_fix.txt` (`scripts/rules/battle.lua`) | athena2003 |
 | Magic and trap/falcon damage | mod0631 `map/battle.c` battle_calc_magic_attack, battle_calc_misc_attack | athena2003 |
