@@ -57,10 +57,14 @@ Next:
   Charge, Shield Boomerang and Holy Cross (test `crusader_shield_skills`),
   Providence, the Sage's endows and Dispell, the Rogue's Strips, the
   Alchemist's Chemical Protections (test
-  `endows_strips_protections_dispell`); none tried in the client yet, which
-  has icons for them but no names or descriptions. Next: Grand Cross, the
-  Sage's ground skills, Magic Rod and Spell Breaker, Potion Pitcher, Acid
-  Terror, Demonstration.
+  `endows_strips_protections_dispell`). **The client cannot offer any of
+  them** (THREADS.md #25, seen in the rig): its exe knows no 2-2 skill, so
+  the skill window leaves them out and a cast shouts "Unknown Skill !!";
+  only the status icons are drawn. Until a later exe is found (euRO's of
+  2004-04-15 or 2004-05-31) they are reachable through `@useskill` alone,
+  so more 2-2 drafts come after that search. Then: Grand Cross, the Sage's
+  ground skills, Magic Rod and Spell Breaker, Potion Pitcher, Acid Terror,
+  Demonstration.
 * **Check the drafted skills against the iRO guide's pages** (THREADS.md
   #22) and the ailments against period guides (#21). The client's skill
   text against the emulators is settled (R6).

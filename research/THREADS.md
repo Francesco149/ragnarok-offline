@@ -573,7 +573,17 @@ function. Of the 2-2 skills the client ships the icons (109 sprites under
 `data\sprite\아이템\`) and SP amounts for thirty of them
 (`leveluseskillspamount.txt`), but no names and no descriptions:
 `skillnametable.txt` and `skilldesctable.txt` end with the 2-1 jobs
-(checked 2026-11-11; an earlier note here said it ships their text). With
+(checked 2026-11-11; an earlier note here said it ships their text). Nor
+does the exe: `Ragexe.exe` holds the Aegis names of the skills up to the
+2-1 jobs, the quest skills and the guild skills (`KN_BOWLINGBASH` is
+there) and not one `CR_`, `MO_`, `SA_`, `RG_`, `BA_`, `DC_` or `BD_` name.
+**Seen in the client (rig, 2026-11-11):** a Crusader is drawn (on a Peco
+Peco too); the skill window lists none of the 2-2 skills the server sends
+in 0x010f, so they cannot be picked or put on a hotkey; a cast started by
+the server shouts "Unknown Skill !!" over the character; the status icons
+of Guard (58), Shield Reflect (59), Providence (61) and Defender (62) are
+drawn. Shots: `data:shots/2-2/`. So on this client the 2-2 skills can only
+be used through `@useskill`, whatever the server does. With
 `jobs2_2` on, a Monk's spheres cannot be drawn, a Sage cannot be offered
 the Auto Spell list, and Devotion has no lines.
 **Impact:** how the 2-2 skills are drafted (ROADMAP §3): spheres and
@@ -587,8 +597,7 @@ Reflect, Shield Charge, Shield Boomerang and Holy Cross are drafted
 (DEVIATIONS; `scripts/rules/`, test `crusader_shield_skills`). 817 and the
 iRO guide's Crusader page (2004-04-11) agree on Guard's chances, Defender's
 percentages and the Boomerang's reach; Shield Reflect is the guide's alone.
-Not yet seen in the client: whether it draws the three stances' icons and
-the block.
+The three stances' icons are drawn (above); the block is not yet seen.
 **2026-11-11, the second lot:** Providence, the four endows, Dispell, the
 four Strips and the four Chemical Protections (DEVIATIONS; test
 `endows_strips_protections_dispell`). Where the three witnesses part:
@@ -598,9 +607,11 @@ and Dispell roll; 817's Dispell ends a fixed list where the guide says
 "all magical effects". Open: the DEX term of a Strip's chance; whether a
 failed endow really cost the weapon on a server of 2004 (the guide's word
 only); which blessings Dispell took.
-**Look:** what the client does with the skills themselves (does it have
-the effects and sprites for Asura Strike, the songs?); whether either of
-those two exes is archived; which 2-2 skills need none of the
+**Look:** first of all whether either of those two exes is archived: a
+client that lists the skills is what the 2-2 jobs wait on, more than any
+skill's numbers. Then what this client does with the skills' effects (does
+it have the effects and sprites for Asura Strike, the songs?); which 2-2
+skills need none of the
 six packets (Auto Guard, Defender, Reflect Shield, the Strips, Chemical
 Protection, the Sage's ground skills and Dispell: their numbers are in the
 iRO guide pages, round 4).

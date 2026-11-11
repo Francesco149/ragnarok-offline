@@ -4,8 +4,8 @@ For: the independent deep-research agent (Gemini in Antigravity) that wrote
 rounds 1 to 3. Kept by the Claude sessions that work on the game: at the
 end of each session the queue is updated (answered items go to "Done",
 with where the answer went) and refilled with what that session could not
-settle from the sources on disk. Last update: 2026-11-11 (second session
-of that day: the test maps of the Turtle Island patch).
+settle from the sources on disk. Last update: 2026-11-11 (third session
+of that day: the client knows no 2-2 skill).
 
 ## How to use it
 
@@ -92,7 +92,35 @@ language (the test content was the same everywhere; say which server):
 Sets: Knight and Hunter tests; `scripts/npc/priest_test.lua`,
 `wizard_test.lua`; the breeders' cells.
 
-### T2. euRO's own news pages of 2004 (threads 1, 15, 17, 19)
+### T2. A client that knows the 2-2 skills (thread 25)
+
+New on 2026-11-11, and placed here because the seven 2-2 jobs wait on it.
+Seen in the real client: `Ragexe.exe` of 2003-12-18 holds the Aegis names
+of the skills up to the 2-1 jobs (`KN_BOWLINGBASH` is in it) and not one
+`CR_`, `MO_`, `SA_`, `RG_`, `BA_`, `DC_` or `BD_` name. Its skill window
+leaves out every 2-2 skill the server lists, and a cast shouts "Unknown
+Skill !!". `data\skillnametable.txt` and `data\skilldesctable.txt` in the
+merged GRF end with the 2-1 jobs as well. euRO replaced the exe twice
+before the jobs opened there on 2004-06-09: patch list entries 444 and 462,
+`2004-04-15aRagexe.rgz` and `2004-05-31aRagexe.rgz`
+(`research/notes/euro-history.md` §5).
+
+* Is either file archived anywhere: Wayback's captures under
+  `wpatch.euro-ro.net` (list them with the CDX API and put the command and
+  its output in the row), mirrors, fan sites, patch collections? One row
+  per place searched, `none` rows included.
+* Failing those: any international client exe dated 2004-03 to 2004-07
+  (iRO, euRO, another English-language server) that is archived, with URL,
+  size and date. Do not download anything over 50 MB; give the URL.
+* The data files that went with the jobs on euRO: the patch lists on disk
+  (`data:refs/euro-patch-wayback/`) name files, not their contents. Which
+  entries from 444 up to the Juno block of the July list look like language
+  or table data (`gdata_lang`, `gdata_scr` and the like), and is any of
+  those `.gpf` files archived?
+
+Sets: whether `jobs2_2` can be played at all, and with which client.
+
+### T3. euRO's own news pages of 2004 (threads 1, 15, 17, 19)
 
 Round 3 found that Wayback's index lists 76 news pages and 19 planned-event
 pages of euRO for 2004-03 to 2004-10, and read none
@@ -104,7 +132,7 @@ schedule, rules stated, castles open), events, character slots, and the
 closed beta's end and wipe.
 Sets: the content defaults in `[game.content]` and the rates.
 
-### T3. Ailments and their resistance (thread 21)
+### T4. Ailments and their resistance (thread 21)
 
 When does "VIT resists stun", "LUK resists curse", "MDEF resists freeze
 and stone" first appear in a player guide or an official page, and with
@@ -118,7 +146,7 @@ pages only), anything dated before March 2004.
 Sets: `skill_additional_effect` and the ailment part of
 `skill_status_change_start`.
 
-### T4. Turtle Island: who took you there, and the quests of its patch (thread 24)
+### T5. Turtle Island: who took you there, and the quests of its patch (thread 24)
 
 The game now has mod0631's chain (`scripts/npc/turtle_island.lua`): an old
 man in Alberta's inn, then the sailor at `alberta 247,122`, 10000z. Known:
@@ -142,7 +170,7 @@ has the island's files between 2004-01-09 and 2004-01-15.
 
 Sets: the fare, and which hat quests belong to the default world.
 
-### T5. Dyeing (thread 13; asked in round 4, not answered)
+### T6. Dyeing (thread 13; asked in round 4, not answered)
 
 mod0631's chain is in the game and needs no more rows. Wanted, from
 anything that is **not** mod0631's `npc_event_dye.txt`:
@@ -158,32 +186,42 @@ Start at: kRO notices of 2003; RODataZone and iRO guide pages on dyes;
 Athena 659's dyer
 (`data:refs/eathena-archive/x/athena0659TestEngmod/athena0659TestEngmod/conf/npc/other/npc_dye.txt`).
 
-### T6. The 2-2 skills that need no missing packet: three witnesses, one table (threads 22, 25)
+### T7. The 2-2 skills that need no missing packet: where the witnesses part (threads 22, 25)
 
-This client has no packets for spirit spheres, combos, Devotion or Auto
-Spell (thread 25), so the first 2-2 skills to be built are the ones that
-need none. The Crusader's Guard, Defender, Shield Reflect, Shield Charge,
-Shield Boomerang and Holy Cross are drafted (2026-11-11) and need no rows,
-except: does Shield Reflect return ranged hits and skill damage, or only
-close weapon hits (the iRO guide says "the full damage taken from an
-enemy")? Still to build: Grand Cross, Providence; the four Strips, Raid,
-Back Stab, Intimidate; the four Chemical Protections, Potion Pitcher,
-Acid Terror, Demonstration; Volcano, Deluge, Violent Gale, Land
-Protector, Dispell, Magic Rod, Spell Breaker, the four weapon endows.
-Round 4 made rows for fifteen iRO tables and ten emulator lines. Still
-wanted, for each skill above:
+Lower than it was: see T2. This client has no text for any 2-2 skill
+(T2), so the witnesses are two: eAthena 817
+(`data:refs/eathena-archive/x/athena-817-src/athena/map/skill.c`,
+`battle.c`, `db/cast_db.txt`, `db/skill_require_db.txt`) and the iRO
+guide's pages on disk. Drafted and in need of no rows: the Crusader's
+Guard, Defender, Shield Reflect, Shield Charge, Shield Boomerang, Holy
+Cross and Providence; the Sage's four endows and Dispell; the Rogue's four
+Strips; the Alchemist's four Chemical Protections (DEVIATIONS.md says
+which witness each number follows). Open on those, wanted from a third
+source dated 2004 (a player guide, a forum post, a kRO notice; say which
+server):
 
-* the client's text: a `grf` row from `data\skilldesctable.txt`, quoting
-  the lines with numbers;
-* eAthena 817 `src/map/skill.c` and `battle.c`: "implemented", "effect
-  only", "commented out" or "absent", with the formula line quoted;
-* the iRO guide's line or table, from the pages on disk (above).
+* Shield Reflect: ranged hits and skill damage too, or only close weapon
+  hits? (The guide: "the full damage taken from an enemy".)
+* The endows: did a failed endow destroy the weapon, as the guide says
+  ("weapon is destroyed on failure")? Neither emulator lets one fail.
+* The Strips: the guide says "DEX difference between the caster and the
+  target affects on the success chance" and gives no number; 817 rolls
+  5 + 2 x level and nothing else. Any period formula. And what a Strip did
+  to a monster: the guide says a tenth of its attack or its DEF.
+* Dispell: which effects it ended. 817 ends the ailments, Increase and
+  Decrease AGI, Suffragium, Magnificat, Gloria, Apple of Idun, the endows
+  and the Chemical Protections (`skill.c:2313`); the guide says "all
+  magical effects".
 
-Then say where the three disagree, one row per disagreement, with both
-quotes in it. Not wanted: a merged answer.
+Still to build, for each of which two rows are wanted (817: "implemented",
+"effect only", "commented out" or "absent", with the formula line quoted;
+the guide's line or table), and one row per disagreement with both quotes
+in it: Grand Cross; Potion Pitcher, Acid Terror, Demonstration; Volcano,
+Deluge, Violent Gale, Land Protector, Magic Rod, Spell Breaker. Not
+wanted: a merged answer.
 Sets: `skill_castend_*` for those skills.
 
-### T7. Things only drafted from the client's text (thread 22)
+### T8. Things only drafted from the client's text (thread 22)
 
 * Ice Wall: did it have HP that fell when players or monsters hit it, and
   could a player attack it by clicking it, in 2003? mod0631 lowers the
@@ -198,7 +236,7 @@ Sets: `skill_castend_*` for those skills.
   earlier than March 2004, and: when did Skid Trap go from sliding 1 to 5
   cells (client text, mod0631) to 6 to 10 (the guide)?
 
-### T8. Small, independent
+### T9. Small, independent
 
 * **Swordman course monsters.** 817 puts Chonchons (id 1183) along the
   course; mod0631 puts Fabres (id 1184) on the same cells, under a map name
@@ -216,16 +254,12 @@ Sets: `skill_castend_*` for those skills.
   takes one, the iRO guide does not say.
 * **Alberta's doll child** (thread 24; in the game from mod0631's
   `conf/npc_event_doll.txt`): which doll brought what on iRO/euRO in
-  2003/04? (The doomed swords are in T4. The arrow makers are closed:
+  2003/04? (The doomed swords are in T5. The arrow makers are closed:
   mod0631's file says they are its author's own.)
 * **Two castle warps onto blocked cells**: `aldeg_cas05 188,49` to
   `165,288` and `prtg_cas02 184,44` to `157,140` are the same in mod0631,
   817, eAthena 0.5.2 and jAthena, and both targets are solid on this
   client's maps. Where did those two doors lead?
-* **euRO's exes of 2004-04-15 and 2004-05-31** (thread 25; patch list
-  entries 444 and 462, `2004-04-15aRagexe.rgz`, `2004-05-31aRagexe.rgz`):
-  is either archived anywhere (Wayback's captures of `wpatch.euro-ro.net`,
-  mirrors, fan sites)?
 * **Kafra fares outside jRO** (thread 3), **the start cell** (thread 6),
   **Lutie in January** (thread 19): still open, nothing new to add to the
   round-3 brief.
@@ -261,3 +295,5 @@ that nobody researches them again.
 | mod0631's arrow makers in Payon | Not jRO: the file's header says its author made them up until Arrow Crafting worked | THREADS.md #24 |
 | Can the Swordman course be walked on this client's map | Yes, each stretch and every pit's cave | `research/course_check.py` |
 | Guard's chances, Defender's percentages, Shield Boomerang's reach | 817 and the iRO guide agree | THREADS.md #25, DEVIATIONS |
+| Does this client ship the 2-2 skills' text | No: neither names nor descriptions, and the exe knows none of the skills (seen in the client) | THREADS.md #25 |
+| Providence, the endows, Dispell, the Strips, Chemical Protection: the numbers | Drafted from mod0631, 817 and the iRO guide; what is still open is in T7 | DEVIATIONS.md, `scripts/rules/skill_effects.lua` |

@@ -405,7 +405,9 @@ research should check is in research/THREADS.md #21–#23 and #25.
   Alchemist's Chemical Protections** (behind `jobs2_2`; drafts, test
   `endows_strips_protections_dispell`). This client has no name or
   description for any 2-2 skill, so there is no client text to read them
-  against: only the two emulators and the iRO guide of spring 2004.
+  against: only the two emulators and the iRO guide of spring 2004. Nor
+  can it offer them: they are missing from its skill window, and only
+  `@useskill` reaches them (THREADS.md #25).
   * Providence is mod0631's (5% a level against Holy and against demons,
     180 s); its 3 s of cast are 817's and the guide's.
   * The four endows last 20 minutes (817, the guide), not mod0631's 30 to
