@@ -717,10 +717,10 @@ only); which blessings Dispell took.
 and 0x01e1, and 128 Aegis names of 2-2 skills; the gpf has the 2-2
 skills' names and English descriptions. Against our exe only the spawn
 and idle packets (0x0078 to 0x007b, 0x01d8 to 0x01da) grew by two bytes,
-and 0x014e is gone; 0x01f1 to 0x01ff are new. A server could tell the two
-apart by those lengths. Whether to support it beside the 2003 client,
-and for what (the 2-2 jobs only?), is the owner's call; nothing is
-changed yet.
+and 0x014e is gone; 0x01f1 to 0x01ff are new. **Owner, 2026-11-11:** that client gets its own version of the game once
+this one is complete; until then nothing is built for it, and what
+matters to it is collected in `research/notes/may2004-client.md`
+(packets, skill text, the 35 maps whose cells differ).
 **Look:** first of all whether either of those two exes is archived: a
 client that lists the skills is what the 2-2 jobs wait on, more than any
 skill's numbers (answered: see the paragraph above). Then what this client does with the skills' effects (does

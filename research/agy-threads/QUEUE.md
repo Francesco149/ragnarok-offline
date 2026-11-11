@@ -233,8 +233,9 @@ unpacked) are on disk. Rows as computed results:
   from ours: `data:mico07/datagrf-diff-dec2003-may2004.txt` exists; sort
   it into maps, sprites, tables.
 
-Sets: whether a second client is worth supporting for the 2-2 jobs (the
-owner's call), and the 2-2 skills' numbers.
+Sets: the later version of the game for that client (owner, 2026-11-11:
+after this one is complete), `research/notes/may2004-client.md`, and the
+2-2 skills' numbers. Lower than the tasks above for that reason.
 
 ### T6. Dyeing (thread 13; asked in round 4, not answered)
 

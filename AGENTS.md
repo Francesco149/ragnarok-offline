@@ -18,6 +18,9 @@ Single-player server for the 2003-12-18 euRO client (see README.md).
   without saying so.
 - Keep confirmed behaviour in Rust and reconstructed behaviour in Lua/TOML
   (docs/ARCHITECTURE.md).
+- euRO's May-2004 client (MICO07 DVD) gets its own version after this
+  one is complete: don't build for it now, but note anything relevant to
+  it in research/notes/may2004-client.md.
 - Every deliberate difference from the period game (single-player
   reworks, fixes to emulator scripts) goes in docs/DEVIATIONS.md; every
   open question worth chasing goes in research/THREADS.md.

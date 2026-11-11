@@ -110,8 +110,9 @@ Next, in order:
   2004-09-12 and eAthena 1.0's of 2004-11-04 are on disk; no account dates
   it earlier (pRO had none: queue T1). The Assassin's and the
   Blacksmith's likewise;
-* whether to support euRO's May-2004 client beside ours for the 2-2 jobs
-  (THREADS.md #25: it is on the owner's MICO07 DVD; the owner's call);
+* later, once this game is complete: its own version for euRO's May-2004
+  client (owner, 2026-11-11), which has the 2-2 jobs' packets and text.
+  What it needs is collected in `research/notes/may2004-client.md`;
 * NPC waiting rooms (0x00d7 chat bubbles over arena/PvP NPCs);
 * clothes dyeing (THREADS.md #13: the dye makers and the hairdresser are
   in, from mod0631); English shop names from 817 by cell (#11);
