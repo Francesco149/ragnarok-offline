@@ -85,8 +85,8 @@ Working with the real client:
   anything a player could not reach;
 - about 600 period NPCs: towns, the novice training ground, job quests,
   guides, Kafras (fares, storage, saving, carts, points), refiners, dye
-  makers, quests, shops; the Turtle Island chain, the Wizard, Priest and Hunter
-  tests on the maps this client has for them;
+  makers, quests, shops; the Turtle Island chain, the Wizard, Priest, Hunter and
+  Knight tests on the maps this client has for them;
 - inventory, equipment, cards, item identification, usable items, Kafra
   storage, pushcarts, forging and ore refining;
 - pets: taming, eggs, hunger, intimacy, accessories;
@@ -106,11 +106,12 @@ Not yet, or only in part:
   magazine DVD of July 2004), so the ones drafted so far can only be used
   through a GM command
   ([research/THREADS.md](research/THREADS.md) #25);
-- the Knight's, Assassin's and Blacksmith's job tests (the Knight's map is in
-  the client; its scripts are of late 2004);
+- the Assassin's and Blacksmith's job tests (the maps they use are in the
+  client; the scripts on disk are of late 2004);
 - a play-through of every job quest in the real client. They pass an
-  automated run on stand-in maps; the training ground and the Thief, Mage,
-  Archer, Acolyte and Wizard tests have been walked for real;
+  automated run on stand-in maps; the training ground and the Swordman, Thief,
+  Mage, Archer, Acolyte, Wizard, Hunter and Knight tests have been walked
+  for real;
 - a handful of skills are drafts from thin evidence (ROADMAP §3), and the
   NPC dialogue is the emulator authors' fan translation, not Gravity's.
 

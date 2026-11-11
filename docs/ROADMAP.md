@@ -83,7 +83,8 @@ Breeder, the dye makers and the hairdresser, the Turtle Island chain, the
 doomed swords and Alberta's doll child; the Wizard test on `job_wiz` from
 817's unfinished script; the Priest test on `job_prist` from jAthena's of
 2004-06-08; the Hunter test on `job_hunte` from eAthena 1.0's script, as
-an iRO player's walkthrough of 2004-02-15 has it.
+an iRO player's walkthrough of 2004-02-15 has it; the Knight test on
+`job_knt` from jAthena's of 2004-09-12 (no account dates it earlier).
 Next, in order:
 
 * play through each 1st-job quest in the client (the test does not walk
@@ -96,20 +97,19 @@ Next, in order:
   test (trunks, the bow and the arrows) and the Acolyte test (an ascetic
   and back). 817's Thief, Merchant and Acolyte scripts are read against
   mod0631's and mended where a player was stopped (THREADS.md #27: one
-  Merchant applicant in four could not finish). Not yet played from end
-  to end: the Merchant test (its four deliveries pass a test and two were
-  made in the client) and the Swordman course; not yet read against
-  jAthena's of 2004-03: Swordman, Archer.
-  The Swordman course is checked
-  on the client's map by search (`research/course_check.py`: each stretch
-  has a way past the pits to its warp, and every pit drops you somewhere
-  with a way out) but not yet played; the Priest test is untried there.
+  Merchant applicant in four could not finish). The Swordman test is
+  played too, from the guild to the job change (`play.sh walk` keeps off
+  the course's pits with `AVOID`), and the Knight test from the
+  application to the verdict. Swordman and Archer are read against
+  jAthena's of 2004-03 (THREADS.md #27). Not yet played from end to end:
+  the Merchant test (its four deliveries pass a test and two were made in
+  the client), the Priest test on `job_prist`.
   Fix what breaks in `scripts/npc/` (one file per fix, listed in
   DEVIATIONS.md);
-* the Knight's test on `job_knt` (THREADS.md #8): jAthena's script of
-  2004-09-12 and eAthena 1.0's of 2004-11-04 are on disk; no account dates
-  it earlier (pRO had none: queue T1). The Assassin's and the
-  Blacksmith's likewise;
+* the Assassin's and the Blacksmith's tests (THREADS.md #8): eAthena 1.0's
+  scripts of 2004-11-04 are on disk (jAthena has both of 2004-09-12); the
+  Assassin's room `in_moc_16` is in the client, the Blacksmith's errands
+  are in towns. No account dates either before September 2004 (queue T1);
 * later, once this game is complete: its own version for euRO's May-2004
   client (owner, 2026-11-11), which has the 2-2 jobs' packets and text.
   What it needs is collected in `research/notes/may2004-client.md`;

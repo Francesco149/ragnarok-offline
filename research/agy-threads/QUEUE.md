@@ -4,10 +4,9 @@ For: the independent deep-research agent (Gemini in Antigravity) that wrote
 rounds 1 to 3. Kept by the Claude sessions that work on the game: at the
 end of each session the queue is updated (answered items go to "Done",
 with where the answer went) and refilled with what that session could not
-settle from the sources on disk. Last update: 2026-11-11 (sixth session
-of that day: rounds 5 and 6 reviewed, `research/notes/round5-6-review.md`;
-T2 is answered from our own disk, the Hunter test is in; T1 and T10
-rewritten, T11 new).
+settle from the sources on disk. Last update: 2026-11-11 (seventh session
+of that day: the Knight test is in from jAthena's script; T1's Knight item
+rewritten with what the two scripts disagree on).
 
 ## How to use it
 
@@ -77,13 +76,21 @@ Changed on 2026-11-11 (sixth session): the Hunter test is in
 and the Priest tests. Wanted, dated 2003-12 to 2004-06, any language (say
 which server), for the three that are still 817's no-test stubs:
 
-* **Knight** on `job_knt`: a player's walkthrough. jAthena's
-  `npc_job_07knight.txt` (2004-09-12, commit `6332410`) and eAthena 1.0's
-  `npc/jobs/2-1/knight.txt` (2004-11-04, `data:refs/rathena` commit
-  `706e78509`) are on disk: wanted is a walkthrough that dates their
-  rounds (Windsor Benedict, the arenas, Dame Amy's patience test) before
-  June 2004. Edge's guide (GameFAQs 29457) says pRO had no test ("Pay a
-  small fee"): is there an iRO or euRO account either way?
+* **Knight** on `job_knt`: in the game since 2026-11-11 (seventh
+  session) from jAthena's `npc_job_07knight.txt` (2004-09-12, commit
+  `6332410`), with eAthena 1.0's English names. Wanted: a player's
+  account from before September 2004, iRO or euRO above all, that says
+  (a) whether the test existed yet (Edge's guide, GameFAQs 29457, says pRO
+  had none in February 2004: "Pay a small fee"); (b) Sir Andrew's items
+  (jAthena names three lists and fills one: Bug Leg, Heart of Mermaid,
+  Maneater Blossom, Clam Flesh, Old Frying Pan, Snail's Shell, five each;
+  eAthena adds Elder Pixie's Moustache, Wing of Red Bat, Orcish Voucher,
+  Moth Dust, Reptile Tongue, Mane); (c) Sir James's questions (the two
+  scripts differ on three of eight: Bowling Bash's and Brandish Spear's
+  prerequisites and the spear for a Nightmare, against "not an attack
+  skill", "most SP" and "strongest against Undead"); (d) whether Sir Grey
+  could fail you, and on what; (e) the arena's time (three minutes a
+  stage?) and Sir Edmond's (four minutes or four and a half?).
 * **Assassin** and **Blacksmith**: a walkthrough of each from before
   June 2004, with the steps (eAthena 1.0 has both scripts; when did the
   international servers get them?).
@@ -99,7 +106,7 @@ which server), for the three that are still 817's no-test stubs:
   of the examiner's questions quoted by a player (round 5 found one, in a
   guide of 2004-07-30).
 
-Sets: Knight, Assassin and Blacksmith tests; the Hunter test's details.
+Sets: Assassin and Blacksmith tests; the Knight's and Hunter's details.
 
 ### T10. The novice training ground outside Japan (thread 6)
 
@@ -350,6 +357,12 @@ Sets: `skill_castend_*` for those skills.
 * **Kafra fares outside jRO** (thread 3), **the start cell** (thread 6),
   **Lutie in January** (thread 19): still open, nothing new to add to the
   round-3 brief.
+* **"Unknown Skill !!" over monsters** (thread 23, new on 2026-11-11):
+  this client shouts a skill's name over whoever uses it, and has no name
+  for the monster-only skills, so a goblin's wind attack (`NPC_WINDATTACK`)
+  or an Ant Egg hatching shows "Unknown Skill !!". Did players of
+  2003/04 see that on the official servers (a forum thread, a screenshot,
+  a guide that mentions it), or nothing at all?
 * **Monster skills** (thread 23): any period monster database that lists
   skills per monster (RODataZone, RO Empire, a Japanese one), for ten
   monsters of your choice across the level range, against
