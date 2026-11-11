@@ -4,6 +4,11 @@
 #
 #   DDrawCompat v0.7.2 (narzoul/DDrawCompat, 0BSD): DirectDraw/Direct3D 1-7 fixes for
 #   Windows 10/11. Released 2026-10-14; bump deliberately, never to "latest".
+#   Arial 2.82 (Microsoft's "core fonts for the Web", 2000; its EULA allows
+#   passing the package on unchanged, so only the .exe is fetched and it is
+#   unpacked locally): the font this client asks Windows for. Wine has no
+#   Arial and substitutes a wider one (docs/DEVELOPMENT.md). Used by the rig
+#   and the playable snapshot only; never embedded or shipped.
 #   euRO patch server snapshot: the files euRO's wpatch.euro-ro.net served to
 #   this CD's patcher, and its front page (the same site as www.euro-ro.net,
 #   the client's registrationweb), as the Wayback Machine archived them
@@ -34,6 +39,20 @@ done <<'LIST'
 20040221010012 / index.html d8a2a8e1692f0e4bb5c8bbc5c81d216c53d36382044a7420e16d412da648b717
 LIST
 echo "euro-patch: present"
+
+# --- Arial (corefonts), for Wine
+c=third_party/corefonts
+ARIAL_SHA256=85297a4d146e9c87ac6f74822734bdee5f4b2a722d7eaa584b7f2cbf76f478f6
+mkdir -p "$c"
+if ! { [ -f "$c/arial32.exe" ] && echo "$ARIAL_SHA256  $c/arial32.exe" | sha256sum -c --quiet 2>/dev/null; }; then
+  curl -fsSL -o "$tmp/arial32.exe" https://downloads.sourceforge.net/corefonts/arial32.exe
+  echo "$ARIAL_SHA256  $tmp/arial32.exe" | sha256sum -c --quiet
+  mv "$tmp/arial32.exe" "$c/"
+fi
+if [ ! -f "$c/x/Arial.TTF" ] && command -v cabextract >/dev/null; then
+  mkdir -p "$c/x" && cabextract -q -d "$c/x" -F '*.TTF' "$c/arial32.exe"
+fi
+echo "corefonts arial: present"
 
 # --- DDrawCompat
 d=third_party/ddrawcompat

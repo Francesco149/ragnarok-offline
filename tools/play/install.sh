@@ -16,11 +16,15 @@ Exec=$S/play.sh
 Icon=$icon
 Terminal=false
 Categories=Game;RolePlaying;
-Actions=fullscreen;settings;stop;
+Actions=fullscreen;gpu;settings;stop;
 
 [Desktop Action fullscreen]
 Name=Fullscreen
 Exec=$S/play.sh --fullscreen
+
+[Desktop Action gpu]
+Name=With the graphics card (may draw interiors white)
+Exec=$S/play.sh --gpu
 
 [Desktop Action settings]
 Name=Client settings (Setup.exe)

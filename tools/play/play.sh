@@ -5,6 +5,9 @@
 #
 #   play.sh               the game, 800x600 in a window
 #   play.sh --fullscreen  the game fullscreen (Wine's Wayland driver scales it)
+#   play.sh --gpu         draw with the graphics card instead of Mesa's software
+#                         renderer (on Intel/iris, floors and walls with
+#                         lightmaps came out white: docs/DEVELOPMENT.md)
 #   play.sh --settings    the client's own Setup.exe
 #   play.sh --smoke       headless self-test: server + client + a login, no window
 #   play.sh --stop        stop a running game (the server saves first)
@@ -15,14 +18,15 @@ set -euo pipefail
 S="$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")" && pwd)"
 IMAGE="${RO_PLAY_IMAGE:-localhost/ro-wb:latest}"
 MEM="${RO_PLAY_MEM:-2g}"
-mode=play; name=ro-play; full=0
+mode=play; name=ro-play; full=0; gpu="${RO_PLAY_GPU:-0}"
 case "${1:-}" in
   --fullscreen) full=1 ;;
+  --gpu) gpu=1 ;;
   --settings) mode=settings ;;
   --smoke) mode=smoke; name=ro-play-smoke ;;
   --stop) podman stop -t 15 ro-play >/dev/null 2>&1 || true; exit 0 ;;
   "") ;;
-  *) sed -n '2,13p' "${BASH_SOURCE[0]}"; exit 2 ;;
+  *) sed -n '2,16p' "${BASH_SOURCE[0]}"; exit 2 ;;
 esac
 say() { echo "$*" >&2; [ "$mode" = smoke ] || notify-send -a "Ragnarok Offline" "Ragnarok Offline" "$*" 2>/dev/null || true; }
 
@@ -35,7 +39,7 @@ args=(--rm --name "$name" --label ro-play=1 --init
   -v "$S:/play" -w /play -e RO_MODE="$mode" -e RO_FULLSCREEN="$full")
 if [ "$mode" != smoke ]; then
   rt="${XDG_RUNTIME_DIR:-/run/user/$(id -u)}"
-  [ -e /dev/dri ] && args+=(--device /dev/dri)
+  if [ "$gpu" = 1 ] && [ -e /dev/dri ]; then args+=(--device /dev/dri); else args+=(-e LIBGL_ALWAYS_SOFTWARE=1); fi
   [ -S "$rt/pulse/native" ] && args+=(-v "$rt/pulse/native:/run/pulse/native" -e PULSE_SERVER=unix:/run/pulse/native)
   if [ "$full" = 1 ] && [ -S "$rt/${WAYLAND_DISPLAY:-wayland-0}" ]; then
     # No DISPLAY: Wine picks its Wayland driver, which shows an 800x600

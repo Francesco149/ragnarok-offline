@@ -18,6 +18,7 @@ cd "$(dirname "$0")/../.."
 S="${RO_STABLE:-/data/stable}"
 LOGIN_PORT=6910 CHAR_PORT=6131 MAP_PORT=5131 CONSOLE_PORT=6133
 
+tools/fetch-third-party.sh >/dev/null || echo "warning: third-party fetch failed (fonts may be missing)"
 cargo build -q --release -p ro-server --target x86_64-unknown-linux-musl
 bin=target/x86_64-unknown-linux-musl/release/ragnarok-offline
 
@@ -39,7 +40,8 @@ if [ ! -f "$S/client/Ragexe.exe" ]; then
   cp -al "$src/." "$S/client/"
   rm -f "$S/client/data.grf" "$S/client/Play Offline.bat"
 fi
-if ! "$b/ragnarok-offline" grf cat "$S/client/data.grf" 'data\clientinfo.xml' 2>/dev/null | grep -q "<port>$LOGIN_PORT</port>"; then
+xml="$("$b/ragnarok-offline" grf cat "$S/client/data.grf" 'data\clientinfo.xml' 2>/dev/null </dev/null || true)"
+if [[ "$xml" != *"<port>$LOGIN_PORT</port>"* ]]; then
   "$b/ragnarok-offline" setup --client "$S/client" --address 127.0.0.1 --port "$LOGIN_PORT" --name Offline
 fi
 
@@ -66,6 +68,11 @@ fi
 
 ln -sfn "builds/$stamp" "$S/current.new" && mv -T "$S/current.new" "$S/current"
 cp tools/play/play.sh "$S/play.sh" && chmod +x "$S/play.sh"
+
+# Arial for the Wine prefix (tools/fetch-third-party.sh; inside.sh installs it).
+if [ -f third_party/corefonts/x/Arial.TTF ]; then
+  mkdir -p "$S/fonts" && cp -u third_party/corefonts/x/*.TTF "$S/fonts/"
+fi
 
 # The launcher icon, from the CD's own (stays in /data, Gravity's).
 if [ ! -f "$S/ragnarok.png" ] && [ -f /data/iso/ragnarok.ico ]; then

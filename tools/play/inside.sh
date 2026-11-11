@@ -34,6 +34,8 @@ if [ ! -f "$WINEPREFIX/.ro-settings" ]; then
   wine regedit /S "Z:${B//\//\\}\\settings.reg" 2>/dev/null
   touch "$WINEPREFIX/.ro-settings"
 fi
+# The client asks for Arial; without it Wine substitutes a wider font.
+[ -d "$S/fonts" ] && cp -n "$S"/fonts/*.TTF "$WINEPREFIX/drive_c/windows/Fonts/" 2>/dev/null
 key='HKLM\Software\Wow6432Node\Gravity Soft\Ragnarok'
 [ "$MODE" = smoke ] && wine reg add "$key" /v SOUNDMODE /t REG_DWORD /d 0 /f >/dev/null 2>&1
 if [ "$MODE" = play ]; then

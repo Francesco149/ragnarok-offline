@@ -47,6 +47,15 @@ tools/wb exec $R click X Y | type TEXT | key KEY
 tools/wb exec ./target/debug/ragnarok-offline -c dev.toml eval 'nearby(10)'
 ```
 
+Fonts: the client picks its face from a table per language (`0x5fb410`:
+Gulim, Arial, MS Gothic, SimSun, MingLiU, Tahoma; Arial with the ANSI
+charset for the English service) and passes it to `CreateFontA`. Wine has
+no Arial and draws a wider stand-in, so `tools/fetch-third-party.sh`
+fetches Microsoft's Arial 2.82 (2000) and the rig and the snapshot copy it
+into their prefix. One thing it does not change: "Open everytime when RO
+starts" in the Tip of the Day box runs under the prev/next buttons with
+the real Arial too (29 letters in a box laid out for the Korean label).
+
 Notes: the client needs press-and-hold clicks and an activated window
 (the rig does both); there is no sound device, so the rig's registry file sets
 `SOUNDMODE=0`; Escape opens the client's exit menu. `logs/packets.log` has
@@ -68,7 +77,9 @@ tools/play/install.sh                       # host, once: "Ragnarok Offline" in 
 
 `play.sh` (copied next to the snapshot, so the entry does not depend on the
 tree) shows the client through the desktop's X socket with sound over
-PulseAudio; `--fullscreen` uses Wine's Wayland driver (not yet tried),
+PulseAudio; it draws with Mesa's software renderer, as the rig does, because
+with the graphics card (Intel UHD 630, iris, Wine 11.21) floors and walls
+that carry lightmaps came out white indoors (`--gpu` to try the card); `--fullscreen` uses Wine's Wayland driver (not yet tried),
 `--settings` runs the client's Setup.exe, `--stop` saves and quits. A running
 game stays on the build it started with; `update.sh` only adds a build and
 moves `current`. `stable/ragnarok-offline.toml` and `stable/saves` are the
