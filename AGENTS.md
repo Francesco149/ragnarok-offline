@@ -27,6 +27,11 @@ Single-player server for the 2003-12-18 euRO client (see README.md).
 - Test with `cargo test --workspace`; for client-visible changes also run the
   headless client (docs/DEVELOPMENT.md) and look at a screenshot.
 - Commits: small, logical, with `Co-Authored-By:` naming your model.
+- Work on `master`. Use a branch or worktree only for a good reason (several
+  agents on different features at once), and merge it back before the
+  session ends. The one exception is work that leaves the game broken: leave
+  it on its branch, say so in research/THREADS.md or the session notes, and
+  the next session finishes and merges it first.
 
 ## Map
 
