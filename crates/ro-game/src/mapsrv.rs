@@ -841,6 +841,7 @@ impl Game {
         let (sid, cid, aid, sex, gm) = (p.sid, p.char_id, p.account_id, p.sex, p.gm_level);
         let same_map = u.map == map;
         self.dialogs.remove(&unit);
+        self.dialog_warped.insert(unit);
         self.despawn(unit, 3);
         if let Some(c) = self.store.chars.get_mut(&cid) {
             c.last_point = Point::new(&map, x, y);
@@ -988,6 +989,7 @@ impl Game {
         let ctx = Ctx { player: unit, npc, kind, def: def as u32 };
         self.dialogs.remove(&unit);
         self.dialog_open.insert(unit, false);
+        self.dialog_warped.remove(&unit);
         let r = engine.start(self, ctx, f, at);
         match r {
             Ok((thread, outcome)) => self.after_resume(unit, npc, def as u32, thread, outcome),
@@ -1020,6 +1022,7 @@ impl Game {
         let Some(engine) = self.scripts.clone() else { return };
         let ctx = Ctx { player: unit, npc: d.npc, kind: CtxKind::Dialog, def: d.def };
         self.dialog_open.insert(unit, d.open && got != Wait::Close);
+        self.dialog_warped.remove(&unit);
         let r = engine.resume(self, ctx, &d.thread, answer);
         match r {
             Ok(o) => self.after_resume(unit, d.npc, d.def, d.thread, o),
@@ -1029,7 +1032,13 @@ impl Game {
 
     fn after_resume(&mut self, unit: u32, npc: u32, def: u32, thread: mlua::Thread, o: Outcome) {
         let open = self.dialog_open.remove(&unit).unwrap_or(false);
+        let warped = self.dialog_warped.remove(&unit);
         match o {
+            // `warp ...; close;` ends the script as it does in Athena, where
+            // `close` never waits. The client threw its NPC window away with
+            // the map change, so no close click will come; waiting for one
+            // left the player unable to talk to any NPC until the next warp.
+            Outcome::Suspended(Wait::Close) if warped => {}
             Outcome::Suspended(wait) => {
                 self.dialogs.insert(unit, Dialog { thread, npc, def, wait, open: open && wait != Wait::Close });
             }

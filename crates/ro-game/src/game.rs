@@ -205,6 +205,9 @@ pub struct Game {
     pub(crate) dialogs: HashMap<u32, Dialog>,
     /// Per player: an NPC message is showing in the current script step.
     pub(crate) dialog_open: HashMap<u32, bool>,
+    /// Players a warp moved while their NPC script was running: the client
+    /// drops its NPC window on a map change and never answers a `close`.
+    pub(crate) dialog_warped: std::collections::HashSet<u32>,
     pub(crate) respawns: Vec<(u64, usize)>,
     /// NPC runtime state: events, timers, temp variables (npcrt.rs).
     pub(crate) npcrt: crate::npcrt::NpcRuntime,
@@ -250,6 +253,7 @@ impl Game {
             scripts: None,
             dialogs: HashMap::new(),
             dialog_open: HashMap::new(),
+            dialog_warped: Default::default(),
             respawns: Vec::new(),
             npcrt: Default::default(),
             battle: Default::default(),

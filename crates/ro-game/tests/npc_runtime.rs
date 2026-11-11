@@ -109,6 +109,10 @@ end)
 npc { map = "testmap", x = 20, y = 20, sprite = 97, name = "Loop",
   on_click = function() ::again:: v.n = 1 goto again end }
 
+-- `warp ...; close;` as the imported scripts end: the client never clicks that close
+npc { map = "testmap", x = 22, y = 22, sprite = 97, name = "Porter",
+  on_click = function() mes "off you go" next() warp("testmap", 24, 24) close() g.after_close = 1 end }
+
 -- invisible touch area (Athena sprite -1): runs on_click when stepped on
 npc { map = "testmap", x = 40, y = 25, sprite = -1, name = "Trap", touch = { 1, 1 },
   on_click = function() g.trapped = g.trapped + 1 end }
@@ -254,6 +258,19 @@ fn npc_runtime() {
     click(&mut g, tester);
     assert!(find(&cap.take(3), 0x00b7).is_some(), "still talking after the runaway script");
     close_dialog(&mut g, tester);
+
+    // an NPC warps the player and then closes: the client drops its window on
+    // the map change and sends no close, yet the next NPC must answer
+    let porter = npc_named(&g, "Porter").expect("porter placed");
+    click(&mut g, porter);
+    let mut w = Writer::new(0x00b9);
+    w.u32(porter);
+    send(&mut g, 3, w);
+    assert!(find(&cap.take(3), 0x0091).is_some(), "warped by the script");
+    click(&mut g, tester);
+    assert!(find(&cap.take(3), 0x00b7).is_some(), "an NPC answers after a script's warp and close");
+    close_dialog(&mut g, tester);
+    assert_eq!(g.console_eval("g.after_close", me), "0", "the script ended at its close, as in Athena");
 
     // overrides by src, invisible touch NPCs
     let new = npc_named(&g, "New").expect("override placed");
@@ -418,6 +435,6 @@ fn npc_runtime() {
     // server-wide variables persist
     g.save_all();
     let world = std::fs::read_to_string(base.join("saves/world.json")).unwrap();
-    assert!(world.contains("\"count\": 5"), "{world}");
+    assert!(world.contains("\"count\": 6"), "{world}");
     let _ = std::fs::remove_dir_all(Path::new(&base));
 }
