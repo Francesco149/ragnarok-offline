@@ -144,9 +144,9 @@ impl T {
     }
 }
 
-const MAPS: [&str; 13] = [
+const MAPS: [&str; 17] = [
     "prontera", "izlude", "aldeba_in", "moc_prydb1", "payon", "alberta_in", "morocc", "prt_in", "prt_castle", "geffen",
-    "geffen_in", "morocc_in", "alberta",
+    "geffen_in", "morocc_in", "alberta", "tur_dun01", "tur_dun02", "izlude_in", "alb2trea",
 ];
 
 fn setup(tag: &str) -> T {
@@ -393,10 +393,100 @@ fn alberta_sailor() {
     let mut t = setup("alberta_sailor");
     t.eval("player.zeny = 1000");
     let menus = t.talk("alberta", 189, 151, &[2]);
-    assert_eq!(menus[0], "Sunken Ship -> 250 Zeny.:Izlude Marina -> 500 Zeny:Turtle Island -> 800 Zeny:Quit");
+    // 817's 800z passage to Turtle Island is gone: Gotanblue sails there (turtle_island)
+    assert_eq!(menus[0], "Sunken Ship -> 250 Zeny.:Izlude Marina -> 500 Zeny:Quit");
     assert_eq!(t.eval("return player.map .. ' ' .. player.zeny"), "izlude 500");
-    // Turtle Island is not among this test's maps: nothing sails, nothing is paid
-    t.eval("player.zeny = 1000");
-    t.talk("alberta", 189, 151, &[3]);
-    assert_eq!(t.eval("return player.map .. ' ' .. player.zeny"), "alberta 1000");
+}
+
+#[test]
+fn turtle_island() {
+    let mut t = setup("turtle_island");
+    t.eval("player.zeny = 25000");
+    // Gotanblue has nothing to offer a stranger
+    assert!(t.talk("alberta", 247, 122, &[]).is_empty());
+    // the old man in the inn sends us to him
+    t.talk("alberta_in", 23, 104, &[2]);
+    assert_eq!(t.eval("return v.turtle_npc"), "1");
+    // thinking better of it costs nothing; then 10000z to the beach
+    t.talk("alberta", 247, 122, &[2, 2]);
+    assert_eq!(t.eval("return player.map .. ' ' .. player.zeny"), "alberta 25000");
+    let menus = t.talk("alberta", 247, 122, &[2, 1]);
+    assert_eq!(menus[1], "Turtle Island -> 10000 z:Never mind");
+    assert_eq!(t.eval("return player.map .. ' ' .. player.x .. ' ' .. player.y .. ' ' .. player.zeny"), "tur_dun01 157 39 15000");
+    // the things on the island are scenery to someone who has not read the logbook
+    t.talk("tur_dun01", 160, 81, &[]);
+    assert_eq!(t.eval("return count_item(513)"), "0");
+    // he waits on the beach and takes us home for nothing
+    t.talk("tur_dun01", 165, 29, &[1]);
+    assert_eq!(t.eval("return player.map .. ' ' .. player.x .. ' ' .. player.y .. ' ' .. player.zeny"), "alberta 241 115 15000");
+    // 9999z is not enough
+    t.eval("player.zeny = 9999");
+    t.talk("alberta", 247, 122, &[2, 1]);
+    assert_eq!(t.eval("return player.map .. ' ' .. player.zeny"), "alberta 9999");
+
+    // the logbook: its first reading is the wreck, the next starts one of two errands
+    t.talk("alberta", 248, 94, &[]);
+    assert_eq!(t.eval("return v.kame_quest"), "1");
+    let (mut bananas, mut gems) = (0, 0);
+    for _ in 0..40 {
+        t.eval("v.kame_quest = 1");
+        t.talk("alberta", 248, 94, &[]);
+        match t.eval("return v.kame_quest").as_str() {
+            "2" => {
+                // the key fits the rock only
+                t.talk("tur_dun02", 132, 251, &[]);
+                assert_eq!(t.eval("return v.kame_quest"), "2");
+                t.talk("tur_dun01", 160, 81, &[]);
+                bananas += 1;
+                assert_eq!(t.eval("return count_item(513)"), (bananas * 5).to_string());
+            }
+            "3" => {
+                // root, crystal mound, pillar, in that order
+                t.talk("tur_dun02", 49, 156, &[]);
+                assert_eq!(t.eval("return v.kame_quest"), "3");
+                t.talk("tur_dun02", 132, 251, &[]);
+                t.talk("tur_dun02", 46, 125, &[]);
+                assert_eq!(t.eval("return v.kame_quest"), "5");
+                t.talk("tur_dun02", 49, 156, &[]);
+                gems += 1;
+                assert_eq!(t.eval("return count_item(716)"), gems.to_string());
+            }
+            other => panic!("the logbook left kame_quest at {other}"),
+        }
+        assert_eq!(t.eval("return v.kame_quest"), "6");
+        // a finished errand: the things are scenery again
+        t.talk("tur_dun01", 160, 81, &[]);
+        t.talk("tur_dun02", 49, 156, &[]);
+        assert_eq!(t.eval("return count_item(513) .. ' ' .. count_item(716)"), format!("{} {gems}", bananas * 5));
+        if bananas > 0 && gems > 0 {
+            break;
+        }
+    }
+    assert!(bananas > 0 && gems > 0, "both errands should come up in 40 readings");
+    // as in mod0631, reading the logbook after an errand begins again
+    t.talk("alberta", 248, 94, &[]);
+    assert_eq!(t.eval("return v.kame_quest"), "1");
+    // the scholar and the boy only talk
+    t.talk("alberta", 248, 89, &[1]);
+    t.talk("alberta", 91, 70, &[]);
+    t.talk("alberta_in", 23, 104, &[1, 1]);
+}
+
+#[test]
+fn moving_hp_recovery() {
+    let mut t = setup("moving_hp");
+    t.eval("job_change(1); player.job_level = 35; give_item(713, 520); give_item(752, 1); give_item(1058, 1)");
+    // without the armour he asks again
+    assert!(t.talk("izlude_in", 175, 130, &[]).is_empty());
+    assert_eq!(t.eval("return skill_level(144)"), "0");
+    t.eval("give_item(2312, 1)");
+    t.talk("izlude_in", 175, 130, &[2]);
+    assert_eq!(t.eval("return skill_level(144) .. ' ' .. count_item(713)"), "0 520");
+    t.talk("izlude_in", 175, 130, &[1]);
+    // what he asked for is what he takes; the armour and the Moth Wings stay
+    assert_eq!(
+        t.eval("return skill_level(144) .. ' ' .. count_item(713) .. ' ' .. count_item(752) .. ' ' .. count_item(2312) .. ' ' .. count_item(1058)"),
+        "1 20 0 1 1"
+    );
+    assert!(t.talk("izlude_in", 175, 130, &[]).is_empty());
 }

@@ -48,10 +48,16 @@ Next:
   is thin here (the Strips are commented out, Chemical Protection is
   empty, Auto Guard, Defender, Volcano and half the songs sit behind
   `#if 0`, Potion Pitcher is nonsense, the Monk needs spirit spheres and
-  combo timing the server does not have). A port has to lean on 817 and
-  the client's skill text, skill by skill: a draft, not a transcription.
-* **Check against the client's skill text and period guides**
-  (THREADS.md #20, #21).
+  combo timing the server does not have). A port has to lean on 817, the
+  client's skill text and the iRO guide's skill pages of spring 2004
+  (research/notes/round4-review.md), skill by skill: a draft, not a
+  transcription. This client has no packets for spirit spheres, combos,
+  Devotion or Auto Spell (THREADS.md #25): start with the skills that need
+  none (Auto Guard, Defender, Reflect Shield, the Strips, Chemical
+  Protection, the Sage's ground skills, Dispell).
+* **Check the drafted skills against the iRO guide's pages** (THREADS.md
+  #22) and the ailments against period guides (#21). The client's skill
+  text against the emulators is settled (R6).
 * Play every job in the real client: skill window, hotkeys, each skill's
   effect and sound.
 
@@ -62,14 +68,15 @@ Done: eAthena 817's NPCs translated (`tools/import/athena_npc.py`,
 monsters, refining, storage), a hand-written Kafra service; a test that
 reaches every job and learns every quest skill through the NPCs
 (`tests/job_quests.rs`, on all-walkable maps); from mod0631: the Peco Peco
-Breeder, the dye makers and the hairdresser. Next, in order:
+Breeder, the dye makers and the hairdresser, the Turtle Island chain.
+Next, in order:
 
 * play through each 1st-job quest and the training ground in the client
   (the test does not walk the real maps: the Swordman course and the
   Priest test are untried there); fix what breaks in `scripts/npc/` (one
   file per fix, listed in DEVIATIONS.md);
-* port mod0631's Turtle Island quest, cursed swords, doll child and arrow
-  makers (THREADS.md #24);
+* port mod0631's cursed swords, doll child and arrow makers
+  (THREADS.md #24);
 * hand-port the Wizard quest (817's is in a later dialect; THREADS.md #8);
 * NPC waiting rooms (0x00d7 chat bubbles over arena/PvP NPCs);
 * clothes dyeing (THREADS.md #13: the dye makers and the hairdresser are
