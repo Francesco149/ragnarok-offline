@@ -12,7 +12,7 @@
 --    test" answers "Under development. Please choose your job manualy."
 --    mod0631 sends you to one of six guide rooms on the same map
 --    (npc_job_newbie.txt:2439-2459), where an attendant hands over what the
---    job's guild sent and passes you on to the town (:2461-2650). The rooms
+--    job's guild sent and passes you on to the town (:2461-2645). The rooms
 --    are on this client's new_zone04: five in the top row and one below the
 --    last, with nothing else in them.
 --  * The subsidy table is scrambled: a total of 8 or less gets the most
@@ -356,7 +356,7 @@ npc {
 }
 
 -- ------------------------------------------------------------ the guide rooms
--- mod0631 conf/npc_job_newbie.txt:2461-2650. Each attendant saves where he
+-- mod0631 conf/npc_job_newbie.txt:2461-2645. Each attendant saves where he
 -- sends you, as there. `gift` runs once (mod0631's NOV_GET_ITEM05).
 local ROOMS = {
   { job = 1, save = { "izlude_in", 121, 165 }, to = { "izlude_in", 121, 165 },

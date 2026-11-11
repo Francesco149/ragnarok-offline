@@ -86,8 +86,11 @@ Next, in order:
 
 * play through each 1st-job quest in the client (the test does not walk
   the real maps; `tools/client-test/play.sh` walks the client and reads
-  the dialogue). The training ground is played (THREADS.md #6: works; the
-  rest of 817's script is still to be read against mod0631's fuller one).
+  the dialogue, `hunt.sh` fights). The training ground is played and
+  817's script read against mod0631's (THREADS.md #6: mended where 817
+  cannot be played; what still differs is listed there and asked in the
+  queue's T10). The Thief test is played (interview, mushroom farm, job
+  change). Not yet: Mage, Archer, Acolyte, Merchant.
   The Swordman course is checked
   on the client's map by search (`research/course_check.py`: each stretch
   has a way past the pits to its warp, and every pit drops you somewhere
@@ -115,7 +118,9 @@ Done: `RagnarokOffline.exe` (drop-in launcher) and the all-in-one installer
 warps onto blocked cells, maps nothing leads to, NPCs out of reach, item
 and monster ids the database lacks. Its first run found Ant Hell, Payon
 Cave 4F and the Clock Tower cut off (fixed); what it still lists is
-THREADS.md #26. Next: packet fuzz tests against the length table; run
-`check` in CI against a client folder; the Tip of the Day and other client
+THREADS.md #26. A packet fuzz test sends every id of the length table with
+plausible payloads and answers the server's prompts
+(`crates/ro-game/tests/fuzz.rs`: no panic so far). Next: run `check` in CI
+against a client folder; the Tip of the Day and other client
 windows under Wine with the card instead of software drawing
 (DEVELOPMENT.md).

@@ -4,8 +4,9 @@ For: the independent deep-research agent (Gemini in Antigravity) that wrote
 rounds 1 to 3. Kept by the Claude sessions that work on the game: at the
 end of each session the queue is updated (answered items go to "Done",
 with where the answer went) and refilled with what that session could not
-settle from the sources on disk. Last update: 2026-11-11 (fourth session
-of that day: a world audit, `ragnarok-offline check`, and what it lists).
+settle from the sources on disk. Last update: 2026-11-11 (fifth session
+of that day: the training ground and the Thief test played in the real
+client; T10 is new, and it comes third).
 
 ## How to use it
 
@@ -119,6 +120,51 @@ before the jobs opened there on 2004-06-09: patch list entries 444 and 462,
   those `.gpf` files archived?
 
 Sets: whether `jobs2_2` can be played at all, and with which client.
+
+### T10. The novice training ground outside Japan (thread 6)
+
+New on 2026-11-11, and placed here because every character starts with it.
+The game runs eAthena 817's English script (`npc/jobs/novice.txt`,
+2004-02-19), mended in six places from mod0631's Japanese one
+(`conf/npc_job_newbie.txt`, 2003-12-18; `scripts/npc/novice_result.lua`,
+DEVIATIONS). The two are ports of the same official script but not of the
+same version of it, and nothing says which one a player of iRO or euRO
+met. Wanted, dated 2003-10 to 2004-06, from an international server (say
+which): a walkthrough, a guide page, forum posts or screenshots of the
+training ground. Row per fact:
+
+* **Leo Von Frisch's quiz** (`new_1-2 84,115`). 817 asks for "the wrong
+  description of a stat" second and "one thing which has nothing to do with
+  me" third (`novice.txt:409` and `:480`); mod0631 asks "which
+  monster does not exist" (`npc_job_newbie.txt:610-647`) and "pick my
+  name" (`:741-768`). Which questions, and what was each prize? (817: one
+  Banana, one Banana, three Sweet Potatoes, one Apple, one Meat, one Milk;
+  mod0631: nothing, five or three Bananas, ten Sweet Potatoes, three
+  Apples, one Meat, one Milk.) How many Red Herbs at the end (817 always
+  four; mod0631 four, two, one or none by the score, `:1155-1173`)?
+* **The end** (`new_1-4 60,149`): what a player was given with the result
+  (mod0631 `:2262-2284`: 100z to 500z and one to ten Red Herbs by points),
+  and what "follow the result of the test" did. mod0631 sends you to a
+  guide room of the suggested job where a stand-in hands over the guild's
+  gift (`:2461-2645`: Swordman five Red Potions, Archer three and 50z,
+  Thief a Leather Jacket, Mage 100z, Acolyte three Red Potions and a Club,
+  Merchant 100z); 817 says "Under development". Any player's account of
+  those rooms or gifts.
+* **The Fabre forest** (`new_1-3`): where a knocked-out novice woke
+  (mod0631: beside the Helper of `new_1-2 16,183`, who counts the tries
+  and lets you give up at the fifth; 817: inside the forest).
+* **The Usher's subsidy** (`new_1-2 100,29`): both scripts give 150z; 817's
+  line says "50 Zeny" (`novice.txt:728`). Which did the screen say?
+* **Starting gear**: a fresh character's equipment window. Both emulators
+  create the Knife and the Cotton Shirt already worn (mod0631
+  `char/char.c:408-415`), and so do we since today.
+* Start with RODataZone's Novice page (the capture of 2003-12-15 that
+  gave the quest-skill NPCs: `web.archive.org/web/20031215225409/http://www.rodatazone.com/jobs/0/novice.php`),
+  the iRO guide's beginner pages, the euRO and Gamona forum captures listed
+  in `research/notes/round2-review.md`.
+
+Sets: `scripts/npc/novice_result.lua`; which of the differences listed in
+THREADS.md #6 get mended, and which way.
 
 ### T3. euRO's own news pages of 2004 (threads 1, 15, 17, 19)
 
@@ -310,4 +356,7 @@ that nobody researches them again.
 | Does this client ship the 2-2 skills' text | No: neither names nor descriptions, and the exe knows none of the skills (seen in the client) | THREADS.md #25 |
 | How a player gets into Ant Hell, Payon Cave 4F and the upper Clock Tower | Script warp tiles in mod0631's `npc_warp.txt`, which the importer skipped until 2026-11-11 | `scripts/import/warps.lua`, PROVENANCE.md |
 | Why Clock Tower 1F could not be walked | Its cells have a stray type (`0x444c74`); only 1 and 5 block, as in Athena | DEVIATIONS.md "Cell types" |
+| Does the training ground play through on this client's maps | Yes, walked in the real client from the bridge to the job guide room; 817's script against mod0631's is read NPC by NPC | THREADS.md #6, `scripts/npc/novice_result.lua` |
+| Is a new character's Knife worn | Yes in mod0631 and 817 (`char/char.c`); now here too | `crates/ro-game/src/game.rs` |
+| The Thief test in the client | Interview, mushroom farm, weighing and job change work on the real maps | ROADMAP §4 |
 | Providence, the endows, Dispell, the Strips, Chemical Protection: the numbers | Drafted from mod0631, 817 and the iRO guide; what is still open is in T7 | DEVIATIONS.md, `scripts/rules/skill_effects.lua` |
