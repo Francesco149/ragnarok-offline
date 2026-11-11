@@ -2,6 +2,8 @@
 """Can the Swordman test's course be walked on THIS client's map?
 
   course_check.py <data.grf>
+  course_check.py --avoid    the pits as a Lua list of {x0,y0,x1,y1} (play.sh walk's AVOID)
+  course_check.py --avoid       the pits as a Lua list of {x0,y0,x1,y1} (play.sh walk's AVOID)
 
 The job-quest test (crates/ro-game/tests/job_quests.rs) plays on all-walkable
 synthetic maps, so it cannot tell. This reads job_sword1.gat from the GRF and
@@ -59,12 +61,24 @@ def box(x, y, rx, ry):
     return {(x + i, y + j) for i in range(-rx, rx + 1) for j in range(-ry, ry + 1)}
 
 
-def main():
-    w, h, ok = gat(sys.argv[1], "job_sword1")
+PIT = r'map = "job_sword1", x = (\d+), y = (\d+), dir = \d+, sprite = 139, name = "[^"]*",\s*\n\s*touch = \{ (\d+), (\d+) \}'
+
+
+def course_src():
     src = (ROOT / "scripts/import/npc/jobs/swordsman.lua").read_text(encoding="utf-8")
-    src += (ROOT / "scripts/npc/swordman_course.lua").read_text(encoding="utf-8")  # four pits 817 lacks
+    return src + (ROOT / "scripts/npc/swordman_course.lua").read_text(encoding="utf-8")  # four pits 817 lacks
+
+
+def main():
+    if sys.argv[1] == "--avoid":
+        rects = [(x - rx, y - ry, x + rx, y + ry) for x, y, rx, ry in
+                 (map(int, m.groups()) for m in re.finditer(PIT, course_src()))]
+        print("{" + ",".join("{%d,%d,%d,%d}" % r for r in rects) + "}")
+        return
+    w, h, ok = gat(sys.argv[1], "job_sword1")
+    src = course_src()
     pits, drops = set(), set()
-    for m in re.finditer(r'map = "job_sword1", x = (\d+), y = (\d+), dir = \d+, sprite = 139, name = "[^"]*",\s*\n\s*touch = \{ (\d+), (\d+) \}', src):
+    for m in re.finditer(PIT, src):
         x, y, rx, ry = map(int, m.groups())
         pits |= box(x, y, rx, ry)
     for m in re.finditer(r'warp\("job_sword1", (\d+), (\d+)\)', src):
