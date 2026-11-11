@@ -77,8 +77,9 @@ npc { map = "testmap", x = 27, y = 25, dir = 4, sprite = 97, name = "Talker",
 shop { map = "testmap", x = 23, y = 25, dir = 4, sprite = 83, name = "Seller", items = { { 501 }, { 1201 }, { 1750 }, { 2301, 5 } } }
 "#;
 
-/// Kinds of server packet a default run draws (measured: see the test's output).
-const MIN_REPLY_KINDS: usize = 45;
+/// A floor under the kinds of server packet a default run draws: 43 to 48
+/// measured (the clock and the monsters make runs differ; the test prints it).
+const MIN_REPLY_KINDS: usize = 35;
 
 /// What a client may send next when the server sends the first id.
 const FOLLOW_UPS: &[(u16, &[u16])] = &[
@@ -212,6 +213,7 @@ impl F {
         assert!(!r.starts_with("error"), "staging: {r}");
         self.ids = self.g.world.units.keys().copied().collect();
         self.ids.push(self.aid);
+        self.ids.sort(); // the map's order changes from run to run
         self.cap.take();
     }
 

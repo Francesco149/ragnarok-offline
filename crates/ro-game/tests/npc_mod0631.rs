@@ -81,6 +81,8 @@ struct T {
     g: Game,
     cap: Cap,
     me: u32,
+    /// What the NPC of the last `talk` said, line by line.
+    said: Vec<String>,
 }
 
 impl T {
@@ -114,8 +116,10 @@ impl T {
         w.u32(npc).u8(1);
         send(&mut self.g, 3, w);
         let mut menus = Vec::new();
+        self.said.clear();
         for _ in 0..200 {
             let out = self.cap.take(3);
+            self.said.extend(out.iter().filter(|p| p[0..2] == [0xb4, 0x00]).map(|p| Reader::new(p).seek(8).str_rest()));
             let mut acted = false;
             for p in out.iter().rev() {
                 match u16::from_le_bytes([p[0], p[1]]) {
@@ -152,10 +156,10 @@ impl T {
     }
 }
 
-const MAPS: [&str; 23] = [
+const MAPS: [&str; 24] = [
     "prontera", "izlude", "aldeba_in", "moc_prydb1", "payon", "alberta_in", "morocc", "prt_in", "prt_castle", "geffen",
     "geffen_in", "morocc_in", "alberta", "tur_dun01", "tur_dun02", "izlude_in", "alb2trea", "pay_fild08",
-    "gef_tower", "job_wiz", "new_zone02", "new_zone04", "payon_in02",
+    "gef_tower", "job_wiz", "new_zone02", "new_zone03", "new_zone04", "payon_in02",
 ];
 
 fn setup(tag: &str) -> T {
@@ -182,7 +186,7 @@ fn setup(tag: &str) -> T {
         g.ensure_map(m);
     }
     g.notices.clear();
-    T { g, cap, me }
+    T { g, cap, me, said: Vec::new() }
 }
 
 #[test]
@@ -628,22 +632,53 @@ impl T {
     }
 }
 
-/// The end of the training ground (scripts/npc/novice_result.lua): Leo Von
-/// Frisch's right answers count, the subsidy follows mod0631's table, and
-/// "I will follow the result of the test" leads through a guide room.
+/// The training ground where 817's script is broken (scripts/npc/novice_result.lua):
+/// the forest Helper saves outside the forest and counts the tries, Leo Von
+/// Frisch's right answers count once, the subsidy follows mod0631's table,
+/// and "I will follow the result of the test" leads through a guide room.
 #[test]
 fn training_ground_result() {
     let mut t = setup("training_ground_result");
-    // the Usher's flag, as after signing up; the first course with every answer right
-    t.eval("v.nov_get_item01 = 1");
-    t.talk("new_zone02", 84, 115, &[1, 2, 3, 3, 2, 4, 4]);
+    // the first course with every answer right ('insert' - /Sit is the last)
+    t.talk("new_zone02", 84, 115, &[1, 2, 3, 3, 2, 4, 1]);
     assert_eq!(t.eval("return v.nov_1st_cos"), "6", "six right answers, six points");
-    // the personality test came out for the Thief
+    assert_eq!(t.eval("return v.nov_1_2_cos_c"), "7");
+    // between his lesson and the NPC Master's he has a line (817: none at all)
+    t.talk("new_zone02", 84, 115, &[]);
+    // a lesson cut short after the last question can be finished
+    t.eval("v.nov_1_2_cos_c = 6");
+    let herbs: i64 = t.eval("return count_item(507)").parse().unwrap();
+    t.talk("new_zone02", 84, 115, &[]);
+    assert_eq!(t.eval("return v.nov_1_2_cos_c"), "7");
+    assert_eq!(t.eval("return count_item(507)").parse::<i64>().unwrap(), herbs + 4);
+    // hearing him again later does not add points
+    t.eval("v.nov_1_2_cos_c = 9; v.nov_1st_cos = 3");
+    t.talk("new_zone02", 84, 115, &[2, 1, 2, 3, 3, 2, 4, 1]);
+    assert_eq!(t.eval("return v.nov_1st_cos"), "3");
+    t.eval("v.nov_1st_cos = 6");
+
+    // the Guide in the hall knows where each step leads (817: one answer for all)
+    for (step, word) in [(0, "Northwest"), (7, "Southeast"), (8, "right next him"), (9, "southwest")] {
+        t.eval(&format!("v.nov_1_2_cos_c = {step}"));
+        t.talk("new_zone02", 100, 113, &[1]);
+        let said = t.said.join(" ");
+        assert!(said.contains(word), "step {step}: {said}");
+    }
+
+    // the forest: saved beside the Helper, each return is a try, the fifth may be the last
+    t.eval("v.nov_1_2_cos_c = 10");
+    t.talk("new_zone02", 16, 183, &[1]);
+    assert_eq!(t.eval("return player.map .. ' ' .. v.nov_1_2_cos_c .. ' ' .. v.nov_2nd_tries"), "new_zone03 11 0");
+    assert_eq!(t.eval("return player.save_map"), "new_zone02", "knocked out, you wake beside the Helper");
+    t.talk("new_zone02", 16, 183, &[1]);
+    assert_eq!(t.eval("return player.map .. ' ' .. v.nov_2nd_tries"), "new_zone03 1");
+
+    // the personality test came out for the Archer and the Thief alike
     t.eval("v.nov_3_thief = 5; v.nov_3_archer = 5; v.nov_3_swordman = 2");
     let zeny: i64 = t.eval("return player.zeny").parse().unwrap();
     let herbs: i64 = t.eval("return count_item(507)").parse().unwrap();
     t.talk("new_zone04", 60, 149, &[2]);
-    // 15 points: 150z and three Red Herbs (mod0631 npc_job_newbie.txt:2270)
+    // 6 + 9 points: 150z and three Red Herbs (mod0631 npc_job_newbie.txt:2270)
     assert_eq!(t.eval("return player.zeny").parse::<i64>().unwrap(), zeny + 150);
     assert_eq!(t.eval("return count_item(507)").parse::<i64>().unwrap(), herbs + 3);
     assert_eq!(t.eval("return player.map .. ' ' .. player.x .. ' ' .. player.y"), "new_zone04 60 176", "the Archer guide room: the first of two equal scores wins");
@@ -653,12 +688,21 @@ fn training_ground_result() {
     assert_eq!(t.eval("return player.zeny").parse::<i64>().unwrap(), zeny + 200);
     assert_eq!(t.eval("return player.map"), "payon_in02");
 
-    // choosing for oneself still goes straight to town, with nothing more
+    // never knocked out and all six right: 16 points, 300z and five Red Herbs;
+    // choosing for oneself goes straight to town
     let mut t = setup("training_ground_result_own");
-    t.eval("v.nov_get_item01 = 1");
+    t.eval("v.nov_1st_cos = 6");
     t.talk("new_zone04", 60, 149, &[1, 4]);
     assert_eq!(t.eval("return player.map"), "geffen");
-    assert_eq!(t.eval("return count_item(507)"), "3", "9 points: three Red Herbs");
+    assert_eq!(t.eval("return count_item(507) .. ' ' .. player.zeny"), "5 300");
+
+    // the fifth time back from the forest it may be given up: no points for it
+    let mut t = setup("training_ground_give_up");
+    t.eval("v.nov_1_2_cos_c = 11; v.nov_2nd_tries = 4");
+    t.talk("new_zone02", 16, 183, &[1]);
+    assert_eq!(t.eval("return player.map .. ' ' .. v.nov_2nd_tries"), "new_zone04 11");
+    t.talk("new_zone04", 60, 149, &[1, 1]);
+    assert_eq!(t.eval("return count_item(507) .. ' ' .. player.zeny"), "1 100", "0 points: one Red Herb, 100z");
 }
 
 fn wizard_answer(menu: &str, right: bool) -> u8 {

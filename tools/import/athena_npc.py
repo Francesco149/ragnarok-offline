@@ -24,8 +24,9 @@ The output is plain Lua with goto, one npc{} per Athena NPC, citing file and
 line. Labels starting with "On" are event entry points (npc_parse_script).
 Fixes to bugs of the source are not made here: they belong in hand-written
 overrides under scripts/npc/ (docs/DEVIATIONS.md lists them). The one
-exception is SOURCE_FIXES: a one-line slip that stops a long script dead and
-whose fix is not in doubt, where an override would mean copying the NPC.
+exception is SOURCE_FIXES: a one-line slip whose fix is not in doubt (it
+stops a long script dead, or a second period source and the client settle
+it), where an override would mean copying a long NPC.
 
 The Athena sources are GPL; so is the output (the project is GPL-3.0-or-later).
 """
@@ -226,7 +227,7 @@ NOOP_COMMANDS = {"scriptlabel"}  # jAthena label marker: every 817 town guide be
 # Map-name typos in the sources (not client naming differences: those are maps.py).
 MAP_TYPOS = {"morroc": "morocc"}
 
-# Slips in a source line that stop a script dead, where the fix is not in doubt. Each is one
+# Slips in a source line where the fix is not in doubt (see the header). Each is one
 # line, replaced before parsing (line numbers stay), named in the generated file and listed in
 # docs/DEVIATIONS.md. (file, line): (text in the source, replacement, reason).
 SOURCE_FIXES = {
@@ -234,6 +235,14 @@ SOURCE_FIXES = {
         "if(@TEMP !=0) goto R10;", "if(@TEMP !=0) goto R11;",
         "the label jumped to itself for ever (one application in eight hung 817); R11 is the "
         "second serial number, as in R00/R01, R20/R21, R30/R31"),
+    ("jobs/novice.txt", 637): (
+        """menu "'insert' - /Sit",LQ6_1,"'page down' - /Sitting",LQ6_2,"'home' - /Sitdown",LQ6_3,"'delete' - /stand",LQ6_4;""",
+        """menu "'insert' - /Sit",LQ6_4,"'page down' - /Sitting",LQ6_2,"'home' - /Sitdown",LQ6_3,"'delete' - /stand",LQ6_1;""",
+        "Leo Von Frisch's last question (the key and the command to sit) rewarded 'delete' - /stand; "
+        "mod0631 (conf/npc_job_newbie.txt:1111-1122) rewards Insert and /sit, and Insert is this client's sit key"),
+    ("jobs/novice.txt", 642): ("`'delete' - /stand`", "`'insert' - /Sit`", "the same slip, in the answer to a wrong choice"),
+    ("jobs/novice.txt", 648): ("`'delete' - /stand`", "`'insert' - /Sit`", "the same slip"),
+    ("jobs/novice.txt", 654): ("`'delete' - /stand`", "`'insert' - /Sit`", "the same slip"),
     ("skillquests/arrowrepel.txt", 115): (
         'everything";f', 'everything";',
         "a stray f after the line made the next one an unknown command, so the script stopped "

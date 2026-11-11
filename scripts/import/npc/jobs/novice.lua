@@ -4,6 +4,10 @@
 -- Don't edit: override in scripts/npc/ (npc{replaces=}, wrap_npc, remove_npc) and list the
 -- change in docs/DEVIATIONS.md.
 -- Note: training ground: new_1-N is this client's new_zone0N (tools/import/maps.py)
+-- source fix (jobs/novice.txt:637): menu "'insert' - /Sit",LQ6_1,"'page down' - /Sitting",LQ6_2,"'home' - /Sitdown",LQ6_3,"'delete' - /stand",LQ6_4; -> menu "'insert' - /Sit",LQ6_4,"'page down' - /Sitting",LQ6_2,"'home' - /Sitdown",LQ6_3,"'delete' - /stand",LQ6_1;: Leo Von Frisch's last question (the key and the command to sit) rewarded 'delete' - /stand; mod0631 (conf/npc_job_newbie.txt:1111-1122) rewards Insert and /sit, and Insert is this client's sit key
+-- source fix (jobs/novice.txt:642): `'delete' - /stand` -> `'insert' - /Sit`: the same slip, in the answer to a wrong choice
+-- source fix (jobs/novice.txt:648): `'delete' - /stand` -> `'insert' - /Sit`: the same slip
+-- source fix (jobs/novice.txt:654): `'delete' - /stand` -> `'insert' - /Sit`: the same slip
 
 npc {
   map = "new_zone01", x = 66, y = 114, dir = 1, sprite = 111, name = "Bulletin Board",
@@ -689,23 +693,23 @@ npc {
     mes "Quiz time!"
     mes "Choose One showing the Right Shortcut for `Sit' and the Command you type in the Chat Box."
     c = menu("'insert' - /Sit", "'page down' - /Sitting", "'home' - /Sitdown", "'delete' - /stand")
-    if c == 1 then goto LQ6_1 elseif c == 2 then goto LQ6_2 elseif c == 3 then goto LQ6_3 elseif c == 4 then goto LQ6_4 end
+    if c == 1 then goto LQ6_4 elseif c == 2 then goto LQ6_2 elseif c == 3 then goto LQ6_3 elseif c == 4 then goto LQ6_1 end
     ::LQ6_1::
     v.nov_1_2_cos_c = v.nov_1_2_cos_c + 1
     mes "[Leo Von Frisch]"
-    mes "Wrong. `'delete' - /stand` is the correct one."
+    mes "Wrong. `'insert' - /Sit` is the correct one."
     next()
     goto LQ7
     ::LQ6_2::
     v.nov_1_2_cos_c = v.nov_1_2_cos_c + 1
     mes "[Leo Von Frisch]"
-    mes "Wrong. `'delete' - /stand` is the correct one."
+    mes "Wrong. `'insert' - /Sit` is the correct one."
     next()
     goto LQ7
     ::LQ6_3::
     v.nov_1_2_cos_c = v.nov_1_2_cos_c + 1
     mes "[Leo Von Frisch]"
-    mes "Wrong. `'delete' - /stand` is the correct one."
+    mes "Wrong. `'insert' - /Sit` is the correct one."
     next()
     goto LQ7
     ::LQ6_4::

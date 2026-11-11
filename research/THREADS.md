@@ -161,17 +161,40 @@ Usher, Leo Von Frisch's six questions, the NPC Master and the Guide in
 the east room, the three Helpers, the Fabre field (`new_zone03`: the
 arrival cell `96,21` lies behind the rampart as the camera sees it, so the
 character is hidden until she walks north), both personality tests and
-the last Helper. Every dialogue, menu and warp works. What it showed:
-817's script is a rough English port of the one mod0631 has in Japanese
-(`conf/npc_job_newbie.txt`, 2,722 lines against 817's 1,400). Mended from
-mod0631 so far: the end (the job guide rooms, the subsidy table, the first
-course's points; DEVIATIONS). Still 817's and worth reading against
-mod0631 line by line: the Usher says "Training Subsidy 50 Zeny" and gives
-150 (mod0631 says and gives 150); Leo's third question rewards "Public
-Prosecutor"; the second course's tries are never counted (mod0631 counts
-them at the Helper of `new_1-2 16,183`, so the "2nd course" score is
-always 9 here); the prizes' amounts differ (mod0631 gives five and three
-Bananas, ten Sweet Potatoes, three Apples).
+the last Helper. Every dialogue, menu and warp works.
+**817's script against mod0631's** (`conf/npc_job_newbie.txt`, 2,722 lines
+against 817's 1,400; read NPC by NPC, 2026-11-11). 817 is an English port
+of the same original, partly of another version of it: Leo's second and
+third questions are different questions (817: "wrong description of a
+stat" and "which has nothing to do with me"; mod0631: "which monster does
+not exist" and "pick my name"), and the second personality test has a
+question mod0631 lacks. So 817 may be nearer the international servers
+there, or just looser. Mended from mod0631 where 817 contradicts itself
+or cannot be played (DEVIATIONS): the last Helper, the points of both
+courses, the forest Helper's save point and tries, Leo's last question and
+his two dead ends, the hall Guide's directions. **Left as 817 has them, open:**
+* the Usher says "Training Subsidy 50 Zeny" and gives 150 (mod0631 says
+  and gives 150: `npc_job_newbie.txt:64-66`);
+* Leo's prizes: one Banana, one Banana, three Sweet Potatoes, one Apple
+  (mod0631: no item, five or three Bananas, ten Sweet Potatoes, three
+  Apples), and his Red Herbs: always four (817 tests the wrong counter;
+  mod0631 gives four for six right, two for five, one for one to four);
+* mod0631 draws the second, fourth, fifth and sixth question from two
+  variants each; 817 has one;
+* hearing Leo again after the NPC Master hands the prizes out again in
+  817 (its guard variable is only set by the last right answer); mod0631
+  asks each question once;
+* the Newbie Instructor gives one Milk every time until Leo's first
+  question is answered (mod0631: three, once);
+* first personality test, "Theory / Experience": 817 gives no point for
+  Experience (mod0631: Swordman); the second test's "competition"
+  question gives one job a point where mod0631 gives two;
+* the Helper of `new_zone04 100,29` always sends to `94,56` (817 forgot
+  the `rand(4)` it uses a room later); mod0631 has the first test's
+  Helper at `20,69` and sends to `19,54`, where 817 has him at `100,69`;
+**Look:** an iRO or euRO walkthrough of the training ground (2003-04:
+the quiz questions and the prizes would tell which version the
+international servers ran).
 **Goal (owner, 2026-11-09):** find the period-accurate start position and
 document it. Failing that, pick the best-supported cell and list it as a
 possible deviation.

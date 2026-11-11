@@ -1,16 +1,20 @@
--- The end of the training ground: the result, the subsidy, and the six job
--- guide rooms for those who take the job the test suggests.
+-- The training ground where 817's script is broken: the forest Helper, Leo
+-- Von Frisch's lesson when it is cut short, the result, the subsidy, and the
+-- six job guide rooms for those who take the job the test suggests.
 --
--- 817's last Helper (npc/jobs/novice.txt:1324, new_1-4 60,149) is an English
--- port of the script mod0631 has in Japanese (conf/npc_job_newbie.txt:2091,
--- archived 2003-12-18, tier athena2003, jRO lineage), and the port is broken
--- in three places:
---  * "I will follow the result of the test" answers "Under development.
---    Please choose your job manualy." mod0631 sends you to one of six guide
---    rooms on the same map (npc_job_newbie.txt:2439-2459), where an
---    attendant hands over what the job's guild sent and passes you on to
---    the town (:2461-2650). The rooms are on this client's new_zone04: five
---    in the top row and one below the last, with nothing else in them.
+-- 817's script (npc/jobs/novice.txt) is an English port of the one mod0631
+-- has in Japanese (conf/npc_job_newbie.txt, archived 2003-12-18, tier
+-- athena2003, jRO lineage). Parts of the port read like another version of
+-- the original (two of Leo's questions differ) and are left alone; these are
+-- the places where 817 contradicts itself or cannot be played, mended from
+-- mod0631 (docs/DEVIATIONS.md, research/THREADS.md #6):
+--  * The last Helper (new_1-4 60,149). "I will follow the result of the
+--    test" answers "Under development. Please choose your job manualy."
+--    mod0631 sends you to one of six guide rooms on the same map
+--    (npc_job_newbie.txt:2439-2459), where an attendant hands over what the
+--    job's guild sent and passes you on to the town (:2461-2650). The rooms
+--    are on this client's new_zone04: five in the top row and one below the
+--    last, with nothing else in them.
 --  * The subsidy table is scrambled: a total of 8 or less gets the most
 --    (500z, 10 Red Herbs) and a total over 16 *loses* 500z. mod0631
 --    (:2262-2284): up to 8, 100z and 1 Red Herb; up to 15, 150z and 3; 16,
@@ -19,10 +23,23 @@
 --    hands out the prizes for right answers but leaves NOV_1ST_COS alone),
 --    so the result always read "1st course: 0 / 6 Points". mod0631 adds a
 --    point for each right answer (:531-1115).
--- Here the three follow mod0631. The English of the Helper is 817's, line
--- for line; the attendants of the guide rooms have no English anywhere, so
--- theirs is ours, translated from mod0631 and cut to the client's window
--- (the name and six lines of about 30 characters). docs/DEVIATIONS.md.
+--  * The forest Helper (new_1-2 16,183) saves you inside the forest, so a
+--    novice the Fabres knock out wakes among them, although the Helper
+--    beside him says "you will lose your points and come back here", and
+--    his own "knocked out by Fabre ... 2nd Course 1 th test" can never be
+--    heard. mod0631 (:1687-1766) saves at new_1-2 23,188, counts the tries
+--    (each costs a point of the second course) and lets you give the forest
+--    up at the fifth and from the tenth.
+--  * The Guide in the hall (new_1-2 100,113) gives everyone the same wrong
+--    direction (below).
+--  * Leo Von Frisch says nothing at all once his lesson is over and before
+--    the NPC Master is heard (a jump to a label that does not exist), and a
+--    lesson cut short after the last question can never be finished (the
+--    script closes; the NPC Master waits for a 7 that never comes).
+-- The English is 817's wherever it has a line; the attendants of the guide
+-- rooms and the giving-up have no English anywhere, so theirs is ours,
+-- translated from mod0631 and cut to the client's window (the name and six
+-- lines of about 30 characters).
 
 local RED_HERB, MILK, RED_POTION, LEATHER_JACKET, CLUB = 507, 519, 501, 2303, 1501
 
@@ -44,6 +61,30 @@ end
 
 wrap_npc("817:jobs/novice.txt:248", function(orig)
   return function(at)
+    local step = v.nov_1_2_cos_c
+    if step == 6 then
+      -- every question answered, the lesson's end not heard: 817 only closes
+      mes "[Leo Von Frisch]"
+      mes "Um..something interrupted my class without reason."
+      next()
+      give_item(RED_HERB, 4)
+      v.nov_1_2_cos_c = 7
+      mes "[Leo Von Frisch]"
+      mes "I will reward you for the successful lesson. Take it. They will be useful when you have a hard time."
+      next()
+      mes "[Leo Von Frisch]"
+      mes "Anyway,Let's call it a day with me,you may go to the 'NPC' master."
+      mes "If you can't find him, inquire at the sly dog at the centre"
+      close()
+      return
+    elseif step == 7 then
+      -- 817 jumps to a label it does not have and says nothing
+      mes "[Leo Von Frisch]"
+      mes "Um? What's matter? My class is over. Your next course would be 'NPC Guide'...."
+      close()
+      return
+    end
+    if step > 7 then return orig(at) end -- a second hearing: its answers no longer count (mod0631 asks once)
     if tmp.nov_quiz_open ~= 0 then credit() end -- a lesson walked away from
     tmp.nov_quiz_base = prizes()
     tmp.nov_quiz_open = 1
@@ -51,6 +92,133 @@ wrap_npc("817:jobs/novice.txt:248", function(orig)
     credit()
   end
 end)
+
+-- ------------------------------------------------------------------ the Guide
+-- The Guide in the middle of the hall tells you where to go next. 817 strung
+-- his tests together without the texts between them (`if (c != 9) goto L00a;
+-- if (c != 8) goto L00b; ...`), so everyone not yet done heard "finished the
+-- First Course?" and the three other answers could never be heard. mod0631
+-- (:215-247): 9 done, 8 hear the other one in the east room, 7 go east,
+-- otherwise go to Leo. Every line is 817's.
+npc {
+  map = "new_zone02", x = 100, y = 113, dir = 4, sprite = 97, name = "Guide",
+  replaces = "817:jobs/novice.txt:818",
+  src = "m631:conf/npc_job_newbie.txt:193",
+  on_click = function()
+    mes "[Guide]"
+    if rand(2) == 0 then
+      mes "Mumble~Mumble~Life is getting Sick~What a boring Job I have~~ I was stupid enough to choose this Boring and Solitary thing!Ah~"
+    else
+      mes "I miss my good-for-nothing day~ Phew~ I should never accepted the Full time job.... Eh?!"
+    end
+    mes "Hey Buddy~ Want some Help?"
+    next()
+    if menu("Current Course State.", "Quit.") ~= 1 then
+      mes "[Guide]"
+      mes "Alright~ Bye Bye~ Don't comback unless you have no idea~"
+      close()
+      return
+    end
+    local step = v.nov_1_2_cos_c
+    mes "[Guide]"
+    mes "Hmm.. Let me see..."
+    if step >= 9 then
+      mes "Ah....? finished the First Course?"
+      mes "Then meet the guy over there at the southwest,tell him 'I got the 1st lesson.'.He will lead you to the Second Hall."
+      mes "Well done~ Bye Bye~ Take Care,Okay?"
+    elseif step == 8 then
+      mes "Err...?Didn't you hear the 'NPC Guide' Master's saying? Told you to go to the table right next him. Sigh~ Hurry up~"
+    elseif step == 7 then
+      mes "Did you attend to 'Sir Leo Von Frisch''s Lesson already? Umm the next is...."
+      mes "Go toward next hall at the Southeast,you will see two guys over there."
+      mes "Ask either of them~"
+    else
+      mes "I assure you are at the first place with this empty list of yours. You must go toward the Northwest."
+      mes "And meet 'Leo Von Frisch',the odd veteran Knight.He is a little bit boring,but that's ok.If you work out a correct answer to his question,he will give you some Snacks. So concentrate on him,Okay?"
+    end
+    close()
+  end,
+}
+
+-- ---------------------------------------------------------------- 2nd course
+-- The Helper at the door of the Fabre forest. 817 counts the course in one
+-- rising number: 10 = signed up with the Helper beside him, 11 = has been in.
+local function into_the_forest()
+  mes "[Helper]"
+  mes "Well ..We wish you luck."
+  next()
+  warp("new_zone03", 96, 21)
+end
+
+local function give_up_the_forest()
+  mes "[Helper]"
+  mes "I see. Then the 2nd Course"
+  mes "ends here. Well done."
+  next()
+  v.nov_2nd_tries = 11
+  warp("new_zone04", 100, 12)
+end
+
+npc {
+  map = "new_zone02", x = 16, y = 183, dir = 5, sprite = 84, name = "Helper",
+  replaces = "817:jobs/novice.txt:61",
+  src = "m631:conf/npc_job_newbie.txt:1687",
+  on_click = function()
+    local step = v.nov_1_2_cos_c
+    if step < 10 then
+      mes "[Helper]"
+      mes "Heh... I can't find your name on the list."
+      mes "Could you register first at the front desk?"
+      close()
+      return
+    end
+    if step == 10 then
+      mes "[Helper]"
+      mes "Heh... I can't find your name on the list....."
+      mes("Ah! Here you are. Ok " .. player.name .. ". Are you ready?")
+      next()
+      if menu("Yes.", "No.") ~= 1 then
+        mes "[Helper]"
+        mes "Take some rest before the 2nd Course."
+        close()
+        return
+      end
+      v.nov_1_2_cos_c = 11
+      v.nov_2nd_tries = 0
+      save_point("new_zone02", 23, 188)
+      return into_the_forest()
+    end
+    -- back from the forest
+    local tries = v.nov_2nd_tries + 1
+    v.nov_2nd_tries = tries
+    mes "[Helper]"
+    if tries >= 10 or tries == 5 then
+      mes("2nd Course, " .. tries .. " th test...")
+      if tries == 5 then
+        mes "You know... you may give the"
+        mes "2nd Course up, too..."
+      else
+        mes "...Shall we give it up?"
+      end
+      next()
+      if menu("Yes...", "No!") == 1 then return give_up_the_forest() end
+      mes "[Helper]"
+      mes "...As you like."
+      mes "Then are you going to start now?"
+    elseif tries >= 6 then
+      mes("2nd Course, " .. tries .. " th test...")
+      mes "Are you going on?"
+    else
+      mes "You've been knocked out by Fabre.Yeah you can't fight with a bunch of Fabre anyway."
+      mes("By the way,2nd Course " .. tries .. " th test.Are you going to start now?")
+    end
+    next()
+    if menu("Yes.", "No.") == 1 then return into_the_forest() end
+    mes "[Helper]"
+    mes "Take some rest before the 2nd Course."
+    close()
+  end,
+}
 
 -- ------------------------------------------------------------------ the jobs
 -- In the order of mod0631's @JOB_NUMBER. `said` is 817's reading of the
@@ -99,6 +267,7 @@ end
 local function forget_the_course()
   for _, j in ipairs(JOBS) do v[j.var] = 0 end
   v.nov_1st_cos = 0
+  v.nov_2nd_tries = 0
   v.nov_get_item01 = 0
   v.nov_get_item03 = 0
 end
@@ -116,7 +285,7 @@ npc {
     mes "Ok, here is the result of your own."
     next()
     local first = v.nov_1st_cos
-    local second = v.nov_get_item01 < 10 and 10 - v.nov_get_item01 or 0
+    local second = v.nov_2nd_tries < 10 and 10 - v.nov_2nd_tries or 0 -- a point lost for each time knocked out
     local job = suggested()
     mes "[Helper]"
     mes("1st course: " .. first .. " / 6 Points.")

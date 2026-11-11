@@ -138,24 +138,48 @@ eAthena 817 (2004-02-19), bugs included. The translator is
   go again") and never checks the clock. The NPC names are RODataZone's;
   the dialogue is our translation of mod0631's Japanese, not Gravity's
   text.
-* **The end of the training ground** (`scripts/npc/novice_result.lua`).
-  817's last Helper (`new_zone04 60,149`) is a broken English port of the
-  script mod0631 has in Japanese (`conf/npc_job_newbie.txt:2091`). Three
-  things follow mod0631 instead. "I will follow the result of the test"
-  said "Under development. Please choose your job manualy."; it now sends
-  you to one of the six job guide rooms of the map, where an attendant
-  gives what the guild sent (Swordman five Red Potions, Archer three and
-  50z, Thief a Leather Jacket, Mage 100z, Acolyte three Red Potions and a
-  Club, Merchant 100z) and passes you on to the town. The subsidy was
-  scrambled (the lowest score got the most, the highest lost 500z); it is
-  mod0631's table: up to 8 points 100z and a Red Herb, up to 15 150z and
-  three, 16 300z and five, more 500z and ten, a Milk each time. The first
-  course's points were never counted ("1st course: 0 / 6 Points" for
-  everyone); each right answer to Leo Von Frisch now counts one, as in
-  mod0631, told by the prize he hands over. The Helper's English is 817's;
-  the attendants have no English in any source, so theirs is our
-  translation. Unconfirmed for an international server: the gifts are
-  jRO's as mod0631 has them.
+* **The training ground where 817's script is broken**
+  (`scripts/npc/novice_result.lua`). 817's script is a rough English port
+  of the one mod0631 has in Japanese (`conf/npc_job_newbie.txt`). Where it
+  contradicts itself or cannot be played, mod0631's logic is used, with
+  817's English:
+  * *The last Helper* (`new_zone04 60,149`). "I will follow the result of
+    the test" said "Under development. Please choose your job manualy."; it
+    now sends you to one of the six job guide rooms of the map, where an
+    attendant gives what the guild sent (Swordman five Red Potions, Archer
+    three and 50z, Thief a Leather Jacket, Mage 100z, Acolyte three Red
+    Potions and a Club, Merchant 100z) and passes you on to the town. The
+    subsidy was scrambled (the lowest score got the most, the highest lost
+    500z); it is mod0631's table: up to 8 points 100z and a Red Herb, up
+    to 15 150z and three, 16 300z and five, more 500z and ten, a Milk each
+    time.
+  * *The points.* The first course's were never counted ("1st course: 0 /
+    6 Points" for everyone); each right answer to Leo Von Frisch now counts
+    one, as in mod0631, told by the prize he hands over, the first time
+    through only. The second course's fell with a counter 817 never moved;
+    they are ten less one for each time the Fabres knocked you out.
+  * *The forest Helper* (`new_zone02 16,183`) saved you inside the forest,
+    against his neighbour's "you will lose your points and come back here";
+    he saves beside himself (`23,188`), counts the tries, and offers to
+    give the forest up at the fifth try and from the tenth (no points
+    then).
+  * *Leo Von Frisch's last question* asks for the key and the command to
+    sit and rewarded "'delete' - /stand"; it rewards "'insert' - /Sit"
+    (mod0631, and the client's own key). This one is a source fix in the
+    importer. He also said nothing at all between his lesson and the NPC
+    Master's (a jump to a missing label), and a lesson cut short after the
+    last question could never be finished; he has 817's own lines for
+    both now.
+  * *The Guide in the hall* (`new_zone02 100,113`) told everyone who had
+    not finished "finished the First Course? meet the guy at the
+    southwest": 817 strung his four tests together without the answers
+    between them. He now says, in 817's own lines, where to go next.
+  The attendants and the giving-up have no English in any source, so
+  theirs is our translation. Unconfirmed for an international server: the
+  gifts and the table are jRO's as mod0631 has them. Left as 817 has them,
+  though mod0631 differs (THREADS.md #6): two of Leo's questions, his
+  prizes' amounts and his Red Herbs (always four), the Instructor's Milk,
+  one answer of the first personality test.
 * **Monster Tamers** (`scripts/npc/monster_tamers.lua`): three NPCs from
   mod0631 that 817 lacks, in Alberta, Izlude and Al De Baran, where the iRO
   pet guide of 2004 says they stood. They turn ingredients into taming
