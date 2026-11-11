@@ -89,12 +89,15 @@ Next, in order:
   the dialogue, `hunt.sh` fights). The training ground is played and
   817's script read against mod0631's (THREADS.md #6: mended where 817
   cannot be played; what still differs is listed there and asked in the
-  queue's T10). The Thief test (interview, mushroom farm, job change) and
-  the Mage test (the Mixing Machine's number box) are played. 817's
-  Thief, Merchant and Acolyte scripts are read against mod0631's and
-  mended where a player was stopped (THREADS.md #27: one Merchant applicant
-  in four could not finish). Not yet played: Archer, Acolyte, Merchant;
-  not yet read against jAthena's of 2004-03: Swordman, Archer.
+  queue's T10). Played since: the Thief test (interview, mushroom farm,
+  job change), the Mage test (the Mixing Machine's number box), the Archer
+  test (trunks, the bow and the arrows) and the Acolyte test (an ascetic
+  and back). 817's Thief, Merchant and Acolyte scripts are read against
+  mod0631's and mended where a player was stopped (THREADS.md #27: one
+  Merchant applicant in four could not finish). Not yet played from end
+  to end: the Merchant test (its four deliveries pass a test and two were
+  made in the client) and the Swordman course; not yet read against
+  jAthena's of 2004-03: Swordman, Archer.
   The Swordman course is checked
   on the client's map by search (`research/course_check.py`: each stretch
   has a way past the pits to its warp, and every pit drops you somewhere

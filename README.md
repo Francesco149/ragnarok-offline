@@ -108,8 +108,8 @@ Not yet, or only in part:
 - the Knight's and Hunter's job tests: the client has their maps, no period
   script for them is known;
 - a play-through of every job quest in the real client. They pass an
-  automated run on stand-in maps; the training ground and the Thief, Mage
-  and Wizard tests have been walked for real;
+  automated run on stand-in maps; the training ground and the Thief, Mage,
+  Archer, Acolyte and Wizard tests have been walked for real;
 - a handful of skills are drafts from thin evidence (ROADMAP §3), and the
   NPC dialogue is the emulator authors' fan translation, not Gravity's.
 

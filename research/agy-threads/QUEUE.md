@@ -5,8 +5,9 @@ rounds 1 to 3. Kept by the Claude sessions that work on the game: at the
 end of each session the queue is updated (answered items go to "Done",
 with where the answer went) and refilled with what that session could not
 settle from the sources on disk. Last update: 2026-11-11 (fifth session
-of that day: the training ground and the Thief test played in the real
-client; T10 is new, and it comes third).
+of that day: the training ground and five of the six first-job tests
+played in the real client, 817's scripts read against mod0631's; T10 is
+new, and it comes third).
 
 ## How to use it
 
@@ -296,6 +297,14 @@ Sets: `skill_castend_*` for those skills.
   level and items in 817 (`npc/skillquests/`), mod0631
   (`conf/npc_event_skillget.txt`) and RODataZone's job page each, side by
   side. The Swordman's three are done.
+* **The first-job tests' small sums** (thread 27, new on 2026-11-11).
+  The Thief guild's pay: 817 gives 200z + 15 per Orange Net Mushroom + 2
+  per Orange Gooey one (`npc/jobs/thief.txt:421`), mod0631 a flat 100z
+  (`conf/npc_job_thief.txt:446`); did the mushrooms stay in the bag? The
+  Acolyte's ascetics: 817 has Yosuke at `prt_fild00 208,218`, mod0631 at
+  `208,255` (a blocked cell on this client's map). The Merchant's wrong
+  parcel: item 1083 or 1091? One row each from RODataZone's job pages
+  (late 2003) or a walkthrough, if they say.
 * **Shockwave Trap: one Trap or two?** The client's text says two, mod0631
   takes one, the iRO guide does not say.
 * **Alberta's doll child** (thread 24; in the game from mod0631's
@@ -357,6 +366,8 @@ that nobody researches them again.
 | How a player gets into Ant Hell, Payon Cave 4F and the upper Clock Tower | Script warp tiles in mod0631's `npc_warp.txt`, which the importer skipped until 2026-11-11 | `scripts/import/warps.lua`, PROVENANCE.md |
 | Why Clock Tower 1F could not be walked | Its cells have a stray type (`0x444c74`); only 1 and 5 block, as in Athena | DEVIATIONS.md "Cell types" |
 | Does the training ground play through on this client's maps | Yes, walked in the real client from the bridge to the job guide room; 817's script against mod0631's is read NPC by NPC | THREADS.md #6, `scripts/npc/novice_result.lua` |
+| Can the Merchant test be finished at each of its four places | Not in 817 (Byalan's Kafra never took a parcel; Kay could not change one); mended from mod0631, each place tested | `scripts/npc/merchant_delivery.lua`, THREADS.md #27 |
+| The Mage test's recipes | In 817's Book Shelf (`npc/other/books.txt`), the same numbers as jAthena's of 2004-03-02; played in the client | THREADS.md #27 |
 | Is a new character's Knife worn | Yes in mod0631 and 817 (`char/char.c`); now here too | `crates/ro-game/src/game.rs` |
 | The Thief test in the client | Interview, mushroom farm, weighing and job change work on the real maps | ROADMAP §4 |
 | Providence, the endows, Dispell, the Strips, Chemical Protection: the numbers | Drafted from mod0631, 817 and the iRO guide; what is still open is in T7 | DEVIATIONS.md, `scripts/rules/skill_effects.lua` |
