@@ -52,6 +52,28 @@ Notes: the client needs press-and-hold clicks and an activated window
 `SOUNDMODE=0`; Escape opens the client's exit menu. `logs/packets.log` has
 every packet both ways.
 
+## The playable snapshot (app launcher)
+
+`tools/play` keeps a build to play while the tree is being worked on. It
+shares nothing that changes with the rig: its own container (`ro-play`, the
+workbench image, 2 GiB, own loopback network), server binary, scripts,
+database, client folder, `data.grf` (ports 6910/6131/5131, console 6133),
+saves, Wine prefix and config, all under `~/data/ragnarok-cd/stable`.
+
+```sh
+tools/wb exec tools/play/update.sh          # end of every session: build + snapshot (builds/<stamp>, `current`)
+~/data/ragnarok-cd/stable/play.sh --smoke   # host: headless check, server + client + a login (logs/smoke.png)
+tools/play/install.sh                       # host, once: "Ragnarok Offline" in the app launcher
+```
+
+`play.sh` (copied next to the snapshot, so the entry does not depend on the
+tree) shows the client through the desktop's X socket with sound over
+PulseAudio; `--fullscreen` uses Wine's Wayland driver (not yet tried),
+`--settings` runs the client's Setup.exe, `--stop` saves and quits. A running
+game stays on the build it started with; `update.sh` only adds a build and
+moves `current`. `stable/ragnarok-offline.toml` and `stable/saves` are the
+player's: never overwritten.
+
 ## A real Windows machine
 
 `tools/win-test/win.sh` drives a Windows 10/11 box over ssh (Windows' own

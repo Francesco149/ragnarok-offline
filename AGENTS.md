@@ -26,6 +26,11 @@ Single-player server for the 2003-12-18 euRO client (see README.md).
 - Every packet goes through `ro_proto::Writer`; don't bypass the length check.
 - Test with `cargo test --workspace`; for client-visible changes also run the
   headless client (docs/DEVELOPMENT.md) and look at a screenshot.
+- **End every session with a fresh playable snapshot**: from the committed
+  tree, `tools/wb exec tools/play/update.sh`, then on the host
+  `~/data/ragnarok-cd/stable/play.sh --smoke` (docs/DEVELOPMENT.md). The owner
+  plays it from the app launcher while work goes on: never touch
+  `stable/saves`, `stable/wine` or a running `ro-play` container.
 - Commits: small, logical, with `Co-Authored-By:` naming your model.
 - Work on `master`. Use a branch or worktree only for a good reason (several
   agents on different features at once), and merge it back before the
