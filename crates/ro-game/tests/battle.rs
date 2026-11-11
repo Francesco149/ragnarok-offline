@@ -114,6 +114,8 @@ impl T {
         g.handle(NetEvent::Packet { sid: 3, data: Writer::new(0x007d).finish() });
         cap.0.lock().unwrap().clear();
         let mut t = T { g, cap, me: aid, cid };
+        t.lua("unequip_all()"); // a new character wears the Knife and the Cotton Shirt; these tests start bare
+        t.cap.0.lock().unwrap().clear();
         t.g.skew(5100); // past the five seconds in which monsters ignore a newcomer
         t.check();
         t

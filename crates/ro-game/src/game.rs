@@ -57,7 +57,7 @@ pub struct GameConfig {
     pub new_account_gm_level: u8,
     pub start_point: Point,
     pub start_zeny: u32,
-    /// (item id, amount) given to new characters.
+    /// (item id, amount) given to new characters; equipment is put on.
     pub start_items: Vec<(u32, u32)>,
     /// Rates in percent (100 = official 1x).
     pub base_exp_rate: u32,
@@ -687,9 +687,17 @@ impl Game {
             save_point: self.cfg.start_point.clone(),
             ..Default::default()
         };
+        // Worn from the start, as in the period emulators (mod0631
+        // char/char.c:408-415: the Knife in 0x02, the Cotton Shirt in 0x10).
+        let mut worn = 0u32;
         for &(id, n) in &self.cfg.start_items {
-            if self.db.item(id).is_some() {
-                c.inventory.push(InvItem::new(id, n));
+            if let Some(d) = self.db.item(id) {
+                let mut it = InvItem::new(id, n);
+                if d.is_equip() && d.kind != 10 && d.loc & worn == 0 {
+                    it.equip = d.loc;
+                    worn |= d.loc;
+                }
+                c.inventory.push(it);
             }
         }
         let d = self.derive(&c);

@@ -163,6 +163,8 @@ fn full_session() {
     assert!(Reader::new(find(&o, 0x008e).unwrap()).seek(4).str_rest().contains("testmap 28,25"));
 
     // ---- spawn a Poring next to us and kill it (continuous attack)
+    // a new character wears its Knife and Cotton Shirt (mod0631 char/char.c:408-415)
+    assert_eq!(g.console_eval("equip(4).name .. ' / ' .. equip(2).name", aid), "Knife / Cotton Shirt");
     let r = g.console_eval("spawn_mob('testmap', 29, 25, 1002, 1)[1]", aid);
     let mob: u32 = r.trim().parse().expect("mob id");
     let mut w = Writer::new(0x0089);
