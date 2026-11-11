@@ -172,8 +172,10 @@ eAthena 817 (2004-02-19), bugs included. The translator is
   questions, monsters and times, with eAthena 0.5.2 and jAthena's finished
   versions of the same script consulted for what 817's half leaves open.
   What is not theirs:
-  * there is no waiting room: the Helper lets you in when you ask (the
-    official test called candidates one at a time out of an NPC chat room);
+  * nobody queues in the waiting room: the Helper lets you in when you
+    ask, or you tell him you would like to lounge a bit first, and from
+    then on he only asks whether you are ready (the official test called
+    candidates one at a time out of an NPC chat room);
   * mod0631's ten warp tiles on `job_wiz` are removed (they lead "to
     0,0", a random cell; they are the rooms' doors, and jAthena removed
     them too when it added the test);

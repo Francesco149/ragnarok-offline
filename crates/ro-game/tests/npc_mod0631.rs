@@ -696,6 +696,10 @@ fn wizard_test() {
     // into the waiting room; the Helper lets us into the Room of Water
     t.talk(raul.0, raul.1, raul.2, &[2, 1]);
     assert_eq!(t.eval("return player.map .. ' ' .. player.x .. ' ' .. player.y .. ' ' .. v.job_wizard_q"), "job_wiz 57 154 6");
+    // lounging first: we stay, and he remembers that we have heard the rules
+    let menus = t.talk(helper.0, helper.1, helper.2, &[2]);
+    assert_eq!(menus, ["I am ready.:I'd like to lounge a bit first."]);
+    assert_eq!(t.eval("return player.x .. ' ' .. player.y .. ' ' .. tmp.jobwiz_lounge"), "50 166 1");
     t.talk(helper.0, helper.1, helper.2, &[1]);
     assert_eq!(t.eval("return player.x .. ' ' .. player.y"), "114 169");
     // running out of time puts us back in Geffen, the monsters gone

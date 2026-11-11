@@ -23,7 +23,8 @@
 -- What is ours (docs/DEVIATIONS.md):
 --   * no waiting room. The official test took one candidate at a time: the
 --     others sat in an NPC chat room and were called in turn. Alone, you
---     talk to the Helper and go in;
+--     talk to the Helper and go in, or tell him you will lounge a bit
+--     first: after that he only asks whether you are ready;
 --   * the ten warp tiles mod0631 has on job_wiz (conf/npc_warp25.txt:440,
 --     "to job_wiz 0,0": a random cell) are removed, as jAthena removed
 --     them when it added this test: they are the rooms' doors, and the
@@ -703,20 +704,30 @@ npc {
   map = MAP, x = 50, y = 165, dir = 4, sprite = 700, name = "Helper",
   src = "817:jobs/wizard.txt:1020",
   on_click = function()
-    page("[Helper]", "Welcome to the testing grounds!", "Please go to the waiting room..")
-    next()
-    page("[Helper]", "Please wait if there is someone in front of you.",
-      "Progress will be announced periodically, so just relax until your turn.")
-    next()
-    page("[Helper]", "1 person usually takes 5 - 10 min.", "It shouldn't take too long.")
-    next()
-    -- ours: nobody is in front of you
-    page("[Helper]", "...But there is nobody in front of you today.", "Shall I let you in?")
-    next()
-    if menu("I am ready.", "Not yet.") ~= 1 then
-      page("[Helper]", "Take your time.")
+    -- ours from here on (owner, 2026-11-11): the waiting room is a room of
+    -- its own, so you may sit in it as candidates did; nobody is in front
+    -- of you, and once you have said you will wait he only asks if you are
+    -- ready
+    if tmp.jobwiz_lounge == 1 then
+      page("[Helper]", "Rested? Nobody is in front of you.", "Shall I let you in?")
+      next()
+    else
+      page("[Helper]", "Welcome to the testing grounds!", "Please go to the waiting room..")
+      next()
+      page("[Helper]", "Please wait if there is someone in front of you.",
+        "Progress will be announced periodically, so just relax until your turn.")
+      next()
+      page("[Helper]", "1 person usually takes 5 - 10 min.", "It shouldn't take too long.")
+      next()
+      page("[Helper]", "...But there is nobody in front of you today.", "Shall I let you in?")
+      next()
+    end
+    if menu("I am ready.", "I'd like to lounge a bit first.") ~= 1 then
+      tmp.jobwiz_lounge = 1
+      page("[Helper]", "Take your time. Tell me when you are ready.")
       return close()
     end
+    tmp.jobwiz_lounge = 0
     close()
     reset()
     candidate = player.name
