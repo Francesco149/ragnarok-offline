@@ -2041,3 +2041,48 @@ warp { map = "gon_dun02", x = 189, y = 166, span = { 1, 1 }, to = { "gon_dun02",
 warp { map = "gon_dun02", x = 198, y = 189, span = { 1, 1 }, to = { "gon_dun02", 186, 166 } } -- npc_warp_gonryun.txt:36
 warp { map = "gon_dun02", x = 253, y = 258, span = { 1, 1 }, to = { "gon_dun03", 68, 8 } } -- npc_warp_gonryun.txt:37
 warp { map = "gon_dun03", x = 68, y = 6, span = { 1, 1 }, to = { "gon_dun02", 256, 256 } } -- npc_warp_gonryun.txt:38
+
+-- Warp tiles that are scripts in the source (sprite 45 with a touch area): the
+-- random exits of Payon Cave 3F and the Clock Tower, and Ant Hell's two doors,
+-- which remember the field you came in from. A rand(n) with fewer branches than
+-- n falls through to the first one, as the source's goto chain does.
+npc { map = "aldeg_cas04", x = 132, y = 231, sprite = 45, name = "", id = "aldg408r@aldeg_cas04,132,231", touch = { 1, 1 }, src = "mod0631:npc_warp25.txt:174",
+  on_touch = function() local d = { { "aldeg_cas04", 170, 100 }, { "aldeg_cas04", 186, 88 }, { "aldeg_cas04", 129, 212 }, { "aldeg_cas04", 132, 209 } } d = d[rand(4) + 1] or d[1] warp(d[1], d[2], d[3]) end }
+npc { map = "moc_fild04", x = 219, y = 327, sprite = 45, name = "", id = "mocf016@moc_fild04,219,327", touch = { 3, 4 }, src = "mod0631:npc_warp.txt:318",
+  on_touch = function() var("anthell", 0) warp("anthell01", 35, 262) end }
+npc { map = "moc_fild15", x = 258, y = 253, sprite = 45, name = "", id = "mocf017@moc_fild15,258,253", touch = { 3, 3 }, src = "mod0631:npc_warp.txt:319",
+  on_touch = function() var("anthell", 1) warp("anthell01", 35, 262) end }
+npc { map = "pay_dun03", x = 127, y = 62, sprite = 45, name = "", id = "payd04r@pay_dun03,127,62", touch = { 2, 2 }, src = "mod0631:npc_warp.txt:504",
+  on_touch = function() local d = { { "pay_dun04", 201, 204 }, { "pay_dun04", 193, 43 }, { "pay_dun04", 43, 40 }, { "pay_dun04", 34, 202 } } d = d[rand(4) + 1] or d[1] warp(d[1], d[2], d[3]) end }
+npc { map = "anthell01", x = 35, y = 267, sprite = 45, name = "", id = "ant001@anthell01,35,267", touch = { 1, 1 }, src = "mod0631:npc_warp.txt:1018",
+  on_touch = function() local d = { { "moc_fild04", 213, 327 }, { "moc_fild15", 251, 248 } } d = (var("anthell") or 0) ~= 0 and d[2] or d[1] warp(d[1], d[2], d[3]) end }
+npc { map = "anthell02", x = 171, y = 169, sprite = 45, name = "", id = "ant001@anthell02,171,169", touch = { 1, 2 }, src = "mod0631:npc_warp.txt:1022",
+  on_touch = function() local d = { { "moc_fild04", 213, 327 }, { "moc_fild15", 251, 248 } } d = (var("anthell") or 0) == 0 and d[2] or d[1] warp(d[1], d[2], d[3]) end }
+npc { map = "c_tower2", x = 13, y = 288, sprite = 45, name = "", id = "clt006r@c_tower2,13,288", touch = { 1, 1 }, src = "mod0631:npc_warp.txt:1140",
+  on_touch = function() local d = { { "c_tower2", 13, 282 }, { "alde_dun03", 175, 131 }, { "c_tower3", 235, 7 } } d = d[rand(3) + 1] or d[1] warp(d[1], d[2], d[3]) end }
+npc { map = "c_tower2", x = 233, y = 267, sprite = 45, name = "", id = "clt007r@c_tower2,233,267", touch = { 1, 1 }, src = "mod0631:npc_warp.txt:1150",
+  on_touch = function() local d = { { "c_tower2", 288, 267 }, { "alde_dun03", 130, 130 }, { "c_tower3", 252, 29 } } d = d[rand(3) + 1] or d[1] warp(d[1], d[2], d[3]) end }
+npc { map = "c_tower3", x = 163, y = 252, sprite = 45, name = "", id = "clt014r@c_tower3,163,252", touch = { 1, 1 }, src = "mod0631:npc_warp.txt:1169",
+  on_touch = function() local d = { { "c_tower3", 168, 252 }, { "alde_dun02", 262, 41 } } d = d[rand(2) + 1] or d[1] warp(d[1], d[2], d[3]) end }
+npc { map = "c_tower3", x = 240, y = 7, sprite = 45, name = "", id = "clt015r@c_tower3,240,7", touch = { 1, 1 }, src = "mod0631:npc_warp.txt:1177",
+  on_touch = function() local d = { { "c_tower2", 13, 282 }, { "alde_dun03", 175, 131 }, { "c_tower3", 235, 7 } } d = d[rand(3) + 1] or d[1] warp(d[1], d[2], d[3]) end }
+npc { map = "c_tower3", x = 252, y = 24, sprite = 45, name = "", id = "clt016r@c_tower3,252,24", touch = { 1, 1 }, src = "mod0631:npc_warp.txt:1187",
+  on_touch = function() local d = { { "c_tower2", 228, 267 }, { "alde_dun03", 130, 130 }, { "c_tower3", 252, 29 } } d = d[rand(3) + 1] or d[1] warp(d[1], d[2], d[3]) end }
+npc { map = "c_tower4", x = 75, y = 156, sprite = 45, name = "", id = "clt027r@c_tower4,75,156", touch = { 0, 0 }, src = "mod0631:npc_warp.txt:1206",
+  on_touch = function() local d = { { "c_tower3", 168, 252 }, { "alde_dun02", 262, 41 }, { "c_tower4", 73, 154 }, { "c_tower4", 140, 149 } } d = d[rand(4) + 1] or d[1] warp(d[1], d[2], d[3]) end }
+npc { map = "c_tower4", x = 68, y = 79, sprite = 45, name = "", id = "clt028r@c_tower4,68,79", touch = { 0, 0 }, src = "mod0631:npc_warp.txt:1217",
+  on_touch = function() local d = { { "c_tower2", 13, 282 }, { "alde_dun03", 175, 131 }, { "c_tower3", 235, 7 }, { "c_tower4", 65, 77 } } d = d[rand(4) + 1] or d[1] warp(d[1], d[2], d[3]) end }
+npc { map = "c_tower4", x = 142, y = 151, sprite = 45, name = "", id = "clt029r@c_tower4,142,151", touch = { 0, 0 }, src = "mod0631:npc_warp.txt:1228",
+  on_touch = function() local d = { { "c_tower3", 168, 252 }, { "alde_dun02", 262, 41 }, { "c_tower4", 73, 154 }, { "c_tower4", 140, 149 } } d = d[rand(4) + 1] or d[1] warp(d[1], d[2], d[3]) end }
+npc { map = "c_tower4", x = 151, y = 96, sprite = 45, name = "", id = "clt030r@c_tower4,151,96", touch = { 0, 0 }, src = "mod0631:npc_warp.txt:1239",
+  on_touch = function() local d = { { "c_tower2", 228, 267 }, { "alde_dun03", 130, 130 }, { "c_tower3", 252, 29 }, { "c_tower4", 152, 95 } } d = d[rand(4) + 1] or d[1] warp(d[1], d[2], d[3]) end }
+npc { map = "c_tower4", x = 189, y = 40, sprite = 45, name = "", id = "clt031r@c_tower4,189,40", touch = { 2, 2 }, src = "mod0631:npc_warp.txt:1250",
+  on_touch = function() local d = { { "c_tower2", 228, 267 }, { "alde_dun03", 130, 130 }, { "c_tower3", 252, 29 }, { "c_tower4", 152, 95 } } d = d[rand(4) + 1] or d[1] warp(d[1], d[2], d[3]) end }
+npc { map = "alde_dun02", x = 267, y = 41, sprite = 45, name = "", id = "clt008r@alde_dun02,267,41", touch = { 1, 1 }, src = "mod0631:npc_warp.txt:1269",
+  on_touch = function() local d = { { "c_tower3", 168, 252 }, { "alde_dun02", 262, 141 } } d = d[rand(2) + 1] or d[1] warp(d[1], d[2], d[3]) end }
+npc { map = "alde_dun03", x = 130, y = 125, sprite = 45, name = "", id = "clt014r@alde_dun03,130,125", touch = { 1, 1 }, src = "mod0631:npc_warp.txt:1283",
+  on_touch = function() local d = { { "c_tower2", 228, 267 }, { "alde_dun03", 130, 130 }, { "c_tower3", 252, 29 } } d = d[rand(3) + 1] or d[1] warp(d[1], d[2], d[3]) end }
+npc { map = "alde_dun03", x = 171, y = 127, sprite = 45, name = "", id = "clt015r@alde_dun03,171,127", touch = { 1, 1 }, src = "mod0631:npc_warp.txt:1293",
+  on_touch = function() local d = { { "c_tower2", 13, 282 }, { "alde_dun03", 175, 131 }, { "c_tower3", 235, 7 } } d = d[rand(4) + 1] or d[1] warp(d[1], d[2], d[3]) end }
+npc { map = "alde_dun04", x = 80, y = 34, sprite = 45, name = "", id = "clt022r@alde_dun04,80,34", touch = { 1, 1 }, src = "mod0631:npc_warp.txt:1308",
+  on_touch = function() local d = { { "c_tower2", 13, 282 }, { "alde_dun03", 175, 131 }, { "c_tower3", 235, 7 }, { "alde_dun04", 84, 36 } } d = d[rand(4) + 1] or d[1] warp(d[1], d[2], d[3]) end }

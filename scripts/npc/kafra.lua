@@ -252,7 +252,7 @@ KAFRA_LIST = {
   -- Mjolnir mine, the Orc Dungeon, the Pyramid, the Sunken Ship, Byalan and the
   -- Archer Village: until then these Kafras saved, as they do here
   { src = "817:other/kafra.txt:2", m631 = 4789, map = "gef_fild10", x = 73, y = 340, dir = 4, sprite = 115, cutin = "kafra_02",
-    save = { "gef_fild10", 54, 232 }, storage = 55 },
+    save = { "gef_fild10", 54, 320 }, storage = 55 }, -- mod0631:4805; 817 saves at 54,232, a blocked cell
   { src = "817:other/kafra.txt:284", m631 = 2914, map = "moc_ruins", x = 61, y = 156, dir = 5, sprite = 114, cutin = "kafra_04",
     save = { "moc_ruins", 41, 141 }, storage = 55 },
   { src = "817:other/kafra.txt:375", m631 = 1136, map = "prt_fild01", x = 198, y = 47, dir = 8, sprite = 112, cutin = "kafra_06",

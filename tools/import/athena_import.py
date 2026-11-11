@@ -617,8 +617,39 @@ def shop_name(names, mp, x, y, sprite):
     return best[1] if best else "Shop"
 
 
+def script_warp(f, ln, cols, where):
+    """A `script` warp tile of mod0631's npc_warp files as an npc{} with a touch area."""
+    lines = read(f).splitlines()
+    body, i = cols[3], ln
+    while body.count("{") > body.count("}") and i < len(lines):
+        body += "\n" + lines[i]
+        i += 1
+    m = re.match(r"([\w\-]+(?:\.gat)?),(\d+),(\d+)", cols[0])
+    h = re.match(r"45,(\d+),(\d+),", cols[3].strip())
+    dests = [(strip_gat(a), int(b), int(c)) for a, b, c in re.findall(r'warp\s+"([\w\-]+(?:\.gat)?)",(\d+),(\d+)', body)]
+    if not (m and h and dests):
+        return None
+    mp, x, y = strip_gat(m.group(1)), m.group(2), m.group(3)
+    lst = ", ".join(f'{{ "{a}", {b}, {c} }}' for a, b, c in dests)
+    rnd = re.search(r"rand\((\d+)\)", body)
+    setv = re.search(r"set\s+anthell,(\d)", body)
+    if rnd:
+        code = f"local d = {{ {lst} }} d = d[rand({rnd.group(1)}) + 1] or d[1] warp(d[1], d[2], d[3])"
+    elif setv:
+        code = f'var("anthell", {setv.group(1)}) warp("{dests[0][0]}", {dests[0][1]}, {dests[0][2]})'
+    elif "anthell" in body:
+        # `if(anthell) goto moc15` / `if(!anthell) goto moc15`: dests are (moc04, moc15)
+        test = '(var("anthell") or 0) == 0' if "!anthell" in body else '(var("anthell") or 0) ~= 0'
+        code = f"local d = {{ {lst} }} d = {test} and d[2] or d[1] warp(d[1], d[2], d[3])"
+    else:
+        code = f'warp("{dests[0][0]}", {dests[0][1]}, {dests[0][2]})'
+    return (f'npc {{ map = "{mp}", x = {x}, y = {y}, sprite = 45, name = "", id = "{cols[2].strip()}@{mp},{x},{y}", '
+            f'touch = {{ {h.group(1)}, {h.group(2)} }}, src = "mod0631:{where}",\n'
+            f"  on_touch = function() {code} end }}")
+
+
 def import_npcs():
-    warps, spawns, shops = [], [], []
+    warps, spawns, shops, touch_npcs = [], [], [], []
     names817 = shop_names_817()
     for f in npc_files():
         if not f.exists():
@@ -631,7 +662,9 @@ def import_npcs():
                 continue
             kind = cols[1].strip()
             where = f"{f.name}:{ln}"
-            if kind == "warp":
+            if kind == "script" and cols[3].strip().startswith("45,") and f.name.startswith("npc_warp"):
+                touch_npcs.append(script_warp(f, ln, cols, where))
+            elif kind == "warp":
                 m = re.match(r"([\w\-]+(?:\.gat)?),(\d+),(\d+)", cols[0])
                 d = re.match(r"(\d+),(\d+),([\w\-]+(?:\.gat)?),(\d+),(\d+)", cols[3].strip())
                 if m and d:
@@ -668,7 +701,13 @@ def import_npcs():
            "-- (mod0631's are Japanese); \"Shop\" where 817 has none within 3 cells.\n")
     out = ROOT / "scripts/import"
     out.mkdir(parents=True, exist_ok=True)
-    (out / "warps.lua").write_text(hdr + "\n".join(warps) + "\n", encoding="utf-8")
+    (out / "warps.lua").write_text(
+        hdr + "\n".join(warps) + "\n\n"
+        "-- Warp tiles that are scripts in the source (sprite 45 with a touch area): the\n"
+        "-- random exits of Payon Cave 3F and the Clock Tower, and Ant Hell's two doors,\n"
+        "-- which remember the field you came in from. A rand(n) with fewer branches than\n"
+        "-- n falls through to the first one, as the source's goto chain does.\n"
+        + "\n".join(t for t in touch_npcs if t) + "\n", encoding="utf-8")
     (out / "spawns.lua").write_text(hdr + "-- delay/delay2: respawn ms (0 = Athena default 5000)\n" + "\n".join(spawns) + "\n", encoding="utf-8")
     (out / "shops.lua").write_text(hdr + "\n".join(shops) + "\n", encoding="utf-8")
     return len(warps), len(spawns), len(shops)
