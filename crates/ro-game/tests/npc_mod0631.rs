@@ -77,12 +77,37 @@ fn enter(g: &mut Game, cap: &Cap) -> u32 {
     aid
 }
 
+/// At most this many games of this file at once: each holds a whole world
+/// (about 100 MB), and eighteen side by side cross the workbench's 2 GiB.
+const GAMES_AT_ONCE: usize = 8;
+static GAMES: (std::sync::Mutex<usize>, std::sync::Condvar) = (std::sync::Mutex::new(0), std::sync::Condvar::new());
+
+struct Slot;
+impl Slot {
+    fn take() -> Slot {
+        let mut n = GAMES.0.lock().unwrap_or_else(|e| e.into_inner());
+        while *n >= GAMES_AT_ONCE {
+            n = GAMES.1.wait(n).unwrap_or_else(|e| e.into_inner());
+        }
+        *n += 1;
+        Slot
+    }
+}
+impl Drop for Slot {
+    fn drop(&mut self) {
+        *GAMES.0.lock().unwrap_or_else(|e| e.into_inner()) -= 1;
+        GAMES.1.notify_one();
+    }
+}
+
 struct T {
     g: Game,
     cap: Cap,
     me: u32,
     /// What the NPC of the last `talk` said, line by line.
     said: Vec<String>,
+    /// Dropped last, after the game.
+    _slot: Slot,
 }
 
 impl T {
@@ -162,8 +187,12 @@ const MAPS: [&str; 31] = [
     "gef_tower", "job_wiz", "new_zone02", "new_zone03", "new_zone04", "payon_in02",
     "izlu2dun", "job_prist", "prt_church", "prt_fild03", "moc_fild07", "prt_fild00", "c_tower2",
 ];
+/// Maps no script reaches beyond 260,260: smaller stand-ins, so that the
+/// eighteen tests side by side stay under the workbench's 2 GiB.
+const SMALL_MAPS: [&str; 3] = ["in_hunter", "job_hunte", "pay_fild10"];
 
 fn setup(tag: &str) -> T {
+    let slot = Slot::take();
     let root = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../..");
     let saves = std::env::temp_dir().join(format!("ro-offline-m631-{tag}-{}", std::process::id()));
     let _ = std::fs::remove_dir_all(&saves);
@@ -178,16 +207,16 @@ fn setup(tag: &str) -> T {
     };
     let cap = Cap::default();
     let mut g = Game::new(cfg, Resources::new(vfs), Box::new(cap.clone())).expect("game");
-    for m in MAPS {
-        g.res.vfs.add_memory_file(&format!("data\\{m}.gat"), gat(400, 400));
+    for (m, size) in MAPS.iter().map(|m| (m, 400)).chain(SMALL_MAPS.iter().map(|m| (m, 260))) {
+        g.res.vfs.add_memory_file(&format!("data\\{m}.gat"), gat(size, size));
         g.res.maps.insert(m.to_string());
     }
     let me = enter(&mut g, &cap);
-    for m in MAPS {
+    for m in MAPS.iter().chain(SMALL_MAPS.iter()) {
         g.ensure_map(m);
     }
     g.notices.clear();
-    T { g, cap, me, said: Vec::new() }
+    T { g, cap, me, said: Vec::new(), _slot: slot }
 }
 
 #[test]
@@ -1020,4 +1049,83 @@ fn wizard_test() {
     t.eval("player.skill_point = 0");
     t.talk(clerk.0, clerk.1, clerk.2, &[]);
     assert_eq!(t.eval("return player.class .. ' ' .. count_item(505) .. ' ' .. v.job_wizard_q"), "9 6 0");
+}
+
+impl T {
+    /// Kill the monsters on the player's map whose death runs `event`.
+    fn slay_by(&mut self, event: &str, n: usize) {
+        let map = self.eval("return player.map");
+        let mobs: Vec<u32> = self
+            .g
+            .world
+            .units
+            .values()
+            .filter(|u| u.map == map && u.mob().is_some_and(|m| m.event.as_deref() == Some(event)))
+            .map(|u| u.id)
+            .take(n)
+            .collect();
+        assert_eq!(mobs.len(), n, "{event}");
+        for id in &mobs {
+            self.eval(&format!("battle.damage(player.id, {id}, 999999)"));
+            self.run(250);
+        }
+    }
+}
+
+/// The Hunter test (scripts/npc/hunter_test.lua): the interview, the
+/// receptionist's items, the guild master's arrows, and the room: a decoy
+/// or a trap sends you back, four Job Change Monsters open the switch, the
+/// switch the exit, then the necklace and the bow.
+#[test]
+fn hunter_test() {
+    let mut t = setup("hunter_test");
+    let sharon = ("in_hunter", 99, 99);
+    let demon = ("in_hunter", 55, 99);
+    let master = ("payon_in02", 21, 31);
+    let guide = ("job_hunte", 178, 32);
+    let (target, decoy) = ("hunter_room::OnKilled", "hunter_room::OnWrong");
+    t.eval("job_change(3); player.job_level = 45");
+    // the interview: one answer that scores nothing fails it below 90
+    t.talk(sharon.0, sharon.1, sharon.2, &[1, 1, 1, 1, 2, 2, 1, 2, 3, 1, 1, 2]);
+    assert_eq!(t.eval("return v.hntr_q .. ' ' .. v.hntr_q2"), "0 1", "two answers that score nothing");
+    t.talk(sharon.0, sharon.1, sharon.2, &[2, 2, 2, 2, 1, 2, 3, 1, 1, 2]);
+    assert_eq!(t.eval("return v.hntr_q .. ' ' .. v.hntr_jl"), "1 40");
+    // the items: none, then the list's
+    t.talk(demon.0, demon.1, demon.2, &[1]);
+    let list = t.eval("return v.hntr_q2");
+    assert!(["1", "2", "3"].contains(&list.as_str()), "{list}");
+    t.talk(demon.0, demon.1, demon.2, &[]);
+    assert_eq!(t.eval("return v.hntr_q"), "1", "nothing brought yet");
+    t.eval("for _, it in ipairs({{508,9},{935,9},{955,9},{925,3},{932,4},{511,5},{509,5},{1019,5},{7030,5}}) do give_item(it[1], it[2]) end");
+    t.talk(demon.0, demon.1, demon.2, &[]);
+    assert_eq!(t.eval("return v.hntr_q"), "2");
+    // the guild master: arrows, and off to the waiting room
+    t.talk(master.0, master.1, master.2, &[1, 2, 3]);
+    assert_eq!(t.eval("return player.map .. ' ' .. player.x .. ' ' .. player.y .. ' ' .. count_item(1751)"), "job_hunte 176 22 200");
+    // in; a decoy shot sends you back and clears the room
+    t.talk(guide.0, guide.1, guide.2, &[1]);
+    assert_eq!(t.eval("return player.x .. ' ' .. player.y"), "90 67");
+    assert_eq!(t.eval(&format!("return mob_count('job_hunte', '{target}') .. ' ' .. mob_count('job_hunte', '{decoy}')")), "6 30");
+    t.slay_by(decoy, 1);
+    assert_eq!(t.eval("return player.x .. ' ' .. player.y"), "176 22", "a decoy");
+    assert_eq!(t.eval(&format!("return mob_count('job_hunte', '{target}') + mob_count('job_hunte', '{decoy}')")), "0");
+    // a trap does the same
+    t.talk(guide.0, guide.1, guide.2, &[1]);
+    t.step(52, 140);
+    assert_eq!(t.eval("return player.x .. ' ' .. player.y"), "176 22", "a trap");
+    // three minutes and a bit, and you are out
+    t.talk(guide.0, guide.1, guide.2, &[1]);
+    t.run(196_000);
+    assert_eq!(t.eval("return player.x .. ' ' .. player.y"), "176 22", "out of time");
+    // four of the six: the rest fall with them, and the switch works
+    t.talk(guide.0, guide.1, guide.2, &[1]);
+    t.slay_by(target, 4);
+    assert_eq!(t.eval(&format!("return mob_count('job_hunte', '{target}') + mob_count('job_hunte', '{decoy}')")), "0");
+    t.talk("job_hunte", 93, 101, &[1]);
+    t.step(89, 139);
+    assert_eq!(t.eval("return player.map .. ' ' .. v.hntr_q2"), "payon_in02 2");
+    t.talk(master.0, master.1, master.2, &[]);
+    assert_eq!(t.eval("return v.hntr_q .. ' ' .. count_item(1007)"), "3 1");
+    t.talk(sharon.0, sharon.1, sharon.2, &[]);
+    assert_eq!(t.eval("return player.class .. ' ' .. count_item(1007) .. ' ' .. count_item(1710)"), "11 0 1", "a Hunter, with a Cross Bow");
 }

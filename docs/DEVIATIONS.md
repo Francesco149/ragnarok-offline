@@ -285,6 +285,28 @@ eAthena 817 (2004-02-19), bugs included. The translator is
     to one spell clear a room once, not once each;
   * the Fire room's guards get 817's two minutes; 0.5.2 and jAthena give
     one. Pages are cut to the dialogue window.
+* **The Hunter test** (`scripts/npc/hunter_test.lua`). 817 changes an
+  Archer into a Hunter at job level 40 with no test, as iRO did before
+  Turtle Island; an iRO player's walkthrough of 2004-02-15 (THREADS.md #8)
+  describes the test that came with the island, and eAthena 1.0's script
+  of 2004-11-04 ("converted from aegis script") is that test: Sharon's
+  interview at the front desk, the Demon Hunter's items, the guild
+  master's 200 Silver Arrows in the Archer Guild, and the trap room on
+  `job_hunte` (four Job Change Monsters to kill among thirty decoys, 381
+  traps, a switch, the exit at the far end, three minutes); a Necklace of
+  Wisdom, and a Cross Bow (a Hunter Bow from job level 50) on changing
+  job. Where they part, the walkthrough decides: its three item lists (not
+  eAthena's five), the decoys' names ("Hunter Change Monster", "Job Test
+  Monster" and the like, as rAthena's later copy has them; eAthena calls
+  them all "Test Monster"), the switch's "escape" button, and three
+  minutes for the whole room (eAthena gives 30 seconds after the switch).
+  Ours: one player, so no chat room (the Guide lets you in or lets you
+  lounge, as in the Wizard test); one guild master, in the Archer Guild
+  (the walkthrough also names one "at the central palace", `payon_in03`,
+  which this client lacks); mod0631's two warp tiles on `job_hunte`
+  ("to 0,0") are removed; a decoy, a trap or the switch's "Re-test" sends
+  you back to the waiting room and clears the room; pages cut to the
+  window, eAthena's jokes for other jobs shortened.
 * **Alberta's sailor** (`scripts/npc/alberta_sailor.lua`) no longer sells
   passage to Amatsu and Gonryun: the client has neither map (they are later
   additions 817 took from jAthena), so the fare went and the ship did not.

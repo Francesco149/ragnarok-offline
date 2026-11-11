@@ -180,10 +180,9 @@ const QUESTS: &[Quest] = &[
     },
     Quest { name: "Thief", files: &["import/npc/jobs/thief.lua"], from: 0, job_level: 10, to: 6, skill: 0, gifts: None, numbers: &[] },
     Quest { name: "Knight", files: &["import/npc/jobs/knight.lua"], from: 1, job_level: 50, to: 7, skill: 0, gifts: None, numbers: &[] },
-    // the Wizard's and the Priest's tests want right answers and monsters killed in time:
-    // npc_mod0631.rs, wizard_test and priest_test
+    // the Wizard's, the Priest's and the Hunter's tests want right answers and monsters killed
+    // in time: npc_mod0631.rs, wizard_test, priest_test and hunter_test
     Quest { name: "Blacksmith", files: &["import/npc/jobs/blacksmith.lua"], from: 5, job_level: 50, to: 10, skill: 0, gifts: None, numbers: &[] },
-    Quest { name: "Hunter", files: &["import/npc/jobs/hunter.lua"], from: 3, job_level: 50, to: 11, skill: 0, gifts: None, numbers: &[] },
     Quest { name: "Assassin", files: &["import/npc/jobs/assassin.lua"], from: 6, job_level: 50, to: 12, skill: 0, gifts: None, numbers: &[] },
 ];
 
