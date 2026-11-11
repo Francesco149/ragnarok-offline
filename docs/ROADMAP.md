@@ -74,9 +74,12 @@ doomed swords and Alberta's doll child; the Wizard test on `job_wiz` from
 Next, in order:
 
 * play through each 1st-job quest and the training ground in the client
-  (the test does not walk the real maps: the Swordman course and the
-  Priest test are untried there); fix what breaks in `scripts/npc/` (one
-  file per fix, listed in DEVIATIONS.md);
+  (the test does not walk the real maps). The Swordman course is checked
+  on the client's map by search (`research/course_check.py`: each stretch
+  has a way past the pits to its warp, and every pit drops you somewhere
+  with a way out) but not yet played; the Priest test is untried there.
+  Fix what breaks in `scripts/npc/` (one file per fix, listed in
+  DEVIATIONS.md);
 * the Knight's and the Hunter's tests on `job_knt` and `job_hunte`, which
   the client has (THREADS.md #8): no period script is known;
 * NPC waiting rooms (0x00d7 chat bubbles over arena/PvP NPCs);
