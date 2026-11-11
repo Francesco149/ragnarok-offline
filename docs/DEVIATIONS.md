@@ -164,6 +164,30 @@ eAthena 817 (2004-02-19), bugs included. The translator is
   and nobody could become a Priest through the test. The three rounds are
   played on `job_priest` in turn; the map's flags (no teleport, no memo, no
   death penalty, logging out puts you in Prontera) are 817's.
+* **The Wizard test** (`scripts/npc/wizard_test.lua`). 817 ships the
+  test (things to bring, ten questions, three rooms of monsters on
+  `job_wiz`) as a half-converted script it could not run, and was played
+  with 659's one-line guild NPC, as we were. The map is in the CD's Turtle
+  Island patch file (THREADS.md #8), so the test is in: 817's steps, words,
+  questions, monsters and times, with eAthena 0.5.2 and jAthena's finished
+  versions of the same script consulted for what 817's half leaves open.
+  What is not theirs:
+  * there is no waiting room: the Helper lets you in when you ask (the
+    official test called candidates one at a time out of an NPC chat room);
+  * mod0631's ten warp tiles on `job_wiz` are removed (they lead "to
+    0,0", a random cell; they are the rooms' doors, and jAthena removed
+    them too when it added the test);
+  * `job_wiz` has map flags no period source gives it: no teleport, no
+    memo, no Dead Branch, and logging out there puts you in Geffen. The
+    rooms have no doors, so without them a Fly Wing skips the guards and
+    a logout leaves you in a sealed room;
+  * the elemental stones are all needed (the three scripts' test ends in
+    an "and" that lets four stones of one kind through), Cartlin takes the
+    Apple Juice before her hint (817 and 0.5.2 jump to a missing label),
+    wind on Water 3 is 200% (817 marks 175%), and several monsters dying
+    to one spell clear a room once, not once each;
+  * the Fire room's guards get 817's two minutes; 0.5.2 and jAthena give
+    one. Pages are cut to the dialogue window.
 * **Alberta's sailor** (`scripts/npc/alberta_sailor.lua`) no longer sells
   passage to Amatsu and Gonryun: the client has neither map (they are later
   additions 817 took from jAthena), so the fare went and the ship did not.
@@ -224,9 +248,9 @@ eAthena 817 (2004-02-19), bugs included. The translator is
   * `save` is the later alias of `savepoint` (the Prontera inns);
   * `else(cond) goto L` (Thief quest) is read as `if`.
 
-  817's Wizard quest is an unfinished conversion it couldn't run; we use
-  Athena 659's simple Wizard guild NPC (job level 40, no test) instead
-  (THREADS.md #8).
+  817's Wizard quest is an unfinished conversion it couldn't run; it is
+  finished by hand in `scripts/npc/wizard_test.lua` (below), which replaces
+  the Athena 659 guild NPC the import still carries.
 * **The Merchant quest's endless loop.** One label in 817's Merchant guild
   script jumps to itself (`R10: if(@TEMP !=0) goto R10;`), so one
   application in eight hung the server. It goes to `R11`, the second serial

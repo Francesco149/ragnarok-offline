@@ -39,6 +39,7 @@ wrap_npc("817:jobs/archer.txt:4", function(orig)  -- run your code around an imp
 end)
 
 warp { map = "prontera", x = 156, y = 22, span = { 2, 2 }, to = { "prt_fild08", 170, 375 } }
+remove_warp("job_wiz", 99, 160)                  -- drop an imported warp by its own cell
 
 shop { map = "prontera", x = 100, y = 100, dir = 4, sprite = 83, name = "Tool Dealer",
        items = { 501, { 502, 250 } } }          -- id = db price, {id, price}

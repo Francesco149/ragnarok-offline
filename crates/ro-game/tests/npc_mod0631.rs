@@ -3,7 +3,9 @@
 //! Thief quest skills from Alcouskou, a Monster Tamer's recipe, and the
 //! Novice's First Aid and Play Dead, the Peco Peco keeper, the dye chain, Turtle
 //! Island, the doomed swords and the doll child. The crawler
-//! (npc_crawl.rs) only takes random paths through them. Repo scripts,
+//! (npc_crawl.rs) only takes random paths through them. Also the Wizard test
+//! (817's script on the Turtle Island patch's job_wiz), which needs right
+//! answers and a clock. Repo scripts,
 //! synthetic all-walkable maps, no client files.
 
 use std::path::PathBuf;
@@ -99,13 +101,18 @@ impl T {
     /// Stand next to the NPC, click it, and answer its menus with `choices`
     /// in order (1-based). Returns every menu it showed.
     fn talk(&mut self, map: &str, x: u16, y: u16, choices: &[u8]) -> Vec<String> {
+        let mut choices = choices.iter();
+        self.talk_by(map, x, y, |menu| *choices.next().unwrap_or_else(|| panic!("unexpected menu {menu:?}")))
+    }
+
+    /// The same, with the closure choosing from each menu it is shown.
+    fn talk_by(&mut self, map: &str, x: u16, y: u16, mut pick: impl FnMut(&str) -> u8) -> Vec<String> {
         let npc = self.npc_at(map, x, y);
         self.eval(&format!("warp('{map}', {x}, {})", y + 1));
         self.cap.take(3);
         let mut w = Writer::new(0x0090);
         w.u32(npc).u8(1);
         send(&mut self.g, 3, w);
-        let mut choices = choices.iter();
         let mut menus = Vec::new();
         for _ in 0..200 {
             let out = self.cap.take(3);
@@ -114,7 +121,7 @@ impl T {
                 match u16::from_le_bytes([p[0], p[1]]) {
                     0x00b7 => {
                         menus.push(Reader::new(p).seek(8).str_rest());
-                        let c = *choices.next().unwrap_or_else(|| panic!("unexpected menu {:?}", menus.last()));
+                        let c = pick(menus.last().unwrap());
                         let mut w = Writer::new(0x00b8);
                         w.u32(npc).u8(c);
                         send(&mut self.g, 3, w);
@@ -145,9 +152,10 @@ impl T {
     }
 }
 
-const MAPS: [&str; 18] = [
+const MAPS: [&str; 20] = [
     "prontera", "izlude", "aldeba_in", "moc_prydb1", "payon", "alberta_in", "morocc", "prt_in", "prt_castle", "geffen",
     "geffen_in", "morocc_in", "alberta", "tur_dun01", "tur_dun02", "izlude_in", "alb2trea", "pay_fild08",
+    "gef_tower", "job_wiz",
 ];
 
 fn setup(tag: &str) -> T {
@@ -556,4 +564,186 @@ fn doll_child() {
     t.eval("player.sex = 0");
     t.talk("alberta", 117, 135, &[2, 1]);
     assert_eq!(t.eval("return count_item(741) .. ' ' .. count_item(529)"), "0 2");
+}
+
+/// Raul's questions by the answers offered, and the right one (scripts/npc/wizard_test.lua).
+const WIZARD_KEY: [(&str, u8); 35] = [
+    ("Fire Bolt Lv 4:Fire Ball Lv 5:Sight Lv 1:Napalm Beat Lv 4", 4),
+    ("Changes to Water:Changes to Earth:Changes to Fire:Changes to Wind", 1),
+    ("1.6x:1.7x:2x:20x", 2),
+    ("Red Blood:Blue Gem:Yellow Gem:Red Gem", 4),
+    ("Napalm Beat Lv 4:Soul Strike Lv 5:SP Recovery Lv 6:Ice Wall Lv 7", 3),
+    ("14:21:28:35", 2),
+    ("dmg 18% SP 1.5%:dmg 18% SP 2%:dmg 24% SP 1.5%:dmg 24% SP 2%", 2),
+    ("40 sp, 6 hits:35 sp, 6 hits:40 sp, 7 hits:35 sp, 7 hits", 3),
+    ("84:74:64:54", 2),
+    ("Lightning Bolt:Fire Bolt:Cold Bolt:Sight", 1),
+    ("Thief Bug:Peco Peco:Pupa:Mace Kobold", 3),
+    ("Flora:Giearth:Golem:Myst", 1),
+    ("Elder Willow:Evil Druid:Magnolia:Marc", 2),
+    ("125%:150%:175%:200%", 4),
+    ("Baby Desert Wolf:Familiar:Tie:Don't know", 1),
+    ("Poporing:Roda Frog:Smokie:Poison Spore", 2),
+    ("Knife Goblin:Mace Goblin:Flail Goblin:Hammer Goblin", 4),
+    ("Horong:Chonchon:Andre:Caramel", 4),
+    ("Poring:Mastering:Ghostring:Spore", 3),
+    ("Drake:Megalodon:Deviace:Khalitzburg", 3),
+    ("INT:AGI:DEX:VIT", 1),
+    ("Water:Earth:Fire:Wind", 2),
+    ("Weak physical abilities:Distance attacks:Good money maker:High magic def", 3),
+    ("Prontera:Morroc:Alberta:Geffen", 4),
+    ("Andre Larva Card:Soldier Andre Card:Baby Desert Wolf Card:Elder Willow Card", 2),
+    ("Close range combat:High dodge:Dance skills:Magical power", 4),
+    ("8:7:6:5", 4),
+    ("Knife:Cap:Sandals:Eye of Dullahan", 2),
+    ("Yellow Gemstone:Red Gemstone:Blue Gemstone:Red Blood", 1),
+    ("Marduk Card:Magnolia Card:Willow Card:Maya Card", 2),
+    ("Mantis:Cunner Tooth:Giearth:Caramel", 2),
+    ("Yoyo:Bigfoot:Metaller:Zerom", 4),
+    ("Marina:Vitata:Scorpion:Giearth", 1),
+    ("Cold Bolt:Fire Bolt:Lightning Bolt:Stone Curse", 3),
+    ("Hydra:Mandragora:Greatest General:Frilldora", 4),
+];
+
+impl T {
+    /// Let some game time pass, in milliseconds.
+    fn run(&mut self, ms: u64) {
+        for _ in 0..ms / 250 {
+            self.g.skew(250);
+            self.g.tick();
+        }
+        let errors: Vec<_> = self.g.notices.drain(..).filter(|n| n.contains("script error") || n.contains("event")).collect();
+        assert!(errors.is_empty(), "{errors:?}");
+    }
+
+    /// Kill every monster on the player's map, by the player's hand.
+    fn slay(&mut self) -> usize {
+        let map = self.eval("return player.map");
+        let mobs: Vec<u32> = self.g.world.units.values().filter(|u| u.map == map && u.mob().is_some()).map(|u| u.id).collect();
+        for id in &mobs {
+            self.eval(&format!("battle.damage(player.id, {id}, 999999)"));
+        }
+        self.run(500);
+        mobs.len()
+    }
+}
+
+fn wizard_answer(menu: &str, right: bool) -> u8 {
+    match WIZARD_KEY.iter().find(|(m, _)| *m == menu) {
+        Some((_, a)) if right => *a,
+        Some((_, a)) => a % 4 + 1,
+        // not a question: take the second entry ("I want to continue", "Please go on")
+        None => 2,
+    }
+}
+
+#[test]
+fn wizard_test() {
+    let mut t = setup("wizard_test");
+    let (clerk, raul, helper) = (("gef_tower", 111, 37), ("gef_tower", 102, 24), ("job_wiz", 50, 165));
+    let q = "return v.job_wizard_q";
+    // a Mage of job level 39 may not sign
+    t.eval("math.randomseed(7); job_change(2); player.job_level = 39; player.skill_point = 0");
+    t.talk(clerk.0, clerk.1, clerk.2, &[1, 1]);
+    assert_eq!(t.eval(q), "0");
+    // at 40 she names one of two lists; Raul will not test before they are brought
+    t.eval("player.job_level = 40");
+    t.talk(clerk.0, clerk.1, clerk.2, &[1, 1]);
+    let list = t.eval(q);
+    assert!(list == "1" || list == "2", "{list}");
+    t.talk(raul.0, raul.1, raul.2, &[]);
+    t.talk(clerk.0, clerk.1, clerk.2, &[]);
+    assert_eq!(t.eval(q), list);
+    // one short of the last thing on the list is not enough (the sources' "and")
+    if list == "1" {
+        t.eval("give_item(716, 10); give_item(717, 10); give_item(715, 9)");
+    } else {
+        t.eval("give_item(991, 5); give_item(993, 5); give_item(990, 5); give_item(992, 4)");
+    }
+    t.talk(clerk.0, clerk.1, clerk.2, &[]);
+    assert_eq!(t.eval(q), list);
+    t.eval(if list == "1" { "give_item(715, 1)" } else { "give_item(992, 1)" });
+    t.talk(clerk.0, clerk.1, clerk.2, &[]);
+    assert_eq!(t.eval(q), "3");
+    assert_eq!(t.eval("return count_item(716) + count_item(717) + count_item(715) + count_item(991) + count_item(993) + count_item(990) + count_item(992)"), "0");
+
+    // the questions: two wrong fails, the hint costs an Apple Juice, one wrong passes
+    let mut wrong = 2;
+    t.talk_by(raul.0, raul.1, raul.2, |m| {
+        let known = WIZARD_KEY.iter().any(|(k, _)| *k == m);
+        let right = !(known && wrong > 0);
+        if known && wrong > 0 {
+            wrong -= 1;
+        }
+        wizard_answer(m, right)
+    });
+    assert_eq!(t.eval(q), "4");
+    t.eval("give_item(531, 1)");
+    t.talk(clerk.0, clerk.1, clerk.2, &[1]);
+    assert_eq!(t.eval("return count_item(531)"), "0");
+    let mut wrong = 1;
+    let menus = t.talk_by(raul.0, raul.1, raul.2, |m| {
+        let known = WIZARD_KEY.iter().any(|(k, _)| *k == m);
+        let right = !(known && wrong > 0);
+        if known && wrong > 0 {
+            wrong -= 1;
+        }
+        wizard_answer(m, right)
+    });
+    assert_eq!(menus.len(), 11, "{menus:?}");
+    assert_eq!(t.eval(q), "5");
+
+    // into the waiting room; the Helper lets us into the Room of Water
+    t.talk(raul.0, raul.1, raul.2, &[2, 1]);
+    assert_eq!(t.eval("return player.map .. ' ' .. player.x .. ' ' .. player.y .. ' ' .. v.job_wizard_q"), "job_wiz 57 154 6");
+    t.talk(helper.0, helper.1, helper.2, &[1]);
+    assert_eq!(t.eval("return player.x .. ' ' .. player.y"), "114 169");
+    // running out of time puts us back in Geffen, the monsters gone
+    t.run(185_000);
+    assert_eq!(t.eval("return player.map .. ' ' .. mob_count('job_wiz', 'jobwiz_1::OnKilled')"), "geffen 0");
+    // Raul asks five questions before a second try: three right is not enough
+    let mut wrong = 2;
+    t.talk_by(raul.0, raul.1, raul.2, |m| {
+        let known = WIZARD_KEY.iter().any(|(k, _)| *k == m);
+        let right = !(known && wrong > 0);
+        if known && wrong > 0 {
+            wrong -= 1;
+        }
+        wizard_answer(m, right)
+    });
+    assert_eq!(t.eval("return player.map"), "gef_tower");
+    t.talk_by(raul.0, raul.1, raul.2, |m| if m.starts_with("Let's start!") { 1 } else { wizard_answer(m, true) });
+    assert_eq!(t.eval("return player.map"), "job_wiz");
+
+    // three rooms: the monsters, then the gate guards, then on
+    t.talk(helper.0, helper.1, helper.2, &[1]);
+    for (room, mobs, guards, then) in [(1, 8, 5, "116 97"), (2, 10, 7, "46 99"), (3, 8, 3, "46 99")] {
+        t.run(4000);
+        assert_eq!(t.eval(&format!("return mob_count('job_wiz', 'jobwiz_{room}::OnKilled')")), mobs.to_string(), "room {room}");
+        if room == 2 {
+            t.eval("player.hp = 10");
+        }
+        assert_eq!(t.slay(), mobs, "room {room}");
+        assert_eq!(t.eval(&format!("return mob_count('job_wiz', 'jobwiz_{room}g::OnKilled')")), guards.to_string(), "room {room}");
+        assert_eq!(t.slay(), guards, "room {room}");
+        if room < 3 {
+            assert_eq!(t.eval("return player.x .. ' ' .. player.y"), then, "after room {room}");
+        }
+        if room == 2 {
+            assert_eq!(t.eval("return player.hp == player.max_hp"), "true", "healed on entering the Room of Fire");
+        }
+    }
+    assert_eq!(t.eval(q), "7");
+    t.run(6000);
+    assert_eq!(t.eval("return player.map .. ' ' .. player.x .. ' ' .. player.y"), "gef_tower 110 30");
+    // no timer of the test is left to throw anyone out
+    t.run(200_000);
+    assert_eq!(t.eval("return player.map"), "gef_tower");
+    // skill points must be spent; then the job and six Blue Potions
+    t.eval("player.skill_point = 1");
+    t.talk(clerk.0, clerk.1, clerk.2, &[]);
+    assert_eq!(t.eval("return player.class"), "2");
+    t.eval("player.skill_point = 0");
+    t.talk(clerk.0, clerk.1, clerk.2, &[]);
+    assert_eq!(t.eval("return player.class .. ' ' .. count_item(505) .. ' ' .. v.job_wizard_q"), "9 6 0");
 }

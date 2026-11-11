@@ -214,9 +214,10 @@ on the international servers at all.
 
 ### 8. Wizard (and other 2-1) job quests
 817's wizard.txt is an unfinished conversion that 817 couldn't run (later
-dialect, `Job_Magician`, missing gotos). We use 659's simple guild NPC:
-job change at job level 40, no test. That is like 817's own Knight,
-Blacksmith and Assassin. 817's Priest and Hunter do have quests.
+dialect, `Job_Magician`, missing gotos). We used 659's simple guild NPC
+(job change at job level 40, no test) until 2026-11-11; see the last
+paragraph. 817's own Knight, Blacksmith and Assassin are still such
+one-line NPCs. 817's Priest and Hunter do have quests.
 **Impact:** whether the 2-1 jobs should have their tests; see #5.
 **Look:** eathena-v0.5.2 (2004-05) `npc/jobs/*.txt`; period
 walkthroughs (#2).
@@ -239,6 +240,29 @@ this client has one; they are played on `job_priest` in turn,
 (2004-09-12), again for `job_wiz`: of its three room cells, `116,171` and
 `46,99` are blocked on `job_wizard`. No dated walkthrough of any 2-1 test
 was found; RODataZone's Wizard and Knight pages on Wayback are empty.
+
+**2026-11-11: the maps are in the client after all.** Rounds 1 to 3 read
+the CD's base GRF (`data.grf.original`). The four maps `job_wiz`,
+`job_knt`, `job_prist` and `job_hunte` are in
+`2003-04-30gdata_turtle_ph_2.gpf`, the second of the two Turtle Island
+patch files on the CD, which the launcher merges (`ragnarok-offline grf ls`
+on the file; the base GRF's `job_wizard`, `job_knight`, `job_priest`,
+`job_hunter` stay beside them). On euRO those two files are patch-list
+entries 400 and 401, between "New Comodo" (2004-01-09) and 2004-01-15
+(`research/notes/euro-history.md` §5): the test maps arrived in the very
+weeks "added 2nd job quest" was announced. All nineteen warp cells that
+mod0631 and jAthena (from //0505, 2003-10-30, `conf/npc_warp25.txt`) put
+on the four maps are walkable on them (`research/gat_cells.py` on the
+merged GRF: 10 of 10, 3 of 3, 4 of 4, 2 of 2). So "a later map" was
+wrong: a Wizard test written for `job_wiz` fits the client we play, and
+three period scripts are (817's unfinished `npc/jobs/wizard.txt` of
+2004-02-19, jAthena's of 2004-04-09, eAthena 0.5.2's of 2004-05, which
+its own config switches off as "totaly bugged"). The Wizard test is now
+in the game from them (`scripts/npc/wizard_test.lua`, DEVIATIONS).
+`job_prist` and `job_cru` are the same file. Open: what the Knight's and
+the Hunter's tests on `job_knt` and `job_hunte` were (jAthena's Knight
+test dates from 2004-09-12; nothing earlier), and whether the Priest's
+ran on `job_prist` by then (817's fits the older `job_priest`).
 
 ### 9. Refining details
 Phracon price (iRO page 2000z vs data 200z), armor DEF per refine (1, 5 or
@@ -579,8 +603,10 @@ client's `.gat`. Results: `new_1-N` = `new_zone0N`, `sword_1-1` =
 Round 1 found the client saying so itself: `data\resnametable.txt` in
 data.grf redirects each newer name to the file it has
 (`new_1-1.gat#new_zone01.gat#`, 143 `.gat` lines; the full list is in
-research/notes/round1-review.md). Tier client. The later names `job_wiz`,
-`job_knt`, `job_prist`, `job_hunte` are different maps, not aliases.
+research/notes/round1-review.md). Tier client. The names `job_wiz`,
+`job_knt`, `job_prist`, `job_hunte` are different maps, not aliases: they
+come with the Turtle Island patch files and are in the merged client
+(thread 8, 2026-11-11).
 
 ### R3. Skill SP costs
 The client's `leveluseskillspamount.txt` has them per level. The server

@@ -69,14 +69,16 @@ monsters, refining, storage), a hand-written Kafra service; a test that
 reaches every job and learns every quest skill through the NPCs
 (`tests/job_quests.rs`, on all-walkable maps); from mod0631: the Peco Peco
 Breeder, the dye makers and the hairdresser, the Turtle Island chain, the
-doomed swords and Alberta's doll child.
+doomed swords and Alberta's doll child; the Wizard test on `job_wiz` from
+817's unfinished script.
 Next, in order:
 
 * play through each 1st-job quest and the training ground in the client
   (the test does not walk the real maps: the Swordman course and the
   Priest test are untried there); fix what breaks in `scripts/npc/` (one
   file per fix, listed in DEVIATIONS.md);
-* hand-port the Wizard quest (817's is in a later dialect; THREADS.md #8);
+* the Knight's and the Hunter's tests on `job_knt` and `job_hunte`, which
+  the client has (THREADS.md #8): no period script is known;
 * NPC waiting rooms (0x00d7 chat bubbles over arena/PvP NPCs);
 * clothes dyeing (THREADS.md #13: the dye makers and the hairdresser are
   in, from mod0631); English shop names from 817 by cell (#11);

@@ -19,9 +19,11 @@ and the server skips entries on maps the client lacks. ordeal_a03/a04 are
 named in the table but their files are not in this client's data.
 
 Not aliases: `job_wiz`, `job_knt`, `job_prist`, `job_hunte` (warps of
-mod0631, the Wizard test of eAthena 0.5.2). They are later maps; their cells
-do not fit this client's job_wizard / job_knight / job_priest / job_hunter
-(3 of 10, 0 of 4, 1 of 3 and 1 of 2 warp cells walkable).
+mod0631, the Wizard test of 817 and eAthena 0.5.2). They are maps of their
+own, from the CD's Turtle Island patch file (2003-04-30gdata_turtle_ph_2.gpf),
+which the launcher merges; their cells do not fit the base GRF's job_wizard /
+job_knight / job_priest / job_hunter (3 of 10, 0 of 4, 1 of 3 and 1 of 2 warp
+cells walkable) and all fit the patch's own maps (research/THREADS.md #8).
 """
 
 MAP_ALIAS = {

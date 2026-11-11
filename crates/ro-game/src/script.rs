@@ -148,6 +148,8 @@ pub struct Defs {
     /// wrap_npc(src, wrapper): (src, wrapper, where it was declared).
     pub wraps: Vec<(String, Function, String)>,
     pub warps: Vec<WarpDef>,
+    /// remove_warp(map, x, y): (map, x, y, where it was declared).
+    pub removed_warps: Vec<(String, u16, u16, String)>,
     pub shops: Vec<ShopDef>,
     pub spawns: Vec<SpawnDef>,
     pub commands: HashMap<String, Function>,
@@ -275,6 +277,13 @@ impl ScriptEngine {
             }
             let gone: std::collections::HashSet<String> = defs.removed.iter().map(|(s, _)| s.clone()).collect();
             defs.npcs.retain(|n| !n.src.as_ref().is_some_and(|s| gone.contains(s)));
+        }
+        for (map, x, y, by) in std::mem::take(&mut defs.removed_warps) {
+            let before = defs.warps.len();
+            defs.warps.retain(|w| !(w.map == map && w.x == x && w.y == y));
+            if defs.warps.len() == before {
+                return Err(anyhow!("{by}: remove_warp {map} {x},{y}, but no warp is there (regenerated import?)"));
+            }
         }
         // hand-written code around imported NPCs: on_click = wrapper(on_click)
         for (src, wrapper, by) in std::mem::take(&mut defs.wraps) {
@@ -435,6 +444,14 @@ impl ScriptEngine {
             "remove_npc",
             lua.create_function(move |lua, src: String| {
                 d.borrow_mut().removed.push((src, source_of(lua)));
+                Ok(())
+            })?,
+        )?;
+        let d = defs.clone();
+        g.set(
+            "remove_warp",
+            lua.create_function(move |lua, (map, x, y): (String, u16, u16)| {
+                d.borrow_mut().removed_warps.push((map, x, y, source_of(lua)));
                 Ok(())
             })?,
         )?;
