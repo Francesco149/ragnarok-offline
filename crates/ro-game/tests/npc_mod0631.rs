@@ -152,10 +152,10 @@ impl T {
     }
 }
 
-const MAPS: [&str; 20] = [
+const MAPS: [&str; 23] = [
     "prontera", "izlude", "aldeba_in", "moc_prydb1", "payon", "alberta_in", "morocc", "prt_in", "prt_castle", "geffen",
     "geffen_in", "morocc_in", "alberta", "tur_dun01", "tur_dun02", "izlude_in", "alb2trea", "pay_fild08",
-    "gef_tower", "job_wiz",
+    "gef_tower", "job_wiz", "new_zone02", "new_zone04", "payon_in02",
 ];
 
 fn setup(tag: &str) -> T {
@@ -626,6 +626,39 @@ impl T {
         self.run(500);
         mobs.len()
     }
+}
+
+/// The end of the training ground (scripts/npc/novice_result.lua): Leo Von
+/// Frisch's right answers count, the subsidy follows mod0631's table, and
+/// "I will follow the result of the test" leads through a guide room.
+#[test]
+fn training_ground_result() {
+    let mut t = setup("training_ground_result");
+    // the Usher's flag, as after signing up; the first course with every answer right
+    t.eval("v.nov_get_item01 = 1");
+    t.talk("new_zone02", 84, 115, &[1, 2, 3, 3, 2, 4, 4]);
+    assert_eq!(t.eval("return v.nov_1st_cos"), "6", "six right answers, six points");
+    // the personality test came out for the Thief
+    t.eval("v.nov_3_thief = 5; v.nov_3_archer = 5; v.nov_3_swordman = 2");
+    let zeny: i64 = t.eval("return player.zeny").parse().unwrap();
+    let herbs: i64 = t.eval("return count_item(507)").parse().unwrap();
+    t.talk("new_zone04", 60, 149, &[2]);
+    // 15 points: 150z and three Red Herbs (mod0631 npc_job_newbie.txt:2270)
+    assert_eq!(t.eval("return player.zeny").parse::<i64>().unwrap(), zeny + 150);
+    assert_eq!(t.eval("return count_item(507)").parse::<i64>().unwrap(), herbs + 3);
+    assert_eq!(t.eval("return player.map .. ' ' .. player.x .. ' ' .. player.y"), "new_zone04 60 176", "the Archer guide room: the first of two equal scores wins");
+    // its attendant: three Red Potions, 50z, and on to the Archer guild
+    t.talk("new_zone04", 59, 186, &[]);
+    assert_eq!(t.eval("return count_item(501)"), "3");
+    assert_eq!(t.eval("return player.zeny").parse::<i64>().unwrap(), zeny + 200);
+    assert_eq!(t.eval("return player.map"), "payon_in02");
+
+    // choosing for oneself still goes straight to town, with nothing more
+    let mut t = setup("training_ground_result_own");
+    t.eval("v.nov_get_item01 = 1");
+    t.talk("new_zone04", 60, 149, &[1, 4]);
+    assert_eq!(t.eval("return player.map"), "geffen");
+    assert_eq!(t.eval("return count_item(507)"), "3", "9 points: three Red Herbs");
 }
 
 fn wizard_answer(menu: &str, right: bool) -> u8 {

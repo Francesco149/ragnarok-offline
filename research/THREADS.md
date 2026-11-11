@@ -155,6 +155,23 @@ point put the character on exactly this map. The cell is still only
 Athena's. The report's further arguments (a 2017 private-server video, a
 2013 rAthena NPC three cells north) do not date the cell.
 
+**Played in the client (rig, 2026-11-11):** a new character walked the
+whole course on this client's maps: the bridge, the castle door, the
+Usher, Leo Von Frisch's six questions, the NPC Master and the Guide in
+the east room, the three Helpers, the Fabre field (`new_zone03`: the
+arrival cell `96,21` lies behind the rampart as the camera sees it, so the
+character is hidden until she walks north), both personality tests and
+the last Helper. Every dialogue, menu and warp works. What it showed:
+817's script is a rough English port of the one mod0631 has in Japanese
+(`conf/npc_job_newbie.txt`, 2,722 lines against 817's 1,400). Mended from
+mod0631 so far: the end (the job guide rooms, the subsidy table, the first
+course's points; DEVIATIONS). Still 817's and worth reading against
+mod0631 line by line: the Usher says "Training Subsidy 50 Zeny" and gives
+150 (mod0631 says and gives 150); Leo's third question rewards "Public
+Prosecutor"; the second course's tries are never counted (mod0631 counts
+them at the Helper of `new_1-2 16,183`, so the "2nd course" score is
+always 9 here); the prizes' amounts differ (mod0631 gives five and three
+Bananas, ten Sweet Potatoes, three Apples).
 **Goal (owner, 2026-11-09):** find the period-accurate start position and
 document it. Failing that, pick the best-supported cell and list it as a
 possible deviation.

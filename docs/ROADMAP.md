@@ -84,8 +84,11 @@ doomed swords and Alberta's doll child; the Wizard test on `job_wiz` from
 817's unfinished script.
 Next, in order:
 
-* play through each 1st-job quest and the training ground in the client
-  (the test does not walk the real maps). The Swordman course is checked
+* play through each 1st-job quest in the client (the test does not walk
+  the real maps; `tools/client-test/play.sh` walks the client and reads
+  the dialogue). The training ground is played (THREADS.md #6: works; the
+  rest of 817's script is still to be read against mod0631's fuller one).
+  The Swordman course is checked
   on the client's map by search (`research/course_check.py`: each stretch
   has a way past the pits to its warp, and every pit drops you somewhere
   with a way out) but not yet played; the Priest test is untried there.

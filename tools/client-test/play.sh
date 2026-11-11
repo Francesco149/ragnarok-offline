@@ -12,6 +12,7 @@
 #   play.sh say N               press Return N times, 0.6 s apart (dialogue "next"/"close")
 #   play.sh pick N              choose the Nth entry of an NPC menu (1 = first)
 #   play.sh adv                 Return through the pages up to the next menu, input box or the end
+#   play.sh run X Y [N...]      talk to the NPC on X Y and go through its dialogue, picking N... at the menus
 #   play.sh said [N]            the last N NPC packets, decoded (said.py)
 #   play.sh steps 'a; b; c'     several of the above in one call
 #
@@ -67,15 +68,22 @@ one() {
     say) for _ in $(seq "${1:-1}"); do $R key Return; sleep 0.6; done ;;
     pick) for _ in $(seq 2 "$1"); do $R key Down; sleep 0.2; done; $R key Return; sleep 0.8 ;;
     adv) # press Return through next/close pages until a menu, an input box or the end; then show what was said
-      local st n0; n0=$(wc -l < /work/logs/packets.log)
+      local st n0; n0=${N0:-$(wc -l < /work/logs/packets.log)}
       for _ in $(seq 60); do
         st=$(cd /work && python3 tools/client-test/said.py --state)
         case "$st" in next) $R key Return; sleep 0.7 ;; close) $R key Return; sleep 0.7; break ;; *) break ;; esac
       done
       (cd /work && tail -n +"$n0" logs/packets.log > /tmp/adv.log && python3 tools/client-test/said.py 400 /tmp/adv.log); echo "== $st" ;;
+    run) # talk X Y, then answer every menu with its first entry (or the given numbers in turn) to the end
+      local tx=$1 ty=$2 st a; shift 2
+      for _ in $(seq 60); do
+        N0=$(wc -l < /work/logs/packets.log); [ -n "$tx" ] && { one talk "$tx" "$ty"; tx=; }
+        one adv > /tmp/run.out; unset N0; st=$(tail -1 /tmp/run.out); grep -v "^  \[next\]\|^  > next" /tmp/run.out | grep -v "^==" || true
+        case "$st" in "== menu") a=${1:-1}; [ $# -gt 0 ] && shift; N0=$(wc -l < /work/logs/packets.log); one pick "$a" ;; *) break ;; esac
+      done; echo "$st"; pos ;;
     said) (cd /work && python3 tools/client-test/said.py "${1:-30}") ;;
     sleep) sleep "$1" ;;
-    *) sed -n '2,17p' "$0"; exit 2 ;;
+    *) sed -n '2,18p' "$0"; exit 2 ;;
   esac
 }
 if [ "${1:-}" = steps ]; then

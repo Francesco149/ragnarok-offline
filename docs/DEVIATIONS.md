@@ -138,6 +138,24 @@ eAthena 817 (2004-02-19), bugs included. The translator is
   go again") and never checks the clock. The NPC names are RODataZone's;
   the dialogue is our translation of mod0631's Japanese, not Gravity's
   text.
+* **The end of the training ground** (`scripts/npc/novice_result.lua`).
+  817's last Helper (`new_zone04 60,149`) is a broken English port of the
+  script mod0631 has in Japanese (`conf/npc_job_newbie.txt:2091`). Three
+  things follow mod0631 instead. "I will follow the result of the test"
+  said "Under development. Please choose your job manualy."; it now sends
+  you to one of the six job guide rooms of the map, where an attendant
+  gives what the guild sent (Swordman five Red Potions, Archer three and
+  50z, Thief a Leather Jacket, Mage 100z, Acolyte three Red Potions and a
+  Club, Merchant 100z) and passes you on to the town. The subsidy was
+  scrambled (the lowest score got the most, the highest lost 500z); it is
+  mod0631's table: up to 8 points 100z and a Red Herb, up to 15 150z and
+  three, 16 300z and five, more 500z and ten, a Milk each time. The first
+  course's points were never counted ("1st course: 0 / 6 Points" for
+  everyone); each right answer to Leo Von Frisch now counts one, as in
+  mod0631, told by the prize he hands over. The Helper's English is 817's;
+  the attendants have no English in any source, so theirs is our
+  translation. Unconfirmed for an international server: the gifts are
+  jRO's as mod0631 has them.
 * **Monster Tamers** (`scripts/npc/monster_tamers.lua`): three NPCs from
   mod0631 that 817 lacks, in Alberta, Izlude and Al De Baran, where the iRO
   pet guide of 2004 says they stood. They turn ingredients into taming
