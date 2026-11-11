@@ -81,7 +81,8 @@ reaches every job and learns every quest skill through the NPCs
 (`tests/job_quests.rs`, on all-walkable maps); from mod0631: the Peco Peco
 Breeder, the dye makers and the hairdresser, the Turtle Island chain, the
 doomed swords and Alberta's doll child; the Wizard test on `job_wiz` from
-817's unfinished script.
+817's unfinished script; the Priest test on `job_prist` from jAthena's of
+2004-06-08.
 Next, in order:
 
 * play through each 1st-job quest in the client (the test does not walk
@@ -104,9 +105,6 @@ Next, in order:
   with a way out) but not yet played; the Priest test is untried there.
   Fix what breaks in `scripts/npc/` (one file per fix, listed in
   DEVIATIONS.md);
-* the Priest's official test on `job_prist` from jAthena's script of
-  2004-06-08 (THREADS.md #8: pilgrimage, exorcism, vow), as the Wizard
-  test was ported; the game plays 817's home-made one meanwhile;
 * the Knight's and the Hunter's tests on `job_knt` and `job_hunte`, which
   the client has (THREADS.md #8): no period script is known (jAthena's
   Knight test is of 2004-09-12);

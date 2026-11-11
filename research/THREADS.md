@@ -311,8 +311,13 @@ a nun's vow
 game plays (`scripts/npc/priest_test.lua`), is its author's own invention
 on the older `job_priest`. Five months after our period, but the nearest
 script of the test that "added 2nd job quest" brought in January 2004,
-and on the map the client has for it: the next thing to port, as the
-Wizard test was. Open: what the Knight's and
+and on the map the client has for it. **Ported the same day**
+(`scripts/npc/priest_test.lua`, DEVIATIONS). Open on it: whether the test
+of January 2004 was already this one (a player's account before June
+would date it), the demons' sprites as the official server sent them
+(jAthena gives monster ids, and 736 for Baphomet, which this client may
+not have; we send the monster's id), and 817's Wraith spawn left on the
+unused `job_priest`. Open: what the Knight's and
 the Hunter's tests on `job_knt` and `job_hunte` were (jAthena's Knight
 test dates from 2004-09-12; nothing earlier), and whether the Priest's
 ran on `job_prist` by then (817's fits the older `job_priest`).

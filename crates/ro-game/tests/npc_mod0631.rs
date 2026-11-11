@@ -156,11 +156,11 @@ impl T {
     }
 }
 
-const MAPS: [&str; 25] = [
+const MAPS: [&str; 31] = [
     "prontera", "izlude", "aldeba_in", "moc_prydb1", "payon", "alberta_in", "morocc", "prt_in", "prt_castle", "geffen",
     "geffen_in", "morocc_in", "alberta", "tur_dun01", "tur_dun02", "izlude_in", "alb2trea", "pay_fild08",
     "gef_tower", "job_wiz", "new_zone02", "new_zone03", "new_zone04", "payon_in02",
-    "izlu2dun",
+    "izlu2dun", "job_prist", "prt_church", "prt_fild03", "moc_fild07", "prt_fild00", "c_tower2",
 ];
 
 fn setup(tag: &str) -> T {
@@ -621,6 +621,17 @@ impl T {
         assert!(errors.is_empty(), "{errors:?}");
     }
 
+    /// Walk onto a cell from four cells south of it (touch areas fire on walking in).
+    fn step(&mut self, x: u16, y: u16) {
+        let map = self.eval("return player.map");
+        self.eval(&format!("warp('{map}', {x}, {})", y - 4));
+        self.cap.take(3);
+        let mut w = Writer::new(0x0085);
+        w.pos3(x, y, 0);
+        send(&mut self.g, 3, w);
+        self.run(1500);
+    }
+
     /// Kill every monster on the player's map, by the player's hand.
     fn slay(&mut self) -> usize {
         let map = self.eval("return player.map");
@@ -783,6 +794,108 @@ fn archer_trunks() {
     let said = t.said.join(" ");
     assert!(said.contains("^0000FF33^000000 / 40"), "six fine trunks and three plain ones are 33 points: {said}");
     assert_eq!(t.eval("return count_item(1702) .. ' ' .. count_item(1750)"), "1 100", "the guild's bow and arrows");
+}
+
+/// The Priest test from jAthena's script of 2004-06-08 (scripts/npc/priest_test.lua):
+/// the pilgrimage in order, the exorcism's risen dead and its gate, a
+/// demon's temptation, the vow, and the Book.
+#[test]
+fn priest_test() {
+    let mut t = setup("priest_test");
+    let bishop = ("prt_church", 16, 41);
+    let cecil = ("prt_church", 27, 24);
+    let q = "return v.job2nd_pri";
+    t.eval("job_change(4); player.job_level = 39");
+    t.talk(bishop.0, bishop.1, bishop.2, &[1, 1]);
+    assert_eq!(t.eval(q), "0", "job level 39 is not enough");
+    t.eval("player.job_level = 40");
+    t.talk(bishop.0, bishop.1, bishop.2, &[1, 1]);
+    assert_eq!(t.eval(q), "1");
+    // the pilgrimage keeps its order
+    t.talk("prt_fild00", 208, 218, &[]);
+    assert_eq!(t.eval(q), "1", "Yosuke is the last");
+    for (map, x, y, after) in [("prt_fild03", 365, 255, "2"), ("moc_fild07", 41, 355, "3"), ("prt_fild00", 208, 218, "4")] {
+        t.talk(map, x, y, &[]);
+        assert_eq!(t.eval(q), after, "{map}");
+    }
+    assert_eq!(t.eval("return player.save_map"), "prt_fild00");
+    // to the exorcism
+    t.talk(bishop.0, bishop.1, bishop.2, &[1]);
+    assert_eq!(t.eval("return player.map .. ' ' .. v.job2nd_pri"), "job_prist 5");
+    t.talk("job_prist", 24, 187, &[1]);
+    assert_eq!(t.eval("return player.x .. ' ' .. player.y .. ' ' .. v.job2nd_pri"), "24 44 6");
+    // the gate stays shut while the dead are up, or have not yet risen
+    t.step(24, 109);
+    assert_ne!(t.eval("return player.x .. ' ' .. player.y"), "168 17", "the gate is shut");
+    for y in [51, 61, 71, 81, 91] {
+        t.step(24, y);
+    }
+    assert_eq!(t.eval("return mob_count('job_prist', 'jpri_undead::OnKilled')"), "13", "thirteen named failings");
+    t.step(24, 109);
+    assert_ne!(t.eval("return player.x .. ' ' .. player.y"), "168 17", "not while they stand");
+    t.slay();
+    t.step(24, 109);
+    assert_eq!(t.eval("return player.x .. ' ' .. player.y"), "168 17");
+    // the first demon: standing against it lets us on; the clock no longer runs
+    t.eval("warp('job_prist', 168, 41)");
+    let mut w = Writer::new(0x0085);
+    w.pos3(168, 44, 0);
+    send(&mut t.g, 3, w);
+    t.run(1500);
+    assert_eq!(t.eval("return tmp.jpri_tempted"), "1");
+    t.run(360_000);
+    assert_eq!(t.eval("return player.map"), "job_prist", "the clock stopped at the first gate");
+    // past the demons: through; the Mummies' room and its door
+    t.step(168, 180);
+    assert_eq!(t.eval("return player.x .. ' ' .. player.y .. ' ' .. v.job2nd_pri"), "98 40 7");
+    t.step(98, 54);
+    assert_eq!(t.eval("return mob_count('job_prist', 'jpri_mummy::OnKilled')"), "2");
+    t.step(97, 104);
+    assert_eq!(t.eval("return player.map .. ' ' .. mob_count('job_prist', 'jpri_mummy::OnKilled')"), "prontera 0");
+    // the vow: one wrong answer, then all right
+    t.talk(cecil.0, cecil.1, cecil.2, &[2]);
+    assert_eq!(t.eval(q), "8");
+    t.talk(cecil.0, cecil.1, cecil.2, &[1, 2, 1, 1, 2, 2, 1, 1]);
+    assert_eq!(t.eval(q), "9");
+    t.talk(bishop.0, bishop.1, bishop.2, &[]);
+    assert_eq!(t.eval("return player.class .. ' ' .. count_item(1550)"), "8 1", "a Priest, with a Book");
+
+    // giving in to a demon throws you out, and time running out does too
+    let mut t = setup("priest_test_tempted");
+    t.eval("job_change(4); v.job2nd_pri = 6; warp('job_prist', 24, 184)");
+    t.talk("job_prist", 24, 187, &[1]);
+    t.run(351_000);
+    assert_eq!(t.eval("return player.map .. ' ' .. mob_count('job_prist', 'jpri_undead::OnKilled')"), "prontera 0", "out of time");
+    t.eval("warp('job_prist', 24, 184)");
+    t.talk("job_prist", 24, 187, &[1]);
+    t.eval("tmp.jpri_step = 6; warp('job_prist', 168, 41)");
+    t.cap.take(3);
+    let mut w = Writer::new(0x0085);
+    w.pos3(168, 44, 0);
+    send(&mut t.g, 3, w);
+    t.run(1500);
+    // answer the demon as the client would: "next" to every page, the first choice ("give in")
+    for _ in 0..12 {
+        let out = t.cap.take(3);
+        for p in &out {
+            let npc = |at: usize| u32::from_le_bytes(p[at..at + 4].try_into().unwrap());
+            match u16::from_le_bytes([p[0], p[1]]) {
+                0x00b5 => {
+                    let mut w = Writer::new(0x00b9);
+                    w.u32(npc(2));
+                    send(&mut t.g, 3, w);
+                }
+                0x00b7 => {
+                    let mut w = Writer::new(0x00b8);
+                    w.u32(npc(4)).u8(1);
+                    send(&mut t.g, 3, w);
+                }
+                _ => {}
+            }
+        }
+        t.run(250);
+    }
+    assert_eq!(t.eval("return player.map"), "c_tower2", "Deviruchi's friends");
 }
 
 fn wizard_answer(menu: &str, right: bool) -> u8 {

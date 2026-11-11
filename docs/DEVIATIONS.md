@@ -239,12 +239,26 @@ eAthena 817 (2004-02-19), bugs included. The translator is
     does it. Which palette is which colour is read from the client's files;
   * showing Louitz the solutions a second time does not make the chemist
     forget you (mod0631 sets the quest back to its first step).
-* **The Priest test on one map** (`scripts/npc/priest_test.lua`). 817 runs
-  its three rounds on `priest_1-1`, `priest_2-1` and `priest_3-1`. This
-  client has that map once (`job_priest`), so the first Nun's warp failed
-  and nobody could become a Priest through the test. The three rounds are
-  played on `job_priest` in turn; the map's flags (no teleport, no memo, no
-  death penalty, logging out puts you in Prontera) are 817's.
+* **The Priest test** (`scripts/npc/priest_test.lua`) is jAthena's of
+  2004-06-08 (`script/npc/job/npc_job_priest.txt`, //1013), four months
+  after our period: a pilgrimage to the three ascetics of the Acolyte
+  test, an exorcism on `job_prist` (thirteen Zombies named for failings
+  before a gate, 350 seconds; four demons who tempt you to give up; a
+  last room of Mummies) and a vow taken before Sister Cecil; a Book on
+  changing job. Until 2026-11-11 the game played 817's, which its author
+  made up ("Designed For Athena": a true-or-false quiz and a grail carried
+  three times over `job_priest`). The test came with "added 2nd job
+  quest" in January 2004 and `job_prist` with the Turtle Island patch the
+  same month (THREADS.md #8), and jAthena's is the nearest script of it.
+  Ours: the English (retold from the Japanese, cut to the window); one
+  player, so no Priest along with a Rosary and no waiting for another
+  candidate; the Mummies rise in the last room and its door (a warp tile
+  "to 0,0" in mod0631 and, commented out, in jAthena) leads to the church
+  door, where jAthena reset the counter that called them and left a
+  candidate to Teleport out; a demon speaks once per attempt; the clock
+  stops once you are off the map; Yosuke saves you where 817 does
+  (jAthena's cell is a rock on this map); `job_prist` takes the flags 817
+  gave its own test map, logging out putting you at the church door.
 * **The Wizard test** (`scripts/npc/wizard_test.lua`). 817 ships the
   test (things to bring, ten questions, three rooms of monsters on
   `job_wiz`) as a half-converted script it could not run, and was played
