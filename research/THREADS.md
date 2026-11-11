@@ -569,7 +569,11 @@ forms), Blade Stop and the combo delay. OpenKore's table for iRO of
 2003-12-16 leaves out the same six (`research/notes/emulators.md` §4), so
 this is the international client of that month, not a gap in our
 extraction: none of the ids occurs as a constant inside the table's
-function. The client does ship the 2-2 jobs' skill text. With
+function. Of the 2-2 skills the client ships the icons (109 sprites under
+`data\sprite\아이템\`) and SP amounts for thirty of them
+(`leveluseskillspamount.txt`), but no names and no descriptions:
+`skillnametable.txt` and `skilldesctable.txt` end with the 2-1 jobs
+(checked 2026-11-11; an earlier note here said it ships their text). With
 `jobs2_2` on, a Monk's spheres cannot be drawn, a Sage cannot be offered
 the Auto Spell list, and Devotion has no lines.
 **Impact:** how the 2-2 skills are drafted (ROADMAP §3): spheres and
@@ -585,6 +589,15 @@ iRO guide's Crusader page (2004-04-11) agree on Guard's chances, Defender's
 percentages and the Boomerang's reach; Shield Reflect is the guide's alone.
 Not yet seen in the client: whether it draws the three stances' icons and
 the block.
+**2026-11-11, the second lot:** Providence, the four endows, Dispell, the
+four Strips and the four Chemical Protections (DEVIATIONS; test
+`endows_strips_protections_dispell`). Where the three witnesses part:
+endows last 30 to 90 s in mod0631 and 20 minutes in 817 and the guide; only
+the guide has an endow fail and break the weapon, a Strip weaken a monster,
+and Dispell roll; 817's Dispell ends a fixed list where the guide says
+"all magical effects". Open: the DEX term of a Strip's chance; whether a
+failed endow really cost the weapon on a server of 2004 (the guide's word
+only); which blessings Dispell took.
 **Look:** what the client does with the skills themselves (does it have
 the effects and sprites for Asura Strike, the songs?); whether either of
 those two exes is archived; which 2-2 skills need none of the

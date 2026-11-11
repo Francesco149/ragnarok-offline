@@ -395,12 +395,38 @@ research should check is in research/THREADS.md #21–#23 and #25.
     nothing else). It follows the guide: 13% to 40% of the damage back for
     300 s. That only weapon hits from close by come back is our reading;
   * Guard, Defender, Shield Reflect, Shield Charge and Shield Boomerang
-    refuse to start without a shield (the guide and the client's text;
+    refuse to start without a shield (the guide's "Requires a shield";
     817 only ends the first two when the shield comes off), and Shield
     Reflect ends with the shield too;
   * 817 also stuns for 3 s on a Shield Charge by a second roll outside its
     resistance rule (skill.c:1233); only the roll that the target's VIT
     resists is kept.
+* **Providence, the Sage's endows and Dispell, the Rogue's Strips, the
+  Alchemist's Chemical Protections** (behind `jobs2_2`; drafts, test
+  `endows_strips_protections_dispell`). This client has no name or
+  description for any 2-2 skill, so there is no client text to read them
+  against: only the two emulators and the iRO guide of spring 2004.
+  * Providence is mod0631's (5% a level against Holy and against demons,
+    180 s); its 3 s of cast are 817's and the guide's.
+  * The four endows last 20 minutes (817, the guide), not mod0631's 30 to
+    90 s. Neither emulator lets them fail. They follow the guide: 80% to
+    100% by level, and "weapon is destroyed on failure": the weapon in the
+    target's hand is lost. Ours: no endow on bare hands.
+  * The Strips take at (5 + 2 x level)% for 60 s (817, the guide's "Basic
+    Chance"). 817's status does nothing to a monster; here, by the guide,
+    Strip Weapon takes a tenth off its attack and each of the other three a
+    tenth off its DEF. The guide's "DEX difference ... affects the success
+    chance" has no number and is left out. A stripped player may put the
+    piece straight back on (817 does not stop it either; the guide's
+    "cannot re-equip" is not built: nothing in this world strips a player).
+  * Chemical Protection stops the matching Strip for a minute a level and
+    takes a Coating Wax (the guide; 817 starts the status for no time and
+    never asks for it).
+  * Dispell takes a Yellow and a Red Gemstone (817, the guide; mod0631 the
+    yellow one) and works at 60% to 100% (the guide; neither emulator
+    rolls). What it ends is 817's list: the ailments, Increase and Decrease
+    AGI, Suffragium, Magnificat, Gloria, Apple of Idun, the endows and the
+    Chemical Protections. The guide says "all magical effects".
 * **Not built yet:** the other 2-2 skills, Talkie Box's text, Repair Weapon
   (nothing breaks in this era's data), attacking an Ice Wall, monsters'
   "friend" skill targets (mod0631 has none either). Venom Splasher is 817's

@@ -130,8 +130,15 @@ function skill_status_change_start(id, type, val1, val2, opt)
     for _, t in ipairs({ SC.CONCENTRATE, SC.INCREASEAGI, SC.TWOHANDQUICKEN, SC.SPEARSQUICKEN, SC.ADRENALINE, SC.LOUD }) do stop(t) end
   elseif type == SC.SIGNUMCRUCIS then tick = 5000 * 60 * 25 -- mod0631's length (the status itself is only started by 817's Signum Crucis)
   elseif type == SC.FLAMELAUNCHER or type == SC.FROSTWEAPON or type == SC.LIGHTNINGLOADER or type == SC.SEISMICWEAPON then
-    tick = 1000 * (15 + val1 * 15)
+    -- 20 minutes: eAthena 817's cast_db and the iRO guide's Sage page (2004-03-27).
+    -- mod0631 (skill.c:3861): 15 s + 15 s a level, Enchant Poison's line copied
+    tick = 1200000
     enchant_end(bl, type)
+  elseif type == SC.STRIPWEAPON or type == SC.STRIPSHIELD or type == SC.STRIPARMOR or type == SC.STRIPHELM then
+    tick = 60000 -- eAthena 817 skill.c:5508; the guide: "for a short amount of time"
+  elseif type == SC.CP_WEAPON or type == SC.CP_SHIELD or type == SC.CP_ARMOR or type == SC.CP_HELM then
+    -- a minute a level: the iRO guide's Alchemist page (2004-03-27). 817's cast_db has no row for them
+    tick = 60000 * val1
   elseif type == SC.PROVIDENCE then tick = 180000; val2 = val1 * 5
   elseif type == SC.DEFENDER then tick = 180000; val2 = val1 * 15 + 5
   elseif type == SC.AUTOGUARD then

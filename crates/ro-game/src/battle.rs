@@ -1185,6 +1185,20 @@ impl Game {
                 }
                 json!(!idx.is_empty())
             }
+            "pc_destroy_equip" => {
+                // whatever is worn at these equip positions is lost for good
+                let (unit, mask) = (id(0), int(a, 1) as u32);
+                let mut lost = Vec::new();
+                while let Some(i) = self.char_of_unit(unit).and_then(|c| c.inventory.iter().position(|i| i.equip & mask != 0)) {
+                    lost.push(self.char_of_unit(unit).map(|c| c.inventory[i].nameid).unwrap_or(0));
+                    self.unequip(unit, i as u16 + packets::INV_OFFSET);
+                    if self.char_of_unit(unit).is_some_and(|c| c.inventory.get(i).is_some_and(|it| it.equip & mask != 0)) {
+                        break; // it would not come off
+                    }
+                    self.remove_item(unit, i, 1);
+                }
+                json!(lost)
+            }
             "pc_ammo_use" => {
                 // one arrow off the quiver; false = none equipped
                 let unit = id(0);

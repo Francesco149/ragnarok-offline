@@ -48,15 +48,19 @@ Next:
   is thin here (the Strips are commented out, Chemical Protection is
   empty, Auto Guard, Defender, Volcano and half the songs sit behind
   `#if 0`, Potion Pitcher is nonsense, the Monk needs spirit spheres and
-  combo timing the server does not have). A port has to lean on 817, the
-  client's skill text and the iRO guide's skill pages of spring 2004
+  combo timing the server does not have). A port has to lean on 817 and
+  the iRO guide's skill pages of spring 2004
   (research/notes/round4-review.md), skill by skill: a draft, not a
   transcription. This client has no packets for spirit spheres, combos,
   Devotion or Auto Spell (THREADS.md #25): start with the skills that need
   none. Drafted: the Crusader's Guard, Defender, Shield Reflect, Shield
-  Charge, Shield Boomerang and Holy Cross (test `crusader_shield_skills`;
-  not yet tried in the client). Next: Grand Cross and Providence, the
-  Strips, Chemical Protection, the Sage's ground skills, Dispell.
+  Charge, Shield Boomerang and Holy Cross (test `crusader_shield_skills`),
+  Providence, the Sage's endows and Dispell, the Rogue's Strips, the
+  Alchemist's Chemical Protections (test
+  `endows_strips_protections_dispell`); none tried in the client yet, which
+  has icons for them but no names or descriptions. Next: Grand Cross, the
+  Sage's ground skills, Magic Rod and Spell Breaker, Potion Pitcher, Acid
+  Terror, Demonstration.
 * **Check the drafted skills against the iRO guide's pages** (THREADS.md
   #22) and the ailments against period guides (#21). The client's skill
   text against the emulators is settled (R6).

@@ -247,8 +247,9 @@ fn every_skill_runs() {
     };
     let mut used = 0;
     for (id, inf, max, name) in skills {
-        // the 2-2 jobs and guild skills are not reconstructed yet
-        if inf == 0 || (210..=10000).contains(&id) || id > 10000 {
+        // guild skills are not reconstructed. Most 2-2 skills are not either, but
+        // they must run without a script error all the same
+        if inf == 0 || id > 10000 {
             continue;
         }
         t.lua("heal(30000, 30000)");
@@ -1307,4 +1308,101 @@ fn crusader_shield_skills() {
     t.cast("CR_SHIELDCHARGE", near);
     t.run(1500);
     assert_eq!(t.mob_hp(near).unwrap(), hp);
+}
+
+/// Drafts of 2-2 skills that need no packet this client lacks: Providence, the Sage's
+/// endows and Dispell, the Rogue's Strips, the Alchemist's Chemical Protections.
+#[test]
+fn endows_strips_protections_dispell() {
+    let mut t = T::new();
+    t.lua("job_change(16); player.base_level = 80; player.int = 60; player.dex = 60; heal(30000, 30000)");
+    for (s, lv) in [("CR_PROVIDENCE", 5), ("SA_FLAMELAUNCHER", 5), ("SA_DISPELL", 5), ("RG_STRIPARMOR", 5), ("RG_STRIPWEAPON", 5), ("AM_CP_ARMOR", 2)] {
+        t.learn(s, lv);
+    }
+    t.lua("give_item(990, 3); give_item(715, 2); give_item(716, 2); give_item(7139, 2)");
+    let me = t.me;
+    let count = |t: &mut T, item: u32| -> i64 { t.lua(&format!("_rt('pc_item_count', {me}, {item})")).trim().parse::<f64>().unwrap() as i64 };
+    let castend = |t: &mut T, skill: &str, lv: u8, target: u32| {
+        t.lua(&format!("rules.skill_castend{{src={me}, skill=SK.{skill}, lv={lv}, target={target}, x=0, y=0, item=true, val=0}}"));
+    };
+
+    // Providence: three seconds of cast (817, the guide), then on
+    t.cast("CR_PROVIDENCE", me);
+    t.run(1500);
+    assert!(!t.sc(61), "still casting");
+    t.run(3000);
+    assert!(t.sc(61));
+
+    // Endow Blaze: nothing to endow on bare hands; on a Knife the blows turn to Fire
+    castend(&mut t, "SA_FLAMELAUNCHER", 5, me);
+    assert!(!t.sc(98));
+    t.wear(1201);
+    t.cast("SA_FLAMELAUNCHER", me);
+    t.run(4500);
+    assert!(t.sc(98), "level 5 does not fail");
+    assert_eq!(count(&mut t, 990), 2, "one Red Blood");
+    assert_eq!(t.lua(&format!("battle.attack_element(battle.get({me}))")).trim().parse::<f64>().unwrap() as i64, 3);
+    // it is still on long after mod0631's minute and a half
+    t.run(200_000);
+    assert!(t.sc(98));
+    // level 1 fails one time in five, and the Knife is gone
+    let mut tries = 0;
+    let knives = t.g.store.chars[&t.cid].inventory.iter().filter(|i| i.nameid == 1201).count();
+    while t.g.store.chars[&t.cid].inventory.iter().any(|i| i.nameid == 1201 && i.equip != 0) {
+        castend(&mut t, "SA_FLAMELAUNCHER", 1, me);
+        tries += 1;
+        assert!(tries < 200, "an endow of level 1 never failed");
+    }
+    assert_eq!(t.g.store.chars[&t.cid].inventory.iter().filter(|i| i.nameid == 1201).count(), knives - 1, "destroyed, not taken off");
+
+    // Strips on a monster: a tenth off its DEF, a tenth off its attack, for a minute
+    let egg = t.spawn(26, 25, 1048);
+    let num = |t: &mut T, f: &str| -> i64 { t.lua(&format!("battle.{f}(battle.get({egg}))")).trim().parse::<f64>().unwrap() as i64 };
+    let (def, atk2) = (num(&mut t, "def"), num(&mut t, "atk2"));
+    assert!(def >= 10 && atk2 >= 10);
+    let mut tries = 0;
+    while !(t.has_sc(egg, "STRIPARMOR") && t.has_sc(egg, "STRIPWEAPON")) {
+        castend(&mut t, "RG_STRIPARMOR", 5, egg);
+        castend(&mut t, "RG_STRIPWEAPON", 5, egg);
+        tries += 1;
+        assert!(tries < 300, "a Strip of level 5 never took");
+    }
+    assert!(tries > 1 || !t.has_sc(egg, "STRIPSHIELD"));
+    assert_eq!(num(&mut t, "def"), def - def / 10);
+    assert_eq!(num(&mut t, "atk2"), atk2 - atk2 / 10);
+
+    // Dispell 5 always works: a Yellow and a Red Gemstone, and the monster's blessing is gone
+    t.lua(&format!("skill_status_change_start({egg}, SC.INCREASEAGI, 5, 0)"));
+    assert!(t.has_sc(egg, "INCREASEAGI"));
+    t.cast("SA_DISPELL", egg);
+    t.run(3500);
+    assert!(!t.has_sc(egg, "INCREASEAGI"));
+    assert_eq!((count(&mut t, 715), count(&mut t, 716)), (1, 1));
+    t.run(61_000);
+    assert!(!t.has_sc(egg, "STRIPARMOR"), "a Strip lasts a minute");
+
+    // Chemical Protection: a Coating Wax, two minutes at level 2, and no Strip takes the armour
+    t.wear(2301);
+    let worn = |t: &T| t.g.store.chars[&t.cid].inventory.iter().any(|i| i.nameid == 2301 && i.equip != 0);
+    t.cast("AM_CP_ARMOR", me);
+    t.run(1500);
+    assert!(t.sc(56));
+    assert_eq!(count(&mut t, 7139), 1);
+    for _ in 0..200 {
+        t.lua(&format!("skill_castend_nodamage_id({egg}, {me}, SK.RG_STRIPARMOR, 5)"));
+    }
+    assert!(worn(&t) && !t.sc(52));
+    t.run(100_000);
+    assert!(t.sc(56), "still on after 100 s");
+    t.run(30_000);
+    assert!(!t.sc(56), "gone after 130 s");
+    // unprotected, the armour comes off
+    let mut tries = 0;
+    while worn(&t) {
+        t.lua(&format!("skill_castend_nodamage_id({egg}, {me}, SK.RG_STRIPARMOR, 5)"));
+        tries += 1;
+        assert!(tries < 300, "the armour never came off");
+    }
+    assert!(t.sc(52));
+    t.check();
 }

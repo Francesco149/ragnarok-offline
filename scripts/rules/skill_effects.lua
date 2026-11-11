@@ -202,6 +202,7 @@ for _, n in ipairs({
   "PR_KYRIE", "PR_LEXDIVINA", "PR_LEXAETERNA", "AS_ENCHANTPOISON", "AS_POISONREACT", "AC_CONCENTRATION",
   "MC_LOUD", "MG_ENERGYCOAT", "SM_PROVOKE", "SM_ENDURE", "PR_SUFFRAGIUM", "MG_SIGHT", "AL_RUWACH",
   "PR_BENEDICTIO", "PR_SLOWPOISON", "KN_AUTOCOUNTER",
+  "CR_PROVIDENCE", -- skill.c:1248
   "CR_REFLECTSHIELD", -- ours, from the iRO guide: 817 only plays the effect (skill.c:1841)
 }) do SC_SIMPLE[SK[n]] = true end
 
@@ -214,6 +215,27 @@ local SC_TOGGLE = {}
 for _, n in ipairs({ "BS_MAXIMIZE", "NV_TRICKDEAD", "TF_HIDING", "AS_CLOAKING",
   "CR_AUTOGUARD", "CR_DEFENDER", -- eAthena 817 skill.c:2003
 }) do SC_TOGGLE[SK[n]] = true end
+
+-- The Sage's four endows, the Rogue's four Strips, the Alchemist's four Chemical
+-- Protections: drafts (docs/DEVIATIONS.md, research/THREADS.md #25).
+local ENDOW = {}
+for _, n in ipairs({ "SA_FLAMELAUNCHER", "SA_FROSTWEAPON", "SA_LIGHTNINGLOADER", "SA_SEISMICWEAPON" }) do ENDOW[SK[n]] = true end
+-- the Strip, the equip position it takes off a player, the Chemical Protection against it
+local STRIP = {
+  [SK.RG_STRIPWEAPON] = { pos = 0x0002, cp = SC.CP_WEAPON },
+  [SK.RG_STRIPSHIELD] = { pos = 0x0020, cp = SC.CP_SHIELD },
+  [SK.RG_STRIPARMOR] = { pos = 0x0010, cp = SC.CP_ARMOR },
+  [SK.RG_STRIPHELM] = { pos = 0x0100, cp = SC.CP_HELM },
+}
+local CHEMICAL = {}
+for _, n in ipairs({ "AM_CP_WEAPON", "AM_CP_SHIELD", "AM_CP_ARMOR", "AM_CP_HELM" }) do CHEMICAL[SK[n]] = true end
+-- eAthena 817 skill.c:2313-2337, what its Dispell ends: the ailments (mod0631's whole
+-- list, skill.c:1661), then the blessings and enchantments 817 added
+local DISPELLED = {
+  SC.SILENCE, SC.BLIND, SC.CONFUSION, SC.FREEZE, SC.STONE, SC.SLEEP, SC.STAN, SC.POISON, SC.CURSE,
+  SC.INCREASEAGI, SC.SUFFRAGIUM, SC.MAGNIFICAT, SC.APPLEIDUN, SC.CP_WEAPON, SC.CP_ARMOR, SC.CP_SHIELD,
+  SC.CP_HELM, SC.DECREASEAGI, SC.FROSTWEAPON, SC.LIGHTNINGLOADER, SC.SEISMICWEAPON, SC.FLAMELAUNCHER, SC.GLORIA,
+}
 
 local ELEMENT_CHANGE = {}
 for _, n in ipairs({ "NPC_ATTRICHANGE", "NPC_CHANGEWATER", "NPC_CHANGEGROUND", "NPC_CHANGEFIRE", "NPC_CHANGEWIND",
@@ -301,6 +323,58 @@ function skill_castend_nodamage_id(src_id, bl_id, skillid, skilllv, opt)
       skill_castend_damage_id(src_id, t.id, skillid, skilllv, { sub = true })
     end
     skill_status_change_end(src_id, SC.HIDDING)
+
+  elseif ENDOW[skillid] then
+    -- skill.c:1249 starts the status and no more; so does eAthena 817 (skill.c:1752). The
+    -- iRO guide's Sage page (2004-03-27): "Skill level affects skill failure chance, weapon
+    -- is destroyed on failure", 80% to 100%. Ours: with bare hands there is nothing to
+    -- break, and nothing to endow either
+    if bl.kind == "player" and bl.st.weapon == 0 then
+      nodamage(src_id, bl_id, skillid, skilllv, false)
+      if sd then _rt("clif_skill_fail", src_id, skillid, 0, 0) end
+    elseif rnd(100) < 75 + 5 * skilllv then
+      nodamage(src_id, bl_id, skillid, skilllv)
+      skill_status_change_start(bl_id, SkillStatusChangeTable[skillid], skilllv, 0)
+    else
+      nodamage(src_id, bl_id, skillid, skilllv, false)
+      if sd then _rt("clif_skill_fail", src_id, skillid, 0, 0) end
+      if bl.kind == "player" then _rt("pc_destroy_equip", bl_id, 0x0002) end
+    end
+
+  elseif STRIP[skillid] then
+    -- 817:2222: (5 + 2 x level)%, the iRO guide's "Basic Chance" (2004-03-27); the status
+    -- for 60 s. A player loses the piece worn there; on a monster 817 starts a status that
+    -- does nothing, where the guide takes 10% off its attack or its DEF (battle.lua).
+    -- Chemical Protection stops it (the guide's Alchemist page; 817 never asks).
+    local s = STRIP[skillid]
+    if not sc(bl, s.cp) and rnd(100) < 5 + 2 * skilllv
+      and (bl.kind ~= "player" or _rt("pc_unequip", bl_id, s.pos)) then
+      nodamage(src_id, bl_id, skillid, skilllv)
+      skill_status_change_start(bl_id, SkillStatusChangeTable[skillid], skilllv, 0)
+    else
+      nodamage(src_id, bl_id, skillid, skilllv, false)
+      if sd then _rt("clif_skill_fail", src_id, skillid, 0, 0) end
+    end
+    if bl.kind == "mob" then _rt("mob_target", bl_id, src_id, skill_get_range(skillid)) end
+
+  elseif CHEMICAL[skillid] then
+    -- 817:1779 (mod0631's four cases are empty, skill.c:1651). How long: the guide
+    nodamage(src_id, bl_id, skillid, skilllv)
+    skill_status_change_start(bl_id, SkillStatusChangeTable[skillid], skilllv, 0)
+
+  elseif skillid == SK.SA_DISPELL then
+    -- 817:2309. Not on a Golden Thief Bug Card's wearer. The chance is the iRO guide's
+    -- (2004-03-27: 60% to 100%); neither emulator rolls
+    if battle.dcard(bl, 4128) or rnd(100) >= 50 + 10 * skilllv then
+      nodamage(src_id, bl_id, skillid, skilllv, false)
+      if sd then _rt("clif_skill_fail", src_id, skillid, 0, 0) end
+    else
+      nodamage(src_id, bl_id, skillid, skilllv)
+      for _, t in ipairs(DISPELLED) do
+        if sc(bl, t) then skill_status_change_end(bl_id, t) end
+      end
+    end
+    if bl.kind == "mob" then _rt("mob_target", bl_id, src_id, skill_get_range(skillid)) end
 
   elseif SC_PARTY[skillid] then
     -- skill.c:1332: the whole party; without one (a lone player, a monster), the target

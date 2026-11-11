@@ -40,6 +40,10 @@ SkillStatusChangeTable = {
   [SK.MO_EXPLOSIONSPIRITS] = SC.EXPLOSIONSPIRITS, [SK.SA_FLAMELAUNCHER] = SC.FLAMELAUNCHER,
   [SK.SA_FROSTWEAPON] = SC.FROSTWEAPON, [SK.SA_LIGHTNINGLOADER] = SC.LIGHTNINGLOADER,
   [SK.SA_SEISMICWEAPON] = SC.SEISMICWEAPON,
+  [SK.RG_STRIPWEAPON] = SC.STRIPWEAPON, [SK.RG_STRIPSHIELD] = SC.STRIPSHIELD,
+  [SK.RG_STRIPARMOR] = SC.STRIPARMOR, [SK.RG_STRIPHELM] = SC.STRIPHELM,
+  [SK.AM_CP_WEAPON] = SC.CP_WEAPON, [SK.AM_CP_SHIELD] = SC.CP_SHIELD,
+  [SK.AM_CP_ARMOR] = SC.CP_ARMOR, [SK.AM_CP_HELM] = SC.CP_HELM,
 }
 SkillStatusChangeTable[-1] = nil
 
@@ -371,6 +375,13 @@ local LEVEL_RANGE = {
   -- 3, 5, 7, 9, 11 cells: eAthena 817's skill_db and the iRO guide (2004-04-11). mod0631's: 6 at every level
   [SK.CR_SHIELDBOOMERANG] = function(lv) return 1 + 2 * lv end,
 }
+-- Cast times mod0631's cast_db lacks, from eAthena 817's (2004-02-19). Providence's three
+-- seconds are also the iRO guide's (2004-04-11: "3 second casting delay")
+local CAST_817 = {
+  [SK.CR_PROVIDENCE] = 3000,
+  [SK.SA_FLAMELAUNCHER] = 3000, [SK.SA_FROSTWEAPON] = 3000, [SK.SA_LIGHTNINGLOADER] = 3000, [SK.SA_SEISMICWEAPON] = 3000,
+  [SK.SA_DISPELL] = 2000,
+}
 local function skill_range(sd, skill, lv)
   if lv and LEVEL_RANGE[skill] then return LEVEL_RANGE[skill](lv) end
   local r = skill_get_range(skill)
@@ -408,7 +419,7 @@ function rules.skill_use(a)
   if bl then tx, ty = bl.x, bl.y end
   if not battle.check_range(sd, tx, ty, skill_range(sd, skill, a.lv)) then return nil end
 
-  local casttime = skill_castfix(sd, skill_get_cast(skill, lv))
+  local casttime = skill_castfix(sd, CAST_817[skill] or skill_get_cast(skill, lv))
   local delay = skill_delayfix(sd, skill_get_delay(skill, lv))
   local cancelable, forcecast = true, false
 
@@ -463,7 +474,13 @@ function skill_check_condition(sd, skill, lv, a)
   elseif skill == SK.MG_SAFETYWALL or skill == SK.AL_WARP or skill == SK.ALL_RESURRECTION
     or skill == SK.PR_SANCTUARY or skill == SK.PR_MAGNUS or skill == SK.WZ_FIREPILLAR then items[717] = 1 -- Blue Gemstone
   elseif skill == SK.SA_VOLCANO or skill == SK.SA_DELUGE or skill == SK.SA_VIOLENTGALE
-    or skill == SK.SA_DISPELL or skill == SK.SA_LANDPROTECTOR then items[715] = 1
+    or skill == SK.SA_LANDPROTECTOR then items[715] = 1
+  elseif skill == SK.SA_DISPELL then
+    -- a Yellow and a Red Gemstone: eAthena 817's skill_require_db and the iRO guide's Sage
+    -- page (2004-03-27). mod0631 takes the yellow one only (skill.c:2863)
+    items[715] = 1; items[716] = 1
+  elseif skill == SK.AM_CP_WEAPON or skill == SK.AM_CP_SHIELD or skill == SK.AM_CP_ARMOR or skill == SK.AM_CP_HELM then
+    items[7139] = 1 -- the guide's "Glistening Coat"; 817's skill_require_db
   elseif skill == SK.SA_FLAMELAUNCHER then items[990] = 1
   elseif skill == SK.SA_FROSTWEAPON then items[991] = 1
   elseif skill == SK.SA_LIGHTNINGLOADER then items[992] = 1
@@ -495,8 +512,8 @@ function skill_check_condition(sd, skill, lv, a)
   elseif skill == SK.BS_MAXIMIZE or skill == SK.NV_TRICKDEAD or skill == SK.TF_HIDING or skill == SK.AS_CLOAKING then
     if sc(sd, SkillStatusChangeTable[skill]) then sp = 0 end -- switching it off is free
   elseif skill == SK.CR_AUTOGUARD or skill == SK.CR_DEFENDER then
-    -- eAthena 817 skill.c:3893: off again for nothing. The shield: the iRO guide and the
-    -- client's skill text ("Requires a shield"); 817 only ends them when it comes off
+    -- eAthena 817 skill.c:3893: off again for nothing. The shield: the iRO guide's Crusader
+    -- page (2004-04-11, "Requires a shield"); 817 only ends them when it comes off
     if sc(sd, SkillStatusChangeTable[skill]) then sp = 0 elseif not sd.st.shield then return fail() end
   elseif skill == SK.CR_REFLECTSHIELD or skill == SK.CR_SHIELDCHARGE or skill == SK.CR_SHIELDBOOMERANG then
     if not sd.st.shield then return fail() end

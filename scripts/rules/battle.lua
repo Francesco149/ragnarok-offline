@@ -110,8 +110,16 @@ function battle.hit(bl) -- battle.c:170
 end
 function battle.flee2(bl) return bl.kind == "mob" and floor(battle.luk(bl) / 10) + 1 or bl.st.flee2 end
 function battle.critical(bl) return bl.kind == "mob" and floor(battle.luk(bl) / 3) + 1 or bl.st.critical end
+-- A monster under Strip Weapon hits a tenth weaker; under Strip Shield, Armor or Helm it
+-- loses a tenth of its DEF each. Neither emulator: eAthena 817 starts the four statuses
+-- and reads them nowhere. The iRO guide's Rogue page (2004-03-27): "Decreases Attack of a
+-- monster by 10%", "decreases DEF of a monster by 10% for a short amount of time".
+local function stripped_atk(bl, atk)
+  if sc(bl, SC.STRIPWEAPON) then return atk - floor(atk * 10 / 100) end
+  return atk
+end
 function battle.atk(bl) -- battle.c:207
-  if bl.kind == "mob" then return bl.db.atk1 end
+  if bl.kind == "mob" then return stripped_atk(bl, bl.db.atk1) end
   local atk = bl.st.watk
   if sc(bl, SC.CURSE) then atk = atk - floor(atk * 25 / 100) end
   return atk
@@ -124,7 +132,7 @@ function battle.atk2(bl) -- battle.c:221
   t = sc(bl, SC.PROVOKE)
   if t then atk2 = floor(atk2 * (100 + 2 * t.val1) / 100) end
   if sc(bl, SC.CURSE) then atk2 = atk2 - floor(atk2 * 25 / 100) end
-  return atk2
+  return stripped_atk(bl, atk2)
 end
 function battle.def(bl)
   if bl.kind ~= "mob" then return bl.st.def end
@@ -133,6 +141,10 @@ function battle.def(bl)
   -- Plants keep their DEF of 10000+ (mod0631's "one damage a hit" value).
   local t = sc(bl, SC.SIGNUMCRUCIS)
   if t and def < 10000 then def = floor(def * (100 - t.val2) / 100) end
+  -- the three Strips of what a monster "wears" (the guide; see stripped_atk)
+  for _, k in ipairs({ SC.STRIPSHIELD, SC.STRIPARMOR, SC.STRIPHELM }) do
+    if sc(bl, k) and def < 10000 then def = def - floor(def * 10 / 100) end
+  end
   return def
 end
 function battle.mdef(bl) return bl.kind == "mob" and bl.db.mdef or bl.st.mdef end
