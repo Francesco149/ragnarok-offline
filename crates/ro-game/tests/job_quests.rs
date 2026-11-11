@@ -347,8 +347,14 @@ fn run(quests: &[Quest]) -> Vec<&'static str> {
     stuck
 }
 
+/// Each of the two tests below peaks near 1.1 GiB (hundreds of games, one
+/// after the other); side by side they cross the workbench's 2 GiB cap and
+/// the kernel kills the binary. They take turns.
+static TURN: std::sync::Mutex<()> = std::sync::Mutex::new(());
+
 #[test]
 fn every_job_can_be_reached() {
+    let _turn = TURN.lock().unwrap_or_else(|e| e.into_inner());
     let stuck = run(QUESTS);
     assert!(stuck.is_empty(), "no way into: {stuck:?}");
 }
@@ -374,6 +380,7 @@ const SKILL_QUESTS: &[Quest] = &[
 
 #[test]
 fn every_quest_skill_can_be_learnt() {
+    let _turn = TURN.lock().unwrap_or_else(|e| e.into_inner());
     let stuck = run(SKILL_QUESTS);
     assert!(stuck.is_empty(), "cannot be learnt: {stuck:?}");
 }

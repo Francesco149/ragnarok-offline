@@ -4,6 +4,7 @@
 //! by a single thread: network tasks feed it [`NetEvent`]s, a timer calls
 //! [`Game::tick`]. No locks, deterministic order.
 
+pub mod audit;
 pub mod game;
 pub mod model;
 pub mod packets;

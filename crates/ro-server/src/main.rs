@@ -134,6 +134,28 @@ fn check(path: &Path) -> Result<()> {
     for n in &game.notices {
         println!("notice: {n}");
     }
+    let mut game = game;
+    let a = ro_game::audit::audit(&mut game);
+    let list = |title: &str, v: &[String]| {
+        if !v.is_empty() {
+            println!("{title} ({}):", v.len());
+            for l in v {
+                println!("  {l}");
+            }
+        }
+    };
+    println!("world: {} maps can be reached from the start point", a.maps_reached);
+    list("warps that cannot be used", &a.bad_warps);
+    list("script destinations on blocked cells", &a.bad_destinations);
+    if !a.unreached_maps.is_empty() {
+        println!("maps with NPCs or monsters that nothing leads to ({}):", a.unreached_maps.len());
+        for (m, n) in &a.unreached_maps {
+            println!("  {m}: {n}");
+        }
+    }
+    list("NPCs out of sight of anywhere the player can stand", &a.unreached_npcs);
+    list("warp tiles the player cannot step on", &a.unreached_warps);
+    list("ids the database lacks", &a.unknown_ids);
     println!("ok");
     Ok(())
 }
