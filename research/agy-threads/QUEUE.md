@@ -4,7 +4,8 @@ For: the independent deep-research agent (Gemini in Antigravity) that wrote
 rounds 1 to 3. Kept by the Claude sessions that work on the game: at the
 end of each session the queue is updated (answered items go to "Done",
 with where the answer went) and refilled with what that session could not
-settle from the sources on disk. Last update: 2026-11-11 (after round 4).
+settle from the sources on disk. Last update: 2026-11-11 (second session
+of that day: the test maps of the Turtle Island patch).
 
 ## How to use it
 
@@ -47,31 +48,49 @@ What is on this machine is listed in `HANDOFF-r3.md` §3. Since then:
   fetch them again; cite them as `web` rows with the URL
   `http://web.archive.org/web/<capture>id_/http://iro.ragnarokonline.com/game/job<xxx>skill.asp`
   and a copy in your `pages/`;
+* **read maps from the merged GRF**, `data:play/RagnarokOnline/data.grf`,
+  not from `data.grf.original`. Rounds 1 to 3 used the CD's base GRF and
+  concluded that `job_wiz`, `job_knt`, `job_prist` and `job_hunte` were
+  "later maps". They are in the CD's second Turtle Island patch file
+  (`2003-04-30gdata_turtle_ph_2.gpf`), which the launcher merges and euRO
+  applied in January 2004 (THREADS.md #8). `research/gat_cells.py` takes
+  either file;
 * euRO's patch lists of 2004-02-21 and 2004-06-06 are in
   `data:refs/euro-patch-wayback/` and read in
   `research/notes/euro-history.md` §5.
 
 ## Queue
 
-### T1. The 2-1 job tests as "New Comodo" brought them (threads 5, 8; carried over from rounds 3 and 4)
+### T1. The 2-1 job tests on the maps of the Turtle Island patch (threads 5, 8)
 
-Still nothing dated. New since round 3:
+Changed on 2026-11-11: the maps are known now. `job_wiz`, `job_knt`,
+`job_prist` and `job_hunte` are in the client we play; the Wizard test is
+in the game on `job_wiz` from eAthena 817's unfinished script
+(`scripts/npc/wizard_test.lua`). Wanted, dated 2003-12 to 2004-06, any
+language (the test content was the same everywhere; say which server):
 
-* 817's Priest test is three rounds on `priest_1-1`, `priest_2-1`,
-  `priest_3-1`; this client has one such map. Was the official test three
-  rounds on one map, three different rooms, or something else? What were
-  the rounds (the grail errand is 817's)?
-* The Knight's, Wizard's, Hunter's, Assassin's and Blacksmith's tests on
-  the maps this client has (`job_knight`, `job_wizard`, `job_hunter`, ...):
-  any walkthrough written between 2003-12 and 2004-06, in any language
-  (Korean and Japanese fan sites count: the test content was the same).
-  Row per step: who, where, what is asked.
+* **Knight** on `job_knt` and **Hunter** on `job_hunte`: a walkthrough.
+  Row per step: who, where, what is asked. No period script exists
+  (jAthena's Knight test is of 2004-09-12; 817's Hunter quest never
+  enters `job_hunte`). mod0631 has four warp tiles on `job_knt`
+  (`165,151`, `122,151`, `65,145`, `22,145`) and two on `job_hunte`
+  (`89,139`, `89,68`), all "to 0,0": what were they?
+* **Priest**: 817's test runs on `priest_1-1` (the older `job_priest`, where
+  its cells fit). mod0631 has two warps on `job_prist` (`97,104` and
+  `24,109` to `168,17`). On which map was the test in early 2004, and what
+  were its rounds (the grail errand is 817's)?
+* **Wizard**, to sharpen what is in: how the waiting room worked (one
+  candidate at a time out of an NPC chat room?); whether the Fire room's
+  guards had one minute (jAthena, eAthena 0.5.2) or two (817); whether
+  dying or logging out in a room cost anything; any of the examiner's
+  questions quoted by a player (ours are 817's translation).
+* **Assassin** and **Blacksmith**: on which maps, if any.
 * The Peco Peco Breeder and the Falcon Breeder: place and fare on iRO or
   euRO (mod0631: `prontera 55,350` and `in_hunter 146,99`, 2500z each; 817's
   falcon breeder stands at `in_hunter 134,101`).
 
-Sets: `scripts/npc/priest_test.lua`, a Wizard test laid out by us, the
-breeders' cells.
+Sets: Knight and Hunter tests; `scripts/npc/priest_test.lua`,
+`wizard_test.lua`; the breeders' cells.
 
 ### T2. euRO's own news pages of 2004 (threads 1, 15, 17, 19)
 
@@ -115,6 +134,11 @@ has the island's files between 2004-01-09 and 2004-01-15.
   (NPC, place, items)? Are they in 817 (`npc/quests/`) or mod0631?
 * mod0631's logbook errands (five Bananas; a Red Gemstone): described
   anywhere for an official server?
+* The smith of the doomed swords (`pay_fild08 218,283`, in the game from
+  mod0631's `conf/npc_event_ma_sword.txt`): his three lists as an official
+  server took them. mod0631 names five Cursed Rubies and ten Blades Lost in
+  Darkness for Grimtooth and tests for one ruby; names one Young Twig for
+  Mysteltain and takes a hundred. We take what he names.
 
 Sets: the fare, and which hat quests belong to the default world.
 
@@ -138,8 +162,11 @@ Athena 659's dyer
 
 This client has no packets for spirit spheres, combos, Devotion or Auto
 Spell (thread 25), so the first 2-2 skills to be built are the ones that
-need none: Auto Guard, Defender, Reflect Shield, Shield Charge, Shield
-Boomerang, Holy Cross, Grand Cross, Providence; the four Strips, Raid,
+need none. The Crusader's Guard, Defender, Shield Reflect, Shield Charge,
+Shield Boomerang and Holy Cross are drafted (2026-11-11) and need no rows,
+except: does Shield Reflect return ranged hits and skill damage, or only
+close weapon hits (the iRO guide says "the full damage taken from an
+enemy")? Still to build: Grand Cross, Providence; the four Strips, Raid,
 Back Stab, Intimidate; the four Chemical Protections, Potion Pitcher,
 Acid Terror, Demonstration; Volcano, Deluge, Violent Gale, Land
 Protector, Dispell, Magic Rod, Spell Breaker, the four weapon endows.
@@ -187,10 +214,14 @@ Sets: `skill_castend_*` for those skills.
   side. The Swordman's three are done.
 * **Shockwave Trap: one Trap or two?** The client's text says two, mod0631
   takes one, the iRO guide does not say.
-* **The cursed swords, the doll child, Payon's arrow makers** (thread 24):
-  is each of mod0631's three quests (`conf/npc_event_ma_sword.txt`,
-  `npc_event_doll.txt`, `npc_event_arrow.txt`) described for iRO/euRO in
-  2003/04?
+* **Alberta's doll child** (thread 24; in the game from mod0631's
+  `conf/npc_event_doll.txt`): which doll brought what on iRO/euRO in
+  2003/04? (The doomed swords are in T4. The arrow makers are closed:
+  mod0631's file says they are its author's own.)
+* **Two castle warps onto blocked cells**: `aldeg_cas05 188,49` to
+  `165,288` and `prtg_cas02 184,44` to `157,140` are the same in mod0631,
+  817, eAthena 0.5.2 and jAthena, and both targets are solid on this
+  client's maps. Where did those two doors lead?
 * **euRO's exes of 2004-04-15 and 2004-05-31** (thread 25; patch list
   entries 444 and 462, `2004-04-15aRagexe.rgz`, `2004-05-31aRagexe.rgz`):
   is either archived anywhere (Wayback's captures of `wpatch.euro-ro.net`,
@@ -224,3 +255,9 @@ that nobody researches them again.
 | Fatal Blow, Auto Berserk items | The same in 817, mod0631 and on RODataZone | THREADS.md #7 |
 | Turtle Island on iRO and euRO | iRO 2003-12-16 (notice of 2003-12-09); euRO's patch list has it by mid-January 2004 | THREADS.md #24 |
 | The iRO guide's numbers for the 2-2 skills | All nineteen skill pages are on disk | `research/notes/round4-review.md` |
+| Are `job_wiz`, `job_knt`, `job_prist`, `job_hunte` in this client | Yes: the CD's second Turtle Island patch file, on euRO in January 2004 | THREADS.md #8 |
+| The Wizard test | 817's unfinished script (2004-02-19), finished from eAthena 0.5.2 and jAthena | `scripts/npc/wizard_test.lua` |
+| mod0631's cursed swords and doll child | In the game | `scripts/npc/cursed_swords.lua`, `doll_child.lua` |
+| mod0631's arrow makers in Payon | Not jRO: the file's header says its author made them up until Arrow Crafting worked | THREADS.md #24 |
+| Can the Swordman course be walked on this client's map | Yes, each stretch and every pit's cave | `research/course_check.py` |
+| Guard's chances, Defender's percentages, Shield Boomerang's reach | 817 and the iRO guide agree | THREADS.md #25, DEVIATIONS |
