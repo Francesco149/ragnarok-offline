@@ -482,9 +482,12 @@ waiting on the beach to bring you back. That chain is in the game
 anyone to the mouth of the cave for 800z with no way back, no longer
 sells the trip. iRO announced the island on 2003-12-09 for 2003-12-16,
 "with new headgears and new quests" (round 4, T1-001): that there were
-quests is all the international servers tell us. The island's maps are
-not in the CD's base GRF: they come with its `2003-04-30gdata_turtle_ph`
-patch, which the launcher merges.
+quests is all the international servers tell us. On euRO the island's two
+patch files are entries 400 and 401 of the patch list, after "New Comodo"
+(2004-01-09) and before the patch of 2004-01-15
+(`research/notes/euro-history.md` §5), so the island was there in our
+period. Its maps are not in the CD's base GRF: they come with the same two
+files (`2003-04-30gdata_turtle_ph`), which the launcher merges.
 Other NPC files mod0631 loads and 817 has nothing of: the cursed swords
 (`npc_event_ma_sword.txt`: a gloomy man at `pay_fild08 218,283`, Gatu at
 `prt_in 163,12`, Nine at `izlude_in 160,129`, for Mysteltainn, Executioner
@@ -493,10 +496,10 @@ and Grimtooth), the doll child of Alberta (`npc_event_doll.txt`, `alberta
 98,57` and `100,121`).
 **Impact:** the fare (jRO's zeny amounts are not always the international
 ones: refine fees differ tenfold); three item quests.
-**Look:** was Turtle Island open on euRO in Dec 2003 to Feb 2004, who took
-a player there on iRO and for how much (RODataZone's map and quest pages,
-player guides of early 2004); the new headgear quests the notice speaks
-of; then port mod0631's other three files.
+**Look:** who took a player there on iRO or euRO and for how much
+(RODataZone's map and quest pages, player guides of early 2004); the new
+headgear quests the notice speaks of; then port mod0631's other three
+files.
 
 ### 25. What this client can show of the 2-2 jobs
 The exe's packet table (`data/client/packet_lengths.tsv`, 2003-12-18) has
@@ -512,9 +515,12 @@ the Auto Spell list, and Devotion has no lines.
 **Impact:** how the 2-2 skills are drafted (ROADMAP §3): spheres and
 combos kept on the server and shown some other way, or the jobs left as
 they are until a later client is a target.
+euRO replaced the exe on 2004-04-15 and 2004-05-31 (patch list entries
+444 and 462, `research/notes/euro-history.md` §5), the second nine days
+before the jobs opened there: they came with a later client than ours.
 **Look:** what the client does with the skills themselves (does it have
-the effects and sprites for Asura Strike, the songs?); euRO's client of
-2004-06-09, when the jobs opened there; which 2-2 skills need none of the
+the effects and sprites for Asura Strike, the songs?); whether either of
+those two exes is archived; which 2-2 skills need none of the
 six packets (Auto Guard, Defender, Reflect Shield, the Strips, Chemical
 Protection, the Sage's ground skills and Dispell: their numbers are in the
 iRO guide pages, round 4).
