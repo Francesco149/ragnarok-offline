@@ -195,6 +195,14 @@ his two dead ends, the hall Guide's directions. **Left as 817 has them, open:**
 **Look:** an iRO or euRO walkthrough of the training ground (2003-04:
 the quiz questions and the prizes would tell which version the
 international servers ran).
+**Round 5 (2026-11-11):** one player's word, iRO, from the base text of
+Weggy's FAQ (GameFAQs faq 20092, older than its 6.0 of 2004-05-17):
+asking for "access directly to the game ... whisks you away to a random
+town"; "After completing the training grounds, you should have 100 zeny,
+or 200 zeny if the final few NPCs guessed your class correctly"; then you
+choose a town and are "whisked away" to it. 100 or 200 is nearer neither
+script (mod0631 100z to 500z by points plus a guild gift; 817 up to 500z);
+nothing on Leo's questions.
 **Goal (owner, 2026-11-09):** find the period-accurate start position and
 document it. Failing that, pick the best-supported cell and list it as a
 possible deviation.
@@ -321,6 +329,25 @@ unused `job_priest`. Open: what the Knight's and
 the Hunter's tests on `job_knt` and `job_hunte` were (jAthena's Knight
 test dates from 2004-09-12; nothing earlier), and whether the Priest's
 ran on `job_prist` by then (817's fits the older `job_priest`).
+**Round 5 (2026-11-11): the Hunter test on iRO by February 2004.**
+Forever-Zero's Archer/Hunter guide (GameFAQs faq 27633; "1.9 (02/15/04)
+- Added the Hunter Quest") walks it: before Turtle Island the front desk
+changed you at once; after it, a personality quiz, one of three item
+lists from the receptionist, a Master Hunter in Payon (the palace or the
+Archer guild) who gives 200 Silver Arrows and sends you to a waiting
+room's chat, one candidate at a time; in the room four "Job Change
+Monster"s among others named "Hunter Change Monster" or "Job Test
+Monster", watery tiles that are traps; when the four fall, a switch in
+the middle offers "escape" and three minutes to leave by the far side;
+then a necklace for the front desk. eAthena 1.0's `npc/jobs/2-1/hunter.txt`
+(2004-11-04, "converted from aegis script", translated by yoshiki like
+817's Wizard test; `data:refs/rathena` commit `706e78509`) is that test
+on `in_hunter`, `payon_in02` and `job_hunte`, down to the monster names.
+The Wizard guide (faq 30054; its Wizard section is of 2004-07-30) adds:
+a failure leaves you saved outside the tower, and after five or six
+failures the examiner lets you skip the fight for a Worn Out Scroll.
+Edge's Knight guide (faq 29457, pRO, from 2004-02-08): "Pay a small fee
+and magically you become a Knight": no test there.
 
 ### 9. Refining details
 Phracon price (iRO page 2000z vs data 200z), armor DEF per refine (1, 5 or
@@ -524,6 +551,15 @@ HP; Envenom's chance falls with the target's VIT; Storm Gust freezes on
 the third hit, never bosses or the undead. They give no formula and say
 nothing on stun, sleep, blind, silence or curse resistance. So 817's
 shape is right for March 2004; whether it held in December 2003 is open.
+**Round 6 (2026-11-11):** when the resistance entered the Athena family.
+jAthena //0729 (`71d06d6`, 2004-01-21) adds it to `skill_status_change_start`:
+`sc_def_mdef = 100 - mdef`, `sc_def_vit = 100 - (vit + luk/3)`,
+`sc_def_int = 100 - (int + luk/3)`, the same for monsters from
+`mob_db`. //0736 (`188a761`, 2004-01-23) makes it cut the time too, "by
+the same rate as the chance", and takes Stone Curse's time from the
+2channel mage thread's template ("マジスレテンプレ準拠"). So jRO's players
+had a resistance worked out by January 2004; 817's `3 +` and LUK-only
+curse/sleep terms are a step later.
 **Impact:** `skill_additional_effect` and the ailment part of
 `skill_status_change_start` in `scripts/rules/`.
 **Look:** period player guides on stun and freeze resistance ("VIT 97
@@ -673,9 +709,21 @@ and Dispell roll; 817's Dispell ends a fixed list where the guide says
 "all magical effects". Open: the DEX term of a Strip's chance; whether a
 failed endow really cost the weapon on a server of 2004 (the guide's word
 only); which blessings Dispell took.
+**2026-11-11, a later client is on this machine** (pointed out by round
+5, `research/notes/round5-6-review.md`): the owner's MICO07 DVD, ripped on
+2026-11-09 to `data:mico07/`, carries euRO's May-2004 installer with
+`2004-05-07aRagexe.rgz` (`data:mico07/Ragexe-2004-05-07.exe`) and
+`2004-05-06gdata_yuno_lang_g.gpf`. That exe has all six missing packets
+and 0x01e1, and 128 Aegis names of 2-2 skills; the gpf has the 2-2
+skills' names and English descriptions. Against our exe only the spawn
+and idle packets (0x0078 to 0x007b, 0x01d8 to 0x01da) grew by two bytes,
+and 0x014e is gone; 0x01f1 to 0x01ff are new. A server could tell the two
+apart by those lengths. Whether to support it beside the 2003 client,
+and for what (the 2-2 jobs only?), is the owner's call; nothing is
+changed yet.
 **Look:** first of all whether either of those two exes is archived: a
 client that lists the skills is what the 2-2 jobs wait on, more than any
-skill's numbers. Then what this client does with the skills' effects (does
+skill's numbers (answered: see the paragraph above). Then what this client does with the skills' effects (does
 it have the effects and sprites for Asura Strike, the songs?); which 2-2
 skills need none of the
 six packets (Auto Guard, Defender, Reflect Shield, the Strips, Chemical
