@@ -92,8 +92,10 @@ and stone" first appear in a player guide or an official page, and with
 what formula? mod0631 (2003-12) has fixed chances and no resistance; 817
 (2004-02) has both. Also: Storm Gust freezing on the third hit; poison
 taking HP down to a quarter; how long each ailment lasted.
-Start at: the iRO guide's status pages (2004), RODataZone, kRO notices,
-Japanese player wikis of 2003 (dated pages only).
+The iRO guide's skill pages of March 2004 are read (THREADS.md #21): they
+say which stat resists freeze, stone and poison and give no formula.
+Start at: RODataZone, kRO notices, Japanese player wikis of 2003 (dated
+pages only), anything dated before March 2004.
 Sets: `skill_additional_effect` and the ailment part of
 `skill_status_change_start`.
 
@@ -164,8 +166,10 @@ Sets: `skill_castend_*` for those skills.
   Box: a period description with numbers for each.
 * Arrows: did they add ATK on the official servers of Dec 2003 (mod0631
   comments the line out)?
-* For each of the above, the iRO guide's page on disk has a line: quote it
-  beside the client's text and say where they differ.
+* The iRO guide's pages on disk have been read against all of these
+  (THREADS.md #22, 2026-11-11): do not repeat that. Wanted is anything
+  earlier than March 2004, and: when did Skid Trap go from sliding 1 to 5
+  cells (client text, mod0631) to 6 to 10 (the guide)?
 
 ### T8. Small, independent
 

@@ -194,7 +194,8 @@ function skill_status_change_start(id, type, val1, val2, opt)
     tick = 100
     val3 = (val1 | 1) * (val1 | 1) - 1
   elseif type == SC.AUTOCOUNTER then tick = opt.tick or skill_get_time(SK.KN_AUTOCOUNTER, val1) -- 817 cast_db: 0.4 s a level
-  elseif type == SC.POISONREACT then tick = opt.tick or skill_get_time(SK.AS_POISONREACT, val1) -- 817 cast_db
+  -- 30 s at every level: the iRO guide's Assassin page (2004-03-27). 817's cast_db says 30 minutes.
+  elseif type == SC.POISONREACT then tick = opt.tick or 30000
   elseif type == SC.RIDING or type == SC.FALCON or type == SC.WEIGHT50 or type == SC.WEIGHT90 then tick = 600000
   else
     return false -- UnknownStatusChange

@@ -392,7 +392,7 @@ function skill_trap_cell(id)
   local c = cells[id]
   local g = c and c.alive and groups[c.group]
   if not g or not TRAPS[g.unit_id] then return nil end
-  return { id = c.id, map = c.map, x = c.x, y = c.y, src = g.src, skill = g.skill }
+  return { id = c.id, map = c.map, x = c.x, y = c.y, src = g.src, skill = g.skill, sprung = g.val2 ~= 0 }
 end
 function skill_trap_remove(id)
   local c = cells[id]

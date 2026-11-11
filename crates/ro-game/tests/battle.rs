@@ -1143,3 +1143,84 @@ fn slow_attackers_keep_their_delay() {
     assert_eq!(t.pos(me), at);
     assert_eq!(t.g.world.units[&me].map, "testmap");
 }
+
+/// Numbers sharpened from the iRO guide's skill pages of spring 2004
+/// (research/THREADS.md #22): Poison React lasts 30 s, the falcon's reach
+/// for Spring Trap grows with the level, a trap that has gone off cannot be
+/// taken up, Brandish Spear also hits beside the knight and pushes two cells.
+#[test]
+fn guide_numbers() {
+    let mut t = T::new();
+    let me = t.me;
+    // Poison React: 30 s (817's table says half an hour)
+    t.lua("job_change(12); player.base_level = 70; heal(9999, 9999)");
+    t.learn("AS_POISONREACT", 5);
+    t.cast("AS_POISONREACT", me);
+    t.run(20000);
+    assert!(t.sc(7), "Poison React still up after 20 s");
+    t.run(15000);
+    assert!(!t.sc(7), "and gone after 35 s");
+
+    // Spring Trap: 4 cells at level 1, 8 at level 5
+    t.lua("job_change(11); player.dex = 90; heal(9999, 9999); give_item(1065, 10)");
+    for (s, lv) in [("HT_LANDMINE", 5), ("HT_FALCON", 1), ("HT_REMOVETRAP", 1), ("HT_SPRINGTRAP", 1), ("HT_ANKLESNARE", 5)] {
+        t.learn(s, lv);
+    }
+    t.lua("set_falcon()");
+    let cells_at = |t: &T, x: u16, y: u16| -> Vec<u32> { t.g.world.units.values().filter(|u| u.skill().is_some() && (u.x, u.y) == (x, y)).map(|u| u.id).collect() };
+    t.cast_at("HT_LANDMINE", 27, 25);
+    t.run(2000);
+    let cell = cells_at(&t, 27, 25)[0];
+    t.lua("warp('testmap', 20, 25)");
+    t.run(1000);
+    t.cast("HT_SPRINGTRAP", cell);
+    t.run(1000);
+    assert_eq!(cells_at(&t, 27, 25).len(), 1, "seven cells is too far for level 1");
+    t.learn("HT_SPRINGTRAP", 5);
+    t.cast("HT_SPRINGTRAP", cell);
+    t.run(1000);
+    assert!(cells_at(&t, 27, 25).is_empty(), "and within reach at level 5");
+
+    // Remove Trap: not once the trap has caught something
+    t.lua("warp('testmap', 25, 25); heal(9999, 9999)");
+    t.run(2000);
+    t.cast_at("HT_ANKLESNARE", 27, 25);
+    t.run(1000);
+    let z = t.spawn(27, 25, 1015);
+    t.run(1500);
+    assert!(t.has_sc(z, "ANKLE"), "snared");
+    let cell = cells_at(&t, 27, 25)[0];
+    let traps = t.inv(1065);
+    t.cast("HT_REMOVETRAP", cell);
+    t.run(500);
+    assert_eq!(cells_at(&t, 27, 25).len(), 1, "a sprung trap stays");
+    assert_eq!(t.inv(1065), traps, "and no Trap comes back");
+    t.kill(z);
+    t.run(25000);
+
+    // Brandish Spear: the cell beside the knight is in area 1; the target is pushed two cells
+    t.lua("job_change(7); player.str = 60; heal(9999, 9999)");
+    for (s, lv) in [("KN_RIDING", 1), ("KN_SPEARMASTERY", 10), ("KN_BRANDISHSPEAR", 1)] {
+        t.learn(s, lv);
+    }
+    t.lua("set_riding()");
+    t.wear(1401); // a Javelin
+    let front = t.spawn(26, 25, 1015);
+    let beside = t.spawn(25, 26, 1015);
+    let behind = t.spawn(24, 25, 1015);
+    t.lua(&format!("for _, id in ipairs{{{front}, {beside}, {behind}}} do _rt('bl_set', id, 'hp', 500000) end"));
+    let hp = |t: &T, id: u32| t.mob_hp(id).unwrap();
+    let (a, b, c) = (hp(&t, front), hp(&t, beside), hp(&t, behind));
+    t.cast("KN_BRANDISHSPEAR", front);
+    // the Zombie walks back at once: note how far it was thrown
+    let mut far = 0;
+    for _ in 0..30 {
+        t.run(100);
+        far = far.max(t.pos(front).0);
+    }
+    assert!(hp(&t, front) < a, "the target is hit");
+    assert!(hp(&t, beside) < b, "and the one beside the knight");
+    assert_eq!(hp(&t, behind), c, "not the one behind");
+    assert_eq!(far, 28, "pushed two cells");
+    t.check();
+}

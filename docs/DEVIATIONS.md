@@ -312,8 +312,11 @@ research should check is in research/THREADS.md #21–#23 and #25.
 | Flasher | Blinds, at Sandman's chance | The client's skill text: "Blinds an Enemy". Chance ours |
 | Shockwave Trap | Takes 20/35/50/65/80% of a player's SP | The client's skill text. Monsters have no SP here |
 | Enchant Poison | Each hit may poison (3% to 7%) | mod0631 stores that chance on the status and never rolls it |
-| Brandish Spear | Rows of five cells from the knight toward the target, 1 to 4 rows by level | 817 has its own helper for the rows; the per-row damage is 817's |
-| Detect | Reveals the hidden within 3 cells of the spot | The client's skill text |
+| Brandish Spear | The two cells either side of the knight and five in front, then rows of five, five and three, 1 to 4 areas by level; the target is pushed two cells | The drawing and the "2 cells" on the iRO guide's Knight page (2004-04-13). 817 has its own helper for the rows and pushes one cell; the per-row damage is 817's |
+| Detect | Reveals the hidden within 3 cells of the spot; the spot may be 3, 5, 7 or 9 cells away by level | The client's skill text; the reach is the iRO guide's "Detecting Range" (2004-03-27), read as how far the falcon flies |
+| Spring Trap | Reaches 4 to 8 cells by level | The iRO guide's Hunter page |
+| Remove Trap | Not a trap that has gone off | The iRO guide's Hunter page |
+| Poison React | Lasts 30 s at every level | The iRO guide's Assassin page. 817's `cast_db.txt` says 30 minutes |
 | Change Cart | Cart look by base level (41, 66, 81, 91) | The client's skill text for the five carts; the levels are later emulators' (tier later) |
 | Provoke | Refused on the undead | The client's skill text: "Not appliable for the Undead" |
 | Sonic Blow | Needs a Katar | The client's skill text: "using Katar" |

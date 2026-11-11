@@ -360,7 +360,15 @@ local function hidden_ok(sd, skill)
 end
 
 -- Weapon range for skills whose range is the weapon's (range < 0 in skill_db).
-local function skill_range(sd, skill)
+-- The falcon's reach grows with the level: Detect 3, 5, 7, 9 cells, Spring
+-- Trap 4 to 8 (the iRO guide's Hunter page, 2004-03-27; neither emulator
+-- has either skill, and their skill_db gives 8 for both).
+local LEVEL_RANGE = {
+  [SK.HT_DETECTING] = function(lv) return 1 + 2 * lv end,
+  [SK.HT_SPRINGTRAP] = function(lv) return 3 + lv end,
+}
+local function skill_range(sd, skill, lv)
+  if lv and LEVEL_RANGE[skill] then return LEVEL_RANGE[skill](lv) end
   local r = skill_get_range(skill)
   if r < 0 then return math.max(1, sd.st and sd.st.attackrange or 1) - (r + 1) end
   return r
@@ -394,7 +402,7 @@ function rules.skill_use(a)
   -- range
   local tx, ty = a.x, a.y
   if bl then tx, ty = bl.x, bl.y end
-  if not battle.check_range(sd, tx, ty, skill_range(sd, skill)) then return nil end
+  if not battle.check_range(sd, tx, ty, skill_range(sd, skill, a.lv)) then return nil end
 
   local casttime = skill_castfix(sd, skill_get_cast(skill, lv))
   local delay = skill_delayfix(sd, skill_get_delay(skill, lv))
@@ -537,7 +545,7 @@ function rules.skill_castend(a)
   end
   local tx, ty = a.x, a.y
   if bl then tx, ty = bl.x, bl.y end
-  local range = sd and skill_range(sd, skill) + battle_config.pc_skill_add_range or skill_get_range(skill)
+  local range = sd and skill_range(sd, skill, lv) + battle_config.pc_skill_add_range or skill_get_range(skill)
   local out = range < battle.distance(src, { x = tx, y = ty })
   -- the target walked off: with skill_out_range_consume the SP is spent anyway
   if sd then

@@ -59,12 +59,13 @@ function skill_castend_damage_id(src_id, bl_id, skillid, skilllv, opt)
     skill_attack(BF.WEAPON, src_id, src_id, bl_id, skillid, skilllv, 0)
 
   elseif skillid == SK.KN_BRANDISHSPEAR then
-    -- 817:1237 the target, pushed back a cell if it lives; the cells around it
-    -- by the rows of 817:1913 (see skill_castend_nodamage_id)
+    -- 817:1237 the target, pushed back if it lives (817: one cell; two, as
+    -- the iRO guide's Knight page has it); the cells around it by the rows
+    -- of 817:1913 (see skill_castend_nodamage_id)
     skill_attack(BF.WEAPON, src_id, src_id, bl_id, skillid, skilllv, opt.wflag or 1)
     local after = get(bl_id)
     if after and not after.dead then
-      skill_blown(src, bl_id, 1)
+      skill_blown(src, bl_id, 2)
       _rt("clif_fixpos", bl_id)
     end
 
@@ -180,7 +181,13 @@ end
 -- The client's skill text: "Remove a Trap Installed. After removing, Can
 -- Regain 1 Trap" and "Manage a Falcon to Destroy a installed Trap". Whose
 -- traps, and which kinds, it does not say: any Hunter trap here. THREADS.md #22.
+-- The iRO guide's Hunter page (2004-03-27): a trap that has gone off cannot
+-- be taken up again; one that is taken up gives its Trap back.
 function skill_castend_trap(src, cell, skillid, skilllv)
+  if skillid == SK.HT_REMOVETRAP and cell.sprung then
+    nodamage(src.id, src.id, skillid, skilllv, false)
+    return
+  end
   nodamage(src.id, src.id, skillid, skilllv)
   skill_trap_remove(cell.id)
   if skillid == SK.HT_REMOVETRAP and src.kind == "player" then _rt("pc_item_add", src.id, 1065, 1) end
@@ -400,21 +407,26 @@ function skill_castend_nodamage_id(src_id, bl_id, skillid, skilllv, opt)
   elseif skillid == SK.KN_BRANDISHSPEAR then
     -- 817:1913 hits rows of cells in front of the knight, more rows with the
     -- level (4, 7, 10); the nearer rows hit harder (battle.lua). 817 lays the
-    -- rows out with a helper of its own; ours: rows from the knight toward
-    -- the target, five cells wide (docs/DEVIATIONS.md).
+    -- rows out with a helper of its own; ours follow the drawing on the iRO
+    -- guide's Knight page (2004-04-13): area 1 is the two cells either side
+    -- of the knight and the five in front, areas 2 and 3 five cells each,
+    -- area 4 the middle three (docs/DEVIATIONS.md).
     local dx = bl.x - src.x; dx = dx > 0 and 1 or (dx < 0 and -1 or 0)
     local dy = bl.y - src.y; dy = dy > 0 and 1 or (dy < 0 and -1 or 0)
     if dx == 0 and dy == 0 then dy = 1 end
     local rows = 1 + (skilllv > 3 and 1 or 0) + (skilllv > 6 and 1 or 0) + (skilllv > 9 and 1 or 0)
     local hit = {}
-    for row = 1, rows do
-      for w = -2, 2 do
-        -- (-dy, dx) runs across the line of attack
+    for row = 0, rows do
+      local half = row == 4 and 1 or 2
+      for w = -half, half do
+        -- (-dy, dx) runs across the line of attack; row 0 is the knight's own
         local x, y = src.x + dx * row - dy * w, src.y + dy * row + dx * w
-        for _, t in ipairs(skill_area(src, src.map, x, y, 0, BCT.ENEMY)) do
-          if not hit[t.id] then
-            hit[t.id] = true
-            skill_castend_damage_id(src_id, t.id, skillid, skilllv, { sub = t.id ~= bl_id, wflag = row })
+        if row > 0 or w ~= 0 then
+          for _, t in ipairs(skill_area(src, src.map, x, y, 0, BCT.ENEMY)) do
+            if not hit[t.id] then
+              hit[t.id] = true
+              skill_castend_damage_id(src_id, t.id, skillid, skilllv, { sub = t.id ~= bl_id, wflag = math.max(row, 1) })
+            end
           end
         end
       end

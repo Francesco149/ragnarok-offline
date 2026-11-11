@@ -434,6 +434,14 @@ Gust freezes on the third hit. We follow 817 (DEVIATIONS.md). Neither says
 where its numbers came from. 817 sends opt1 = 6 for the five seconds of
 turning to stone; we keep it server-side and send nothing until the stone
 sets: does the Dec-2003 client draw opt1 6 (look for it in the exe)?
+**The iRO guide's skill pages** (2004-03-27 to 2004-04-13) side with 817
+wherever they speak: Frost Diver's chance and time fall with the target's
+magic defence, Freezing Trap's chance likewise; Stone Curse's time
+depends on the target's level and LUK and costs 1% HP every 5 s down to 1
+HP; Envenom's chance falls with the target's VIT; Storm Gust freezes on
+the third hit, never bosses or the undead. They give no formula and say
+nothing on stun, sleep, blind, silence or curse resistance. So 817's
+shape is right for March 2004; whether it held in December 2003 is open.
 **Impact:** `skill_additional_effect` and the ailment part of
 `skill_status_change_start` in `scripts/rules/`.
 **Look:** period player guides on stun and freeze resistance ("VIT 97
@@ -451,10 +459,28 @@ which kinds, Spring Trap's range by level). Not built: Venom Splasher's
 delayed burst (817 makes it a plain splash), Talkie Box, Repair Weapon. Arrows add no ATK in mod0631 (the line is
 commented out) and its bow skills use none: did they on the official
 servers of Dec 2003? The client shows an ATK on arrow items.
-**Round 4:** the iRO guide's skill pages of March and April 2004 are on
-disk for all nineteen jobs (`research/notes/round4-review.md`). They have
-a line or a table for each of these skills and have not been read against
-our drafts yet.
+**Read against the iRO guide's skill pages** (2004-03-27 to 2004-04-13,
+`research/notes/round4-review.md`; 2026-11-11):
+* *Agrees with the draft:* Enchant Poison's chance to poison (3% to 7%)
+  and length; Flasher blinds; every trap's time on the ground; Ankle
+  Snare's hold (4 s a level); Claymore Trap; Talkie Box's 600 s; Remove
+  Trap gives one Trap back; Venom Splasher's 220% to 400%; Ice Wall (the
+  guide: 400 to 2200 durability, 50 lost a second, which is our 8 s to
+  44 s).
+* *Changed to the guide's:* Poison React lasts 30 s (817's table: 30
+  minutes); Detect reaches 3/5/7/9 cells and Spring Trap 4 to 8 by level;
+  a trap that has gone off cannot be taken up; Brandish Spear's cells
+  follow the guide's drawing and it pushes two cells.
+* *Differs, kept:* Skid Trap slides 6 to 10 cells in the guide, 1 to 5 in
+  the client's text and in mod0631, which is what we do. Unlike the rows
+  of R6, the period emulator sides with the client's text here, so this
+  may be a change made between December and March.
+* *Still a draft:* the guide says Venom Splasher marks the target with a
+  timer, bursts when it is under a third of its HP, and splashes a quarter
+  of the damage on 3x3 cells; that Ice Wall loses durability by the damage
+  it takes; that Sandman also puts those near the victim to sleep. None
+  of the three is built. It gives no chance for Flasher and says nothing
+  on arrows or on what counts as a poisonous attack.
 **Impact:** Hunter, Assassin and Blacksmith play.
 **Look:** jAthena's history (`refs/jathena`, `git log -S` on each skill
 name gives the date and often a source note), 817 and eathena-v0.5.2, the
