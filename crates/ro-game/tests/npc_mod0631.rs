@@ -1106,6 +1106,19 @@ fn hunter_test() {
     t.talk(guide.0, guide.1, guide.2, &[1]);
     assert_eq!(t.eval("return player.x .. ' ' .. player.y"), "90 67");
     assert_eq!(t.eval(&format!("return mob_count('job_hunte', '{target}') .. ' ' .. mob_count('job_hunte', '{decoy}')")), "6 30");
+    // the client is told the script's name, not the database's ("Zombie")
+    let mut names: Vec<String> = Vec::new();
+    for event in [target, decoy] {
+        let id = t.g.world.units.values().find(|u| u.mob().is_some_and(|m| m.event.as_deref() == Some(event))).unwrap().id;
+        t.cap.take(3);
+        let mut w = Writer::new(0x0094);
+        w.u32(id);
+        send(&mut t.g, 3, w);
+        let reply = t.cap.take(3).into_iter().find(|p| p[0..2] == [0x95, 0x00]).expect("0x0095");
+        names.push(Reader::new(&reply).seek(6).str_rest());
+    }
+    assert_eq!(names[0], "Job Change Monster");
+    assert!(!["", "Zombie", "Poring", "Mummy", "Archer Skeleton"].contains(&names[1].as_str()), "{names:?}");
     t.slay_by(decoy, 1);
     assert_eq!(t.eval("return player.x .. ' ' .. player.y"), "176 22", "a decoy");
     assert_eq!(t.eval(&format!("return mob_count('job_hunte', '{target}') + mob_count('job_hunte', '{decoy}')")), "0");

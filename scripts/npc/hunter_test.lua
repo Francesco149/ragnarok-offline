@@ -128,7 +128,7 @@ local function interview()
     page(S, "With your kind of attitude and", "values, you should have no", "problems becoming a Hunter.")
   end
   next()
-  page(S, "Next, go and see ^5533FFthe Demon", "Hunter^000000 over there to my left.", "He'll tell you about the second", "test.")
+  page(S, "Next, go and see", "^5533FFthe Demon Hunter^000000 over there", "to my left. He'll tell you about", "the second test.")
   next()
   page(S, "Good luck!")
   v.hntr_q, v.hntr_q2 = 1, 0
@@ -332,7 +332,7 @@ npc {
         end
       end
       for _, it in ipairs(list) do take_item(it[1], it[2]) end
-      page(D, "Good job. You brought everything.", "Now go and find the ^5533FFGuild", "Master^000000. I think he's in the", "^5533FFArcher Guild^000000.")
+      page(D, "Good job. You brought everything.", "Now go and find the", "^5533FFGuild Master^000000. I think he's in", "the ^5533FFArcher Guild^000000.")
       next()
       page(D, "He'll give you your final test.", "Good luck.")
       v.hntr_q, v.hntr_q2 = 2, 0

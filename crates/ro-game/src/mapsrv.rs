@@ -51,8 +51,10 @@ impl Game {
             CZ_REQNAME => {
                 let target = r.u32()?;
                 if let Some(u) = self.world.units.get(&target) {
+                    // a monster's name is its database name unless a script named it
+                    // ("Job Change Monster": Athena's `monster` takes a name)
                     let name = match &u.kind {
-                        UnitKind::Mob(m) => self.db.mob(m.mob_id).map(|d| d.display.clone()).unwrap_or_default(),
+                        UnitKind::Mob(m) if u.name.is_empty() => self.db.mob(m.mob_id).map(|d| d.display.clone()).unwrap_or_default(),
                         _ => u.name.clone(),
                     };
                     self.send(sid, packets::name_ack(target, &name));
