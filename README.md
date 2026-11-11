@@ -85,8 +85,8 @@ Working with the real client:
   anything a player could not reach;
 - about 600 period NPCs: towns, the novice training ground, job quests,
   guides, Kafras (fares, storage, saving, carts, points), refiners, dye
-  makers, quests, shops; the Turtle Island chain, the Wizard test on the
-  map this client has for it;
+  makers, quests, shops; the Turtle Island chain, the Wizard and Priest tests on
+  the maps this client has for them;
 - inventory, equipment, cards, item identification, usable items, Kafra
   storage, pushcarts, forging and ore refining;
 - pets: taming, eggs, hunger, intimacy, accessories;
