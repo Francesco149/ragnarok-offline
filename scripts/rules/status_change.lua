@@ -134,6 +134,21 @@ function skill_status_change_start(id, type, val1, val2, opt)
     enchant_end(bl, type)
   elseif type == SC.PROVIDENCE then tick = 180000; val2 = val1 * 5
   elseif type == SC.DEFENDER then tick = 180000; val2 = val1 * 15 + 5
+  elseif type == SC.AUTOGUARD then
+    -- eAthena 817 skill.c:5655: 5, 10, 14, 18, 21, 24, 26, 28, 29, 30 %, which is the iRO
+    -- guide's "Guard Chance" table (2004-04-11); 300 s (817's cast_db, the guide)
+    tick = 300000
+    val2 = 0
+    for i = 0, val1 - 1 do
+      local t = 5 - (i >> 1)
+      val2 = val2 + (t < 0 and 1 or t)
+    end
+  elseif type == SC.REFLECTSHIELD then
+    -- the iRO guide (2004-04-11): 13% to 40% of the damage returned, 300 s. Neither
+    -- emulator: 817 only plays the effect and starts the status for a second or two,
+    -- by chance, when the Crusader hits something (skill.c:477, :1841, :5524)
+    tick = 300000
+    val2 = 10 + val1 * 3
   elseif type == SC.SPEARSQUICKEN then tick = 300000; val2 = 80 - val1
   elseif type == SC.ASSNCROS then tick = 120000; val2 = 90 - val1
   elseif type == SC.WHISTLE then tick = 60000

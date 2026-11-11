@@ -157,7 +157,11 @@ function rules.status(c)
     elseif it.type == 5 then
       s.watk = s.watk + (it.atk or 0)
       s.def = s.def + (it.refine or 0) * refinebonus[0][1]
-      if (it.loc & 0x20) ~= 0 then s.shield = true end
+      if (it.loc & 0x20) ~= 0 then
+        s.shield = true
+        -- what a thrown shield adds (eAthena 817 battle.c:2695): a tenth of its weight and its refine bonus
+        s.shield_atk = floor((it.weight or 0) / 10) + (it.refine or 0) * refinebonus[0][1]
+      end
       run_script(s, it.script, false)
     end
   end
@@ -317,6 +321,13 @@ function rules.status(c)
   if t then aspd = floor(aspd * t.val2 / 100) end
   t = has(SC.ASSNCROS)
   if t then aspd = floor(aspd * t.val2 / 100) end
+  -- Defender (eAthena 817 pc.c:1403: aspd_rate += 35 - 5 x level, speed x (155 - 5 x level) / 100;
+  -- mod0631 has the skill behind #if 0). The iRO guide: "causes movement and attack speed to be slower"
+  t = has(SC.DEFENDER)
+  if t then
+    aspd = floor(aspd * (135 - t.val1 * 5) / 100)
+    s.speed = floor(s.speed * (155 - t.val1 * 5) / 100)
+  end
   t = has(SC.DONTFORGETME)
   if t then aspd = floor(aspd * t.val2 / 100); s.speed = floor(s.speed * t.val3 / 100) end
   -- pc.c:1027 speed potions, strongest first

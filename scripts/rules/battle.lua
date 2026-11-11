@@ -372,6 +372,19 @@ function battle.calc_damage(bl, damage, flag)
       _rt("sc_touch", bl.id, SC.KYRIE, hits, left, nil, t.left)
     end
   end
+  -- Defender: 20% to 80% off ranged weapon damage (eAthena 817 pc.c:1402 long_attack_def_rate,
+  -- and the same figures commented out at battle.c:1105; the iRO guide's table)
+  t = sc(bl, SC.DEFENDER)
+  if t and damage > 0 and (flag & BF.WEAPON) ~= 0 and (flag & BF.LONG) ~= 0 then
+    damage = damage - floor(damage * t.val2 / 100)
+  end
+  -- Auto Guard: a weapon hit stopped outright, and 0.3 s on the spot (eAthena 817 battle.c:1141)
+  t = sc(bl, SC.AUTOGUARD)
+  if t and damage > 0 and (flag & BF.WEAPON) ~= 0 and rnd(100) < t.val2 then
+    damage = 0
+    _rt("clif_skill_nodamage", bl.id, bl.id, SK.CR_AUTOGUARD, t.val1, 1)
+    _rt("bl_set", bl.id, "canmove", 300)
+  end
   if damage > 0 then
     for _, k in ipairs({ SC.STONE, SC.FREEZE, SC.SLEEP }) do
       if sc(bl, k) then sc_end(bl.id, k); break end
@@ -383,6 +396,18 @@ function battle.calc_damage(bl, damage, flag)
     if (flag & BF.LONG) ~= 0 then _rt("mob_event", bl.id, "longrangeattacked") end
   end
   return damage
+end
+
+-- Reflect Shield, a draft: neither emulator has it (status_change.lua). The iRO guide
+-- (2004-04-11): "Reflect an amount of the full damage taken from an enemy back to the
+-- enemy", 13% to 40%. Here: of a weapon hit from close by, after the Crusader has taken
+-- it; at least 1. That only close hits come back is our reading (docs/DEVIATIONS.md).
+function battle.reflect(src, target, damage, flag)
+  local t = sc(target, SC.REFLECTSHIELD)
+  if not t or damage <= 0 or (flag & BF.WEAPON) == 0 or (flag & BF.SHORT) == 0 or src.id == target.id then return end
+  local back = math.max(1, floor(damage * t.val2 / 100))
+  _rt("clif_damage", src.id, src.id, 0, 0, back, 1, 4, 0)
+  battle.damage(target.id, src.id, back)
 end
 
 -- battle.c:699 battle_addmastery: flat damage from weapon masteries
@@ -514,6 +539,7 @@ function battle.calc_weapon_attack(src, target, skill_num, skill_lv, wflag, opt)
         local r = f({ damage = damage, hitrate = hitrate, div = div, blewcount = blewcount, lv = skill_lv, wflag = wflag,
                       src = src, target = target, t_size = t_size, def1 = def1, def2 = def2, s_ele = s_ele, s_ele_ = s_ele_ })
         damage, hitrate, div, blewcount, s_ele, s_ele_ = r.damage, r.hitrate, r.div, r.blewcount, r.s_ele, r.s_ele_
+        if r.long then flag = (flag & ~(BF.SHORT | BF.LONG)) | BF.LONG end
       end
     end
     -- (Auto Counter's blow ignores DEF: eAthena 817 battle.c:2643)
@@ -536,6 +562,8 @@ function battle.calc_weapon_attack(src, target, skill_num, skill_lv, wflag, opt)
     damage = damage + battle.atk2(src) - st.watk_2
     damage2 = damage2 + st.watk_2
   end
+  -- eAthena 817 battle.c:2695: a thrown shield adds a tenth of its weight and its refine bonus
+  if skill_num == SK.CR_SHIELDBOOMERANG and sd then damage = damage + (st.shield_atk or 0) end
   if da == 2 then
     type, div = 0x08, 255
     damage = floor(damage * (100 + 20 * checkskill(sd, SK.MO_TRIPLEATTACK)) / 100)
@@ -698,8 +726,10 @@ battle.weapon_skill = {
   [SK.RG_BACKSTAP] = function(w) return pct(w, 300 + 40 * w.lv) end,
   [SK.RG_RAID] = function(w) return pct(w, 100 + 40 * w.lv) end,
   [SK.RG_INTIMIDATE] = function(w) return pct(w, 100 + 30 * w.lv) end,
-  [SK.CR_SHIELDCHARGE] = function(w) w.blewcount = 4 + w.lv; return pct(w, 100 + 20 * w.lv) end,
-  [SK.CR_SHIELDBOOMERANG] = function(w) return pct(w, 100 + 30 * w.lv) end,
+  -- the shield hits, not the weapon: neutral, whatever the weapon's element (eAthena 817
+  -- battle.c:1531-1540; mod0631 has the two percentages only)
+  [SK.CR_SHIELDCHARGE] = function(w) w.blewcount = 4 + w.lv; w.s_ele, w.s_ele_ = 0, 0; return pct(w, 100 + 20 * w.lv) end,
+  [SK.CR_SHIELDBOOMERANG] = function(w) w.s_ele, w.s_ele_ = 0, 0; w.long = true; return pct(w, 100 + 30 * w.lv) end,
   [SK.CR_HOLYCROSS] = function(w) w.div = 2; return pct(w, 100 + 35 * w.lv) end,
   [SK.CR_GRANDCROSS] = function(w) return pct(w, 100 + 40 * w.lv) end,
   [SK.MO_INVESTIGATE] = function(w)
@@ -908,6 +938,7 @@ function rules.weapon_attack(a)
   end
   local total = wd.damage + math.max(0, wd.damage2)
   battle.damage(src.id, target.id, total)
+  battle.reflect(src, target, total, wd.flag)
   if total > 0 then skill_additional_effect(src.id, target.id, 0, 0) end
   skill_poison_react(src.id, target.id, battle.attack_element(src))
   return { adelay = adelay }

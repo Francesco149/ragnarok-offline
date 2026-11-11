@@ -53,8 +53,10 @@ Next:
   (research/notes/round4-review.md), skill by skill: a draft, not a
   transcription. This client has no packets for spirit spheres, combos,
   Devotion or Auto Spell (THREADS.md #25): start with the skills that need
-  none (Auto Guard, Defender, Reflect Shield, the Strips, Chemical
-  Protection, the Sage's ground skills, Dispell).
+  none. Drafted: the Crusader's Guard, Defender, Shield Reflect, Shield
+  Charge, Shield Boomerang and Holy Cross (test `crusader_shield_skills`;
+  not yet tried in the client). Next: Grand Cross and Providence, the
+  Strips, Chemical Protection, the Sage's ground skills, Dispell.
 * **Check the drafted skills against the iRO guide's pages** (THREADS.md
   #22) and the ailments against period guides (#21). The client's skill
   text against the emulators is settled (R6).

@@ -378,7 +378,28 @@ research should check is in research/THREADS.md #21–#23 and #25.
   (100 + 30 x level)% and ends; Remove Trap takes up any Hunter trap and
   gives one Trap back; Spring Trap needs the falcon and destroys the trap.
   Not tried in the real client yet (does it let you click a trap?).
-* **Not built yet:** the 2-2 jobs' skills, Talkie Box's text, Repair Weapon
+* **The Crusader's shield skills** (behind `jobs2_2`; the first of the 2-2
+  jobs' skills to be drafted, because this client can show them:
+  THREADS.md #25). mod0631 has Auto Guard and Defender behind `#if 0` and
+  calls Shield Charge and Shield Boomerang "no damage". From eAthena 817,
+  whose numbers the iRO guide of April 2004 repeats: Guard blocks 5% to
+  30% of weapon hits and holds you 0.3 s; Defender takes 20% to 80% off
+  ranged weapon damage and slows attack and walk; both are switched off
+  again for nothing and end when the shield comes off; Shield Charge and
+  Shield Boomerang hit as Neutral whatever the weapon, the Boomerang from
+  3 to 11 cells with a tenth of the shield's weight and its refine bonus
+  added. Ours:
+  * Shield Reflect is in neither emulator (817 plays its effect and
+    nothing else). It follows the guide: 13% to 40% of the damage back for
+    300 s. That only weapon hits from close by come back is our reading;
+  * Guard, Defender, Shield Reflect, Shield Charge and Shield Boomerang
+    refuse to start without a shield (the guide and the client's text;
+    817 only ends the first two when the shield comes off), and Shield
+    Reflect ends with the shield too;
+  * 817 also stuns for 3 s on a Shield Charge by a second roll outside its
+    resistance rule (skill.c:1233); only the roll that the target's VIT
+    resists is kept.
+* **Not built yet:** the other 2-2 skills, Talkie Box's text, Repair Weapon
   (nothing breaks in this era's data), attacking an Ice Wall, monsters'
   "friend" skill targets (mod0631 has none either). Venom Splasher is 817's
   plain splash, without the delayed burst of the client's skill text.

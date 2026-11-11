@@ -578,6 +578,13 @@ they are until a later client is a target.
 euRO replaced the exe on 2004-04-15 and 2004-05-31 (patch list entries
 444 and 462, `research/notes/euro-history.md` §5), the second nine days
 before the jobs opened there: they came with a later client than ours.
+**2026-11-11, the first of them:** the Crusader's Guard, Defender, Shield
+Reflect, Shield Charge, Shield Boomerang and Holy Cross are drafted
+(DEVIATIONS; `scripts/rules/`, test `crusader_shield_skills`). 817 and the
+iRO guide's Crusader page (2004-04-11) agree on Guard's chances, Defender's
+percentages and the Boomerang's reach; Shield Reflect is the guide's alone.
+Not yet seen in the client: whether it draws the three stances' icons and
+the block.
 **Look:** what the client does with the skills themselves (does it have
 the effects and sprites for Asura Strike, the songs?); whether either of
 those two exes is archived; which 2-2 skills need none of the

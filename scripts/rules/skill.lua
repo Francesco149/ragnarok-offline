@@ -36,6 +36,7 @@ SkillStatusChangeTable = {
   [SK.AS_ENCHANTPOISON] = SC.ENCPOISON, [SK.AS_POISONREACT] = SC.POISONREACT, [SK.AS_VENOMDUST] = SC.POISON,
   [SK.NV_TRICKDEAD] = SC.TRICKDEAD, [SK.MC_LOUD] = SC.LOUD, [SK.MG_ENERGYCOAT] = SC.ENERGYCOAT,
   [SK.CR_PROVIDENCE] = SC.PROVIDENCE, [SK.CR_SPEARQUICKEN] = SC.SPEARSQUICKEN, [SK.MO_STEELBODY] = SC.STEELBODY,
+  [SK.CR_AUTOGUARD] = SC.AUTOGUARD, [SK.CR_DEFENDER] = SC.DEFENDER, [SK.CR_REFLECTSHIELD] = SC.REFLECTSHIELD,
   [SK.MO_EXPLOSIONSPIRITS] = SC.EXPLOSIONSPIRITS, [SK.SA_FLAMELAUNCHER] = SC.FLAMELAUNCHER,
   [SK.SA_FROSTWEAPON] = SC.FROSTWEAPON, [SK.SA_LIGHTNINGLOADER] = SC.LIGHTNINGLOADER,
   [SK.SA_SEISMICWEAPON] = SC.SEISMICWEAPON,
@@ -264,6 +265,7 @@ function skill_attack(attack_type, src_id, dsrc, bl_id, skillid, skilllv, wflag,
   end
   local total = dmg.damage + math.max(0, dmg.damage2)
   battle.damage(src_id, bl_id, total)
+  if attack_type == BF.WEAPON then battle.reflect(src, bl, total, dmg.flag or 0) end
   if total > 0 then skill_additional_effect(src_id, bl_id, skillid, skilllv, attack_type) end
   if attack_type == BF.WEAPON and skillid ~= SK.AS_POISONREACT then
     local pl = skill_get_pl(skillid)
@@ -366,6 +368,8 @@ end
 local LEVEL_RANGE = {
   [SK.HT_DETECTING] = function(lv) return 1 + 2 * lv end,
   [SK.HT_SPRINGTRAP] = function(lv) return 3 + lv end,
+  -- 3, 5, 7, 9, 11 cells: eAthena 817's skill_db and the iRO guide (2004-04-11). mod0631's: 6 at every level
+  [SK.CR_SHIELDBOOMERANG] = function(lv) return 1 + 2 * lv end,
 }
 local function skill_range(sd, skill, lv)
   if lv and LEVEL_RANGE[skill] then return LEVEL_RANGE[skill](lv) end
@@ -490,6 +494,12 @@ function skill_check_condition(sd, skill, lv, a)
     if w ~= 6 and w ~= 7 and w ~= 8 then return fail(6) end
   elseif skill == SK.BS_MAXIMIZE or skill == SK.NV_TRICKDEAD or skill == SK.TF_HIDING or skill == SK.AS_CLOAKING then
     if sc(sd, SkillStatusChangeTable[skill]) then sp = 0 end -- switching it off is free
+  elseif skill == SK.CR_AUTOGUARD or skill == SK.CR_DEFENDER then
+    -- eAthena 817 skill.c:3893: off again for nothing. The shield: the iRO guide and the
+    -- client's skill text ("Requires a shield"); 817 only ends them when it comes off
+    if sc(sd, SkillStatusChangeTable[skill]) then sp = 0 elseif not sd.st.shield then return fail() end
+  elseif skill == SK.CR_REFLECTSHIELD or skill == SK.CR_SHIELDCHARGE or skill == SK.CR_SHIELDBOOMERANG then
+    if not sd.st.shield then return fail() end
   elseif skill == SK.HT_BLITZBEAT or skill == SK.HT_SPRINGTRAP then
     -- Spring Trap: the client's text, "Manage a Falcon to Destroy a installed Trap"
     if not sd.st.falcon then return fail() end
@@ -574,6 +584,9 @@ function rules.skill_castend(a)
   -- an attack skill needs an enemy (skill.c:1769)
   if (skill_get_inf(skill) & 1) ~= 0 and not battle.is_enemy(src, bl) then return false end
   local nk = skill_get_nk(skill)
+  -- mod0631's skill_db calls Shield Charge and Shield Boomerang "no damage" (nk 1): it never
+  -- built them. eAthena 817's has 2 and 0, and hits with both (skill.c:1202)
+  if skill == SK.CR_SHIELDCHARGE or skill == SK.CR_SHIELDBOOMERANG then nk = 0 end
   if nk == 1 then
     -- Heal and Resurrection hurt whatever is of the Undead element (friend or not: skill.c:1780)
     if (skill == SK.AL_HEAL or skill == SK.ALL_RESURRECTION) and battle.elem_type(bl) == 9 then
@@ -612,6 +625,12 @@ function rules.equip_changed(a)
   if sc(sd, SC.TWOHANDQUICKEN) and w ~= 3 then skill_status_change_end(sd.id, SC.TWOHANDQUICKEN) end
   if sc(sd, SC.SPEARSQUICKEN) and w ~= 4 and w ~= 5 then skill_status_change_end(sd.id, SC.SPEARSQUICKEN) end
   if sc(sd, SC.ADRENALINE) and w ~= 6 and w ~= 7 and w ~= 8 then skill_status_change_end(sd.id, SC.ADRENALINE) end
+  -- eAthena 817 pc.c:3150: Auto Guard and Defender end with the shield; Reflect Shield by the same rule
+  if not sd.st.shield then
+    for _, t in ipairs({ SC.AUTOGUARD, SC.DEFENDER, SC.REFLECTSHIELD }) do
+      if sc(sd, t) then skill_status_change_end(sd.id, t) end
+    end
+  end
 end
 
 -- /memo (pc.c:2010 pc_memo): Warp Portal level 2 remembers one cell, 3 two,

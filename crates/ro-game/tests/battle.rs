@@ -1224,3 +1224,87 @@ fn guide_numbers() {
     assert_eq!(far, 28, "pushed two cells");
     t.check();
 }
+
+/// The Crusader's shield skills, the first of the 2-2 jobs' to be drafted:
+/// Guard and Defender as eAthena 817 has them (the iRO guide's tables),
+/// Shield Reflect from the guide alone, the shield's own weight in a
+/// Shield Boomerang. All of them want a shield.
+#[test]
+fn crusader_shield_skills() {
+    let mut t = T::new();
+    t.lua("job_change(14); player.base_level = 80; player.str = 80; player.dex = 80; player.vit = 50; heal(30000, 30000)");
+    for (s, lv) in [("CR_AUTOGUARD", 10), ("CR_DEFENDER", 5), ("CR_REFLECTSHIELD", 10), ("CR_SHIELDCHARGE", 5), ("CR_SHIELDBOOMERANG", 5)] {
+        t.learn(s, lv);
+    }
+    let me = t.me;
+    let calc = |t: &mut T, flags: &str| -> i64 {
+        t.lua(&format!("battle.calc_damage(battle.get({me}), 1000, {flags})")).trim().parse::<f64>().unwrap() as i64
+    };
+    // no shield, no Guard
+    t.cast("CR_AUTOGUARD", me);
+    t.run(1500);
+    assert!(!t.sc(58));
+    t.wear(2101); // a Guard: 30 of weight
+    assert_eq!(t.st("shield_atk"), 30);
+
+    // Guard 10 costs 30 SP and stops three weapon hits in ten; magic passes
+    let sp = t.sp();
+    t.cast("CR_AUTOGUARD", me);
+    t.run(1500);
+    assert!(t.sc(58));
+    assert_eq!(sp - t.sp(), 30);
+    let blocked = (0..1000).filter(|_| calc(&mut t, "BF.WEAPON | BF.SHORT") == 0).count();
+    assert!((230..370).contains(&blocked), "{blocked} of 1000 blocked at 30%");
+    assert_eq!(calc(&mut t, "BF.MAGIC | BF.LONG"), 1000);
+    // off again, for nothing
+    let sp = t.sp();
+    t.cast("CR_AUTOGUARD", me);
+    t.run(1500);
+    assert!(!t.sc(58));
+    assert_eq!(t.sp(), sp);
+
+    // Defender 5: four fifths off a ranged weapon hit, nothing off a close one; slower hands and feet
+    let (aspd, speed) = (t.st("aspd"), t.st("speed"));
+    t.cast("CR_DEFENDER", me);
+    t.run(1500);
+    assert!(t.sc(62));
+    assert_eq!(calc(&mut t, "BF.WEAPON | BF.LONG"), 200);
+    assert_eq!(calc(&mut t, "BF.WEAPON | BF.SHORT"), 1000);
+    assert_eq!(calc(&mut t, "BF.MAGIC | BF.LONG"), 1000);
+    assert_eq!(t.st("aspd"), aspd * 110 / 100);
+    assert_eq!(t.st("speed"), speed * 130 / 100);
+
+    // Shield Reflect 10: two fifths of a close blow go back to who dealt it
+    t.cast("CR_REFLECTSHIELD", me);
+    t.run(1500);
+    assert!(t.sc(59));
+    let z = t.spawn(26, 25, 1015);
+    let zhp = t.mob_hp(z).unwrap();
+    t.lua(&format!("battle.reflect(battle.get({z}), battle.get({me}), 500, BF.WEAPON | BF.LONG)"));
+    assert_eq!(t.mob_hp(z).unwrap(), zhp, "an arrow is not thrown back");
+    t.lua(&format!("battle.reflect(battle.get({z}), battle.get({me}), 500, BF.WEAPON | BF.SHORT)"));
+    assert_eq!(t.mob_hp(z).unwrap(), zhp - 200);
+    t.kill(z);
+
+    // a Shield Boomerang reaches eleven cells at level 5 (six in mod0631) and takes the Zombie's HP down
+    let (x, y) = t.pos(me);
+    let far = t.spawn(x + 10, y, 1015);
+    let hp = t.mob_hp(far).unwrap();
+    t.cast("CR_SHIELDBOOMERANG", far);
+    t.run(1500);
+    assert!(t.mob_hp(far).unwrap_or(0) < hp, "hit at ten cells");
+    t.kill(far);
+
+    // the shield comes off: all three stances end, and Smite has nothing to hit with
+    let idx = t.g.store.chars[&t.cid].inventory.iter().position(|i| i.nameid == 2101 && i.equip != 0).unwrap() as u16 + 2;
+    let mut w = Writer::new(0x00ab);
+    w.u16(idx);
+    t.send(w);
+    t.run(200);
+    assert!(!t.sc(62) && !t.sc(59));
+    let near = t.spawn(26, 25, 1015);
+    let hp = t.mob_hp(near).unwrap();
+    t.cast("CR_SHIELDCHARGE", near);
+    t.run(1500);
+    assert_eq!(t.mob_hp(near).unwrap(), hp);
+}

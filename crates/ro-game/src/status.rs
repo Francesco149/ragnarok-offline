@@ -123,7 +123,7 @@ impl Game {
                     .collect()
             };
             equips.push(json!({
-                "id": d.id, "type": d.kind, "atk": d.atk, "def": d.def, "loc": it.equip, "refine": it.refine,
+                "id": d.id, "type": d.kind, "atk": d.atk, "def": d.def, "loc": it.equip, "refine": it.refine, "weight": d.weight,
                 "wlv": d.weapon_level, "view": d.view, "range": d.range, "script": d.athena_equip, "cards": cards,
                 "star": if forged { it.cards[1] >> 8 } else { 0 }, "forged_ele": if forged { it.cards[1] & 0x0f } else { 0 },
             }));
