@@ -690,6 +690,39 @@ script names. After its first fixes it still reports:
 **Look:** 817's and jAthena's warp files for the same cells; the `.gat`
 of each map in `data.grf.original` against the merged one.
 
+### 27. 817's first-job quests against mod0631's
+Read side by side on 2026-11-11 (Thief, Merchant, Acolyte; mod0631 has
+`conf/npc_job_thief.txt`, `npc_job_merchant.txt`, `npc_job_aco.txt` and the
+Kafras' parts in `npc_town_kafra.txt`). 817's are ports of the same
+official scripts with slips; the ones that stopped a player or gave the
+wrong thing are mended (DEVIATIONS: the Merchant's parcels, the Thief's
+weighing). Played in the client since: the Thief test and the Mage test
+(the Mixing Machine's number box works; its recipes are in 817's Book
+Shelf, `other/books.txt`). **Left as 817 has them, open:**
+* *Thief.* The Comrade pays 200z + 15 per Orange Net Mushroom + 2 per
+  Orange Gooey one (`thief.txt:421`, `:485`); mod0631 pays a flat 100z
+  (`npc_job_thief.txt:446`) and calls it "subsidy and the mushrooms'
+  price". 817 takes "99 of each" mushroom, which takes none when fewer are
+  held (so they stay in the bag); mod0631 takes one of each. mod0631 has a
+  separate application step and counts at most 9 Net and 20 Gooey.
+* *Merchant.* Kay's wrong parcel is item 1083 in 817 and 1091 in mod0631;
+  817 goes on to the confirmation with a number out of range where mod0631
+  asks again. Both read the first Byalan parcel's number out as 3012685
+  (it is 3318702): the official script's own slip, it seems.
+* *Acolyte.* Yosuke stands at `prt_fild00 208,218` in 817 and `208,255`
+  in mod0631; the second is a blocked cell on this client's map, so 817's
+  is kept. 817 saves you a few cells from each ascetic, mod0631 on the
+  ascetic's own cell.
+* *Mage* (817 only; jAthena's of 2004-03-02 has the same numbers): the
+  Mixing Machine checks each solution's own amounts and then takes two
+  Jellopy and three Fluff whatever the solution.
+* The Swordman's and the Archer's quests have no second period script
+  before jAthena's of 2004-03-02 (`conf/npc/npc_job_swordman.txt`,
+  `npc_job_archer.txt`, //0854): not yet read against 817's.
+**Impact:** small sums and one cell. **Look:** RODataZone's job pages
+(late 2003) for the Thief's reward and the ascetics' cells; jAthena //0854
+against 817 for Swordman and Archer.
+
 ## Resolved
 
 ### R1. Basic Skill levels

@@ -4,8 +4,12 @@
 -- Don't edit: override in scripts/npc/ (npc{replaces=}, wrap_npc, remove_npc) and list the
 -- change in docs/DEVIATIONS.md.
 -- source fix (jobs/merchant.txt:103): if(@TEMP !=0) goto R10; -> if(@TEMP !=0) goto R11;: the label jumped to itself for ever (one application in eight hung 817); R11 is the second serial number, as in R00/R01, R20/R21, R30/R31
+-- source fix (jobs/merchant.txt:244): goto M0jobmercE9NZ; -> goto M0JobMerQE9NZ;: the label is spelt M0JobMerQE9NZ five lines on: without 500z for the rest of the fee the script ended with its window open
+-- source fix (jobs/merchant.txt:267): if((job_merchant_q2==7) || (job_merchant_q2==8)) goto JobMerQ2E7o8; -> if(nov_3_merchant==11) goto JobMerQ2E7o8; if((job_merchant_q2<7) || (job_merchant_q2>8)) goto JobMerQua1;: the 100z for the letter was paid for being sent to Byalan, letter or no; mod0631 (conf/npc_job_merchant.txt:70-72) pays when the Kafra got it (she sets nov_3_merchant to 11, which nothing in 817 read) and says nothing of a letter to those sent elsewhere
+-- source fix (jobs/merchant.txt:367): ((countitem(1081)==0) || (countitem(1082)==0) || (countitem(1083)==0)) -> ((countitem(1081)==0) && (countitem(1082)==0) && (countitem(1083)==0)): 'no box' was true for everyone (nobody holds all three), so Kay never offered to change a wrong parcel; mod0631 (conf/npc_job_merchant.txt:537-539, 558-560) asks for none of the three
+-- source fix (jobs/merchant.txt:729): if((job_merchant_q2==3) || (countitem(1081) !=0)) -> if((job_merchant_q2==3) && (countitem(1081) !=0)): any box passed for the right one; mod0631 (conf/npc_job_merchant.txt:801-802) wants the errand and its box
+-- source fix (jobs/merchant.txt:730): if((job_merchant_q2==4) || (countitem(1082) !=0)) -> if((job_merchant_q2==4) && (countitem(1082) !=0)): the same slip (mod0631 :809-810)
 
--- warning (jobs/merchant.txt:3): goto M0jobmercE9NZ: no such label (Athena ends the script here)
 npc {
   map = "alberta_in", x = 53, y = 43, dir = 6, sprite = 86, name = "Merchant",
   src = "817:jobs/merchant.txt:3",
@@ -245,7 +249,7 @@ npc {
     if c == 1 then goto M0JobMerQE9 elseif c == 2 then goto EndJobMerQE9 end
     ::M0JobMerQE9::
     mes "[Chief Mahnsoo]"
-    if player.zeny < 500 then do return end --[[ goto M0jobmercE9NZ: no such label in the source (Athena ends the script) ]] end
+    if player.zeny < 500 then goto M0JobMerQE9NZ end
     player.zeny = player.zeny - 500
     mes "Oh yeah... 500 Zeny. Gotcha!"
     goto JobMerQua
@@ -266,7 +270,8 @@ npc {
     job_change(5)
     mes "I am so Pleased that you join the Merchant Guild and I hope you will play an Active Part in Rune Midgard Economy."
     next()
-    if (v.job_merchant_q2 == 7) or (v.job_merchant_q2 == 8) then goto JobMerQ2E7o8 end
+    if v.nov_3_merchant == 11 then goto JobMerQ2E7o8 end
+    if (v.job_merchant_q2 < 7) or (v.job_merchant_q2 > 8) then goto JobMerQua1 end
     mes "[Chief Mahnsoo]"
     mes "(The Message you delivered by my personal request....errr.....You've forgotten...???...Never Mind...Well done.)"
     goto JobMerQua1
@@ -359,7 +364,7 @@ npc {
     if player.class == 5 then goto JobMer end
     if ((v.job_merchant_q == 10) or (v.job_merchant_q == 9)) or (v.job_merchant_q == 2) then goto JobMerQE10oE9oE2 end
     if (v.job_merchant_q == 8) or (v.job_merchant_q == 7) then goto JobMerQE8oE7 end
-    if ((v.job_merchant_q == 6) or (v.job_merchant_q == 5)) and (((count_item(1081) == 0) or (count_item(1082) == 0)) or (count_item(1083) == 0)) then goto JobMerQE6oE5aBoxE0 end
+    if ((v.job_merchant_q == 6) or (v.job_merchant_q == 5)) and (((count_item(1081) == 0) and (count_item(1082) == 0)) and (count_item(1083) == 0)) then goto JobMerQE6oE5aBoxE0 end
     if ((v.job_merchant_q == 6) or (v.job_merchant_q == 5)) and (((count_item(1081) ~= 0) or (count_item(1082) ~= 0)) or (count_item(1083) ~= 0)) then goto JobMerQE6oE5aBoxNE0 end
     mes(("Name? " .. char_info(0)) .. "....")
     if v.job_merchant_q == 0 then goto M0JobMerQE0 end
@@ -686,8 +691,8 @@ npc {
     next()
     mes "[Guild Staff]"
     mes "Alright, Let's get checked the Serial Numbers? Ehh...."
-    if (v.job_merchant_q2 == 3) or (count_item(1081) ~= 0) then goto JobMerQ2E3oMerBox1NE0 end
-    if (v.job_merchant_q2 == 4) or (count_item(1082) ~= 0) then goto JobMerQ2E4oMerBox2NE0 end
+    if (v.job_merchant_q2 == 3) and (count_item(1081) ~= 0) then goto JobMerQ2E3oMerBox1NE0 end
+    if (v.job_merchant_q2 == 4) and (count_item(1082) ~= 0) then goto JobMerQ2E4oMerBox2NE0 end
     mes ".....! Ehh??? Wrong Numbers!?"
     next()
     mes "[Guild Staff]"

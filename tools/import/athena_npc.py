@@ -243,6 +243,32 @@ SOURCE_FIXES = {
     ("jobs/novice.txt", 642): ("`'delete' - /stand`", "`'insert' - /Sit`", "the same slip, in the answer to a wrong choice"),
     ("jobs/novice.txt", 648): ("`'delete' - /stand`", "`'insert' - /Sit`", "the same slip"),
     ("jobs/novice.txt", 654): ("`'delete' - /stand`", "`'insert' - /Sit`", "the same slip"),
+    ("jobs/merchant.txt", 244): (
+        "goto M0jobmercE9NZ;", "goto M0JobMerQE9NZ;",
+        "the label is spelt M0JobMerQE9NZ five lines on: without 500z for the rest of the fee the script "
+        "ended with its window open"),
+    ("jobs/merchant.txt", 267): (
+        "if((job_merchant_q2==7) || (job_merchant_q2==8)) goto JobMerQ2E7o8;",
+        "if(nov_3_merchant==11) goto JobMerQ2E7o8; if((job_merchant_q2<7) || (job_merchant_q2>8)) goto JobMerQua1;",
+        "the 100z for the letter was paid for being sent to Byalan, letter or no; mod0631 "
+        "(conf/npc_job_merchant.txt:70-72) pays when the Kafra got it (she sets nov_3_merchant to 11, "
+        "which nothing in 817 read) and says nothing of a letter to those sent elsewhere"),
+    ("jobs/merchant.txt", 367): (
+        "((countitem(1081)==0) || (countitem(1082)==0) || (countitem(1083)==0))",
+        "((countitem(1081)==0) && (countitem(1082)==0) && (countitem(1083)==0))",
+        "'no box' was true for everyone (nobody holds all three), so Kay never offered to change a "
+        "wrong parcel; mod0631 (conf/npc_job_merchant.txt:537-539, 558-560) asks for none of the three"),
+    ("jobs/merchant.txt", 729): (
+        "if((job_merchant_q2==3) || (countitem(1081) !=0))", "if((job_merchant_q2==3) && (countitem(1081) !=0))",
+        "any box passed for the right one; mod0631 (conf/npc_job_merchant.txt:801-802) wants the errand and its box"),
+    ("jobs/merchant.txt", 730): (
+        "if((job_merchant_q2==4) || (countitem(1082) !=0))", "if((job_merchant_q2==4) && (countitem(1082) !=0))",
+        "the same slip (mod0631 :809-810)"),
+    ("jobs/thief.txt", 429): (
+        "if (Mushroom2==0) goto NoMushroom;",
+        "if ((Mushroom1==0) && (Mushroom2==0)) goto NoMushroom; if (Mushroom2==0) goto TotalMH;",
+        "a basket of Orange Net Mushrooms alone (nine are 27 points, a pass) was told it held none; "
+        "mod0631 (conf/npc_job_thief.txt:269-270) refuses only when both kinds are missing"),
     ("skillquests/arrowrepel.txt", 115): (
         'everything";f', 'everything";',
         "a stray f after the line made the next one an unknown command, so the script stopped "

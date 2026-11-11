@@ -3,6 +3,7 @@
 -- the emulator authors' (often fan-translated), not Gravity's. GPL, like its source.
 -- Don't edit: override in scripts/npc/ (npc{replaces=}, wrap_npc, remove_npc) and list the
 -- change in docs/DEVIATIONS.md.
+-- source fix (jobs/thief.txt:429): if (Mushroom2==0) goto NoMushroom; -> if ((Mushroom1==0) && (Mushroom2==0)) goto NoMushroom; if (Mushroom2==0) goto TotalMH;: a basket of Orange Net Mushrooms alone (nine are 27 points, a pass) was told it held none; mod0631 (conf/npc_job_thief.txt:269-270) refuses only when both kinds are missing
 
 npc {
   map = "moc_ruins", x = 141, y = 125, dir = 3, sprite = 83, name = "Bogus Man",
@@ -446,7 +447,8 @@ npc {
     mes " "
     goto MH2
     ::MH2::
-    if v.Mushroom2 == 0 then goto NoMushroom end
+    if (v.Mushroom1 == 0) and (v.Mushroom2 == 0) then goto NoMushroom end
+    if v.Mushroom2 == 0 then goto TotalMH end
     mes(("You brought Orange Gooey Mushroom " .. v.Mushroom2) .. " ea.")
     mes " "
     goto TotalMH

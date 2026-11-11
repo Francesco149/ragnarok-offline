@@ -156,10 +156,11 @@ impl T {
     }
 }
 
-const MAPS: [&str; 24] = [
+const MAPS: [&str; 25] = [
     "prontera", "izlude", "aldeba_in", "moc_prydb1", "payon", "alberta_in", "morocc", "prt_in", "prt_castle", "geffen",
     "geffen_in", "morocc_in", "alberta", "tur_dun01", "tur_dun02", "izlude_in", "alb2trea", "pay_fild08",
     "gef_tower", "job_wiz", "new_zone02", "new_zone03", "new_zone04", "payon_in02",
+    "izlu2dun",
 ];
 
 fn setup(tag: &str) -> T {
@@ -703,6 +704,65 @@ fn training_ground_result() {
     assert_eq!(t.eval("return player.map .. ' ' .. v.nov_2nd_tries"), "new_zone04 11");
     t.talk("new_zone04", 60, 149, &[1, 1]);
     assert_eq!(t.eval("return count_item(507) .. ' ' .. player.zeny"), "1 100", "0 points: one Red Herb, 100z");
+}
+
+/// The Merchant test's parcels (scripts/npc/merchant_delivery.lua and the
+/// source fixes to 817's merchant.txt): each of the four places takes the
+/// box of the errand it was sent and no other, Byalan's Kafra among them;
+/// Kay changes a wrong parcel; the letter pays only when it was delivered.
+#[test]
+fn merchant_parcels() {
+    let mut t = setup("merchant_parcels");
+    let places = [("prontera", 248, 42, 1073), ("geffen_in", 155, 122, 1075), ("morocc_in", 140, 102, 1077), ("izlu2dun", 106, 58, 1079)];
+    for (i, (map, x, y, receipt)) in places.iter().enumerate() {
+        for errand in 0..2u32 {
+            let (right, other, receipt) = (1081 + errand, 1082 - errand, receipt + errand);
+            let state = format!("v.job_merchant_q = 5; v.job_merchant_q2 = {}; v.job_merchant_q3 = {}", 2 * i as u32 + 1 + errand, i + 1);
+            for wrong in [1083, other] {
+                t.eval(&format!("{state}; give_item({wrong}, 1)"));
+                t.talk_by(map, *x, *y, |_| 1);
+                assert_eq!(t.eval(&format!("return count_item({receipt}) .. ' ' .. v.job_merchant_q .. ' ' .. count_item({wrong})")), "0 5 1", "{map}, errand {errand}: box {wrong} is not the one ordered");
+                t.eval(&format!("take_item({wrong}, 1)"));
+            }
+            t.eval(&format!("{state}; give_item({right}, 1)"));
+            t.talk_by(map, *x, *y, |_| 1);
+            assert_eq!(t.eval(&format!("return count_item({receipt}) .. ' ' .. v.job_merchant_q .. ' ' .. count_item({right})")), "1 7 0", "{map}, errand {errand}: the right box gets its receipt");
+            // delivered: she has nothing more to take, and stays a Kafra to everyone else
+            t.talk_by(map, *x, *y, |_| 1);
+            assert_eq!(t.eval("return v.job_merchant_q"), "7");
+            t.eval(&format!("take_item({receipt}, 1)"));
+        }
+    }
+    // Byalan: the Chief's letter goes with the parcel, and only then does he pay for it
+    let fruit: i64 = t.eval("return count_item(512) + count_item(513)").parse().unwrap();
+    t.eval("v.job_merchant_q = 6; v.job_merchant_q2 = 8; v.job_merchant_q3 = 4; v.nov_3_merchant = 0; give_item(1082, 1); give_item(1072, 1)");
+    t.talk_by("izlu2dun", 106, 58, |_| 1);
+    assert_eq!(t.eval("return count_item(1080) .. ' ' .. count_item(1072) .. ' ' .. v.nov_3_merchant .. ' ' .. v.job_merchant_q"), "1 0 11 8");
+    assert_eq!(t.eval("return count_item(512) + count_item(513)").parse::<i64>().unwrap(), fruit + 3, "her small gift");
+
+    // off the errand she is the Kafra who sends you to Izlude for 900z, if you have them
+    t.eval("v.job_merchant_q = 0; v.job_merchant_q3 = 0; player.zeny = 899; v.KF_PIT = 0");
+    t.talk("prontera", 248, 42, &[1]);
+    assert_eq!(t.eval("return player.map .. ' ' .. player.zeny"), "prontera 899");
+    t.eval("player.zeny = 1000");
+    t.talk("prontera", 248, 42, &[1]);
+    assert_eq!(t.eval("return player.map .. ' ' .. player.zeny .. ' ' .. v.KF_PIT"), "izlude 100 90");
+
+    // Kay changes a parcel with the wrong serial number (817: the branch could not be reached)
+    t.eval("v.job_merchant_q = 5; v.job_merchant_q2 = 1; v.job_merchant_q3 = 1; give_item(1083, 1)");
+    let menus = t.talk("alberta_in", 28, 29, &[1, 1]);
+    assert!(menus[1].starts_with("Please Exchange the Product."), "{menus:?}");
+    assert_eq!(t.eval("return count_item(1083) .. ' ' .. v.job_merchant_q .. ' ' .. v.job_merchant_q3"), "0 4 0");
+}
+
+/// The Thief test's weighing (source fix to 817's thief.txt:429): nine Orange
+/// Net Mushrooms and nothing else are 27 points, a pass.
+#[test]
+fn thief_mushrooms_of_one_kind() {
+    let mut t = setup("thief_mushrooms");
+    t.eval("player.job_level = 10; give_skill(1, 9); v.job_thief_q = 3; give_item(1069, 9)");
+    t.talk_by("moc_prydb1", 42, 133, |_| 1);
+    assert_eq!(t.eval("return player.class"), "6", "Thief");
 }
 
 fn wizard_answer(menu: &str, right: bool) -> u8 {

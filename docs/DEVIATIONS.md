@@ -180,6 +180,28 @@ eAthena 817 (2004-02-19), bugs included. The translator is
   though mod0631 differs (THREADS.md #6): two of Leo's questions, his
   prizes' amounts and his Red Herbs (always four), the Instructor's Milk,
   one answer of the first personality test.
+* **The Merchant test's parcels** (`scripts/npc/merchant_delivery.lua`,
+  and source fixes in the importer). 817's port of the test could not be
+  finished by one applicant in four: Byalan's Kafra (`izlu2dun 106,58`)
+  asks a variable nothing sets whether you bring a parcel, reads the
+  training ground's counter for the serial number, and hands out two items
+  that do not exist where mod0631 (`conf/npc_town_kafra.txt:1735`) moves
+  the quest on; and Kay could never change a parcel with the wrong number
+  ("no box" was written so that it was true for everyone), so the only way
+  on was to report it lost, fail, and pay the fee again. Mended from
+  mod0631, in 817's words: the Kafras of Byalan and Prontera take the box
+  of the errand they were sent and no other (both tested the box and went
+  on whatever the answer), Byalan's takes the Chief's letter; Kay changes
+  a parcel; Geffen's Guild Staff wants the errand *and* its box (817: or);
+  the Chief pays the 100z for the letter when it was delivered (817: to
+  everyone sent to Byalan), and being 500z short no longer ends his script
+  in mid-air (a misspelt label). Prontera's Kafra, off the errand, sends
+  you to Izlude for 900z only if you have them (817 took them unchecked).
+* **The Thief test's weighing.** 817's Comrade told a novice with Orange
+  Net Mushrooms and no Orange Gooey ones that the basket was empty (nine
+  Net ones are 27 points, a pass); only an empty basket is refused now, as
+  in mod0631 (`conf/npc_job_thief.txt:269-270`). A source fix in the
+  importer.
 * **Monster Tamers** (`scripts/npc/monster_tamers.lua`): three NPCs from
   mod0631 that 817 lacks, in Alberta, Izlude and Al De Baran, where the iRO
   pet guide of 2004 says they stood. They turn ingredients into taming
