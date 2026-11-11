@@ -37,7 +37,11 @@ impl MapGrid {
                 1 => 0,
                 3 => WALK | SHOOT | WATER,
                 5 => SHOOT,
-                _ => 0,
+                // Anything else can be walked: Athena keeps the type's low
+                // byte and blocks on 1 and 5 alone (mod0631 map.c:1052,
+                // path.c:153). It matters on one map of this client:
+                // c_tower1's whole floor has the type 0x444c74.
+                _ => WALK | SHOOT,
             });
         }
         Ok(MapGrid { name: name.to_string(), width: w as u16, height: h as u16, cells })
@@ -78,5 +82,23 @@ impl MapGrid {
     }
     pub fn walkable_count(&self) -> usize {
         self.cells.iter().filter(|&&c| c & WALK != 0).count()
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn only_types_1_and_5_block() {
+        let mut b = b"GRAT\x01\x02".to_vec();
+        b.extend_from_slice(&4u32.to_le_bytes());
+        b.extend_from_slice(&1u32.to_le_bytes());
+        for t in [0u32, 1, 5, 0x444c74] {
+            b.extend_from_slice(&[0; 16]);
+            b.extend_from_slice(&t.to_le_bytes());
+        }
+        let g = MapGrid::from_gat("t", &b).unwrap();
+        assert_eq!((0..4).map(|x| g.walkable(x, 0)).collect::<Vec<_>>(), [true, false, false, true]);
     }
 }
