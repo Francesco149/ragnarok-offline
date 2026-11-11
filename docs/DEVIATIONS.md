@@ -178,14 +178,17 @@ eAthena 817 (2004-02-19), bugs included. The translator is
   The words are ours, a short retelling, and the names our reading of the
   katakana. One line is mended: mod0631's rock lacks a `goto`, so its
   Bananas could never be had. As in mod0631, the logbook can be read
-  again after an errand, and the errand done again. Whether the
-  international servers asked 10000z is THREADS.md #24.
+  again after an errand, and the errand done again. The 10000z is the
+  Japanese servers' fare, kept as the best figure we have; what the
+  international servers asked is not confirmed (THREADS.md #24).
 * **Moving HP Recovery** (`scripts/npc/moving_hp.lua`). 817's knight asks
   for 500 Empty Bottles, a Rocker Doll and a Padded Armour, tests for
   them, and takes 200 Empty Bottles and a Moth Wings, which are the
   Japanese servers' items (mod0631). He now takes the 500 bottles and the
   doll, the list RODataZone gives for the international servers
-  (2004-05-02). The armour is still asked for, as in 817, and not taken.
+  (2004-05-02). The armour is neither tested nor taken: he says to come
+  wearing one, as mod0631's knight does. Not confirmed for the
+  international servers (THREADS.md #7).
 * **Peco Peco Breeder** (`scripts/npc/peco_keeper.lua`): mod0631's keeper
   by Prontera's north-west wall (`prontera 55,350`), 2500z a bird for a
   Knight; the Crusaders' keeper (`232,318`) comes with `jobs2_2`. 817 has

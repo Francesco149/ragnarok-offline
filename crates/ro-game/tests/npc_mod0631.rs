@@ -475,18 +475,15 @@ fn turtle_island() {
 #[test]
 fn moving_hp_recovery() {
     let mut t = setup("moving_hp");
-    t.eval("job_change(1); player.job_level = 35; give_item(713, 520); give_item(752, 1); give_item(1058, 1)");
-    // without the armour he asks again
+    t.eval("job_change(1); player.job_level = 35; give_item(713, 520); give_item(1058, 1)");
+    // without the doll he asks again
     assert!(t.talk("izlude_in", 175, 130, &[]).is_empty());
     assert_eq!(t.eval("return skill_level(144)"), "0");
-    t.eval("give_item(2312, 1)");
+    t.eval("give_item(752, 1)");
     t.talk("izlude_in", 175, 130, &[2]);
     assert_eq!(t.eval("return skill_level(144) .. ' ' .. count_item(713)"), "0 520");
     t.talk("izlude_in", 175, 130, &[1]);
-    // what he asked for is what he takes; the armour and the Moth Wings stay
-    assert_eq!(
-        t.eval("return skill_level(144) .. ' ' .. count_item(713) .. ' ' .. count_item(752) .. ' ' .. count_item(2312) .. ' ' .. count_item(1058)"),
-        "1 20 0 1 1"
-    );
+    // what he asked for is what he takes; no armour is needed, the Moth Wings stay
+    assert_eq!(t.eval("return skill_level(144) .. ' ' .. count_item(713) .. ' ' .. count_item(752) .. ' ' .. count_item(1058)"), "1 20 0 1");
     assert!(t.talk("izlude_in", 175, 130, &[]).is_empty());
 }

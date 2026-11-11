@@ -204,8 +204,9 @@ same items in 817, mod0631 and on RODataZone's Swordman page (capture of
 say 500 Empty Bottles and a Rocker Doll (817 adds a Padded Armour),
 mod0631 says 200 Empty Bottles and a Moth Wings and that the armour is
 only to be worn, and 817's code tests for the first list and takes the
-second. `scripts/npc/moving_hp.lua` takes what is asked and leaves the
-armour (DEVIATIONS).
+second. `scripts/npc/moving_hp.lua` takes the bottles and the doll; the
+armour is only to be worn, as in mod0631, and is not tested (DEVIATIONS;
+unconfirmed).
 **Open:** the item lists of the other jobs' quests side by side (Archer,
 Merchant, Mage, Acolyte: mod0631's are in `conf/npc_event_skillget.txt`,
 RODataZone's on its job pages); whether the Padded Armour was asked for
