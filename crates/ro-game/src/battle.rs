@@ -573,7 +573,13 @@ impl Game {
     pub(crate) fn begin_cast(&mut self, unit: u32, skill: u16, lv: u16, target: u32, x: u16, y: u16, cast_ms: u64, delay_ms: u64, cancelable: bool, forcecast: bool, val: i64, line: i32) {
         let now = self.now();
         let element = self.db.skill(skill).map(|s| s.element as u32).unwrap_or(0);
-        if cast_ms > 0 || forcecast {
+        // The client shouts the skill's name over a caster and says "Unknown
+        // Skill !!" for one its name table lacks: every monster-only skill
+        // (an Ant Egg hatching) and every 2-2 skill on this client. Those
+        // cast without the bar; the cast still takes its time (ours: what
+        // the official server sent for them is not known, THREADS.md #23).
+        let named = self.res.skill_names.is_empty() || self.db.skill(skill).is_some_and(|s| self.res.skill_names.contains(&s.name));
+        if (cast_ms > 0 || forcecast) && named {
             self.area_send(unit, packets::skill_casting(unit, target, x, y, skill, element, cast_ms as u32), true);
         }
         let cast = Cast { skill, lv, target, x, y, end_at: now + cast_ms, cancelable: cancelable && cast_ms > 0, val, line };

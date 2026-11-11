@@ -113,6 +113,9 @@ pub struct Resources {
     /// SP per level by Aegis skill name, from the client's
     /// `data\leveluseskillspamount.txt` (tier client).
     pub skill_sp: HashMap<String, Vec<u16>>,
+    /// Aegis names of the skills the client can name, from its
+    /// `data\\skillnametable.txt` (tier client). Empty when there is no table.
+    pub skill_names: HashSet<String>,
 }
 
 impl Resources {
@@ -127,7 +130,11 @@ impl Resources {
             }
         }
         let skill_sp = vfs.read("data\\leveluseskillspamount.txt").map(|b| parse_skill_sp(&b)).unwrap_or_default();
-        Resources { vfs, maps, skill_sp }
+        let skill_names = vfs
+            .read("data\\skillnametable.txt")
+            .map(|b| String::from_utf8_lossy(&b).lines().filter_map(|l| l.split_once('#')).map(|(n, _)| n.trim().to_string()).collect())
+            .unwrap_or_default();
+        Resources { vfs, maps, skill_sp, skill_names }
     }
 }
 

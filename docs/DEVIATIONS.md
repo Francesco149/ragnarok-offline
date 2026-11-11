@@ -284,6 +284,12 @@ eAthena 817 (2004-02-19), bugs included. The translator is
 
 ## Engine behaviour relative to Athena 817
 
+* **No casting bar for a skill the client cannot name.** Athena sends the
+  bar (0x013e) for every cast. This client shouts the skill's name over the
+  caster and says "Unknown Skill !!" for one that is not in its
+  `skillnametable.txt`: every monster-only skill (an Ant Egg hatching) and
+  every 2-2 skill. Those casts take their time without the bar. Ours;
+  what the official server sent is not known (THREADS.md #23).
 * **Cell types.** Only types 1 and 5 block, as in Athena (mod0631
   `map.c:1052`, `path.c:153`). One map of this client depends on it: the
   whole floor of `c_tower1` has the type `0x444c74` (some builder's stray

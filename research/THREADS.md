@@ -517,6 +517,12 @@ lines): its authors' reconstruction of what jRO's monsters did, with
 monster skills with "New Comodo" (January 2004). The AI is mod0631's
 `mob_ai_sub_hard`: 9-cell sight for aggressive monsters, chase to 13
 cells, 25% chance to switch target, looters, assist within 13 cells.
+**Seen in the client (rig, 2026-11-11):** an Ant Egg hatching
+(`NPC_METAMORPHOSIS`, a two-second cast) had "Unknown Skill !!" over it.
+The exe holds no `NPC_` name and `skillnametable.txt` none either, so
+every monster-only skill with a cast time did that. Such casts are now
+sent without the casting bar (DEVIATIONS). Open: what an official server
+sent for a monster-only cast, and what a client of January 2004 showed.
 **Impact:** how every fight feels; `data/db/mob_skills.toml`.
 **Look:** kRO notices on monster skills (2003); period monster databases
 that list skills (RODataZone, RO Empire); later official data is tier
