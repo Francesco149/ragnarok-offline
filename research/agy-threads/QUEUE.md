@@ -4,10 +4,10 @@ For: the independent deep-research agent (Gemini in Antigravity) that wrote
 rounds 1 to 3. Kept by the Claude sessions that work on the game: at the
 end of each session the queue is updated (answered items go to "Done",
 with where the answer went) and refilled with what that session could not
-settle from the sources on disk. Last update: 2026-11-11 (fifth session
-of that day: the training ground and five of the six first-job tests
-played in the real client, 817's scripts read against mod0631's; T10 is
-new, and it comes third).
+settle from the sources on disk. Last update: 2026-11-11 (sixth session
+of that day: rounds 5 and 6 reviewed, `research/notes/round5-6-review.md`;
+T2 is answered from our own disk, the Hunter test is in; T1 and T10
+rewritten, T11 new).
 
 ## How to use it
 
@@ -23,6 +23,12 @@ new, and it comes third).
    * **`source_date` of a file on disk is the file's own date** (`ls -l
      --time-style=long-iso`), or empty. Round 4 dated every mod0631 row
      2003-06-30 and every 817 row 2004-01-20; neither date is anywhere.
+   * **Rows from a file that is not a period source are grade D**: a
+     later client's tables (`euRO_quests.txt` is a quest log of the 2010s),
+     our own extractions. A GameFAQs guide is dated by the version-history
+     line that added the section you quote: put that line in `reasoning`.
+   * **Before searching the web for a file, look on `data:`** and in
+     `docs/PRESERVATION.md`: round 5's best find (T2) was on our own disk.
    * **Do not quote back what THREADS.md already says.** Round 4's rows
      for dyes and for the skill table repeated lines the game was built
      from. If a task has nothing beyond that, write one `none` row per
@@ -30,7 +36,7 @@ new, and it comes third).
 2. Take tasks from the top; the order is by how much of the game waits on
    the answer. A round need not take them all. Say in `progress.md` which
    ones you took.
-3. Write only inside `research/agy-threads/r<N>/` for round N (round 5 is
+3. Write only inside `research/agy-threads/r<N>/` for round N (round 7 is
    next): `rows/<task id>.jsonl`, `pages/` for saved web pages, `check.txt`
    for your own checker run. No summary report: rows only, plus one line per
    task in `progress.md`: "answered" only if every bullet of the task has a
@@ -63,68 +69,37 @@ What is on this machine is listed in `HANDOFF-r3.md` §3. Since then:
 
 ## Queue
 
-### T1. The 2-1 job tests on the maps of the Turtle Island patch (threads 5, 8)
+### T1. The 2-1 job tests: Knight, Assassin, Blacksmith (threads 5, 8)
 
-Changed on 2026-11-11: the maps are known now. `job_wiz`, `job_knt`,
-`job_prist` and `job_hunte` are in the client we play; the Wizard test is
-in the game on `job_wiz` from eAthena 817's unfinished script
-(`scripts/npc/wizard_test.lua`). Wanted, dated 2003-12 to 2004-06, any
-language (the test content was the same everywhere; say which server):
+Changed on 2026-11-11 (sixth session): the Hunter test is in
+(`scripts/npc/hunter_test.lua`, from round 5's iRO walkthrough of
+2004-02-15 and eAthena 1.0's script of 2004-11-04), and so are the Wizard
+and the Priest tests. Wanted, dated 2003-12 to 2004-06, any language (say
+which server), for the three that are still 817's no-test stubs:
 
-* **Knight** on `job_knt` and **Hunter** on `job_hunte`: a walkthrough.
-  Row per step: who, where, what is asked. No period script exists
-  (jAthena's Knight test is of 2004-09-12; 817's Hunter quest never
-  enters `job_hunte`). mod0631 has four warp tiles on `job_knt`
-  (`165,151`, `122,151`, `65,145`, `22,145`) and two on `job_hunte`
-  (`89,139`, `89,68`), all "to 0,0": what were they?
-* **Priest** (changed on 2026-11-11: 817's test turns out to be its
-  author's own invention, and jAthena's `script/npc/job/npc_job_priest.txt`
-  of 2004-06-08, commit `0f45810` in `data:refs/jathena`, is the official
-  three-part test on `job_prist`; wanted now is a player's account of that
-  test from before June 2004, to date it). 817's test runs on `priest_1-1` (the older `job_priest`, where
-  its cells fit). mod0631 has two warps on `job_prist` (`97,104` and
-  `24,109` to `168,17`). On which map was the test in early 2004, and what
-  were its rounds (the grail errand is 817's)?
-* **Wizard**, to sharpen what is in: how the waiting room worked (one
-  candidate at a time out of an NPC chat room?); whether the Fire room's
-  guards had one minute (jAthena, eAthena 0.5.2) or two (817); whether
-  dying or logging out in a room cost anything; any of the examiner's
-  questions quoted by a player (ours are 817's translation).
-* **Assassin** and **Blacksmith**: on which maps, if any.
-* The Peco Peco Breeder and the Falcon Breeder: place and fare on iRO or
-  euRO (mod0631: `prontera 55,350` and `in_hunter 146,99`, 2500z each; 817's
-  falcon breeder stands at `in_hunter 134,101`).
+* **Knight** on `job_knt`: a player's walkthrough. jAthena's
+  `npc_job_07knight.txt` (2004-09-12, commit `6332410`) and eAthena 1.0's
+  `npc/jobs/2-1/knight.txt` (2004-11-04, `data:refs/rathena` commit
+  `706e78509`) are on disk: wanted is a walkthrough that dates their
+  rounds (Windsor Benedict, the arenas, Dame Amy's patience test) before
+  June 2004. Edge's guide (GameFAQs 29457) says pRO had no test ("Pay a
+  small fee"): is there an iRO or euRO account either way?
+* **Assassin** and **Blacksmith**: a walkthrough of each from before
+  June 2004, with the steps (eAthena 1.0 has both scripts; when did the
+  international servers get them?).
+* **Hunter, to sharpen**: the walkthrough's Master Hunter "at the central
+  palace" of Payon (this client has no `payon_in03`: which map was it on
+  iRO in early 2004?); any other item list of the Demon Hunter's (the
+  walkthrough found three); what the interview's right answers were.
+* **Priest**: a player's account of the three-part test on `job_prist`
+  (pilgrimage, exorcism, vow; in the game from jAthena's script of
+  2004-06-08) from before June 2004, to date it.
+* **Wizard**: one minute or two for the Fire room's guards (jAthena and
+  eAthena 0.5.2 against 817); whether dying or logging out in a room cost anything; more
+  of the examiner's questions quoted by a player (round 5 found one, in a
+  guide of 2004-07-30).
 
-Sets: Knight and Hunter tests; `scripts/npc/priest_test.lua`,
-`wizard_test.lua`; the breeders' cells.
-
-### T2. A client that knows the 2-2 skills (thread 25)
-
-New on 2026-11-11, and placed here because the seven 2-2 jobs wait on it.
-Seen in the real client: `Ragexe.exe` of 2003-12-18 holds the Aegis names
-of the skills up to the 2-1 jobs (`KN_BOWLINGBASH` is in it) and not one
-`CR_`, `MO_`, `SA_`, `RG_`, `BA_`, `DC_` or `BD_` name. Its skill window
-leaves out every 2-2 skill the server lists, and a cast shouts "Unknown
-Skill !!". `data\skillnametable.txt` and `data\skilldesctable.txt` in the
-merged GRF end with the 2-1 jobs as well. euRO replaced the exe twice
-before the jobs opened there on 2004-06-09: patch list entries 444 and 462,
-`2004-04-15aRagexe.rgz` and `2004-05-31aRagexe.rgz`
-(`research/notes/euro-history.md` §5).
-
-* Is either file archived anywhere: Wayback's captures under
-  `wpatch.euro-ro.net` (list them with the CDX API and put the command and
-  its output in the row), mirrors, fan sites, patch collections? One row
-  per place searched, `none` rows included.
-* Failing those: any international client exe dated 2004-03 to 2004-07
-  (iRO, euRO, another English-language server) that is archived, with URL,
-  size and date. Do not download anything over 50 MB; give the URL.
-* The data files that went with the jobs on euRO: the patch lists on disk
-  (`data:refs/euro-patch-wayback/`) name files, not their contents. Which
-  entries from 444 up to the Juno block of the July list look like language
-  or table data (`gdata_lang`, `gdata_scr` and the like), and is any of
-  those `.gpf` files archived?
-
-Sets: whether `jobs2_2` can be played at all, and with which client.
+Sets: Knight, Assassin and Blacksmith tests; the Hunter test's details.
 
 ### T10. The novice training ground outside Japan (thread 6)
 
@@ -168,6 +143,12 @@ training ground. Row per fact:
   the iRO guide's beginner pages, the euRO and Gamona forum captures listed
   in `research/notes/round2-review.md`.
 
+Round 5 found one player's account (Weggy's FAQ: "100 zeny, or 200 zeny
+if the final few NPCs guessed your class correctly"; skipping the
+training "whisks you away to a random town"), and nothing on Leo's
+questions. Its other rows quoted eAthena 0.5.2's `novice.txt`, which is
+817's script two months on: not wanted again.
+
 Sets: `scripts/npc/novice_result.lua`; which of the differences listed in
 THREADS.md #6 get mended, and which way.
 
@@ -181,6 +162,10 @@ rates (closed-beta EXP and drops, thread 1), what each patch added
 (Turtle Island, Lutie, New Comodo, Juno), War of Emperium (first siege,
 schedule, rules stated, castles open), events, character slots, and the
 closed beta's end and wipe.
+Round 6 read about fifteen of them (saved in `r6/pages/`); nearly all of
+what they say was already in `research/notes/euro-history.md`. Wanted
+now: only pages dated 2003-12 to 2004-03 (closed beta and open beta), and
+any page that says what a patch changed in the game (not when).
 Sets: the content defaults in `[game.content]` and the rates.
 
 ### T4. Ailments and their resistance (thread 21)
@@ -194,6 +179,10 @@ The iRO guide's skill pages of March 2004 are read (THREADS.md #21): they
 say which stat resists freeze, stone and poison and give no formula.
 Start at: RODataZone, kRO notices, Japanese player wikis of 2003 (dated
 pages only), anything dated before March 2004.
+Round 6 found jAthena's first resistance (//0729, 2004-01-21; //0736 takes
+Stone Curse's time from "マジスレテンプレ", the 2channel mage thread's
+template): THREADS.md #21. Wanted now: that template itself, or any 2003
+copy of it (2ch archives, mirrors), with its numbers.
 Sets: `skill_additional_effect` and the ailment part of
 `skill_status_change_start`.
 
@@ -219,7 +208,33 @@ has the island's files between 2004-01-09 and 2004-01-15.
   Darkness for Grimtooth and tests for one ruby; names one Young Twig for
   Mysteltain and takes a hundred. We take what he names.
 
+Round 6 quoted mod0631's `npc_turtle.txt` and 817's `headgearquest.txt`,
+both already in the game, and a later client's quest log: nothing from an
+international server of 2004. Only that is wanted.
 Sets: the fare, and which hat quests belong to the default world.
+
+### T11. The May-2004 client against ours (thread 25)
+
+New on 2026-11-11. `data:mico07/Ragexe-2004-05-07.exe` (euRO, from the
+MICO07 DVD) and `data:mico07/yuno_lang/data/` (its language patch,
+unpacked) are on disk. Rows as computed results:
+
+* every packet whose length differs between
+  `data/client/packet_lengths.tsv` and
+  `data:mico07/packet_lengths-Ragexe-2004-05-07.tsv`, and for each what
+  the field that grew is, from OpenKore's or eAthena's packet tables of
+  2004 (`data:refs/`, `research/notes/emulators.md` §4);
+* the lines of `skilldesctable.txt` (May 2004) for the 2-2 skills that
+  are drafted (THREADS.md #25 and DEVIATIONS.md list them), each against
+  the iRO guide's line and 817's number: where the client's text gives a
+  number or a condition;
+* which `data\` files of the May 2004 `data.grf`
+  (`data:mico07/client/out/Program Files/Gravity/RagnarokOnline/`) differ
+  from ours: `data:mico07/datagrf-diff-dec2003-may2004.txt` exists; sort
+  it into maps, sprites, tables.
+
+Sets: whether a second client is worth supporting for the 2-2 jobs (the
+owner's call), and the 2-2 skills' numbers.
 
 ### T6. Dyeing (thread 13; asked in round 4, not answered)
 
@@ -251,8 +266,8 @@ which witness each number follows). Open on those, wanted from a third
 source dated 2004 (a player guide, a forum post, a kRO notice; say which
 server):
 
-* Shield Reflect: ranged hits and skill damage too, or only close weapon
-  hits? (The guide: "the full damage taken from an enemy".)
+* Shield Reflect: answered by the May-2004 client's text (T11): "against
+  short-distance attack ... Reflect only physical attack".
 * The endows: did a failed endow destroy the weapon, as the guide says
   ("weapon is destroyed on failure")? Neither emulator lets one fail.
 * The Strips: the guide says "DEX difference between the caster and the
@@ -371,6 +386,10 @@ that nobody researches them again.
 | Why Clock Tower 1F could not be walked | Its cells have a stray type (`0x444c74`); only 1 and 5 block, as in Athena | DEVIATIONS.md "Cell types" |
 | Does the training ground play through on this client's maps | Yes, walked in the real client from the bridge to the job guide room; 817's script against mod0631's is read NPC by NPC | THREADS.md #6, `scripts/npc/novice_result.lua` |
 | The Priest test of 2004 | jAthena's of 2004-06-08 (pilgrimage, exorcism on `job_prist`, vow) is in the game; T1 asks to date it earlier | `scripts/npc/priest_test.lua`, THREADS.md #8 |
+| A client that knows the 2-2 skills | euRO's `Ragexe` of 2004-05-07 and its language patch, on the owner's MICO07 DVD (ripped 2026-11-09); found by round 5 | THREADS.md #25, `research/notes/round5-6-review.md` |
+| The Hunter test of early 2004 | iRO walkthrough of 2004-02-15 (round 5) and eAthena 1.0's script; in the game | `scripts/npc/hunter_test.lua`, THREADS.md #8 |
+| jAthena's first stat resistance | //0729, 2004-01-21 (round 6) | THREADS.md #21 |
+| euRO's news of 2004 | Round 6: nearly all already in `euro-history.md` | `research/agy-threads/r6/` |
 | Can the Merchant test be finished at each of its four places | Not in 817 (Byalan's Kafra never took a parcel; Kay could not change one); mended from mod0631, each place tested | `scripts/npc/merchant_delivery.lua`, THREADS.md #27 |
 | The Mage test's recipes | In 817's Book Shelf (`npc/other/books.txt`), the same numbers as jAthena's of 2004-03-02; played in the client | THREADS.md #27 |
 | Is a new character's Knife worn | Yes in mod0631 and 817 (`char/char.c`); now here too | `crates/ro-game/src/game.rs` |

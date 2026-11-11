@@ -82,7 +82,8 @@ reaches every job and learns every quest skill through the NPCs
 Breeder, the dye makers and the hairdresser, the Turtle Island chain, the
 doomed swords and Alberta's doll child; the Wizard test on `job_wiz` from
 817's unfinished script; the Priest test on `job_prist` from jAthena's of
-2004-06-08.
+2004-06-08; the Hunter test on `job_hunte` from eAthena 1.0's script, as
+an iRO player's walkthrough of 2004-02-15 has it.
 Next, in order:
 
 * play through each 1st-job quest in the client (the test does not walk
@@ -105,9 +106,12 @@ Next, in order:
   with a way out) but not yet played; the Priest test is untried there.
   Fix what breaks in `scripts/npc/` (one file per fix, listed in
   DEVIATIONS.md);
-* the Knight's and the Hunter's tests on `job_knt` and `job_hunte`, which
-  the client has (THREADS.md #8): no period script is known (jAthena's
-  Knight test is of 2004-09-12);
+* the Knight's test on `job_knt` (THREADS.md #8): jAthena's script of
+  2004-09-12 and eAthena 1.0's of 2004-11-04 are on disk; no account dates
+  it earlier (pRO had none: queue T1). The Assassin's and the
+  Blacksmith's likewise;
+* whether to support euRO's May-2004 client beside ours for the 2-2 jobs
+  (THREADS.md #25: it is on the owner's MICO07 DVD; the owner's call);
 * NPC waiting rooms (0x00d7 chat bubbles over arena/PvP NPCs);
 * clothes dyeing (THREADS.md #13: the dye makers and the hairdresser are
   in, from mod0631); English shop names from 817 by cell (#11);
