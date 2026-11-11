@@ -40,7 +40,8 @@ overweight icons.
 Next:
 
 * **Skills left out** (DEVIATIONS.md, THREADS.md #22): Talkie Box's text,
-  attacking an Ice Wall, Venom Splasher's delayed burst. Poison React,
+  attacking an Ice Wall, Venom Splasher's delayed burst (no period source
+  for its timer). Sandman's sleep on those nearby is in. Poison React,
   Remove Trap and Spring Trap are drafts to try in the client.
 * **The 2-2 jobs' skills** (behind `jobs2_2`): Crusader, Monk, Sage, Rogue,
   Alchemist, Bard, Dancer. Their damage formulas and status changes came
