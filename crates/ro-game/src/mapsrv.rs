@@ -844,6 +844,9 @@ impl Game {
         let same_map = u.map == map;
         self.dialogs.remove(&unit);
         self.dialog_warped.insert(unit);
+        // the pet goes with its owner: the new player unit below knows no pet unit, so an old one
+        // left standing would follow on (two pets after a warp on the same map)
+        self.pet_owner_left(unit);
         self.despawn(unit, 3);
         if let Some(c) = self.store.chars.get_mut(&cid) {
             c.last_point = Point::new(&map, x, y);
@@ -857,6 +860,9 @@ impl Game {
             self.set_ghost(unit);
             self.send(sid, packets::map_move(&map, x, y));
             self.refresh_view(unit, true);
+            if self.char_of_unit(unit).is_some_and(|c| c.active_pet != 0) {
+                self.spawn_pet(unit);
+            }
         } else {
             // client loads the new map, then sends 0x007d
             self.send(sid, packets::map_move(&map, x, y));

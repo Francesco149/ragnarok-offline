@@ -411,6 +411,17 @@ fn npc_runtime() {
     send(&mut g, 3, w);
     assert!(find(&cap.take(3), 0x01a2).is_some(), "pet status after hatching");
     assert!(g.world.units.values().any(|u| matches!(u.kind, UnitKind::Pet(_))), "pet out");
+    // the pet goes along on a warp, on the same map and to another, and stays one pet
+    // (an old pet unit used to stay behind and follow too: two Porings after a pit of the Swordman course)
+    let pets = |g: &Game| g.world.units.values().filter(|u| matches!(u.kind, UnitKind::Pet(_))).map(|u| u.map.clone()).collect::<Vec<_>>();
+    g.console_eval("warp('testmap', 20, 20)", me);
+    assert_eq!(pets(&g), ["testmap"], "after a warp on the same map");
+    g.console_eval("warp('job_sword1', 20, 20)", me);
+    send(&mut g, 3, Writer::new(0x007d));
+    g.console_eval("warp('testmap', 25, 25)", me);
+    send(&mut g, 3, Writer::new(0x007d));
+    assert_eq!(pets(&g), ["testmap"], "after going to another map and back");
+    cap.take(3);
     g.console_eval("give_item(531, 1)", me); // Apple Juice
     cap.take(3);
     let mut w = Writer::new(0x01a1);
