@@ -3,6 +3,11 @@
 -- the emulator authors' (often fan-translated), not Gravity's. GPL, like its source.
 -- Don't edit: override in scripts/npc/ (npc{replaces=}, wrap_npc, remove_npc) and list the
 -- change in docs/DEVIATIONS.md.
+-- source fix (jobs/swordsman.txt:122): "Cancel.",LEnd; -> "Cancel.",L3;: no label LEnd: the Sword Master's goodbye is at L3, which nothing reached
+-- source fix (jobs/swordsman.txt:372): announce @TEMP,3; -> : a leftover of testing: this pit told the faller a bare digit, the number of the cave
+-- source fix (jobs/swordsman.txt:1041): sword_1-1.gat,125,210,4 -> sword_1-1.gat,125,203,4: pit 2_blank_5_f repeats 2_blank_5_b's cell forty lines up; jAthena //0854 (conf/warp/npc_warp_job.txt:128) has it on row 203, where the strip it closes is
+-- source fix (jobs/swordsman.txt:1061): sword_1-1.gat,113,201,4 -> sword_1-1.gat,125,201,4: pit 2_blank_6_b repeats 2_blank_6_a's cell; jAthena (:130) has 125,201
+-- source fix (jobs/swordsman.txt:1151): 139,40,0,{ -> 139,21,0,{: pit 2_blank_9_a is 21 cells to each side like 7_a, 8_a and 8_e above it (jAthena :143), not 40
 
 -- warning (jobs/swordsman.txt:14): goto L1: no such label (Athena ends the script here)
 npc {
@@ -126,7 +131,6 @@ npc {
   end,
 }
 
--- warning (jobs/swordsman.txt:118): menu target ('name', 'LEnd') is not a label
 npc {
   map = "izlude_in", x = 74, y = 172, dir = 5, sprite = 119, name = "Sword Master",
   src = "817:jobs/swordsman.txt:118",
@@ -136,7 +140,7 @@ npc {
     mes "Welcome to the Swordman Association! So..What business brings you to us!?"
     next()
     c = menu("Job Change", "About Swordman.", "About the Job requirements.", "Cancel.")
-    if c == 1 then goto L0 elseif c == 2 then goto L1 elseif c == 3 then goto L2 elseif c == 4 then do return end end
+    if c == 1 then goto L0 elseif c == 2 then goto L1 elseif c == 3 then goto L2 elseif c == 4 then goto L3 end
     ::L0::
     if player.class == 1 then goto L0a end
     if player.class ~= 0 then goto L0b end
@@ -402,7 +406,6 @@ npc {
   touch = { 1, 1 }, src = "817:jobs/swordsman.txt:370",
   on_click = function()
     tmp.TEMP = rand(5)
-    announce(tmp.TEMP, 3)
     if tmp.TEMP == 0 then warp("job_sword1", 65, 56) end
     if tmp.TEMP == 1 then warp("job_sword1", 29, 26) end
     if tmp.TEMP == 2 then warp("job_sword1", 43, 16) end
@@ -1244,7 +1247,7 @@ npc {
 }
 
 npc {
-  map = "job_sword1", x = 125, y = 210, dir = 4, sprite = 139, name = "2_blank_5_f",
+  map = "job_sword1", x = 125, y = 203, dir = 4, sprite = 139, name = "2_blank_5_f",
   touch = { 2, 0 }, src = "817:jobs/swordsman.txt:1041",
   on_click = function()
     tmp.TEMP = rand(5)
@@ -1270,7 +1273,7 @@ npc {
 }
 
 npc {
-  map = "job_sword1", x = 113, y = 201, dir = 4, sprite = 139, name = "2_blank_6_b",
+  map = "job_sword1", x = 125, y = 201, dir = 4, sprite = 139, name = "2_blank_6_b",
   touch = { 2, 0 }, src = "817:jobs/swordsman.txt:1061",
   on_click = function()
     tmp.TEMP = rand(5)
@@ -1388,7 +1391,7 @@ npc {
 
 npc {
   map = "job_sword1", x = 155, y = 201, dir = 4, sprite = 139, name = "2_blank_9_a",
-  touch = { 40, 0 }, src = "817:jobs/swordsman.txt:1151",
+  touch = { 21, 0 }, src = "817:jobs/swordsman.txt:1151",
   on_click = function()
     tmp.TEMP = rand(5)
     if tmp.TEMP == 0 then warp("job_sword1", 162, 120) end

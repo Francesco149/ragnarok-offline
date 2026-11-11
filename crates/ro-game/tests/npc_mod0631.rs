@@ -771,6 +771,20 @@ fn thief_mushrooms_of_one_kind() {
     assert_eq!(t.eval("return player.class"), "6", "Thief");
 }
 
+/// The Archer test (source fixes to 817's archer.txt): the trunks handed in
+/// are taken, all of them, and a passing score is read out, not "0 / 40".
+#[test]
+fn archer_trunks() {
+    let mut t = setup("archer_trunks");
+    t.eval("player.job_level = 10; give_skill(1, 9); v.job_archer_q = 1; give_item(1066, 6); give_item(1019, 3)");
+    t.talk_by("payon_in02", 64, 71, |menu| if menu.starts_with("Err") { 2 } else { 1 });
+    assert_eq!(t.eval("return player.class"), "3", "Archer");
+    assert_eq!(t.eval("return count_item(1066) + count_item(1019)"), "0", "no trunk left to sell");
+    let said = t.said.join(" ");
+    assert!(said.contains("^0000FF33^000000 / 40"), "six fine trunks and three plain ones are 33 points: {said}");
+    assert_eq!(t.eval("return count_item(1702) .. ' ' .. count_item(1750)"), "1 100", "the guild's bow and arrows");
+}
+
 fn wizard_answer(menu: &str, right: bool) -> u8 {
     match WIZARD_KEY.iter().find(|(m, _)| *m == menu) {
         Some((_, a)) if right => *a,

@@ -3,6 +3,13 @@
 -- the emulator authors' (often fan-translated), not Gravity's. GPL, like its source.
 -- Don't edit: override in scripts/npc/ (npc{replaces=}, wrap_npc, remove_npc) and list the
 -- change in docs/DEVIATIONS.md.
+-- source fix (jobs/archer.txt:140): "+Total_Trunk+" -> "+@Total_Trunk+": the score is in @Total_Trunk (line 120); a pass read "0 / 40"
+-- source fix (jobs/archer.txt:147): "+Total_Trunk+" -> "+@Total_Trunk+": the same slip
+-- source fix (jobs/archer.txt:155): "+Total_Trunk+" -> "+@Total_Trunk+": the same slip
+-- source fix (jobs/archer.txt:172): delitem 1066; -> delitem 1066,countitem(1066);: no amount: the trunks handed in stayed in the bag (jAthena //0854, 2004-03-02, conf/npc/npc_job_archer.txt:104-107, takes them all)
+-- source fix (jobs/archer.txt:173): delitem 1067; -> delitem 1067,countitem(1067);: the same slip
+-- source fix (jobs/archer.txt:174): delitem 1068; -> delitem 1068,countitem(1068);: the same slip
+-- source fix (jobs/archer.txt:175): delitem 1019; -> delitem 1019,countitem(1019);: the same slip
 
 npc {
   map = "payon_in02", x = 64, y = 71, dir = 4, sprite = 85, name = "Archer Guildsman",
@@ -138,14 +145,14 @@ npc {
     close()
     do return end
     ::HighTrunk::
-    mes(("  Total Grades :  ^0000FF" .. v.Total_Trunk) .. "^000000 / 40")
+    mes(("  Total Grades :  ^0000FF" .. tmp.Total_Trunk) .. "^000000 / 40")
     next()
     mes "[Archer Guildsman]"
     mes "Wow! That's wonderful! You scored above 40! Excellent! Congratulations!"
     next()
     goto MakArc
     ::MediumTrunk::
-    mes(("  Total Grades :  ^0000FF" .. v.Total_Trunk) .. "^000000 / 40")
+    mes(("  Total Grades :  ^0000FF" .. tmp.Total_Trunk) .. "^000000 / 40")
     next()
     mes "[Archer Guildsman]"
     mes "You scored above 30!"
@@ -153,7 +160,7 @@ npc {
     next()
     goto MakArc
     ::NormalTrunk::
-    mes(("  Total Grades :  ^0000FF" .. v.Total_Trunk) .. "^000000 / 40")
+    mes(("  Total Grades :  ^0000FF" .. tmp.Total_Trunk) .. "^000000 / 40")
     next()
     mes "[Archer Guildsman]"
     mes "Wow, You barely passed! Anyway, well done!."
@@ -169,10 +176,10 @@ npc {
     mes "Now you are a real Archer with this bow of your own."
     give_item(1702, 1)
     give_item(1750, 100)
-    take_item(1066)
-    take_item(1067)
-    take_item(1068)
-    take_item(1019)
+    take_item(1066, count_item(1066))
+    take_item(1067, count_item(1067))
+    take_item(1068, count_item(1068))
+    take_item(1019, count_item(1019))
     tmp.Trunk1 = 0
     tmp.Trunk2 = 0
     tmp.Trunk3 = 0

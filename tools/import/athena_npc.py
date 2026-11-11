@@ -249,7 +249,7 @@ SOURCE_FIXES = {
         "ended with its window open"),
     ("jobs/merchant.txt", 267): (
         "if((job_merchant_q2==7) || (job_merchant_q2==8)) goto JobMerQ2E7o8;",
-        "if(nov_3_merchant==11) goto JobMerQ2E7o8; if((job_merchant_q2<7) || (job_merchant_q2>8)) goto JobMerQua1;",
+        "if((job_merchant_q2<7) || (job_merchant_q2>8)) goto JobMerQua1; if(nov_3_merchant==11) goto JobMerQ2E7o8;",
         "the 100z for the letter was paid for being sent to Byalan, letter or no; mod0631 "
         "(conf/npc_job_merchant.txt:70-72) pays when the Kafra got it (she sets nov_3_merchant to 11, "
         "which nothing in 817 read) and says nothing of a letter to those sent elsewhere"),
@@ -269,6 +269,26 @@ SOURCE_FIXES = {
         "if ((Mushroom1==0) && (Mushroom2==0)) goto NoMushroom; if (Mushroom2==0) goto TotalMH;",
         "a basket of Orange Net Mushrooms alone (nine are 27 points, a pass) was told it held none; "
         "mod0631 (conf/npc_job_thief.txt:269-270) refuses only when both kinds are missing"),
+    ("jobs/archer.txt", 140): ('"+Total_Trunk+"', '"+@Total_Trunk+"', "the score is in @Total_Trunk (line 120); a pass read \"0 / 40\""),
+    ("jobs/archer.txt", 147): ('"+Total_Trunk+"', '"+@Total_Trunk+"', "the same slip"),
+    ("jobs/archer.txt", 155): ('"+Total_Trunk+"', '"+@Total_Trunk+"', "the same slip"),
+    ("jobs/archer.txt", 172): ("delitem 1066;", "delitem 1066,countitem(1066);",
+                               "no amount: the trunks handed in stayed in the bag (jAthena //0854, 2004-03-02, "
+                               "conf/npc/npc_job_archer.txt:104-107, takes them all)"),
+    ("jobs/archer.txt", 173): ("delitem 1067;", "delitem 1067,countitem(1067);", "the same slip"),
+    ("jobs/archer.txt", 174): ("delitem 1068;", "delitem 1068,countitem(1068);", "the same slip"),
+    ("jobs/archer.txt", 175): ("delitem 1019;", "delitem 1019,countitem(1019);", "the same slip"),
+    ("jobs/swordsman.txt", 122): ('"Cancel.",LEnd;', '"Cancel.",L3;',
+                                  "no label LEnd: the Sword Master's goodbye is at L3, which nothing reached"),
+    ("jobs/swordsman.txt", 372): ("announce @TEMP,3;", "",
+                                  "a leftover of testing: this pit told the faller a bare digit, the number of the cave"),
+    ("jobs/swordsman.txt", 1041): ("sword_1-1.gat,125,210,4", "sword_1-1.gat,125,203,4",
+                                   "pit 2_blank_5_f repeats 2_blank_5_b's cell forty lines up; jAthena //0854 "
+                                   "(conf/warp/npc_warp_job.txt:128) has it on row 203, where the strip it closes is"),
+    ("jobs/swordsman.txt", 1061): ("sword_1-1.gat,113,201,4", "sword_1-1.gat,125,201,4",
+                                   "pit 2_blank_6_b repeats 2_blank_6_a's cell; jAthena (:130) has 125,201"),
+    ("jobs/swordsman.txt", 1151): ("139,40,0,{", "139,21,0,{",
+                                   "pit 2_blank_9_a is 21 cells to each side like 7_a, 8_a and 8_e above it (jAthena :143), not 40"),
     ("skillquests/arrowrepel.txt", 115): (
         'everything";f', 'everything";',
         "a stray f after the line made the next one an unknown command, so the script stopped "

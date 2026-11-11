@@ -104,8 +104,12 @@ Next, in order:
   with a way out) but not yet played; the Priest test is untried there.
   Fix what breaks in `scripts/npc/` (one file per fix, listed in
   DEVIATIONS.md);
+* the Priest's official test on `job_prist` from jAthena's script of
+  2004-06-08 (THREADS.md #8: pilgrimage, exorcism, vow), as the Wizard
+  test was ported; the game plays 817's home-made one meanwhile;
 * the Knight's and the Hunter's tests on `job_knt` and `job_hunte`, which
-  the client has (THREADS.md #8): no period script is known;
+  the client has (THREADS.md #8): no period script is known (jAthena's
+  Knight test is of 2004-09-12);
 * NPC waiting rooms (0x00d7 chat bubbles over arena/PvP NPCs);
 * clothes dyeing (THREADS.md #13: the dye makers and the hairdresser are
   in, from mod0631); English shop names from 817 by cell (#11);

@@ -205,6 +205,20 @@ eAthena 817 (2004-02-19), bugs included. The translator is
   Net ones are 27 points, a pass); only an empty basket is refused now, as
   in mod0631 (`conf/npc_job_thief.txt:269-270`). A source fix in the
   importer.
+* **The Archer test's trunks.** 817's Guildsman took one trunk of each
+  kind and left the rest to sell (`delitem` without an amount), and read
+  a passing score out as "0 / 40" (the wrong variable). He takes them all,
+  as jAthena's script of 2004-03-02 does, and reads the score. Source
+  fixes in the importer.
+* **The Swordman course's pits** (`scripts/npc/swordman_course.lua`, and
+  source fixes). Three of 817's pits on the second stretch sit on a cell
+  another pit already has, or reach too far (typing slips: jAthena's list
+  of 2004-03-02 has the same pits with the cells one would expect), and
+  the four short ones that close the strips at x 130 to 134 are missing,
+  so there one could leave the path and not fall. Both are as in
+  jAthena's now. The pit at `job_sword1 17,251` no longer tells the faller
+  a bare digit (a leftover `announce`), and the Sword Master says goodbye
+  on "Cancel." (the menu named a label that does not exist).
 * **Monster Tamers** (`scripts/npc/monster_tamers.lua`): three NPCs from
   mod0631 that 817 lacks, in Alberta, Izlude and Al De Baran, where the iRO
   pet guide of 2004 says they stood. They turn ingredients into taming

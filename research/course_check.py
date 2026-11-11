@@ -6,7 +6,7 @@
 The job-quest test (crates/ro-game/tests/job_quests.rs) plays on all-walkable
 synthetic maps, so it cannot tell. This reads job_sword1.gat from the GRF and
 the pit cells from the imported script (scripts/import/npc/jobs/swordsman.lua:
-the `sprite = 139` touch NPCs), and searches each of the three stretches for
+the `sprite = 139` touch NPCs, and the four in scripts/npc/swordman_course.lua), and searches each of the three stretches for
 a way from its entrance to the warp tile at its end that steps on no pit
 (eight directions, no cutting corners), and from there through the checkpoint
 room. It also checks that every place a pit drops you has a way
@@ -62,6 +62,7 @@ def box(x, y, rx, ry):
 def main():
     w, h, ok = gat(sys.argv[1], "job_sword1")
     src = (ROOT / "scripts/import/npc/jobs/swordsman.lua").read_text(encoding="utf-8")
+    src += (ROOT / "scripts/npc/swordman_course.lua").read_text(encoding="utf-8")  # four pits 817 lacks
     pits, drops = set(), set()
     for m in re.finditer(r'map = "job_sword1", x = (\d+), y = (\d+), dir = \d+, sprite = 139, name = "[^"]*",\s*\n\s*touch = \{ (\d+), (\d+) \}', src):
         x, y, rx, ry = map(int, m.groups())

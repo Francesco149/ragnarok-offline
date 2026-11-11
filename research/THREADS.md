@@ -299,7 +299,20 @@ three period scripts are (817's unfinished `npc/jobs/wizard.txt` of
 2004-02-19, jAthena's of 2004-04-09, eAthena 0.5.2's of 2004-05, which
 its own config switches off as "totaly bugged"). The Wizard test is now
 in the game from them (`scripts/npc/wizard_test.lua`, DEVIATIONS).
-`job_prist` and `job_cru` are the same file. Open: what the Knight's and
+`job_prist` and `job_cru` are the same file.
+**2026-11-11, the Priest's official test is on disk.** jAthena's
+`script/npc/job/npc_job_priest.txt` of 2004-06-08 (commit `0f45810`) is
+the three-part test on `job_prist`: a pilgrimage to the three ascetics of
+the Acolyte test (job level 50 skips it), an exorcism on `job_prist`
+(thirteen undead must fall before the gate at `24,109` opens; tempters
+further on whose wrong answer throws you out; 350 seconds in all), and
+a nun's vow
+(`prt_church 27,24`); the reward is a Book. 817's Priest test, which the
+game plays (`scripts/npc/priest_test.lua`), is its author's own invention
+on the older `job_priest`. Five months after our period, but the nearest
+script of the test that "added 2nd job quest" brought in January 2004,
+and on the map the client has for it: the next thing to port, as the
+Wizard test was. Open: what the Knight's and
 the Hunter's tests on `job_knt` and `job_hunte` were (jAthena's Knight
 test dates from 2004-09-12; nothing earlier), and whether the Priest's
 ran on `job_prist` by then (817's fits the older `job_priest`).
@@ -724,12 +737,25 @@ Shelf, `other/books.txt`). **Left as 817 has them, open:**
   (`geffen_in 144,166`), the Swordman's Test Hall Staff for a non-novice,
   Comodo's Camp Ground Boy. Nothing is taken and the window gets its close
   button; what they should say is not in 817.
-* The Swordman's and the Archer's quests have no second period script
-  before jAthena's of 2004-03-02 (`conf/npc/npc_job_swordman.txt`,
-  `npc_job_archer.txt`, //0854): not yet read against 817's.
+* *Swordman and Archer*, read against jAthena //0854 of 2004-03-02
+  (`conf/npc/npc_job_swordman.txt`, `npc_job_archer.txt`,
+  `conf/warp/npc_warp_job.txt`; the same official tests). Mended: the
+  Archer's trunks and score, the course's pits (DEVIATIONS). Left as 817:
+  the briefing Swordman speaks of a time limit (neither script has one)
+  and of giving up "at the entrances of each course", where jAthena has
+  three cells that ask (`sword_1-1 7,245`, `8,207`, `8,169`) and 817 has
+  none (one gives up at the checkpoint staff); 817 marks the end of a
+  stretch with a plain warp, jAthena with a cell that announces "point N
+  passed"; the Sword Master says the test is "the right room next to me"
+  (jAthena: to the left; the door Swordman stands west of him); the
+  Archer guild gives 100 Arrows (jAthena: `rand(100)`); a pass needs 25
+  points in 817 as its text says (jAthena's code wants more than 25).
+* *Priest and Hunter.* 817's Priest test is its author's own ("Designed
+  For Athena": ten true-or-false questions and a grail errand), not a
+  port; see #8 for the official one. 817's Hunter NPC is a plain job
+  changer.
 **Impact:** small sums and one cell. **Look:** RODataZone's job pages
-(late 2003) for the Thief's reward and the ascetics' cells; jAthena //0854
-against 817 for Swordman and Archer.
+(late 2003) for the Thief's reward and the ascetics' cells.
 
 ## Resolved
 

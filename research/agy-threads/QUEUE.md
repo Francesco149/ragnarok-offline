@@ -77,7 +77,11 @@ language (the test content was the same everywhere; say which server):
   enters `job_hunte`). mod0631 has four warp tiles on `job_knt`
   (`165,151`, `122,151`, `65,145`, `22,145`) and two on `job_hunte`
   (`89,139`, `89,68`), all "to 0,0": what were they?
-* **Priest**: 817's test runs on `priest_1-1` (the older `job_priest`, where
+* **Priest** (changed on 2026-11-11: 817's test turns out to be its
+  author's own invention, and jAthena's `script/npc/job/npc_job_priest.txt`
+  of 2004-06-08, commit `0f45810` in `data:refs/jathena`, is the official
+  three-part test on `job_prist`; wanted now is a player's account of that
+  test from before June 2004, to date it). 817's test runs on `priest_1-1` (the older `job_priest`, where
   its cells fit). mod0631 has two warps on `job_prist` (`97,104` and
   `24,109` to `168,17`). On which map was the test in early 2004, and what
   were its rounds (the grail errand is 817's)?
