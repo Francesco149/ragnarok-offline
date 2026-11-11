@@ -29,7 +29,9 @@ local function delivery(k)
     return function(at)
       local q = v.job_merchant_q
       if at then return orig(at) end
-      if v.job_merchant_q3 ~= k.place or q < 5 or q > 8 then
+      -- on the way with a parcel: 5 or 6 (half the fee paid, or all of it). Once it is
+      -- delivered q3 moves on (as in 817), and she is an ordinary Kafra again.
+      if v.job_merchant_q3 ~= k.place or q < 5 or q > 6 then
         if k.service then return k.service() end
         return orig(at)
       end
@@ -38,17 +40,22 @@ local function delivery(k)
         cutin(k.cutin, 255)
         close()
       end
-      if q >= 7 then return k.after(bye) end
       mes "[Kafra]"
       for _, line in ipairs(k.hello) do mes(line) end
       if count_item(BOX_1) + count_item(BOX_2) + count_item(BOX_WRONG) == 0 then
         mes(k.no_box)
         return bye()
       end
-      for _, line in ipairs(k.check) do mes(line) end
+      for _, line in ipairs(k.thanks_first or {}) do mes(line) end
+      next()
+      mes "[Kafra]"
+      mes(k.check)
       local errand = v.job_merchant_q2 - k.q2 + 1 -- 1 or 2
       local box = errand == 1 and BOX_1 or BOX_2
       if (errand ~= 1 and errand ~= 2) or count_item(box) == 0 then
+        if k.wrong_first then mes(k.wrong_first) end
+        next()
+        mes "[Kafra]"
         for _, line in ipairs(k.wrong) do mes(line) end
         return bye()
       end
@@ -66,9 +73,10 @@ wrap_npc("817:jobs/merchant.txt:846", delivery {
   place = 1, q2 = 1, receipt = 1073, cutin = "kafra_03",
   hello = { "Delivery from the Merchant Guild? Oh, yes! Alright, Please put down here...." },
   no_box = "Excuse me.. Where's the Delivery....?",
-  check = { "I really appreciate for what you've done. You must be Really tired to come here from the Distance~", "Let me check its Serial Numbers. Hmm...." },
-  wrong = { ".....Umm? This is...??",
-            "Oh, Dear. I don't think it's the Right one we ordered. It should have the serial numbers as either of 2485741 or 2328137.",
+  thanks_first = { "I really appreciate for what you've done. You must be Really tired to come here from the Distance~" },
+  check = "Let me check its Serial Numbers. Hmm....",
+  wrong_first = ".....Umm? This is...??",
+  wrong = { "Oh, Dear. I don't think it's the Right one we ordered. It should have the serial numbers as either of 2485741 or 2328137.",
             "I am so afraid there were something worng during passage." },
   right = { "2485741.. Yes, This is the Right one we ordered~ I guess you need a Receipt. I will give it to you right away.",
             "2328137.. Yes, This is the Right one we ordered~ I guess you need a Receipt. I will give it to you right away." },
@@ -76,11 +84,6 @@ wrap_npc("817:jobs/merchant.txt:846", delivery {
     next()
     mes "[Kafra]"
     mes "I really appreciate you for what you've done so far."
-    bye()
-  end,
-  after = function(bye)
-    mes "[Kafra]"
-    mes "Good Day~ Have you got something more to do here?"
     bye()
   end,
   -- Her ordinary service: to Izlude for 900z. 817 took the 900z without
@@ -119,7 +122,7 @@ wrap_npc("817:other/kafra.txt:91", delivery {
   place = 4, q2 = 7, receipt = 1079, cutin = "kafra_03",
   hello = { "Delivery fro the Merchant Guild?? Ah, Right! Yes! I almost forgot.", "Okay,Please put down here...." },
   no_box = ".... I think our orders are almost one Box of Oversized and Heavy....But you seem to carry it on without difficulty.",
-  check = { "Let me check its Serial numbers, I have to give the receipt to you anyhow." },
+  check = "Let me check its Serial numbers, I have to give the receipt to you anyhow.",
   wrong = { "......? Excuse me! I think you gave me the wrong one.",
             "Our order should have the serial numbers as either of 3318702 or 3543625..." },
   right = { "Um.... 3012685. Yes! This is the right one we ordered. Here, your receipt.",
@@ -140,12 +143,6 @@ wrap_npc("817:other/kafra.txt:91", delivery {
     mes "I really appreciate you for what you've done so far. This is my Small Gift for you to lay my heart."
     mes "I hope you will help me next time."
     give_item(rand(2) == 0 and 513 or 512, 3)
-    bye()
-  end,
-  after = function(bye)
-    menu("Excuse me.")
-    mes "[Kafra]"
-    mes "Yes?"
     bye()
   end,
 })
