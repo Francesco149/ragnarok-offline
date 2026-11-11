@@ -39,11 +39,15 @@ import os
 import re
 import subprocess
 import sys
+import time
 import unicodedata
+import urllib.error
 import urllib.request
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DATA = os.path.expanduser("~/data/ragnarok-cd")
+if not os.path.isdir(DATA) and os.path.isdir("/data/refs"):
+    DATA = "/data"  # inside the workbench
 ENCODINGS = ("utf-8", "cp932", "cp949", "latin-1")
 NEAR = 40  # lines either side of a cited line
 
@@ -104,12 +108,29 @@ def wayback_ts(url):
     return m.group(1) if m else None
 
 
+_fetched = {}
+
+
 def fetch(url):
-    """-> (bytes, final_url). Wayback URLs are loaded in their id_ form: the page as it was."""
+    """-> (bytes, final_url). Wayback URLs are loaded in their id_ form: the page as it was.
+    Each URL is loaded once per run (Wayback refuses a client that loads the same page per row),
+    with a pause between loads and two more tries after a refusal."""
     raw_url = re.sub(r"(web\.archive\.org/web/\d{14})(?:[a-z]{2}_)?/", r"\1id_/", url)
+    if raw_url in _fetched:
+        return _fetched[raw_url]
     req = urllib.request.Request(raw_url, headers={"User-Agent": "Mozilla/5.0 (X11; Linux x86_64) check-rows"})
-    with urllib.request.urlopen(req, timeout=90) as r:
-        return r.read(), r.geturl()
+    for attempt in range(3):
+        if _fetched or attempt:
+            time.sleep(4 + 20 * attempt)
+        try:
+            with urllib.request.urlopen(req, timeout=90) as r:
+                _fetched[raw_url] = (r.read(), r.geturl())
+                return _fetched[raw_url]
+        except urllib.error.HTTPError:
+            raise
+        except OSError:
+            if attempt == 2:
+                raise
 
 
 def check(row, pages, do_fetch):

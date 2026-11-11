@@ -198,8 +198,18 @@ Revolution (817, RODataZone: 35; mod0631: 30) and Stone Fling (emulators:
 Aid and Play Dead are confirmed on the same cells by mod0631 and
 RODataZone's Novice page of 2003-12-15, and are in the game
 (`scripts/npc/novice_skills.lua`, DEVIATIONS).
-**Open:** the item lists of the other jobs' quests side by side, starting
-with Moving HP Recovery (mod0631: 200 Empty Bottles and item 1058).
+**Round 4, the Swordman's three:** Fatal Blow and Auto Berserk have the
+same items in 817, mod0631 and on RODataZone's Swordman page (capture of
+2004-05-02). Moving HP Recovery does not: RODataZone and 817's dialogue
+say 500 Empty Bottles and a Rocker Doll (817 adds a Padded Armour),
+mod0631 says 200 Empty Bottles and a Moth Wings and that the armour is
+only to be worn, and 817's code tests for the first list and takes the
+second. `scripts/npc/moving_hp.lua` takes what is asked and leaves the
+armour (DEVIATIONS).
+**Open:** the item lists of the other jobs' quests side by side (Archer,
+Merchant, Mage, Acolyte: mod0631's are in `conf/npc_event_skillget.txt`,
+RODataZone's on its job pages); whether the Padded Armour was asked for
+on the international servers at all.
 
 ### 8. Wizard (and other 2-1) job quests
 817's wizard.txt is an unfinished conversion that 817 couldn't run (later
@@ -414,34 +424,6 @@ Was Lutie a permanent town on euRO, or seasonal? The CD patcher carries
 `2003-10-31gdata_xmas.gpf`.
 **Look:** euRO notices Dec 2003–Jan 2004.
 
-### 20. Skill numbers: the client's own text against the emulators
-The client's `data\skilldesctable.txt` gives per-level numbers for many
-skills. Some agree with mod0631 (Mammonite 150–600%, Discount 7–24%, Stone
-Fling 30, First Aid 5 HP, Moving HP Recovery 25%, Suffragium 15/30/45% for
-30/20/10 s). Others do not, and the text is partly older than the client
-(Teleport with ten levels):
-
-| Skill | Client text | mod0631 (used) |
-|---|---|---|
-| Sword / Two-Handed Sword Mastery | +5 a level (to +50) | +4 a level |
-| Beast Bane | +3 a level | +4 a level |
-| Two-Hand Quicken | lasts 15 s to 60 s | 30 s a level |
-| Impositio Manus | +2 a level, 40 s | +5 a level, 60 s |
-| Aspersio | 5 s to 17 s | 60 s to 180 s |
-| Kyrie Eleison | 10 s a level, blocks 1 to 3 times | 120 s, 5 to 10 hits, a share of max HP |
-| Resurrection | 1 HP, 15%, 30%, 50% | 10%, 30%, 50%, 80% |
-| Charge Arrow | throws the target 4 cells | 6 cells |
-| Land Mine | lasts 65 s down to 5 s | 200 s down to 40 s |
-| Blast Mine | goes off after 10 s down to 2 s | 25 s down to 5 s |
-| Shockwave Trap | needs 2 Traps | 1 Trap |
-
-**Impact:** each row is a number in `scripts/rules/`.
-**Look:** which state of the game the text describes (kRO beta? when was
-each line last edited: compare the same file in later clients and in the
-2003-04-30 and 2003-12-11 patch archives on the CD); iRO skill pages of
-late 2003 on Wayback (RODataZone's job pages list skill tables); kRO
-notices on skill changes in 2003.
-
 ### 21. Ailments: which emulator is nearer the official servers
 mod0631 (2003-12): fixed chances, no resistance from the target's stats,
 placeholder lengths, no Curse, poison without HP loss. eAthena 817
@@ -468,6 +450,10 @@ which kinds, Spring Trap's range by level). Not built: Venom Splasher's
 delayed burst (817 makes it a plain splash), Talkie Box, Repair Weapon. Arrows add no ATK in mod0631 (the line is
 commented out) and its bow skills use none: did they on the official
 servers of Dec 2003? The client shows an ATK on arrow items.
+**Round 4:** the iRO guide's skill pages of March and April 2004 are on
+disk for all nineteen jobs (`research/notes/round4-review.md`). They have
+a line or a table for each of these skills and have not been read against
+our drafts yet.
 **Impact:** Hunter, Assassin and Blacksmith play.
 **Look:** jAthena's history (`refs/jathena`, `git log -S` on each skill
 name gives the date and often a source note), 817 and eathena-v0.5.2, the
@@ -485,16 +471,18 @@ cells, 25% chance to switch target, looters, assist within 13 cells.
 that list skills (RODataZone, RO Empire); later official data is tier
 later but shows which monster has which skill at all.
 
-### 24. Turtle Island: how one got there, and mod0631's NPCs we lack
-817's Alberta sailor (`alberta 189,151`) takes anyone to Turtle Island for
-800z, in one menu with the Sunken Ship and Izlude. mod0631
-(`conf/npc_turtle.txt`, 1,084 lines, Dec 2003) has what reads like the
-official quest: an old man in Alberta (`alberta_in 23,104`) tells the
-story, after which the sailor Gotanblue (`alberta 247,122`) takes 10000z
-for the trip to `tur_dun01 157,39`; a scholar and a logbook on the quay
-(`alberta 248,89`, `248,94`) start a second quest among four objects on
-the island, and a sailor there (`tur_dun01 165,29`) brings you back. We
-have 817's sailor; mod0631's chain is not ported. The island's maps are
+### 24. Turtle Island's fare, and mod0631's NPCs we lack
+mod0631 (`conf/npc_turtle.txt`, "Turtle Quest! From jRO") has an old man
+in Alberta's inn who sends you to the sailor Gotanblue (`alberta
+247,122`), 10000z to the island's beach (`tur_dun01 157,39`), a scholar
+and a logbook on the quay that start one of two errands among four
+objects on the island (five Bananas, or a Red Gemstone), and the sailor
+waiting on the beach to bring you back. That chain is in the game
+(`scripts/npc/turtle_island.lua`), in our words. 817's sailor, who took
+anyone to the mouth of the cave for 800z with no way back, no longer
+sells the trip. iRO announced the island on 2003-12-09 for 2003-12-16,
+"with new headgears and new quests" (round 4, T1-001): that there were
+quests is all the international servers tell us. The island's maps are
 not in the CD's base GRF: they come with its `2003-04-30gdata_turtle_ph`
 patch, which the launcher merges.
 Other NPC files mod0631 loads and 817 has nothing of: the cursed swords
@@ -503,11 +491,33 @@ Other NPC files mod0631 loads and 817 has nothing of: the cursed swords
 and Grimtooth), the doll child of Alberta (`npc_event_doll.txt`, `alberta
 117,134`) and two arrow makers in Payon (`npc_event_arrow.txt`, `payon
 98,57` and `100,121`).
-**Impact:** whether Turtle Island is a 800z ferry or a 10000z expedition
-with a story; three item quests.
-**Look:** was Turtle Island open on euRO in Dec 2003 to Feb 2004 (iRO:
-2003-12-16), and the fare; RODataZone and iRO guide pages on the island and
-on the cursed-sword quest; then port mod0631's files.
+**Impact:** the fare (jRO's zeny amounts are not always the international
+ones: refine fees differ tenfold); three item quests.
+**Look:** was Turtle Island open on euRO in Dec 2003 to Feb 2004, who took
+a player there on iRO and for how much (RODataZone's map and quest pages,
+player guides of early 2004); the new headgear quests the notice speaks
+of; then port mod0631's other three files.
+
+### 25. What this client can show of the 2-2 jobs
+The exe's packet table (`data/client/packet_lengths.tsv`, 2003-12-18) has
+no 0x01cd to 0x01d2 and no 0x01e1. In kRO's numbering those are Auto
+Spell's list and choice, Devotion's lines, the spirit spheres (both
+forms), Blade Stop and the combo delay. OpenKore's table for iRO of
+2003-12-16 leaves out the same six (`research/notes/emulators.md` §4), so
+this is the international client of that month, not a gap in our
+extraction: none of the ids occurs as a constant inside the table's
+function. The client does ship the 2-2 jobs' skill text. With
+`jobs2_2` on, a Monk's spheres cannot be drawn, a Sage cannot be offered
+the Auto Spell list, and Devotion has no lines.
+**Impact:** how the 2-2 skills are drafted (ROADMAP §3): spheres and
+combos kept on the server and shown some other way, or the jobs left as
+they are until a later client is a target.
+**Look:** what the client does with the skills themselves (does it have
+the effects and sprites for Asura Strike, the songs?); euRO's client of
+2004-06-09, when the jobs opened there; which 2-2 skills need none of the
+six packets (Auto Guard, Defender, Reflect Shield, the Strips, Chemical
+Protection, the Sage's ground skills and Dispell: their numbers are in the
+iRO guide pages, round 4).
 
 ## Resolved
 
@@ -550,3 +560,35 @@ Not open in Dec 2003 – Feb 2004. kRO, 2004-10-12, main servers: "after a
 long reconstruction, an arena was added to Izlude". 817's arena is its own:
 entered from an NPC in the middle of Prontera, on `prt_are_in` and
 `force_1-N` (maps this client does ship). `[game.content] arena`, off.
+
+### R6. Skill numbers: the client's text against the emulators (was #20)
+The client's `data\skilldesctable.txt` gives per-level numbers. Some agree
+with mod0631 (Mammonite, Discount, Stone Fling, First Aid, Moving HP
+Recovery, Suffragium); for these it does not:
+
+| Skill | Client text | mod0631 (used) |
+|---|---|---|
+| Sword / Two-Handed Sword Mastery | +5 a level (to +50) | +4 a level |
+| Beast Bane | +3 a level | +4 a level |
+| Two-Hand Quicken | lasts 15 s to 60 s | 30 s a level |
+| Impositio Manus | +2 a level, 40 s | +5 a level, 60 s |
+| Aspersio | 5 s to 17 s | 60 s to 180 s |
+| Kyrie Eleison | 10 s a level, blocks 1 to 3 times | 120 s, 5 to 10 hits, a share of max HP |
+| Resurrection | 1 HP, 15%, 30%, 50% | 10%, 30%, 50%, 80% |
+| Charge Arrow | throws the target 4 cells | 6 cells |
+| Land Mine | lasts 65 s down to 5 s | 200 s down to 40 s |
+| Blast Mine | goes off after 10 s down to 2 s | 25 s down to 5 s |
+| Shockwave Trap | needs 2 Traps | 1 Trap |
+
+The iRO guide's skill pages, in their earliest captures (2004-03-27 to
+2004-04-13; `research/notes/round4-review.md` says where they are saved),
+give mod0631's number on every row: masteries and Beast Bane +4 a level,
+Two-Hand Quicken 30 s a level, Impositio Manus +5 a level for a minute,
+Aspersio one to three minutes, Kyrie Eleison 120 s and 5 to 10 hits,
+Resurrection 10/30/50/80%, Arrow Repel 6 cells, Land Mine 200 s at level
+1, Blast Mine 25 s down to 5 s. RODataZone's Swordman page (2004-05-02)
+says +4 for the masteries too. So the text is an older state of the game
+(it also has Teleport with ten levels), and `scripts/rules/` keeps
+mod0631's numbers. The guide says nothing on how many Traps Shockwave Trap
+takes (client text: 2; mod0631: 1; we use 1). Tier: athena2003, confirmed
+for the international servers three months after our date.

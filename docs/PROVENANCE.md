@@ -75,8 +75,9 @@ period source). Research behind the tiers: `research/notes/mechanics-sources.md`
 skills. It is Gravity's own, but not kept up to date: it gives Teleport ten
 levels and Kyrie Eleison a length by level, as in kRO's beta. So it is used
 where the emulators have nothing (DEVIATIONS.md lists those), and where it
-disagrees with them the emulator's value stands and the disagreement is a
-research thread (THREADS.md #20).
+disagrees with them the emulator's value stands: the iRO guide's skill
+pages of spring 2004 give the emulator's number on every such row
+(THREADS.md R6).
 
 ## Known period disagreements (don't "fix" these silently)
 
