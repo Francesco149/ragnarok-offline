@@ -296,6 +296,17 @@ local function onplace(c, bl, now)
     end
   elseif uid == 0x95 or uid == 0x96 or uid == 0x94 or uid == 0x91 then -- Sandman, Flasher, Shockwave, Ankle Snare
     skill_additional_effect(g.src, bl.id, g.skill, g.lv, BF.MISC)
+    if uid == 0x95 and g.val2 == 0 then
+      -- Sandman: "makes an enemy and near enemies fall asleep" (the iRO guide's
+      -- Hunter page, 2004-03-27). Both emulators put only the one who stepped
+      -- on it to sleep. How near is ours: the cells around that one.
+      local ss = get(g.src)
+      if ss then
+        for _, t in ipairs(skill_area(ss, bl.map, bl.x, bl.y, 1, BCT.ENEMY)) do
+          if t.id ~= bl.id then skill_additional_effect(g.src, t.id, g.skill, g.lv, BF.MISC) end
+        end
+      end
+    end
     if g.val2 == 0 then
       local hold = 500
       if uid == 0x91 then hold = floor(g.val1 / ((battle.mode(bl) & 0x20) ~= 0 and 5 or 1)) end

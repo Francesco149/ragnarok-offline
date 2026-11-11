@@ -502,8 +502,10 @@ servers of Dec 2003? The client shows an ATK on arrow items.
 * *Still a draft:* the guide says Venom Splasher marks the target with a
   timer, bursts when it is under a third of its HP, and splashes a quarter
   of the damage on 3x3 cells; that Ice Wall loses durability by the damage
-  it takes; that Sandman also puts those near the victim to sleep. None
-  of the three is built. It gives no chance for Flasher and says nothing
+  it takes; that Sandman also puts those near the victim to sleep. The
+  first two are not built; Sandman's is (2026-11-11), on the cells around
+  the victim, a reach nothing gives. Venom Splasher's burst stays out: no
+  period source says how long the timer runs. It gives no chance for Flasher and says nothing
   on arrows or on what counts as a poisonous attack.
 **Impact:** Hunter, Assassin and Blacksmith play.
 **Look:** jAthena's history (`refs/jathena`, `git log -S` on each skill

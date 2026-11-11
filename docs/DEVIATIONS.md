@@ -371,6 +371,7 @@ research should check is in research/THREADS.md #21–#23 and #25.
 | Skill | What we do | From |
 |---|---|---|
 | Flasher | Blinds, at Sandman's chance | The client's skill text: "Blinds an Enemy". Chance ours |
+| Sandman | Also rolls sleep on the enemies in the cells around the one who stepped on it | The iRO guide's Hunter page (2004-03-27): "an enemy and near enemies". Both emulators: that one alone. The 3x3 is ours |
 | Shockwave Trap | Takes 20/35/50/65/80% of a player's SP | The client's skill text. Monsters have no SP here |
 | Enchant Poison | Each hit may poison (3% to 7%) | mod0631 stores that chance on the status and never rolls it |
 | Brandish Spear | The two cells either side of the knight and five in front, then rows of five, five and three, 1 to 4 areas by level; the target is pushed two cells | The drawing and the "2 cells" on the iRO guide's Knight page (2004-04-13). 817 has its own helper for the rows and pushes one cell; the per-row damage is 817's |

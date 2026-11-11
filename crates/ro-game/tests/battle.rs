@@ -1121,6 +1121,29 @@ fn hunter_traps() {
     let _ = me;
 }
 
+/// Sandman: the one who springs it and those on the cells around may fall
+/// asleep (the iRO guide's "an enemy and near enemies"), nobody further off.
+#[test]
+fn sandman_reaches_the_neighbours() {
+    let mut t = T::new();
+    t.lua("job_change(11); player.base_level = 70; player.dex = 90; heal(9999, 9999); give_item(1065, 10)");
+    t.learn("HT_SANDMAN", 5);
+    // Ant Eggs do not move: eight around the trap's cell, three further off;
+    // a Zombie walks at us over the trap
+    let near: Vec<u32> = [(27, 24), (28, 24), (29, 24), (27, 26), (28, 26), (29, 26), (27, 25), (29, 25)].iter().map(|(x, y)| t.spawn(*x, *y, 1097)).collect();
+    let far: Vec<u32> = (0..3).map(|i| t.spawn(32, 22 + i, 1097)).collect();
+    t.cast_at("HT_SANDMAN", 28, 25);
+    assert!(t.packets(0x01c9).iter().any(|p| p[14] == 0x95), "a Sandman is set");
+    let z = t.spawn(32, 25, 1015);
+    t.run(6000);
+    assert!(!t.g.world.units.values().any(|u| u.skill().is_some()), "the trap went off");
+    let asleep = |t: &mut T, ids: &[u32]| ids.iter().filter(|id| t.has_sc(**id, "SLEEP")).count();
+    let n = asleep(&mut t, &near);
+    assert!(n >= 1, "one of the eight around it sleeps (55% each): {n}");
+    assert_eq!(asleep(&mut t, &far), 0, "three cells away nobody does");
+    let _ = z;
+}
+
 /// A monster with a long attack delay (a Zombie: 2612 ms) keeps to it, and
 /// a living player cannot "return to the save point".
 #[test]
