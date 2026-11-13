@@ -114,8 +114,9 @@ Next, in order:
   DEVIATIONS.md);
 * the Assassin's and the Blacksmith's tests are in since 2026-11-13, from
   eAthena 1.0's scripts of 2004-11-04 (THREADS.md #8): every 2-1 job has
-  its test. The Blacksmith's is played in the client to the job change,
-  the Assassin's to its first room. No account dates either before
+  its test. Both are played in the client to the job change (the
+  Assassin's on 2026-11-13: quiz, targets, hide room, maze). No account
+  dates either before
   autumn 2004 (queue T1): sharpen when one turns up;
 * later, once this game is complete: its own version for euRO's May-2004
   client (owner, 2026-11-11), which has the 2-2 jobs' packets and text.

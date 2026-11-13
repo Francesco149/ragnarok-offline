@@ -390,8 +390,14 @@ too: the turtle patch's `in_moc_16` walls off the Guild Master's maze, which
 126 of 208 cells walkable against 169). mod0631's and 817's warp list
 chains the rooms with free warps from the field door into Kai's room;
 the test needs the door into the entrance hall instead (eAthena 1.0).
-Played in the client from the door to Barcardi's first room. Open: any
-account of the Assassin test before autumn 2004 (queue T1).
+Played in the client from the door to the job change (2026-11-13): Kai
+hides and then registers, the quiz (set 1), Barcardi's targets (a decoy
+killed and the clock running out both fail you back to her room), the
+hide room (the Mummies kill a lv-70 Thief without armour who stops;
+dying fails the test like the clock), the maze's voices, the six testers
+in the office, the reward choice at job level 50, and Huey's job change
+(the necklace stays, as in eAthena). Open: any account of the Assassin
+test before autumn 2004 (queue T1).
 
 ### 9. Refining details
 Phracon price (iRO page 2000z vs data 200z), armor DEF per refine (1, 5 or
