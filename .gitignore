@@ -29,3 +29,4 @@ __pycache__/
 /research/agy-threads/r3/pages/
 # later rounds: the same
 /research/agy-threads/r[0-9]*/pages/
+/research/agy-threads/r[0-9]*/rows/pages
