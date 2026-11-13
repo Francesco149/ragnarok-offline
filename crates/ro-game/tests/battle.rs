@@ -651,6 +651,23 @@ fn trade_potions_and_weight() {
     assert_eq!(t.hp(), 1);
 }
 
+/// A job change with less SP than the old job's brings SP down to the new
+/// maximum at once (mod0631 pc_jobchange -> pc_calcstatus), and the recovery
+/// tick never subtracts below what it had (it panicked on an SP above its
+/// maximum in the client rig, 2026-11-13).
+#[test]
+fn recovery_with_sp_above_max() {
+    let mut t = T::new();
+    t.lua("job_change(9); player.base_level = 70; player.int = 90; heal(9999, 9999)");
+    let high = t.st("max_sp");
+    t.lua("job_change(1)"); // a Swordman: less SP than a Wizard, more HP to recover
+    let low = t.st("max_sp");
+    assert!(low < high);
+    assert_eq!(t.sp() as i64, low, "SP comes down with the job change");
+    t.run(15_000);
+    assert_eq!(t.sp() as i64, low);
+}
+
 /// Forging: the hammer lists what the smith can make, the materials go,
 /// and a made weapon carries its maker and element.
 #[test]

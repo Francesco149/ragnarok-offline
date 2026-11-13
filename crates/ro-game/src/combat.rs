@@ -1221,7 +1221,9 @@ impl Game {
             let (hp0, sp0) = (cm.hp, cm.sp);
             cm.hp = (cm.hp + heal_hp + note_hp).min(d.max_hp);
             cm.sp = (cm.sp + heal_sp + note_sp).min(d.max_sp);
-            let (got_hp, got_sp) = ((cm.hp - hp0).saturating_sub(heal_hp), (cm.sp - sp0).saturating_sub(heal_sp));
+            // HP or SP may stand above a maximum that just fell (gear taken off, a job
+            // change): the `min` above brings them down to it, which is no recovery
+            let (got_hp, got_sp) = (cm.hp.saturating_sub(hp0).saturating_sub(heal_hp), cm.sp.saturating_sub(sp0).saturating_sub(heal_sp));
             if let Some(sid) = self.sid_of(id) {
                 // the skills' recovery shows as a number (clif_heal)
                 if note_hp > 0 && got_hp > 0 {

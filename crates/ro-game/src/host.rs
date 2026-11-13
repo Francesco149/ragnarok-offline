@@ -301,7 +301,9 @@ impl Host for Game {
                     self.unequip(unit, idx);
                 }
                 self.area_send(unit, packets::look(unit, 0, job as u8), true);
-                self.send_full_status(unit);
+                // pc_jobchange ends in pc_calcstatus, which brings HP and SP down to the
+                // new job's maxima (mod0631 pc.c:3122, 983)
+                self.refresh_status(unit); // sends the status window too
                 self.send_skill_list(unit);
             }
             "give_exp" => {
