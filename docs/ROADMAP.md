@@ -76,7 +76,18 @@ Next:
   Blow, Enchant Poison, Venom Dust and Cloaking (which ends away from a
   wall, as in mod0631, `skill.c:4132`); the Blacksmith's Weapon
   Perfection, Over Thrust and Maximize Power, and the refusal of Adrenaline
-  Rush and Hammer Fall with a katar worn.
+  Rush and Hammer Fall with a katar worn. Later the same day: the Hunter's
+  falcon from the Falcon Breeder, every trap, Remove Trap and Spring Trap
+  aimed at a trap in the skill window, Blitz Beat, Double Strafe and Arrow
+  Shower; the Wizard's spells (Sense opens the monster window); the
+  Priest's spells on a Zombie and the blessings on himself; the Knight's
+  spear skills on a Peco Peco, Two-Hand Quicken and Counter Attack. Playing
+  found: Ankle Snare ended when any monster walked near it (mod0631's slip,
+  fixed as jAthena did), a skill asked for from one cell beyond its range
+  was dropped (the client sends it from there), Sightrasher did nothing (now
+  drafted), and a job change to less SP crashed the debug server at the next
+  recovery tick. Not built yet: Frost Nova draws nothing on a target
+  (THREADS.md #22).
 
 ## 4. NPC content
 

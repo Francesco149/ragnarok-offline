@@ -4,9 +4,9 @@ For: the independent deep-research agent (Gemini in Antigravity) that wrote
 rounds 1 to 3. Kept by the Claude sessions that work on the game: at the
 end of each session the queue is updated (answered items go to "Done",
 with where the answer went) and refilled with what that session could not
-settle from the sources on disk. Last update: 2026-11-13, later (the
-Assassin test played in the client to the job change; nothing new to ask,
-the queue stands; no round 7 had arrived).
+settle from the sources on disk. Last update: 2026-11-13, evening (the
+Hunter's, Wizard's, Priest's and Knight's skills tried in the client: T8
+gains Sightrasher and Frost Nova; no round 7 had arrived).
 
 ## How to use it
 
@@ -326,6 +326,15 @@ Sets: `skill_castend_*` for those skills.
   (THREADS.md #22, 2026-11-11): do not repeat that. Wanted is anything
   earlier than March 2004, and: when did Skid Trap go from sliding 1 to 5
   cells (client text, mod0631) to 6 to 10 (the guide)?
+* Sightrasher (drafted 2026-11-13 from the guide's Wizard page, 817 and
+  jAthena): which cells did it hit, only the eight lines from the caster
+  or every cell within reach, and how far at each level? The guide's
+  "Range +1 cells" column (levels 1-2: 1, ... 9-10: 5) is read as the
+  reach; jAthena's pattern reaches 5 cells at every level. A period
+  description or screenshot settles it.
+* Frost Nova: what did the official client show when it was cast on a
+  target (this client draws nothing for 011a or 0117 of skill 88)? A
+  period screenshot, video or player's description of its animation.
 
 ### T9. Small, independent
 
