@@ -535,6 +535,12 @@ research should check is in research/THREADS.md #21–#23 and #25.
   nothing.
 * **A skill's item** (gemstone, trap) was not used up when it sat in the
   first inventory slot.
+* **Ankle Snare** ended a second after any enemy moved within 5 cells of
+  it, caught or not, sprung or not (`skill_unit_onout` case 0x91, also in
+  817): in a field a snare was gone before anything stepped in, and a
+  caught monster went free as soon as another walked by (seen in the
+  client, 2026-11-13). Here only the caught one leaving ends it early, as
+  jAthena //1046 (2004-09-12) has it.
 * **Attack speed.** Not mod0631's slip but ours, fixed now: the server
   attacked twice as fast as the status window's ASPD says. The delay between
   two attacks is twice the "aspd" value (`pc.c:2458`).

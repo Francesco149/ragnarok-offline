@@ -347,8 +347,14 @@ local function onout(c, bl, now)
       skill_status_change_end(bl.id, type)
     end
   elseif uid == 0x91 then
-    if g.val2 == bl.id then skill_status_change_end(bl.id, SC.ANKLE) end
-    g.limit = now - g.tick + 1000
+    -- Only the snared one walking off ends the snare, a second later, as in
+    -- jAthena //1046 (2004-09-12). mod0631 and 817 shortened the trap on any
+    -- enemy that moved within 5 cells of it, caught or not, so a snare in a
+    -- field went within a second, sprung or not (DEVIATIONS.md).
+    if g.val2 ~= 0 and g.val2 == bl.id then
+      skill_status_change_end(bl.id, SC.ANKLE)
+      g.limit = now - g.tick + 1000
+    end
   end
   g.ticks[bl.id] = nil
 end

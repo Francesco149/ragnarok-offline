@@ -1059,6 +1059,34 @@ fn fighter_skills() {
     assert!(t.packets(0x0110).iter().any(|p| p[9] == 5), "the client is told why");
 }
 
+/// Ankle Snare stays while other monsters move near it: only the caught one
+/// walking off ends it (jAthena //1046; mod0631 and 817 ended it on anyone's
+/// step within 5 cells, which in the client took a snare away in a second).
+#[test]
+fn ankle_snare_outlasts_passers_by() {
+    let mut t = T::new();
+    t.lua("job_change(11); player.base_level = 70; player.dex = 90; heal(9999, 9999); give_item(1065, 10)");
+    t.learn("HT_ANKLESNARE", 5);
+    let snares = |t: &T| t.g.world.units.values().filter(|u| u.skill().is_some() && (u.x, u.y) == (28, 25)).count();
+    t.cast_at("HT_ANKLESNARE", 28, 25);
+    t.run(1000);
+    assert_eq!(snares(&t), 1, "set");
+    // a Zombie walks about 3 cells off the trap without stepping on it
+    let passer = t.spawn(31, 28, 1002);
+    t.lua(&format!("_rt('walk_to', {passer}, 25, 28)"));
+    t.run(4000);
+    assert_eq!(snares(&t), 1, "a monster walking by does not take an unsprung snare away");
+    t.kill(passer);
+    let z = t.spawn(32, 25, 1015);
+    t.run(5000);
+    assert!(t.has_sc(z, "ANKLE"), "snared");
+    let passer = t.spawn(31, 29, 1002);
+    t.lua(&format!("_rt('walk_to', {passer}, 25, 29)"));
+    t.run(4000);
+    assert!(t.has_sc(z, "ANKLE"), "still snared while another walks by");
+    assert_eq!(snares(&t), 1, "and the trap is still there");
+}
+
 /// Hunter: traps wait for a monster; Land Mine goes off, Ankle Snare holds.
 #[test]
 fn hunter_traps() {
