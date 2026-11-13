@@ -190,7 +190,7 @@ const MAPS: [&str; 33] = [
 ];
 /// Maps no script reaches beyond 260,260: smaller stand-ins, so that the
 /// eighteen tests side by side stay under the workbench's 2 GiB.
-const SMALL_MAPS: [&str; 4] = ["in_hunter", "job_hunte", "pay_fild10", "job_knt"];
+const SMALL_MAPS: [&str; 5] = ["in_hunter", "job_hunte", "pay_fild10", "job_knt", "in_moc_16"];
 
 fn setup(tag: &str) -> T {
     let slot = Slot::take();
@@ -1331,4 +1331,151 @@ fn blacksmith_test() {
     t.eval("player.skill_point = 0");
     t.talk(alt.0, alt.1, alt.2, &[]);
     assert_eq!(t.eval("return player.class .. ' ' .. count_item(1005) .. ' ' .. count_item(999) .. ' ' .. v.bsmith_q"), "10 0 5 0", "a Blacksmith, with five Steel");
+}
+
+/// The Assassin test (scripts/npc/assassin_test.lua): the man at the door,
+/// Kai who hides and then registers you, the Nameless One's quiz (failed,
+/// Kai's tips, passed), Barcardi's first room (a decoy, a trap, the clock,
+/// then the six targets), the hide room (a kill fails, then through), the
+/// Guild Master behind his maze, and the necklace at the door.
+#[test]
+fn assassin_test() {
+    /// Answer an open dialog (one an event or a touch started), choosing with `pick`.
+    fn drive(t: &mut T, mut pick: impl FnMut(&str) -> u8) -> Vec<String> {
+        let mut menus = Vec::new();
+        for _ in 0..400 {
+            let out = t.cap.take(3);
+            let Some(p) = out.iter().rev().find(|p| [[0xb5, 0], [0xb6, 0], [0xb7, 0]].contains(&[p[0], p[1]])) else { break };
+            let at = if p[0] == 0xb7 { 4 } else { 2 };
+            let npc = u32::from_le_bytes([p[at], p[at + 1], p[at + 2], p[at + 3]]);
+            let mut w = Writer::new(match p[0] { 0xb5 => 0x00b9, 0xb6 => 0x0146, _ => 0x00b8 });
+            w.u32(npc);
+            if p[0] == 0xb7 {
+                menus.push(Reader::new(p).seek(8).str_rest());
+                w.u8(pick(menus.last().unwrap()));
+            }
+            send(&mut t.g, 3, w);
+            t.g.tick();
+        }
+        let errors: Vec<_> = t.g.notices.drain(..).filter(|n| n.contains("script error")).collect();
+        assert!(errors.is_empty(), "{errors:?}");
+        menus
+    }
+    // the Nameless One's thirty questions, by their first answers: the right one
+    const RIGHT: [(&str, u8); 30] = [
+        ("Cloak Lv 2:", 4), ("Poison:Earth", 1), ("Attack +80%:", 2), ("Green Gemstone:", 4), ("Venom Splasher:", 4),
+        ("Hide:Back Slide", 3), ("The enemy must be weak.:", 2), ("Steel Chonchon:", 3), ("15:0:", 2), ("Sword of Piercing Wind:", 1),
+        ("Thief Bug Male:", 3), ("Caramel:", 1), ("Merchant:Blacksmith", 2), ("Jur:Jamadhar", 4), ("Water:Fire", 1),
+        ("Poring:Roda Frog", 2), ("Kobold (Sword):", 4), ("Katar of Raging Blaze:", 4), ("Poring:Ghostring", 3), ("Drake:", 3),
+        ("20:30", 2), ("Hode:", 2), ("Jur and Mace:", 3), ("Prontera:Lutie", 4), ("Baphomet Jr. Card:", 2),
+        ("Excellent singing:", 4), ("7:8", 4), ("Sword:Golden Helm", 2), ("Orange Net Mushrooms:", 1), ("Ghostring Card:", 2),
+    ];
+    fn nameless(wrong: bool) -> impl FnMut(&str) -> u8 {
+        move |m: &str| {
+            if m.starts_with("Eeek!") || m.starts_with("You're right, I'm not") {
+                return 2;
+            }
+            if m.starts_with("...What are the skills?") {
+                return 3;
+            }
+            let r = RIGHT.iter().find(|(k, _)| m.starts_with(k)).unwrap_or_else(|| panic!("which question? {m}")).1;
+            if wrong { if r == 1 { 2 } else { 1 } } else { r }
+        }
+    }
+    let mut t = setup("assassin_test");
+    let m = "in_moc_16";
+    let huey = (19, 33);
+    let kai = (25, 90);
+    let barcardi = (21, 165);
+    let (target, decoy, hide) = ("assassin_clock::OnTarget", "assassin_clock::OnDecoy", "assassin_clock::OnHideKill");
+    let q = |t: &mut T| t.eval("return v.assin_q");
+    let at = |t: &mut T| t.eval("return player.map .. ' ' .. player.x .. ' ' .. player.y");
+    let mobs = |t: &mut T, ev: &str| t.eval(&format!("return mob_count('in_moc_16', '{ev}')"));
+    assert!(!t.g.world.units.values().any(|u| u.name == "Assassin Clan Member"), "817's NPC is replaced");
+    t.eval("job_change(6); player.job_level = 39");
+    assert!(t.talk(m, huey.0, huey.1, &[]).is_empty(), "job level 39");
+    t.eval("player.job_level = 40");
+    // the requirements, then in: Kai's room
+    t.talk(m, huey.0, huey.1, &[2, 1]);
+    assert_eq!(at(&mut t), "in_moc_16 19 76");
+    let kai_here = |t: &T| t.g.world.units.values().any(|u| u.map == "in_moc_16" && (u.x, u.y) == kai);
+    assert!(!kai_here(&t), "Kai is in his corner");
+    // he hides when you come near, and turns up by the wall; his form
+    t.step(21, 87);
+    t.answer();
+    assert!(kai_here(&t));
+    t.step(kai.0, kai.1 - 1);
+    drive(&mut t, |_| 1);
+    assert_eq!(t.eval("return v.assin_jl .. ' ' .. player.x .. ' ' .. player.y"), "40 19 141");
+    // the Nameless One speaks once you step across: every answer wrong
+    t.step(19, 144);
+    t.run(1000);
+    let menus = drive(&mut t, nameless(true));
+    assert_eq!(menus.len(), 12, "{menus:?}");
+    assert_eq!(format!("{} {}", q(&mut t), at(&mut t)), "1 in_moc_16 19 76");
+    // Kai laughs, gives the tips for that set, and sends you back; all right this time
+    t.talk(m, kai.0, kai.1, &[3, 1]);
+    assert_eq!(at(&mut t), "in_moc_16 19 141");
+    t.step(19, 144);
+    t.run(1000);
+    let menus = drive(&mut t, nameless(false));
+    assert_eq!(menus.len(), 11, "{menus:?}");
+    assert_eq!(q(&mut t), "2");
+    // Barcardi's first room: a decoy fails you, three seconds later you are out
+    t.talk(m, barcardi.0, barcardi.1, &[1, 2, 1]);
+    assert_eq!(at(&mut t), "in_moc_16 65 150");
+    assert_eq!(format!("{} {}", mobs(&mut t, target), mobs(&mut t, decoy)), "6 34");
+    t.slay_by(decoy, 1);
+    t.run(3500);
+    assert_eq!(at(&mut t), "in_moc_16 21 160", "a decoy");
+    assert_eq!(format!("{} {}", mobs(&mut t, target), mobs(&mut t, decoy)), "0 0");
+    // a trap
+    t.talk(m, barcardi.0, barcardi.1, &[2, 1]);
+    t.step(68, 158);
+    assert_eq!(at(&mut t), "in_moc_16 19 161", "a trap");
+    assert_eq!(mobs(&mut t, decoy), "0");
+    // three minutes
+    t.talk(m, barcardi.0, barcardi.1, &[2, 2]);
+    assert_eq!(at(&mut t), "in_moc_16 21 166", "lounging");
+    t.talk(m, barcardi.0, barcardi.1, &[2, 1]);
+    t.run(180_000);
+    assert_eq!(at(&mut t), "in_moc_16 65 150", "still in");
+    t.run(9_000);
+    assert_eq!(at(&mut t), "in_moc_16 21 160", "out of time");
+    // the six targets: the rest go, the way out opens
+    t.talk(m, barcardi.0, barcardi.1, &[2, 1]);
+    t.slay_by(target, 6);
+    assert_eq!(mobs(&mut t, decoy), "0");
+    t.step(87, 137);
+    assert_eq!(at(&mut t), "in_moc_16 87 102");
+    // Thomas; a kill in his room fails the whole test
+    t.step(87, 100);
+    t.run(1000);
+    t.answer();
+    assert_eq!(format!("{} {}", at(&mut t), mobs(&mut t, hide)), "in_moc_16 87 102 15");
+    t.slay_by(hide, 1);
+    t.run(3500);
+    assert_eq!(format!("{} {} {}", at(&mut t), mobs(&mut t, hide), t.eval("return v.assin_q2")), "in_moc_16 21 160 0 1");
+    // again: this time the way out takes you after 30 seconds, and you get through
+    t.talk(m, barcardi.0, barcardi.1, &[2, 1]);
+    t.slay_by(target, 6);
+    t.run(30_500);
+    assert_eq!(at(&mut t), "in_moc_16 87 102");
+    t.step(87, 100);
+    t.run(1000);
+    t.answer();
+    assert_eq!(mobs(&mut t, hide), "15");
+    t.step(87, 48);
+    t.answer();
+    assert_eq!(format!("{} {} {}", q(&mut t), at(&mut t), mobs(&mut t, hide)), "3 in_moc_16 181 183 0");
+    // the Guild Master's room, his maze, his questions, a weapon and the necklace
+    t.step(182, 169);
+    assert_eq!(at(&mut t), "in_moc_16 167 116");
+    t.step(149, 80);
+    drive(&mut t, |_| 1);
+    assert_eq!(format!("{} {}", q(&mut t), at(&mut t)), "4 in_moc_16 18 28");
+    assert_eq!(t.eval("return count_item(1008) .. ' ' .. (count_item(1250) + count_item(1217) + count_item(1252))"), "1 1");
+    t.eval("player.skill_point = 0");
+    t.talk(m, huey.0, huey.1, &[]);
+    assert_eq!(t.eval("return player.class .. ' ' .. count_item(1008) .. ' ' .. v.assin_q"), "12 1 0", "an Assassin, who keeps the necklace (eAthena takes none)");
 }

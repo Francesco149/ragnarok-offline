@@ -353,6 +353,36 @@ eAthena 817 (2004-02-19), bugs included. The translator is
   Ring Pommel Saber for eAthena's Buster in one question; eAthena's slips
   mended (Geshupenschte checked for a Knife instead of the Gladius he made;
   three customers ran on into their next line); dialogue cut to the window.
+* **The Assassin test** (`scripts/npc/assassin_test.lua`). 817 changes a
+  Thief into an Assassin at job level 40 with no test, as mod0631's guild
+  member does (the requirements "will come with an update"); jAthena's
+  script of 2004-09-12 is a stub too. The test here is eAthena 1.0's of
+  2004-11-04 ("Based of Official RO Assassin jobchange quest", some
+  dialogue from the Aegis script), the only one on disk, all on
+  `in_moc_16`: the angry-looking man at the door (Huey; job level 40), Kai
+  who hides and then takes your form, the Nameless One's quiz (one of
+  three sets of ten, nine right; Kai's tips after a failure), Barcardi's
+  test in two parts (six Job Change Targets among 34 decoys and 83 traps,
+  then a room of Mummies and Hydras to sneak through without a kill; three
+  minutes each, a failure in either starts both again), the Guild Master
+  behind his maze (the turtle patch's `in_moc_16` has the maze,
+  data.grf.original's an open hall), a dagger or katar (a choice from job
+  level 50) and the Necklace of Oblivion, which Huey looks at and lets you
+  keep (no skill points left). No account dates the test: it is here
+  because the other 2-1 tests are. Ours: the guild's door on `moc_fild16`
+  leads into the entrance hall where Huey stands, as in eAthena 1.0 and
+  later (mod0631's led into Kai's room), with eAthena's way out of the
+  hall; mod0631's ten warp tiles between the test's rooms are removed (the
+  test moves you); no chat room (Barcardi sends you in when asked, or lets
+  you lounge), and no "busy with another candidate"; eAthena's slips
+  mended (a decoy that never spawned, the pass warp that came again 30
+  seconds later wherever you were, the first room's way out open before
+  any test, the hide room's exit passing you in the seconds after a kill
+  had failed you, guild members left standing in the Guild Master's room,
+  Huey starting you over after the second test, Kai and the Nameless One
+  serving anyone); the Nameless One's tip to a fan web site goes; three of
+  the guild members called to the Guild Master stand on the nearest floor
+  (eAthena's cells are walls here); dialogue cut to the window.
 * **Alberta's sailor** (`scripts/npc/alberta_sailor.lua`) no longer sells
   passage to Amatsu and Gonryun: the client has neither map (they are later
   additions 817 took from jAthena), so the fare went and the ship did not.

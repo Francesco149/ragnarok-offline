@@ -179,10 +179,9 @@ const QUESTS: &[Quest] = &[
         numbers: &[2485741, 2328137, 2989396, 2191737, 3012685, 3487372, 3318702, 3543625],
     },
     Quest { name: "Thief", files: &["import/npc/jobs/thief.lua"], from: 0, job_level: 10, to: 6, skill: 0, gifts: None, numbers: &[] },
-    // the Wizard's, the Priest's, the Hunter's, the Knight's and the Blacksmith's tests want
-    // right answers and monsters killed in time: npc_mod0631.rs, wizard_test, priest_test,
-    // hunter_test, knight_test, blacksmith_test
-    Quest { name: "Assassin", files: &["import/npc/jobs/assassin.lua"], from: 6, job_level: 50, to: 12, skill: 0, gifts: None, numbers: &[] },
+    // the Wizard's, the Priest's, the Hunter's, the Knight's, the Blacksmith's and the
+    // Assassin's tests want right answers and monsters killed in time: npc_mod0631.rs,
+    // wizard_test, priest_test, hunter_test, knight_test, blacksmith_test, assassin_test
 ];
 
 /// Talk to (or step on) the quest's NPCs until the class changes. Returns

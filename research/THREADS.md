@@ -380,6 +380,18 @@ Wind of Verdure. jAthena's Gromgast refuses a Tsurugi with cards or
 refines; eAthena does not check. Open: a player's account of the
 Blacksmith test before autumn 2004 (queue T1). Played in the client from the
 application to the job change (Gladius order, Mitmayer at 80 points).
+**2026-11-13: the Assassin test is in** (`scripts/npc/assassin_test.lua`,
+DEVIATIONS), from eAthena 1.0's `npc/jobs/2-1/assassin.txt` (2004-11-04,
+kobra_k88: "Based of Official RO Assassin jobchange quest", dialogue partly
+from the official script via pRO's translators), the only script on disk:
+jAthena's of 2004-09-12 is a stub ("不完全"). The map came with the patch
+too: the turtle patch's `in_moc_16` walls off the Guild Master's maze, which
+`data.grf.original`'s leaves an open hall (sampled with `gat_cells.py`:
+126 of 208 cells walkable against 169). mod0631's and 817's warp list
+chains the rooms with free warps from the field door into Kai's room;
+the test needs the door into the entrance hall instead (eAthena 1.0).
+Played in the client from the door to Barcardi's first room. Open: any
+account of the Assassin test before autumn 2004 (queue T1).
 
 ### 9. Refining details
 Phracon price (iRO page 2000z vs data 200z), armor DEF per refine (1, 5 or
