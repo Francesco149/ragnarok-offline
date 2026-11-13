@@ -85,8 +85,10 @@ Working with the real client:
   anything a player could not reach;
 - about 600 period NPCs: towns, the novice training ground, job quests,
   guides, Kafras (fares, storage, saving, carts, points), refiners, dye
-  makers, quests, shops; the Turtle Island chain, the Wizard, Priest, Hunter and
-  Knight tests on the maps this client has for them;
+  makers, quests, shops; the Turtle Island chain; the job test of every 2-1
+  job (Knight, Priest, Wizard, Blacksmith, Hunter, Assassin), on the maps this
+  client has for them. Every first-job and 2-1 test has been played through
+  in the real client;
 - inventory, equipment, cards, item identification, usable items, Kafra
   storage, pushcarts, forging and ore refining;
 - pets: taming, eggs, hunger, intimacy, accessories;
@@ -106,12 +108,9 @@ Not yet, or only in part:
   magazine DVD of July 2004), so the ones drafted so far can only be used
   through a GM command
   ([research/THREADS.md](research/THREADS.md) #25);
-- the Assassin's and Blacksmith's job tests (the maps they use are in the
-  client; the scripts on disk are of late 2004);
-- a play-through of every job quest in the real client. They pass an
-  automated run on stand-in maps; the training ground and the Swordman, Thief,
-  Mage, Archer, Acolyte, Wizard, Hunter and Knight tests have been walked
-  for real;
+- how the 2-1 job tests went on euRO in early 2004. Their scripts are the
+  emulators' of 2004 (the Assassin's, the Blacksmith's and the Knight's of
+  autumn 2004), and no player account dates most of them that early;
 - a handful of skills are drafts from thin evidence (ROADMAP §3), and the
   NPC dialogue is the emulator authors' fan translation, not Gravity's.
 

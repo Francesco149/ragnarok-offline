@@ -20,9 +20,10 @@ Ordered by "confirmable first". Each item says where the truth would come from.
 
 euRO opened Juno and the 2-2 jobs on 2004-06-09; the closed beta (this disc,
 Dec 2003) and the "New Comodo" update (Jan 2004) define the default world.
-Add a `content_date` / episode setting that filters `scripts/import/*`
-(e.g. Juno warps) and NPCs by date, default 2004-01. Closed-beta EXP boost:
-unknown factor, keep as a rate.
+Done as switches rather than a date: `[game.content]` (juno, jobs2_2, pvp,
+events, arena, castle_monsters; DEVIATIONS.md lists the defaults). A
+single `content_date` that sets them is still possible. Closed-beta EXP
+boost: unknown factor, keep as a rate.
 
 ## 3. Battle, skills, status changes, monsters
 
@@ -101,15 +102,16 @@ Next, in order:
   played too, from the guild to the job change (`play.sh walk` keeps off
   the course's pits with `AVOID`), and the Knight test from the
   application to the verdict. Swordman and Archer are read against
-  jAthena's of 2004-03 (THREADS.md #27). Not yet played from end to end:
-  the Merchant test (its four deliveries pass a test and two were made in
-  the client), the Priest test on `job_prist`.
+  jAthena's of 2004-03 (THREADS.md #27). Since 2026-11-13 the Merchant
+  test (the Morroc delivery) and the Priest test on `job_prist` are played
+  too (the Priest's last room only to a death: its door is in the test).
   Fix what breaks in `scripts/npc/` (one file per fix, listed in
   DEVIATIONS.md);
-* the Assassin's and the Blacksmith's tests (THREADS.md #8): eAthena 1.0's
-  scripts of 2004-11-04 are on disk (jAthena has both of 2004-09-12); the
-  Assassin's room `in_moc_16` is in the client, the Blacksmith's errands
-  are in towns. No account dates either before September 2004 (queue T1);
+* the Assassin's and the Blacksmith's tests are in since 2026-11-13, from
+  eAthena 1.0's scripts of 2004-11-04 (THREADS.md #8): every 2-1 job has
+  its test. The Blacksmith's is played in the client to the job change,
+  the Assassin's to its first room. No account dates either before
+  autumn 2004 (queue T1): sharpen when one turns up;
 * later, once this game is complete: its own version for euRO's May-2004
   client (owner, 2026-11-11), which has the 2-2 jobs' packets and text.
   What it needs is collected in `research/notes/may2004-client.md`;
