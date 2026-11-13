@@ -4,9 +4,9 @@ For: the independent deep-research agent (Gemini in Antigravity) that wrote
 rounds 1 to 3. Kept by the Claude sessions that work on the game: at the
 end of each session the queue is updated (answered items go to "Done",
 with where the answer went) and refilled with what that session could not
-settle from the sources on disk. Last update: 2026-11-13, evening (the
-Hunter's, Wizard's, Priest's and Knight's skills tried in the client: T8
-gains Sightrasher and Frost Nova; no round 7 had arrived).
+settle from the sources on disk. Last update: 2026-11-13, night (the path finder read from the exe and
+checked under an emulator: settled from the client, nothing for the
+queue; no round 7 had arrived).
 
 ## How to use it
 

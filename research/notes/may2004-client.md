@@ -103,3 +103,13 @@ random warps (`c_tower1`, `c_tower2`, `c_tower4`), Turtle Island
 * What 0x01f1 to 0x01ff are, and whether the server must send any.
 * The exe of 2004-05-31 (patch entry 462) is still lost; 2004-05-07 is
   what we have.
+
+## The path finder (2026-11-13)
+
+The 2003-12 exe's `CPathFinder` (`0x4d2300`, docs/CLIENT.md) is ported in
+`path.rs` and checked under an emulator (`research/client_paths/`). For the
+May-2004 exe: find the same function by its log strings ("find path
+failed : no path found"), point `emu_path.py`'s addresses at it (the
+function, `operator new`/`delete`, `atexit`, `_Lockit`, the error log, the
+two static initialisers, the instance) and run the committed fixture
+through it. If any path differs, that version needs its own finder.
