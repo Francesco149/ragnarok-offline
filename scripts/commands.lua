@@ -6,7 +6,7 @@ local function words(s) local t = {} for w in s:gmatch("%S+") do t[#t + 1] = w e
 
 command("help", function()
   return "@warp <map> [x y], @go <town>, @where, @item <id|name> [n], @zeny <n>, @lvup [n], @joblvup [n], " ..
-         "@job <id>, @heal, @monster <id|name> [n], @save, @stats, @reload, @allskill, @useskill <id|NAME> [lv]"
+         "@job <id>, @equip <item id>, @heal, @monster <id|name> [n], @save, @stats, @reload, @allskill, @useskill <id|NAME> [lv]"
 end)
 
 -- Every skill of the current job at its top level (quest skills too).
@@ -79,6 +79,14 @@ command("item", function(args)
   if not a[1] then return "usage: @item <id|name> [amount]" end
   local id = tonumber(a[1]) or a[1]
   if not give_item(id, tonumber(a[2]) or 1) then return "could not give " .. a[1] end
+end)
+
+-- Wear an item from the inventory, as a double click on it would.
+command("equip", function(args)
+  local a = words(args)
+  local id = tonumber(a[1])
+  if not id then return "usage: @equip <item id>" end
+  if not _rt("pc_equip", player.id, id) then return "could not wear " .. a[1] end
 end)
 
 command("zeny", function(args)

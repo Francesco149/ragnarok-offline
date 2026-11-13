@@ -172,7 +172,8 @@ val2)`, `skill_blown`, `skill_unitsetting`, `battle.after(ms, fn)`.
 
 To try a skill from the console or the chat: `@allskill`, then
 `@useskill MG_FIREBOLT 10` (on the nearest monster, yourself or its cell,
-as the skill's target type says).
+as the skill's target type says). `@equip 1163` wears an item from the
+inventory (the first unworn one of that id), as a double click on it would.
 
 ## Console (for you or an LLM)
 

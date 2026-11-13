@@ -1106,6 +1106,20 @@ impl Game {
                 })
             }
             "pc_item_count" => json!(self.count_item(id(0), int(a, 1) as u32)),
+            "pc_equip" => {
+                // wear the first unworn item of this id, as a double click in the
+                // inventory would (the @equip command): true if it went on
+                let unit = id(0);
+                let want = int(a, 1) as u32;
+                let idx = self.char_of_unit(unit).and_then(|c| c.inventory.iter().position(|it| it.nameid == want && it.equip == 0));
+                match idx {
+                    Some(i) => {
+                        self.equip(unit, i as u16 + packets::INV_OFFSET);
+                        json!(self.char_of_unit(unit).is_some_and(|c| c.inventory.get(i).is_some_and(|it| it.equip != 0)))
+                    }
+                    None => json!(false),
+                }
+            }
             "pc_item_take" => json!(self.take_item(id(0), int(a, 1) as u32, int(a, 2).max(1) as u32)),
             "pc_item_add" => {
                 // unit, item, amount, cards, identified. Falls to the floor when
