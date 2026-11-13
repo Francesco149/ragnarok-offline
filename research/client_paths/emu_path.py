@@ -2,7 +2,11 @@
 # Runs the client's own path finder (Ragexe 2003-12-18, 0x4d2300) under unicorn.
 # CASES: [{"w":W,"h":H,"cells":"0101..." (row-major, y*w+x; '1' blocked),
 #          "pairs":[[sx,sy,tx,ty],...]}, ...]
-# OUT: same shape with "paths": [null | [[x,y,dir],...]] per pair.
+#   A pair may go on with [subx, suby, speed, start] (default 8, 8, 150, 0):
+#   the sub-cell the unit starts from (0-15, 8 the centre), ms a cell, and
+#   the move's tick.
+# OUT: same shape with "paths": [null | [[x,y,dir,time],...]] per pair, time
+#   being when the client has the unit at that cell's centre.
 import json, struct, sys
 import pefile
 from unicorn import Uc, UC_ARCH_X86, UC_MODE_32, UC_HOOK_CODE, UC_HOOK_MEM_INVALID
@@ -68,6 +72,9 @@ def call(fn, ecx=0, args=()):
     esp -= 4; w32(esp, SENTINEL)
     mu.reg_write(UC_X86_REG_ESP, esp)
     mu.reg_write(UC_X86_REG_ECX, ecx)
+    # the x87 as the game runs: Direct3D 7 leaves it at 24-bit precision
+    # (SetCooperativeLevel at 0x404251 never asks for DDSCL_FPUPRESERVE)
+    mu.reg_write(UC_X86_REG_FPCW, 0x007F)
     mu.emu_start(fn, SENTINEL, count=50_000_000)
     return mu.reg_read(UC_X86_REG_EAX)
 
@@ -87,18 +94,21 @@ def run_case(w, h, cells, pairs):
     mu.mem_write(cell_base, bytes(buf))
     w32(PF, attr)
     res = []
-    for sx, sy, tx, ty in (p[:4] for p in pairs):  # also takes the fixture's rows
+    for p in pairs:  # also takes the fixture's rows
+        sx, sy, tx, ty = p[:4]
+        rest = [v for v in p[4:8] if isinstance(v, int)]
+        subx, suby, speed, start = rest if len(rest) == 4 else (8, 8, 150, 0)
         mu.mem_write(OUTINFO, b"\0" * 0x40)
         # the previous call's tree nodes are erased (read) at the start of the
         # next call, before anything is allocated; the open list's buffer is
         # dropped here so new allocations cannot alias it
         heap_top[0] = MARK
         mu.mem_write(PF + 0x108c, b"\0" * 12)
-        ok = call(0x4d2300, PF, (0, sx, sy, 8, 8, tx, ty, 150, OUTINFO)) & 0xFF
+        ok = call(0x4d2300, PF, (start, sx, sy, subx, suby, tx, ty, speed, OUTINFO)) & 0xFF
         if not ok:
             res.append(None); continue
         b, e = u32(OUTINFO + 4), u32(OUTINFO + 8)
-        res.append([[i32(p), i32(p + 4), i32(p + 8)] for p in range(b, e, 16)])
+        res.append([[i32(c), i32(c + 4), i32(c + 8), u32(c + 12)] for c in range(b, e, 16)])
     return res
 
 cases = json.load(open(CASES))

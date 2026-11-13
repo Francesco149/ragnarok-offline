@@ -31,9 +31,25 @@ Then:
   `0x4d2300(time 0, sx, sy, 8, 8, tx, ty, speed 150, &out)` on a fake map
   object (`+0x110` width, `+0x114` height, `+0x120` cells of 20 bytes, the
   type at `+0x10`).
+* `gen_times.py CASES OUT SEED`: the same pairs with a random sub-cell,
+  speed and start tick each, plus an open grid of first steps where a float
+  or double square root, or the product's rounding, change the time.
+  `emu_path.py` then also returns each cell's time (the x87 set to 24-bit
+  precision, as Direct3D 7 leaves it in the game), and `to_fixture.py`
+  keeps them. The committed `client_walk_times.json` is seed 2, 30 grids:
+
+      python3 -I research/client_paths/gen_cases.py target/re/tc.json 2 30
+      python3 -I research/client_paths/gen_times.py target/re/tc.json target/re/tt.json 2
+      target/re/venv/bin/python3 -I research/client_paths/emu_path.py $E target/re/tt.json target/re/tt.out.json
+      python3 -I research/client_paths/to_fixture.py target/re/tt.out.json crates/ro-game/tests/data/client_walk_times.json
+
 * `rdis.py EXE START END`: linear disassembly, for reading the code.
 
 Checked on 2026-11-13: 4,800 synthetic paths and 5,760 on windows of all
 269 maps of the played GRF agree with the port, path for path. Changing the
 heap's tie rule or dropping the closed-node quirk makes 22 and 10 of the
 synthetic ones differ, so the fixture tells them apart.
+
+Checked on 2026-11-13 too: the times of 925 paths (`path::client_times`).
+Taking a double square root, or not rounding the product to a float, makes
+7 and 27 of them differ; leaving out the column-0 quirk, 79.

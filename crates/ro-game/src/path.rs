@@ -34,6 +34,36 @@ pub fn step_time(speed: u32, dir: u8) -> u32 {
     if is_diagonal(dir) { (speed as f64 * 1.414f32 as f64) as u32 } else { speed }
 }
 
+/// When the client has a walking unit at the centre of each cell of its path
+/// (the start cell, then one per step), in ms after the move's tick:
+/// `CPathFinder::FindPath` (`0x4d2300`) and the path it builds (`0x4d2cf0`).
+/// The unit starts from a point within its cell, `x - 0.5 + sub/16` (only
+/// `sub/16` on column or row 0; sub 8 is the centre, all the server sends).
+/// The first step takes `(int)(speed * sqrtf(distance²))` from that point to
+/// the next cell's centre, the product rounded to a float: Direct3D 7 keeps
+/// the x87 at 24-bit precision (the exe never asks for `DDSCL_FPUPRESERVE`).
+/// Every later step takes [`step_time`]. Halfway between two of these times
+/// the unit crosses into the next cell. Checked under an emulator
+/// (`tests/client_paths.rs`).
+pub fn client_times(x0: i32, y0: i32, sub: (u8, u8), dirs: &[u8], speed: u32) -> Vec<u32> {
+    let mut t = Vec::with_capacity(dirs.len() + 1);
+    t.push(0u32);
+    let Some(&d0) = dirs.first() else { return t };
+    // all exact in a float: whole cells and sixteenths
+    let at = |c: i32, s: u8| s as f32 * 0.0625 + if c > 0 { c as f32 - 0.5 } else { 0.0 };
+    let (dx, dy) = DIRS[d0 as usize];
+    let ex = (x0 + dx) as f32 - at(x0, sub.0);
+    let ey = (y0 + dy) as f32 - at(y0, sub.1);
+    // sqrtf at 0x4085a0; the product is exact in a double, then rounded to
+    // a float as the x87 does at 24 bits, then truncated (_ftol, 0x5bec90)
+    let first = (speed as f32 as f64 * (ex * ex + ey * ey).sqrt() as f64) as f32 as u32;
+    t.push(first);
+    for &d in &dirs[1..] {
+        t.push(t[t.len() - 1].wrapping_add(step_time(speed, d)));
+    }
+    t
+}
+
 fn can_move(g: &MapGrid, x0: i32, y0: i32, x1: i32, y1: i32) -> bool {
     if !g.walkable(x0, y0) || !g.walkable(x1, y1) {
         return false;
