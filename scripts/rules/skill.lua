@@ -417,7 +417,12 @@ function rules.skill_use(a)
   -- range
   local tx, ty = a.x, a.y
   if bl then tx, ty = bl.x, bl.y end
-  if not battle.check_range(sd, tx, ty, skill_range(sd, skill, a.lv)) then return nil end
+  -- One cell more than the skill's range: the client asks from there (it did
+  -- for Remove Trap at range 2 from 3 cells, 2026-11-13) and mod0631 refused
+  -- it without a word (skill.c:3237, 3360). jAthena //1082 (2004-12-18) let it
+  -- through: "a skill used one cell beyond its range does nothing" was its bug.
+  local range = skill_range(sd, skill, a.lv)
+  if not battle.check_range(sd, tx, ty, range > 0 and range + 1 or range) then return nil end
 
   local casttime = skill_castfix(sd, CAST_817[skill] or skill_get_cast(skill, lv))
   local delay = skill_delayfix(sd, skill_get_delay(skill, lv))
@@ -573,6 +578,10 @@ function rules.skill_castend(a)
   local tx, ty = a.x, a.y
   if bl then tx, ty = bl.x, bl.y end
   local range = sd and skill_range(sd, skill, lv) + battle_config.pc_skill_add_range or skill_get_range(skill)
+  -- the cell beyond the range that rules.skill_use lets a player ask from counts
+  -- here too (ours: jAthena //1082 widened only the request, so a skill asked
+  -- for from there would spend its SP and items and fail)
+  if sd and range > 0 then range = range + 1 end
   local out = range < battle.distance(src, { x = tx, y = ty })
   -- the target walked off: with skill_out_range_consume the SP is spent anyway
   if sd then

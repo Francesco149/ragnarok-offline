@@ -541,6 +541,12 @@ research should check is in research/THREADS.md #21–#23 and #25.
   caught monster went free as soon as another walked by (seen in the
   client, 2026-11-13). Here only the caught one leaving ends it early, as
   jAthena //1046 (2004-09-12) has it.
+* **A skill asked for from one cell beyond its range** did nothing: the
+  client sends the request from there (Remove Trap, range 2, from 3 cells;
+  from farther it walks up first), and mod0631 refused it without a word
+  (`skill.c:3237, 3360`). jAthena //1082 (2004-12-18) fixed the request; here
+  the cast end allows the same cell (ours: jAthena's cast end would have
+  spent the SP and the item and failed).
 * **Attack speed.** Not mod0631's slip but ours, fixed now: the server
   attacked twice as fast as the status window's ASPD says. The delay between
   two attacks is twice the "aspd" value (`pc.c:2458`).

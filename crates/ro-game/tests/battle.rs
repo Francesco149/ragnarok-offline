@@ -1087,6 +1087,30 @@ fn ankle_snare_outlasts_passers_by() {
     assert_eq!(snares(&t), 1, "and the trap is still there");
 }
 
+/// The client asks for a skill from one cell beyond its range (Remove Trap,
+/// range 2, from 3 cells) and the server lets it through (jAthena //1082);
+/// two cells beyond is still too far.
+#[test]
+fn skill_range_one_cell_more() {
+    let mut t = T::new();
+    t.lua("job_change(11); player.base_level = 70; player.dex = 90; heal(9999, 9999); give_item(1065, 10)");
+    for (s, lv) in [("HT_LANDMINE", 5), ("HT_REMOVETRAP", 1)] {
+        t.learn(s, lv);
+    }
+    let at = |t: &T, x: u16, y: u16| -> Vec<u32> { t.g.world.units.values().filter(|u| u.skill().is_some() && (u.x, u.y) == (x, y)).map(|u| u.id).collect() };
+    t.cast_at("HT_LANDMINE", 28, 22);
+    t.run(2000);
+    t.cast_at("HT_LANDMINE", 21, 27);
+    t.run(2000);
+    let (three, four) = (at(&t, 28, 22)[0], at(&t, 21, 27)[0]);
+    t.cast("HT_REMOVETRAP", four);
+    t.run(1000);
+    assert_eq!(at(&t, 21, 27).len(), 1, "four cells is too far");
+    t.cast("HT_REMOVETRAP", three);
+    t.run(1000);
+    assert!(at(&t, 28, 22).is_empty(), "three cells is near enough");
+}
+
 /// Hunter: traps wait for a monster; Land Mine goes off, Ankle Snare holds.
 #[test]
 fn hunter_traps() {
