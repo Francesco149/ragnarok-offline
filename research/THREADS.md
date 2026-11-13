@@ -803,6 +803,13 @@ script names. After its first fixes it still reports:
 * **The guild dungeons** `gld_dun01-04`: nothing leads in (#17).
 * `job_wiz` is entered through a destination the script computes, which
   the audit cannot see: not a fault.
+* `gef_fild10 54,232` and `morocc 120,39` (2026-11-13): destinations of
+  817 Kafras that `scripts/npc/kafra.lua` replaces with mod0631's cells.
+  The audit reads destinations per file, so a replaced NPC's still count:
+  not a fault in the game.
+* Scripts that warp with a variable for the map (`warp(MAP, ...)`) hide
+  their rooms from the audit; write the map name out (the Priest test's
+  demons showed as "out of sight" until 2026-11-13 for that reason).
 **Impact:** small; each is a place a player cannot stand or reach.
 **Look:** 817's and jAthena's warp files for the same cells; the `.gat`
 of each map in `data.grf.original` against the merged one.

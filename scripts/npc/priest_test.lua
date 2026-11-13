@@ -476,7 +476,7 @@ npc {
     tmp.jpri_step = 1
     tmp.jpri_tempted = 0
     add_timer(TIME_MS, "jpri_timer::OnWarp")
-    warp(MAP, 24, 44)
+    warp("job_prist", 24, 44) -- literal, for `check`
   end,
 }
 
@@ -516,7 +516,7 @@ npc {
       if tmp.jpri_step < 6 or mob_count(MAP, RISEN) > 0 then return end
       del_timer("jpri_timer::OnWarp")
     end
-    warp(MAP, 168, 17)
+    warp("job_prist", 168, 17) -- literal, for `check`
   end,
 }
 
@@ -608,7 +608,7 @@ npc {
       kill_monster(MAP, MUMMIES)
       tmp.jpri_step = 6
     end
-    warp(MAP, 98, 40)
+    warp("job_prist", 98, 40) -- literal, for `check`
   end,
 }
 
