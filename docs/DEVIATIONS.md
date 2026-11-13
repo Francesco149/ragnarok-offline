@@ -405,9 +405,8 @@ eAthena 817 (2004-02-19), bugs included. The translator is
   them, and takes 200 Empty Bottles and a Moth Wings, which are the
   Japanese servers' items (mod0631). He now takes the 500 bottles and the
   doll, the list RODataZone gives for the international servers
-  (2004-05-02). The armour is neither tested nor taken: he says to come
-  wearing one, as mod0631's knight does. Not confirmed for the
-  international servers (THREADS.md #7).
+  (2004-05-02). The armour is tested for, worn or carried, and kept, as an
+  iRO player's guide of autumn 2003 says (THREADS.md #7).
 * **The doomed swords** (`scripts/npc/cursed_swords.lua`). 817 has three
   people who tell of Executioner, Grimtooth and Mysteltain and of a
   blacksmith who left Prontera, and nothing comes of it. mod0631 has the

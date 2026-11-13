@@ -524,11 +524,17 @@ fn moving_hp_recovery() {
     assert!(t.talk("izlude_in", 175, 130, &[]).is_empty());
     assert_eq!(t.eval("return skill_level(144)"), "0");
     t.eval("give_item(752, 1)");
+    // nor without a Padded Armour
+    assert!(t.talk("izlude_in", 175, 130, &[]).is_empty());
+    t.eval("give_item(2312, 1)");
     t.talk("izlude_in", 175, 130, &[2]);
     assert_eq!(t.eval("return skill_level(144) .. ' ' .. count_item(713)"), "0 520");
     t.talk("izlude_in", 175, 130, &[1]);
-    // what he asked for is what he takes; no armour is needed, the Moth Wings stay
-    assert_eq!(t.eval("return skill_level(144) .. ' ' .. count_item(713) .. ' ' .. count_item(752) .. ' ' .. count_item(1058)"), "1 20 0 1");
+    // he takes the bottles and the doll; the armour and the Moth Wings stay
+    assert_eq!(
+        t.eval("return skill_level(144) .. ' ' .. count_item(713) .. ' ' .. count_item(752) .. ' ' .. count_item(2312) .. ' ' .. count_item(1058)"),
+        "1 20 0 1 1"
+    );
     assert!(t.talk("izlude_in", 175, 130, &[]).is_empty());
 }
 

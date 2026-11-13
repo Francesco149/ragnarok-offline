@@ -9,13 +9,13 @@
 -- RODataZone's Swordman page (capture of 2004-05-02) gives the request as
 -- "1 Rocker Doll, 500 Empty Bottle" for job level 35, so the request is
 -- right and the taking is the slip. He takes the 500 bottles and the doll.
--- The armour: RODataZone does not list it, and mod0631's knight says to
--- come wearing one and then that it is not needed. So he says to wear one
--- and does not look for it (owner, 2026-11-11: the best reading we have,
--- not confirmed; research/THREADS.md #7). That one sentence is ours; the
--- rest of the wording, the cell and the job test are 817's.
+-- The armour: an iRO player's guide of autumn 2003 (vgmaster88, GameFAQs
+-- 19031) has "1 Padded Armor (which you get to keep), 500 empty bottles, and
+-- a rocker doll", which is 817's test: he looks for one, worn or carried,
+-- and leaves it with you (research/THREADS.md #7, round 7). The wording,
+-- the cell and the job test are 817's.
 
-local EMPTY_BOTTLE, ROCKER_DOLL, SKILL = 713, 752, 144
+local EMPTY_BOTTLE, ROCKER_DOLL, PADDED_ARMOR, SKILL = 713, 752, 2312, 144
 
 local function say(...)
   mes "[Thomas De Knight]"
@@ -41,10 +41,10 @@ npc {
       say("YOu already have this skill implemented in your skilltree.")
       return close()
     end
-    if count_item(EMPTY_BOTTLE) < 500 or count_item(ROCKER_DOLL) < 1 then
+    if count_item(EMPTY_BOTTLE) < 500 or count_item(ROCKER_DOLL) < 1 or count_item(PADDED_ARMOR) < 1 then
       say("Hello, I am Thomas De Knight.",
         "I would like you to do me a favour. In return I will give you the HP movement recovery skill. ",
-        "Get me 500 ^FF0000Empty Bottles^000000 and 1 ^FF0000Rocker Doll^000000. And come wearing a Padded Armour.",
+        "Get me 500 ^FF0000Empty Bottles^000000, 1 ^FF0000Rocker Doll^000000, and 1 ^FF0000Padded Armour^000000.",
         "Come back when you have these things and your reward will be waiting for you. ")
       return close()
     end

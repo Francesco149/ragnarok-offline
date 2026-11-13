@@ -266,7 +266,7 @@ on the international servers at all.
 Swordsman guide (GameFAQs 19031, v3.2, iRO, autumn 2003): "The items for
 Moving HP recovery are 1 Padded Armor (which you get to keep), 500 empty
 bottles, and a rocker doll." That is 817's code (it tests for one and does
-not take it); `scripts/npc/moving_hp.lua` only says to wear one. To mend.
+not take it); `scripts/npc/moving_hp.lua` now does the same (2026-11-14).
 The same guide gives Fatal Blow 10 Tentacles where mod0631, 817 and
 RODataZone have 30: the guide's slip. Auto Berserk agrees with all.
 Weggy's FAQ (v6.0/6.2, May 2004) on the Swordman course: "If you do fall
