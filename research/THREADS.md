@@ -651,7 +651,20 @@ servers of Dec 2003? The client shows an ATK on arrow items.
   the victim, a reach nothing gives. Venom Splasher's burst stays out: no
   period source says how long the timer runs. It gives no chance for Flasher and says nothing
   on arrows or on what counts as a poisonous attack.
-**Impact:** Hunter, Assassin and Blacksmith play.
+**Found by playing the Hunter and the Wizard in the client (2026-11-13):**
+* *Sightrasher* did nothing (mod0631 has no code; 817 lays out its cells
+  and never sets them). Drafted: needs Sight and ends it (817's ST_SIGHT,
+  jAthena 2004-05-07), MATK 120% to 300% (817 `battle.c:3178`, the guide),
+  pushed back 5 cells (jAthena's skill_db), on the eight lines around the
+  caster, reaching 1 cell at levels 1-2 to 5 at 9-10 (the guide's "Range +1
+  cells" column; jAthena's fixed 41-cell pattern reaches 5 at every level).
+  The eight lines and the reach are ours; the client draws the burst.
+* *Frost Nova* draws nothing in this client when cast on a target, hit
+  around it or not (011a and 0117 tried by hand): mod0631 and 817 comment
+  out its effect packet. The guide: "freezes all enemies around a target,
+  however the target is not frozen", as built. jAthena (2004-05) makes it
+  a ground unit around the target. What did the official client show?
+**Impact:** Hunter, Assassin, Blacksmith and Wizard play.
 **Look:** jAthena's history (`refs/jathena`, `git log -S` on each skill
 name gives the date and often a source note), 817 and eathena-v0.5.2, the
 client's item text for arrows (`idnum2itemdesctable.txt`).

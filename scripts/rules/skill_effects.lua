@@ -140,6 +140,27 @@ function skill_castend_damage_id(src_id, bl_id, skillid, skilllv, opt)
       skill_attack(BF.MAGIC, src_id, src_id, bl_id, skillid, skilllv, 0)
     end
 
+  elseif skillid == SK.WZ_SIGHTRASHER then
+    -- Neither emulator casts it: mod0631 has nothing, 817 lays out its cells
+    -- and never sets them. The iRO guide's Wizard page (2004-03-27): "Only
+    -- usable while using Sight. Spreads the fire ball around the caster to 8
+    -- directions, does fire damage and pushes back the enemies around the
+    -- caster", reaching 1 cell at levels 1-2 and one more every two levels to 5
+    -- at 9-10. Sight ends with it (jAthena, 2004-05-07). The eight lines are ours.
+    if opt.sub then
+      skill_attack(BF.MAGIC, src_id, src_id, bl_id, skillid, skilllv, 0)
+      return
+    end
+    nodamage(src_id, src_id, skillid, skilllv)
+    skill_status_change_end(src_id, SC.SIGHT)
+    local reach = floor((skilllv + 1) / 2)
+    for _, t in ipairs(skill_area(src, src.map, src.x, src.y, reach, BCT.ENEMY)) do
+      local dx, dy = t.x - src.x, t.y - src.y
+      if dx == 0 or dy == 0 or math.abs(dx) == math.abs(dy) then
+        skill_castend_damage_id(src_id, t.id, skillid, skilllv, { sub = true })
+      end
+    end
+
   elseif skillid == SK.HT_BLITZBEAT then
     -- skill.c:1043: by itself (auto) the damage is split among the enemies around
     if opt.sub then

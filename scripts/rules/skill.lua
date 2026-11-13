@@ -499,6 +499,8 @@ function skill_check_condition(sd, skill, lv, a)
   elseif skill == SK.PR_ASPERSIO then items[523] = 1 -- Holy Water
   elseif skill == SK.WZ_WATERBALL then
     if not water() then return fail() end
+  elseif skill == SK.WZ_SIGHTRASHER then
+    if not sc(sd, SC.SIGHT) then return fail() end -- 817 skill.c:3990 (ST_SIGHT)
   elseif skill == SK.MC_MAMMONITE then
     zeny = lv * 100
     if sd.char.zeny < zeny then return fail(5) end

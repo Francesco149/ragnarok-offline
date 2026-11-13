@@ -582,6 +582,7 @@ research should check is in research/THREADS.md #21–#23 and #25.
 | Brandish Spear | The two cells either side of the knight and five in front, then rows of five, five and three, 1 to 4 areas by level; the target is pushed two cells | The drawing and the "2 cells" on the iRO guide's Knight page (2004-04-13). 817 has its own helper for the rows and pushes one cell; the per-row damage is 817's |
 | Detect | Reveals the hidden within 3 cells of the spot; the spot may be 3, 5, 7 or 9 cells away by level | The client's skill text; the reach is the iRO guide's "Detecting Range" (2004-03-27), read as how far the falcon flies |
 | Spring Trap | Reaches 4 to 8 cells by level | The iRO guide's Hunter page |
+| Sightrasher | Under Sight only, which it ends: fire on the eight lines around the wizard, 1 to 5 cells by level, 120% to 300% MATK, pushed 5 cells back | The iRO guide's Wizard page (2004-03-27); damage 817 `battle.c:3178`; Sight and the push jAthena (2004-05). The lines and the reach by level are ours (THREADS.md #22) |
 | Remove Trap | Not a trap that has gone off | The iRO guide's Hunter page |
 | Poison React | Lasts 30 s at every level | The iRO guide's Assassin page. 817's `cast_db.txt` says 30 minutes |
 | Change Cart | Cart look by base level (41, 66, 81, 91) | The client's skill text for the five carts; the levels are later emulators' (tier later) |

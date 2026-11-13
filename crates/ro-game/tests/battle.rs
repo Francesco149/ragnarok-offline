@@ -1087,6 +1087,36 @@ fn ankle_snare_outlasts_passers_by() {
     assert_eq!(snares(&t), 1, "and the trap is still there");
 }
 
+/// Sightrasher: only under Sight, which it ends; burns and pushes back what
+/// stands on the eight lines around the wizard, not what stands between them.
+#[test]
+fn sightrasher() {
+    let mut t = T::new();
+    t.lua("job_change(9); player.base_level = 70; player.int = 80; player.dex = 99; heal(9999, 9999)");
+    t.learn("MG_SIGHT", 1);
+    t.learn("WZ_SIGHTRASHER", 10);
+    let me = t.me;
+    let on_line = t.spawn(28, 25, 1008); // Pupa, Earth: fire hurts; does not move
+    let off_line = t.spawn(27, 28, 1008); // 2 east, 3 north: off the lines
+    let (hp_on, hp_off) = (t.mob_hp(on_line).unwrap(), t.mob_hp(off_line).unwrap());
+    t.cast("WZ_SIGHTRASHER", me);
+    t.run(1500);
+    assert_eq!(t.mob_hp(on_line), Some(hp_on), "nothing without Sight");
+    assert!(t.packets(0x0110).iter().any(|p| u16::from_le_bytes([p[2], p[3]]) == 81), "the client is told it failed");
+    t.run(2500);
+    t.cast("MG_SIGHT", me);
+    t.run(1500);
+    assert!(t.has_sc(me, "SIGHT"));
+    t.cast("WZ_SIGHTRASHER", me);
+    t.run(1500);
+    assert!(t.mob_hp(on_line).is_none_or(|h| h < hp_on), "the Pupa on the line burns");
+    if t.g.world.units.contains_key(&on_line) {
+        assert!(t.pos(on_line).0 > 28, "and is pushed back: {:?}", t.pos(on_line));
+    }
+    assert_eq!(t.mob_hp(off_line), Some(hp_off), "the one off the lines does not");
+    assert!(!t.has_sc(me, "SIGHT"), "Sight is spent");
+}
+
 /// The client asks for a skill from one cell beyond its range (Remove Trap,
 /// range 2, from 3 cells) and the server lets it through (jAthena //1082);
 /// two cells beyond is still too far.

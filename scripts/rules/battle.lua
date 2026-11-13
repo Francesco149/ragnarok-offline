@@ -821,6 +821,11 @@ function battle.calc_magic_attack(bl, target, skill_num, skill_lv, flag)
     matk1, matk2 = matk1 + 50, matk2 + 50
   elseif skill_num == SK.WZ_JUPITEL then blewcount = skill_lv > 6 and 6 or skill_lv
   elseif skill_num == SK.WZ_VERMILION then fix(skill_lv * 20 + 80, 100)
+  elseif skill_num == SK.WZ_SIGHTRASHER then
+    -- 817 battle.c:3178 (the iRO guide's Wizard page, 2004-03-27: 120% to 300%);
+    -- five cells back, jAthena's skill_db (2004-05-07). mod0631: plain MATK, no push
+    fix(100 + skill_lv * 20, 100)
+    blewcount = 5
   elseif skill_num == SK.WZ_WATERBALL then matk1, matk2 = matk1 + skill_lv * 30, matk2 + skill_lv * 30
   elseif skill_num == SK.WZ_STORMGUST then
     fix(skill_lv * 40 + 100, 100)
