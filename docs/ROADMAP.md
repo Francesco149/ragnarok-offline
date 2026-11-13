@@ -11,12 +11,13 @@ Ordered by "confirmable first". Each item says where the truth would come from.
   0x009d/0x009e, 0x0119. Find each handler via the zone-mode dispatch (like
   the login-mode jump table at `0x52fa88`).
 - **Walk/attack timing** the client animates vs ours. Done: the path
-  finder is the client's (`0x4d2300`, docs/CLIENT.md, checked under an
-  emulator) and so is the diagonal step's time. Open: the first step's
-  time from the sub-cell position, and what `0x4f6ae0` does after a
-  path is found: when a time it reads from the path (`0x4d30f0`, not
-  read yet) is already past, it searches again from now with 10/13 of
-  the speed's time, which looks like a catch-up walk.
+  finder is the client's (`0x4d2300`), and so are the walk's clock and
+  every step's time, the first one from the sub-cell included, and the
+  hurried walk for a move that arrives too late (docs/CLIENT.md; the
+  times checked under an emulator). The server crosses cells when the
+  client draws it doing so. Open: the attack motion's timing, and
+  whether the client re-times a walk when the unit's speed changes
+  mid-walk (0x00b0 SPEED; the server assumes it does not).
 - Client tables not used yet: skill names/descriptions, `itemslottable`,
   `leveluseskillspamount`, `mapnametable` (for messages), `num2cardillustnametable`.
 

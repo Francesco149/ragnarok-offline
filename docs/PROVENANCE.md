@@ -25,7 +25,7 @@ period source). Research behind the tiers: `research/notes/mechanics-sources.md`
 | Packet layouts | client receive code for 0x0069/0x006a/0x006b/0x006d; others Athena layouts verified by the real client drawing them correctly | client / athena2003 |
 | Map walkability | client `.gat` | client |
 | Pathfinding | the client's `CPathFinder` (`0x4d2300`, docs/CLIENT.md), checked under an emulator; the 32-step limit and monsters' straight random walks are Athena's path.c | client / athena2003 |
-| Walk speed 150 ms/cell, diagonal `(int)(speed × 1.414f)` | client default; diagonal from the client's walk timing (`0x4d2cf0`) | client |
+| Walk speed 150 ms/cell, diagonal `(int)(speed × 1.414f)`, the first step and when a unit enters each cell | client default; the step times from the client's walk timing (`0x4d2cf0`, `path::client_times`, checked under an emulator; docs/CLIENT.md, "The walk clock and step times") | client |
 | Items, monsters, drops | athena-dev-2.1.1-mod0631 `db/` (archived 2003-12-18) — numbers; English names from eAthena 0.5.2 (2004-05) | athena2003 |
 | EXP tables, job HP/SP/weight/ASPD | mod0631 `db/exp.txt`, `job_db1.txt`, `job_db2.txt` | athena2003 |
 | Warps (2,038), spawns (2,001 groups), shops (80) | mod0631 `conf/map_athena.conf` npc list | athena2003 |
