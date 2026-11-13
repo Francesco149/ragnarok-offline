@@ -210,6 +210,9 @@ possible deviation.
 **Look:** period first-screen reports and screenshots, OpenKore 2004 logs,
 kRO/jRO notices on the training ground (초보자 수련장), the iRO guide's
 beginner pages. Round 1: research/agy-threads/HANDOFF.md.
+**Round 7 (2026-11-14):** nothing new: round 5's Weggy rows and the
+Usher's lines above again (`research/notes/round7-review.md`).
+
 
 ### 7. Quest skills and their NPCs in iRO, Dec 2003
 817 places the Thief quests (Back Slide, Pick Stone) at morocc 165,124,
@@ -259,6 +262,17 @@ unconfirmed).
 Merchant, Mage, Acolyte: mod0631's are in `conf/npc_event_skillget.txt`,
 RODataZone's on its job pages); whether the Padded Armour was asked for
 on the international servers at all.
+**Round 7 (2026-11-14): the Padded Armour was asked for.** vgmaster88's
+Swordsman guide (GameFAQs 19031, v3.2, iRO, autumn 2003): "The items for
+Moving HP recovery are 1 Padded Armor (which you get to keep), 500 empty
+bottles, and a rocker doll." That is 817's code (it tests for one and does
+not take it); `scripts/npc/moving_hp.lua` only says to wear one. To mend.
+The same guide gives Fatal Blow 10 Tentacles where mod0631, 817 and
+RODataZone have 30: the guide's slip. Auto Berserk agrees with all.
+Weggy's FAQ (v6.0/6.2, May 2004) on the Swordman course: "If you do fall
+off, there are some aggressive Fabres and Chonchons down there": both
+(817 has Chonchons, mod0631 Fabres).
+
 
 ### 8. Wizard (and other 2-1) job quests
 817's wizard.txt is an unfinished conversion that 817 couldn't run (later
@@ -398,6 +412,22 @@ dying fails the test like the clock), the maze's voices, the six testers
 in the office, the reward choice at job level 50, and Huey's job change
 (the necklace stays, as in eAthena). Open: any account of the Assassin
 test before autumn 2004 (queue T1).
+**Round 7 (2026-11-14, `research/notes/round7-review.md`).** Weggy's
+FAQ (GameFAQs 20092, iRO). Its text from before his year-long break
+(about mid-2003) changes Knights for 2500z and Assassins for 666z with no
+test. On 2004-05-18 he noted that "Gravity also added more in-depth
+quests to the 2-1 classes". His Priest section (v6.4, 2004-06-07) has a
+priest's questions in the antechamber, then "a hall of temptations",
+then "rooms where undead monsters spawn. You can actually just run past
+them all". So iRO had a three-part Priest test by 2004-06-07. It differs
+from jAthena's of 06-08, which we play: there thirteen undead must fall
+before the gate opens, and the tempters come after them. Guide_Maker's
+Forging guide (GameFAQs 28512, pRO, section of 2004-08-31) walks the
+Blacksmith test as eAthena 1.0 has it: a quiz in Alberta, materials, a
+"Reciept", a quiz in Morroc, the "Hammer of Blacksmith". Still no account
+of the Knight's, the Assassin's or the Blacksmith's test before autumn
+2004.
+
 
 ### 9. Refining details
 Phracon price (iRO page 2000z vs data 200z), armor DEF per refine (1, 5 or
@@ -799,6 +829,17 @@ skills need none of the
 six packets (Auto Guard, Defender, Reflect Shield, the Strips, Chemical
 Protection, the Sage's ground skills and Dispell: their numbers are in the
 iRO guide pages, round 4).
+**Round 7 (2026-11-14): the May client's text against the drafts**
+(`research/notes/round7-review.md`). It agrees on the endow that breaks
+the weapon, Dispell's two gemstones, and the Coating Bottle. **It differs
+on the Strips:** Strip Shield takes a monster's DEF down 15%, Strip Armor
+its VIT 40%, Strip Helm its INT 40%, and Strip Weapon its ATK (no number;
+`yuno_lang/data/skilldesctable.txt:1309-1330`). The draft has the iRO
+guide's 10% ATK and 10% DEF for each. euRO's own text of May 2004 is
+nearer the jobs' opening than the guide of March: re-draft or say why
+not. The two bytes the unit packets gained are the base level (817
+`map/clif.c:544`, `630`, `855`, its packet version 4).
+
 
 ### 26. What `check` still lists
 The world audit (`ragnarok-offline check`, 2026-11-11) walks the client's

@@ -40,7 +40,7 @@ Read any of the archives with
 
 | Id | Dec 2003 | May 2004 | What (kRO numbering) |
 |---|---|---|---|
-| 0x0078, 0x0079, 0x007a, 0x007b | 52, 51, 56, 58 | 54, 53, 58, 60 | unit idle / spawn / walk: two bytes more each; which field is queue T11 |
+| 0x0078, 0x0079, 0x007a, 0x007b | 52, 51, 56, 58 | 54, 53, 58, 60 | unit idle / spawn / walk: two bytes more each, the unit's base level (eAthena 817 writes `(base_level>99)?99:base_level` there, `map/clif.c:544`, `630`, `855`; round 7) |
 | 0x01d8, 0x01d9, 0x01da | 52, 51, 58 | 54, 53, 60 | the same for the later forms |
 | 0x014e | 6 | absent | |
 | 0x01cd to 0x01d2, 0x01e1 | absent | 30, 6, 28, 8, 14, 10, 8 | Auto Spell list and choice, Devotion's lines, spirit spheres (two forms), Blade Stop, combo delay (THREADS.md #25) |
@@ -59,6 +59,15 @@ Lines of its text that settle a question:
   ... Reflect only physical attack and you can use this skill only when
   you putting on shield." (Our draft follows the iRO guide's "full
   damage taken"; THREADS.md #25, DEVIATIONS.)
+* The Strips, on a monster (`:1309-1330`): Strip Weapon lowers its ATK
+  (no number), Strip Shield its DEF by 15%, Strip Armor its **VIT** by
+  40%, Strip Helm its **INT** by 40%. The draft has the iRO guide's 10%
+  ATK and 10% DEF for each (round 7; THREADS.md #25).
+* The endows fail by level and "if it's failed the weapon'll be broken"
+  (`:1794`); Dispell takes a Yellow and a Red Gemstone (`:1828`); the
+  Chemical Protections a Coating Bottle (`:1445`): all as drafted.
+* Defender: "your movememt and attack'll be slowed" (`:1591`); Grand
+  Cross: "Consume 20% of remained HP" (`:1572`).
 
 **Other tables changed** in the language patch or the base GRF: item names,
 descriptions and resource names (`idnum2item*`, `num2item*`),
@@ -99,7 +108,6 @@ random warps (`c_tower1`, `c_tower2`, `c_tower4`), Turtle Island
 
 ## Open, for later
 
-* What the two extra bytes in 0x0078 to 0x007b are (queue T11).
 * What 0x01f1 to 0x01ff are, and whether the server must send any.
 * The exe of 2004-05-31 (patch entry 462) is still lost; 2004-05-07 is
   what we have.

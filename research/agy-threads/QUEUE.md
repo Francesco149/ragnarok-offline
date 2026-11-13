@@ -4,10 +4,8 @@ For: the independent deep-research agent (Gemini in Antigravity) that wrote
 rounds 1 to 3. Kept by the Claude sessions that work on the game: at the
 end of each session the queue is updated (answered items go to "Done",
 with where the answer went) and refilled with what that session could not
-settle from the sources on disk. Last update: 2026-11-13, late night (the walk's clock and step times
-read from the exe and checked under an emulator: settled from the client,
-nothing for the queue. Round 7 was being written under `r7/` (rows for
-T1, T9, T10, T11, no `progress.md` yet): the next session reviews it).
+settle from the sources on disk. Last update: 2026-11-14 (round 7 reviewed: `research/notes/round7-review.md`.
+T11 answered and moved to Done; T1, T9 and T10 updated with what it found).
 
 ## How to use it
 
@@ -29,6 +27,12 @@ T1, T9, T10, T11, no `progress.md` yet): the next session reviews it).
      line that added the section you quote: put that line in `reasoning`.
    * **Before searching the web for a file, look on `data:`** and in
      `docs/PRESERVATION.md`: round 5's best find (T2) was on our own disk.
+   * **Date a FAQ's section, not the FAQ.** Round 7 read Weggy's simple
+     2-1 job changes as iRO in May 2004. They are text from before his
+     year-long break (about mid-2003), and his own v6.1 says the 2-1
+     quests were added since. Version numbers and dates go in
+     `reasoning` only as the page gives them (round 7 wrote "v3.3
+     (2003-11-14)" for a page that says 3.2 and gives no date).
    * **Do not quote back what THREADS.md already says.** Round 4's rows
      for dyes and for the skill table repeated lines the game was built
      from. If a task has nothing beyond that, write one `none` row per
@@ -36,7 +40,7 @@ T1, T9, T10, T11, no `progress.md` yet): the next session reviews it).
 2. Take tasks from the top; the order is by how much of the game waits on
    the answer. A round need not take them all. Say in `progress.md` which
    ones you took.
-3. Write only inside `research/agy-threads/r<N>/` for round N (round 7 is
+3. Write only inside `research/agy-threads/r<N>/` for round N (round 8 is
    next): `rows/<task id>.jsonl`, `pages/` for saved web pages, `check.txt`
    for your own checker run. No summary report: rows only, plus one line per
    task in `progress.md`: "answered" only if every bullet of the task has a
@@ -95,7 +99,9 @@ server):
   skill", "most SP" and "strongest against Undead"); (d) whether Sir Grey
   could fail you, and on what; (e) the arena's time (three minutes a
   stage?) and Sir Edmond's (four minutes or four and a half?).
-* **Blacksmith**: a walkthrough from before June 2004. The two scripts
+* **Blacksmith**: a walkthrough from before June 2004 (round 7 found
+  pRO's of 2004-08-31, GameFAQs 28512, which follows eAthena 1.0's outline
+  and gives no answers or items). The two scripts
   on disk (eAthena 1.0, and jAthena //1046's unfinished
   `script/npc/job/npc_job_10blacksmith.txt`) part on: (a) the pass marks
   (eAthena: Geshupenschte 100, 90 on a retry, Mitmayer 80; jAthena: 90, 80,
@@ -115,9 +121,13 @@ server):
   palace" of Payon (this client has no `payon_in03`: which map was it on
   iRO in early 2004?); any other item list of the Demon Hunter's (the
   walkthrough found three); what the interview's right answers were.
-* **Priest**: a player's account of the three-part test on `job_prist`
-  (pilgrimage, exorcism, vow; in the game from jAthena's script of
-  2004-06-08) from before June 2004, to date it.
+* **Priest**: round 7 found Weggy's (iRO, 2004-06-07): questions in
+  the antechamber, a hall of temptations, then rooms of undead "You can
+  actually just run past". jAthena's script, which we play, makes
+  thirteen undead fall before the gate opens and puts the tempters after
+  them. Wanted: another account of 2004 that says whether the undead had
+  to be killed, in which order the parts came, and whether a pilgrimage
+  to the three ascetics came first.
 * **Wizard**: one minute or two for the Fire room's guards (jAthena and
   eAthena 0.5.2 against 817); whether dying or logging out in a room cost anything; more
   of the examiner's questions quoted by a player (round 5 found one, in a
@@ -173,6 +183,10 @@ if the final few NPCs guessed your class correctly"; skipping the
 training "whisks you away to a random town"), and nothing on Leo's
 questions. Its other rows quoted eAthena 0.5.2's `novice.txt`, which is
 817's script two months on: not wanted again.
+
+Round 7 found nothing beyond round 5's Weggy rows. Weggy is used up for
+this: look elsewhere (RODataZone's Novice page, forum captures, other
+GameFAQs guides with a Novice section).
 
 Sets: `scripts/npc/novice_result.lua`; which of the differences listed in
 THREADS.md #6 get mended, and which way.
@@ -237,30 +251,6 @@ Round 6 quoted mod0631's `npc_turtle.txt` and 817's `headgearquest.txt`,
 both already in the game, and a later client's quest log: nothing from an
 international server of 2004. Only that is wanted.
 Sets: the fare, and which hat quests belong to the default world.
-
-### T11. The May-2004 client against ours (thread 25)
-
-New on 2026-11-11. `data:mico07/Ragexe-2004-05-07.exe` (euRO, from the
-MICO07 DVD) and `data:mico07/yuno_lang/data/` (its language patch,
-unpacked) are on disk. Rows as computed results:
-
-* every packet whose length differs between
-  `data/client/packet_lengths.tsv` and
-  `data:mico07/packet_lengths-Ragexe-2004-05-07.tsv`, and for each what
-  the field that grew is, from OpenKore's or eAthena's packet tables of
-  2004 (`data:refs/`, `research/notes/emulators.md` §4);
-* the lines of `skilldesctable.txt` (May 2004) for the 2-2 skills that
-  are drafted (THREADS.md #25 and DEVIATIONS.md list them), each against
-  the iRO guide's line and 817's number: where the client's text gives a
-  number or a condition;
-* which `data\` files of the May 2004 `data.grf`
-  (`data:mico07/client/out/Program Files/Gravity/RagnarokOnline/`) differ
-  from ours: `data:mico07/datagrf-diff-dec2003-may2004.txt` exists; sort
-  it into maps, sprites, tables.
-
-Sets: the later version of the game for that client (owner, 2026-11-11:
-after this one is complete), `research/notes/may2004-client.md`, and the
-2-2 skills' numbers. Lower than the tasks above for that reason.
 
 ### T6. Dyeing (thread 13; asked in round 4, not answered)
 
@@ -339,13 +329,11 @@ Sets: `skill_castend_*` for those skills.
 
 ### T9. Small, independent
 
-* **Swordman course monsters.** 817 puts Chonchons (id 1183) along the
-  course; mod0631 puts Fabres (id 1184) on the same cells, under a map name
-  with a typo. Which did a player of early 2004 meet? (Any walkthrough of
-  the Swordman test.)
-* **The Padded Armour.** 817's Moving HP Recovery knight asks for one;
-  RODataZone's Swordman page (2004-05-02) does not list it; mod0631's
-  knight says to come wearing one. Any other period page on that quest.
+* **0x01f1 to 0x01ff** (from T11): fifteen packet ids the May-2004 exe
+  knows and ours does not (`data:mico07/packet_lengths-Ragexe-2004-05-07.tsv`).
+  What each is, from OpenKore's or eAthena's tables of 2004 (`data:refs/`,
+  `research/notes/emulators.md` §4): one row per id, `none` where no
+  table names it.
 * **The other quest skills** (thread 7): Arrow Crafting, Charge Arrow,
   Cart Revolution, Change Cart, Crazy Uproar, Holy Light, Energy Coat: job
   level and items in 817 (`npc/skillquests/`), mod0631
@@ -437,3 +425,8 @@ that nobody researches them again.
 | Is a new character's Knife worn | Yes in mod0631 and 817 (`char/char.c`); now here too | `crates/ro-game/src/game.rs` |
 | The Thief test in the client | Interview, mushroom farm, weighing and job change work on the real maps | ROADMAP §4 |
 | Providence, the endows, Dispell, the Strips, Chemical Protection: the numbers | Drafted from mod0631, 817 and the iRO guide; what is still open is in T7 | DEVIATIONS.md, `scripts/rules/skill_effects.lua` |
+| Swordman course monsters | Both: "aggressive Fabres and Chonchons" in the pits (Weggy, iRO, May 2004; round 7) | THREADS.md #7 |
+| The Padded Armour for Moving HP Recovery | Asked for, and kept (vgmaster88, iRO, autumn 2003; round 7) | THREADS.md #7 |
+| The two bytes the May-2004 unit packets gained | The base level (817 `map/clif.c:544`; round 7) | `research/notes/may2004-client.md` |
+| The May-2004 client's text for the drafted 2-2 skills | Agrees on endows, Dispell, Chemical Protection; differs on the Strips (round 7) | THREADS.md #25, `research/notes/round7-review.md` |
+| The May-2004 data.grf against ours | Sorted (round 7); totals as in the notes | `research/notes/may2004-client.md` |
