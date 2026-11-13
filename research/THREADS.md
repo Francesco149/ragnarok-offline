@@ -835,9 +835,11 @@ the weapon, Dispell's two gemstones, and the Coating Bottle. **It differs
 on the Strips:** Strip Shield takes a monster's DEF down 15%, Strip Armor
 its VIT 40%, Strip Helm its INT 40%, and Strip Weapon its ATK (no number;
 `yuno_lang/data/skilldesctable.txt:1309-1330`). The draft has the iRO
-guide's 10% ATK and 10% DEF for each. euRO's own text of May 2004 is
-nearer the jobs' opening than the guide of March: re-draft or say why
-not. The two bytes the unit packets gained are the base level (817
+guide's 10% ATK and 10% DEF for each. Re-drafted on 2026-11-14 with
+euRO's numbers: jAthena of 2004-05-07 (`7d0b373`, `battle.c`) has VIT
+x60/100 and DEF x85/100 too, and INT x90/100 (we take euRO's 40%).
+Strip Weapon keeps the guide's tenth: jAthena's `atk2 -= atk2*90/100`
+looks like a slip for x90/100. The two bytes the unit packets gained are the base level (817
 `map/clif.c:544`, `630`, `855`, its packet version 4).
 
 

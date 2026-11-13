@@ -1440,7 +1440,7 @@ fn crusader_shield_skills() {
 fn endows_strips_protections_dispell() {
     let mut t = T::new();
     t.lua("job_change(16); player.base_level = 80; player.int = 60; player.dex = 60; heal(30000, 30000)");
-    for (s, lv) in [("CR_PROVIDENCE", 5), ("SA_FLAMELAUNCHER", 5), ("SA_DISPELL", 5), ("RG_STRIPARMOR", 5), ("RG_STRIPWEAPON", 5), ("AM_CP_ARMOR", 2)] {
+    for (s, lv) in [("CR_PROVIDENCE", 5), ("SA_FLAMELAUNCHER", 5), ("SA_DISPELL", 5), ("RG_STRIPARMOR", 5), ("RG_STRIPWEAPON", 5), ("RG_STRIPSHIELD", 5), ("RG_STRIPHELM", 5), ("AM_CP_ARMOR", 2)] {
         t.learn(s, lv);
     }
     t.lua("give_item(990, 3); give_item(715, 2); give_item(716, 2); give_item(7139, 2)");
@@ -1479,11 +1479,12 @@ fn endows_strips_protections_dispell() {
     }
     assert_eq!(t.g.store.chars[&t.cid].inventory.iter().filter(|i| i.nameid == 1201).count(), knives - 1, "destroyed, not taken off");
 
-    // Strips on a monster: a tenth off its DEF, a tenth off its attack, for a minute
+    // Strips on a monster, for a minute: Weapon a tenth off its attack (the iRO guide),
+    // Armor 40% off its VIT, Shield 15% off its DEF, Helm 40% off its INT (euRO's text)
     let egg = t.spawn(26, 25, 1048);
-    let num = |t: &mut T, f: &str| -> i64 { t.lua(&format!("battle.{f}(battle.get({egg}))")).trim().parse::<f64>().unwrap() as i64 };
-    let (def, atk2) = (num(&mut t, "def"), num(&mut t, "atk2"));
-    assert!(def >= 10 && atk2 >= 10);
+    let num = |t: &mut T, id: u32, f: &str| -> i64 { t.lua(&format!("battle.{f}(battle.get({id}))")).trim().parse::<f64>().unwrap() as i64 };
+    let (def, atk2, vit, def2) = (num(&mut t, egg, "def"), num(&mut t, egg, "atk2"), num(&mut t, egg, "vit"), num(&mut t, egg, "def2"));
+    assert!(def >= 10 && atk2 >= 10 && vit >= 3);
     let mut tries = 0;
     while !(t.has_sc(egg, "STRIPARMOR") && t.has_sc(egg, "STRIPWEAPON")) {
         castend(&mut t, "RG_STRIPARMOR", 5, egg);
@@ -1492,8 +1493,23 @@ fn endows_strips_protections_dispell() {
         assert!(tries < 300, "a Strip of level 5 never took");
     }
     assert!(tries > 1 || !t.has_sc(egg, "STRIPSHIELD"));
-    assert_eq!(num(&mut t, "def"), def - def / 10);
-    assert_eq!(num(&mut t, "atk2"), atk2 - atk2 / 10);
+    assert_eq!(num(&mut t, egg, "def"), def, "Strip Armor leaves DEF alone");
+    assert_eq!(num(&mut t, egg, "vit"), vit - vit * 40 / 100);
+    assert_eq!(num(&mut t, egg, "def2"), def2 - def2 * 40 / 100);
+    assert_eq!(num(&mut t, egg, "atk2"), atk2 - atk2 / 10);
+    let picky = t.spawn(27, 25, 1050); // a Picky with its shell: DEF 20, INT 10
+    let (def, int, mdef2) = (num(&mut t, picky, "def"), num(&mut t, picky, "int"), num(&mut t, picky, "mdef2"));
+    assert!(def >= 20 && int >= 10);
+    let mut tries = 0;
+    while !(t.has_sc(picky, "STRIPSHIELD") && t.has_sc(picky, "STRIPHELM")) {
+        castend(&mut t, "RG_STRIPSHIELD", 5, picky);
+        castend(&mut t, "RG_STRIPHELM", 5, picky);
+        tries += 1;
+        assert!(tries < 300, "a Strip of level 5 never took");
+    }
+    assert_eq!(num(&mut t, picky, "def"), def - def * 15 / 100);
+    assert_eq!(num(&mut t, picky, "int"), int - int * 40 / 100);
+    assert_eq!(num(&mut t, picky, "mdef2"), mdef2 - mdef2 * 40 / 100);
 
     // Dispell 5 always works: a Yellow and a Red Gemstone, and the monster's blessing is gone
     t.lua(&format!("skill_status_change_start({egg}, SC.INCREASEAGI, 5, 0)"));

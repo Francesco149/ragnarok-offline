@@ -61,8 +61,9 @@ Lines of its text that settle a question:
   damage taken"; THREADS.md #25, DEVIATIONS.)
 * The Strips, on a monster (`:1309-1330`): Strip Weapon lowers its ATK
   (no number), Strip Shield its DEF by 15%, Strip Armor its **VIT** by
-  40%, Strip Helm its **INT** by 40%. The draft has the iRO guide's 10%
-  ATK and 10% DEF for each (round 7; THREADS.md #25).
+  40%, Strip Helm its **INT** by 40%. The draft follows it since
+  2026-11-14 (it had the iRO guide's 10% ATK and 10% DEF for each; round
+  7, THREADS.md #25); Strip Weapon keeps the guide's 10%.
 * The endows fail by level and "if it's failed the weapon'll be broken"
   (`:1794`); Dispell takes a Yellow and a Red Gemstone (`:1828`); the
   Chemical Protections a Coating Bottle (`:1445`): all as drafted.

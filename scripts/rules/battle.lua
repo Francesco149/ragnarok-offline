@@ -59,7 +59,15 @@ function battle.agi(bl) -- battle.c:60
   if sc(bl, SC.QUAGMIRE) then agi = agi < 0 and -floor(-agi / 2) or floor(agi / 2) end -- C rounds toward zero
   return agi
 end
-function battle.vit(bl) return bl.kind == "mob" and bl.db.vit or bl.st.vit end
+-- Strip Armor and Strip Helm take 40% off a monster's VIT and INT: euRO's own skill
+-- text of May 2004 (the MICO07 client's skilldesctable.txt:1323 and :1330). jAthena of
+-- 2004-05-07 (7d0b373, battle.c) has VIT x60/100 too, and INT x90/100.
+local function mob_vit(bl)
+  local v = bl.db.vit
+  if sc(bl, SC.STRIPARMOR) then v = v - floor(v * 40 / 100) end
+  return v
+end
+function battle.vit(bl) return bl.kind == "mob" and mob_vit(bl) or bl.st.vit end
 function battle.int(bl) -- battle.c:94
   if bl.kind ~= "mob" then return bl.st.int end
   local v = bl.db.int
@@ -68,6 +76,7 @@ function battle.int(bl) -- battle.c:94
     local race = bl.db.race
     if race == 1 or race == 6 then v = floor(v / 2) else v = v + t.val1 end
   end
+  if sc(bl, SC.STRIPHELM) then v = v - floor(v * 40 / 100) end
   return v
 end
 function battle.dex(bl) -- battle.c:111
@@ -110,10 +119,11 @@ function battle.hit(bl) -- battle.c:170
 end
 function battle.flee2(bl) return bl.kind == "mob" and floor(battle.luk(bl) / 10) + 1 or bl.st.flee2 end
 function battle.critical(bl) return bl.kind == "mob" and floor(battle.luk(bl) / 3) + 1 or bl.st.critical end
--- A monster under Strip Weapon hits a tenth weaker; under Strip Shield, Armor or Helm it
--- loses a tenth of its DEF each. Neither emulator: eAthena 817 starts the four statuses
--- and reads them nowhere. The iRO guide's Rogue page (2004-03-27): "Decreases Attack of a
--- monster by 10%", "decreases DEF of a monster by 10% for a short amount of time".
+-- A monster under Strip Weapon hits a tenth weaker. eAthena 817 starts the four Strip
+-- statuses and reads them nowhere. The iRO guide's Rogue page (2004-03-27): "Decreases
+-- Attack of a monster by 10%"; euRO's text of May 2004 says its ATK is lowered and gives no
+-- number. jAthena of 2004-05-07 has `atk2 -= atk2*90/100`, likely a slip for x90/100.
+-- The other three: Strip Shield here (battle.def), Armor and Helm at battle.vit and .int.
 local function stripped_atk(bl, atk)
   if sc(bl, SC.STRIPWEAPON) then return atk - floor(atk * 10 / 100) end
   return atk
@@ -141,16 +151,15 @@ function battle.def(bl)
   -- Plants keep their DEF of 10000+ (mod0631's "one damage a hit" value).
   local t = sc(bl, SC.SIGNUMCRUCIS)
   if t and def < 10000 then def = floor(def * (100 - t.val2) / 100) end
-  -- the three Strips of what a monster "wears" (the guide; see stripped_atk)
-  for _, k in ipairs({ SC.STRIPSHIELD, SC.STRIPARMOR, SC.STRIPHELM }) do
-    if sc(bl, k) and def < 10000 then def = def - floor(def * 10 / 100) end
-  end
+  -- Strip Shield: 15% off (euRO's text of May 2004, skilldesctable.txt:1316; jAthena of
+  -- 2004-05-07 has x85/100). The iRO guide of March gave 10% for each of three Strips.
+  if sc(bl, SC.STRIPSHIELD) and def < 10000 then def = def - floor(def * 15 / 100) end
   return def
 end
 function battle.mdef(bl) return bl.kind == "mob" and bl.db.mdef or bl.st.mdef end
 function battle.def2(bl) -- battle.c:258
   if bl.kind ~= "mob" then return bl.st.def2 end
-  local def2 = bl.db.vit
+  local def2 = mob_vit(bl)
   local t = sc(bl, SC.ANGELUS)
   if t then def2 = floor(def2 * (110 + 5 * t.val1) / 100) end
   t = sc(bl, SC.PROVOKE)
@@ -159,7 +168,12 @@ function battle.def2(bl) -- battle.c:258
   if t then def2 = floor(def2 * (100 - t.val2) / 100) end
   return def2
 end
-function battle.mdef2(bl) return bl.kind == "mob" and bl.db.int or bl.st.mdef2 end
+function battle.mdef2(bl)
+  if bl.kind ~= "mob" then return bl.st.mdef2 end
+  local v = bl.db.int
+  if sc(bl, SC.STRIPHELM) then v = v - floor(v * 40 / 100) end
+  return v
+end
 function battle.amotion(bl) return bl.kind == "mob" and bl.db.attack_motion or bl.st.amotion end
 function battle.dmotion(bl) -- battle.c:296
   if sc(bl, SC.PROVOKE) then return 0 end

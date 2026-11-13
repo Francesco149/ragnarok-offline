@@ -634,8 +634,9 @@ research should check is in research/THREADS.md #21–#23 and #25.
 * **Providence, the Sage's endows and Dispell, the Rogue's Strips, the
   Alchemist's Chemical Protections** (behind `jobs2_2`; drafts, test
   `endows_strips_protections_dispell`). This client has no name or
-  description for any 2-2 skill, so there is no client text to read them
-  against: only the two emulators and the iRO guide of spring 2004. Nor
+  description for any 2-2 skill: they are read against the two emulators,
+  the iRO guide of spring 2004 and euRO's own skill text of May 2004 (the
+  MICO07 client, `research/notes/may2004-client.md`). Nor
   can it offer them: they are missing from its skill window, and only
   `@useskill` reaches them (THREADS.md #25).
   * Providence is mod0631's (5% a level against Holy and against demons,
@@ -645,9 +646,12 @@ research should check is in research/THREADS.md #21–#23 and #25.
     100% by level, and "weapon is destroyed on failure": the weapon in the
     target's hand is lost. Ours: no endow on bare hands.
   * The Strips take at (5 + 2 x level)% for 60 s (817, the guide's "Basic
-    Chance"). 817's status does nothing to a monster; here, by the guide,
-    Strip Weapon takes a tenth off its attack and each of the other three a
-    tenth off its DEF. The guide's "DEX difference ... affects the success
+    Chance"). 817's status does nothing to a monster; here Strip Shield
+    takes 15% off its DEF, Strip Armor 40% off its VIT and Strip Helm 40%
+    off its INT, as euRO's own skill text of May 2004 says (jAthena of
+    2004-05-07 agrees on the first two and has 10% for INT). Strip Weapon
+    takes a tenth off its attack, the iRO guide's number (euRO's text
+    gives none). The guide's "DEX difference ... affects the success
     chance" has no number and is left out. A stripped player may put the
     piece straight back on (817 does not stop it either; the guide's
     "cannot re-equip" is not built: nothing in this world strips a player).
