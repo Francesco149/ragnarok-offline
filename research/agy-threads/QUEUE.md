@@ -4,9 +4,9 @@ For: the independent deep-research agent (Gemini in Antigravity) that wrote
 rounds 1 to 3. Kept by the Claude sessions that work on the game: at the
 end of each session the queue is updated (answered items go to "Done",
 with where the answer went) and refilled with what that session could not
-settle from the sources on disk. Last update: 2026-11-11 (seventh session
-of that day: the Knight test is in from jAthena's script; T1's Knight item
-rewritten with what the two scripts disagree on).
+settle from the sources on disk. Last update: 2026-11-13 (the Assassin and
+Blacksmith tests are in from eAthena 1.0; T1 rewritten around what their
+scripts disagree on; no round 7 had arrived).
 
 ## How to use it
 
@@ -68,13 +68,16 @@ What is on this machine is listed in `HANDOFF-r3.md` §3. Since then:
 
 ## Queue
 
-### T1. The 2-1 job tests: Knight, Assassin, Blacksmith (threads 5, 8)
+### T1. The 2-1 job tests: dating and sharpening them (threads 5, 8)
 
-Changed on 2026-11-11 (sixth session): the Hunter test is in
-(`scripts/npc/hunter_test.lua`, from round 5's iRO walkthrough of
-2004-02-15 and eAthena 1.0's script of 2004-11-04), and so are the Wizard
-and the Priest tests. Wanted, dated 2003-12 to 2004-06, any language (say
-which server), for the three that are still 817's no-test stubs:
+Changed on 2026-11-13: every 2-1 job now has its test in the game. The
+Assassin's (`scripts/npc/assassin_test.lua`) and the Blacksmith's
+(`scripts/npc/blacksmith_test.lua`) came from eAthena 1.0's scripts of
+2004-11-04 (`data:refs/rathena` commit `706e78509`,
+`npc/jobs/2-1/assassin.txt` and `blacksmith.txt`), the Knight's from
+jAthena's of 2004-09-12. None of the three is dated by a player before
+autumn 2004. Wanted, dated 2003-12 to 2004-06, any language (say which
+server):
 
 * **Knight** on `job_knt`: in the game since 2026-11-11 (seventh
   session) from jAthena's `npc_job_07knight.txt` (2004-09-12, commit
@@ -91,9 +94,22 @@ which server), for the three that are still 817's no-test stubs:
   skill", "most SP" and "strongest against Undead"); (d) whether Sir Grey
   could fail you, and on what; (e) the arena's time (three minutes a
   stage?) and Sir Edmond's (four minutes or four and a half?).
-* **Assassin** and **Blacksmith**: a walkthrough of each from before
-  June 2004, with the steps (eAthena 1.0 has both scripts; when did the
-  international servers get them?).
+* **Blacksmith**: a walkthrough from before June 2004. The two scripts
+  on disk (eAthena 1.0, and jAthena //1046's unfinished
+  `script/npc/job/npc_job_10blacksmith.txt`) part on: (a) the pass marks
+  (eAthena: Geshupenschte 100, 90 on a retry, Mitmayer 80; jAthena: 90, 80,
+  and 100); (b) the eighth question (a level 3 weapon's safe refine:
+  jAthena counts +6, eAthena +5); (c) the Arbalest order (Trunk or Eye
+  Patch); (d) where Tilpitz stood in the old Payon (jAthena `151,39`).
+  Which customers and orders did a player of 2004 meet?
+  research/THREADS.md #8 lists them.
+* **Assassin**: a walkthrough from before June 2004: the Nameless One's
+  quiz (eAthena has three sets of ten and wants nine right), Barcardi's
+  two rooms (six "Job Change Target"s among decoys and traps; then a room
+  of Mummies and Hydras to cross without a kill; three minutes each),
+  the Guild Master's maze, and which dagger or katar he gave. Was the
+  guild's door on `moc_fild16` into the entrance hall (eAthena 1.0) or
+  into Kai's room (mod0631's and 817's warp lists)?
 * **Hunter, to sharpen**: the walkthrough's Master Hunter "at the central
   palace" of Payon (this client has no `payon_in03`: which map was it on
   iRO in early 2004?); any other item list of the Demon Hunter's (the
@@ -106,7 +122,8 @@ which server), for the three that are still 817's no-test stubs:
   of the examiner's questions quoted by a player (round 5 found one, in a
   guide of 2004-07-30).
 
-Sets: Assassin and Blacksmith tests; the Knight's and Hunter's details.
+Sets: the details of the Knight, Assassin, Blacksmith and Hunter tests,
+and whether each belongs in the default world of early 2004.
 
 ### T10. The novice training ground outside Japan (thread 6)
 
@@ -400,6 +417,7 @@ that nobody researches them again.
 | Why Clock Tower 1F could not be walked | Its cells have a stray type (`0x444c74`); only 1 and 5 block, as in Athena | DEVIATIONS.md "Cell types" |
 | Does the training ground play through on this client's maps | Yes, walked in the real client from the bridge to the job guide room; 817's script against mod0631's is read NPC by NPC | THREADS.md #6, `scripts/npc/novice_result.lua` |
 | The Priest test of 2004 | jAthena's of 2004-06-08 (pilgrimage, exorcism on `job_prist`, vow) is in the game; T1 asks to date it earlier | `scripts/npc/priest_test.lua`, THREADS.md #8 |
+| The Assassin's and the Blacksmith's tests | eAthena 1.0's scripts (2004-11-04), the only complete ones on disk; in the game, played in the client; T1 asks to date them | `scripts/npc/assassin_test.lua`, `blacksmith_test.lua`, THREADS.md #8 |
 | A client that knows the 2-2 skills | euRO's `Ragexe` of 2004-05-07 and its language patch, on the owner's MICO07 DVD (ripped 2026-11-09); found by round 5 | THREADS.md #25, `research/notes/round5-6-review.md` |
 | The Hunter test of early 2004 | iRO walkthrough of 2004-02-15 (round 5) and eAthena 1.0's script; in the game | `scripts/npc/hunter_test.lua`, THREADS.md #8 |
 | jAthena's first stat resistance | //0729, 2004-01-21 (round 6) | THREADS.md #21 |
