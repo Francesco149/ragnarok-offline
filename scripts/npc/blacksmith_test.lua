@@ -147,7 +147,7 @@ local function change()
     next()
     page(A, "You DO have it... don't you???")
     next()
-    if menu("It's in storage, just a moment...", "I sold it for potions... now what?") == 1 then
+    if menu("It's in storage, just a moment...", "I sold it for potions... now?") == 1 then
       page(A, "...grrrrr...")
       emotion(7)
       return close()
@@ -302,7 +302,7 @@ local function quiz()
   end
   mes(retry and "You passed!" or "Perfect!")
   next()
-  page(G, retry and "I'll let you do the job." or "Then you can surely do the errand!", "Are you prepared?")
+  page(G, retry and "I'll let you do the job." or "Then you can do the errand!", "Are you prepared?")
   v.bsmith_q, v.bsmith_q2 = 2, 0
   close()
 end
@@ -310,12 +310,12 @@ end
 -- the five orders: what to bring, the store item he works on, its customer
 local ORDERS = {
   { { { STEEL, 2, "Steel" }, { 930, 1, "Rotten Bandage" }, { 717, 2, "Blue Gemstone" } }, 1610, "Arc Wand",
-    "Baisulitst", "Deliver this to Baisulitst in", "Geffen, and bring back the receipt.",
+    "Baisulitst", "Deliver this to Baisulitst in", "Geffen, and bring the receipt.",
     { "WHAT!? Nothing looks different?", "Look where my hand is! See that", "groove!? The SUPER GESHUPENSCHTE", "ARC WAND MK II!!!" },
     { "Feel the difference! Almost no", "inertia! Now, off to Baisulitst!" },
     { "Baisulitst should be at", "11 o'clock in Geffen." }, 3, "Steel" },
   { { { 1001, 2, "Star Dust" }, { 932, 1, "Skel-Bone" }, { 912, 1, "Zargon" } }, 1219, "Gladius",
-    "Wickebine", "Now take this to Wickebine in", "Morroc, and bring back the receipt.",
+    "Wickebine", "Now take this to Wickebine in", "Morroc, and bring the receipt.",
     { "WHAT!? IT DOESN'T LOOK ANY", "DIFFERENT!? Look at the blade!", "Those beautiful markings! ULTRA", "GLADIUS GESHUPENSCHTE MK II!!" },
     { "Isn't it pretty? ^_^ Well, off to", "Morroc, and bring the receipt." },
     { "Take it to Wickebine, near the", "Sword Mace dealer in Morroc." }, 3, "Star Dusts" },
@@ -426,7 +426,7 @@ local function check_delivery()
       return close()
     end
     take_item(RECEIPT, 1)
-    page(G, "Great! Very good! You're an honest", "Merchant indeed. Go and see", "Altiregen back in Geffen!")
+    page(G, "Great! Very good! You are an", "honest Merchant indeed. Now go", "and see Altiregen in Geffen!")
     next()
     page(G, "I know you'll pass the test!!!")
     v.bsmith_q, v.bsmith_q2, v.bsmith_q3 = 4, 0, 0
@@ -563,8 +563,8 @@ customer(1, "geffen", 46, 164, 69, "923", {
   no_item_emotion = 32,
   thanks = {
     { "Wow! Is it finally here?!", "Thank you! I waited forever!" },
-    { "I ordered from the Geffen guild,", "and they gave it to the smith in", "Alberta! Thanks for coming so far." },
-    { "And hit Geshupenschte once for me!", "How can anything be so late >_>", "Here's the receipt!" },
+    { "I ordered from the Geffen guild,", "and they gave it to the smith in", "Alberta! Thanks for coming." },
+    { "Hit Geshupenschte once for me!", "How can anything be so late >_>", "Here's the receipt!" },
   },
   scribble = "~scribble, scribble~ ~rip~",
   receipt = { "Here you go! Goodbye, and thank", "you for the delivery!" },
@@ -577,9 +577,9 @@ customer(2, "morocc", 27, 112, 725, "979", {
     { "This is very upsetting..." },
   },
   waiting_emotion = 20,
-  wrong = { "I think you're supposed to deliver", "that somewhere else..." },
+  wrong = { "I think that goes to someone", "else..." },
   done = { "Thank you." },
-  no_item = { "Ugh! You came all this way to", "deliver my order and you lost it??" },
+  no_item = { "Ugh! You came all this way", "and you lost my order??" },
   no_item_emotion = 6,
   thanks = {
     { "Is it finally here!?", "Give it!!!" },
@@ -592,8 +592,8 @@ customer(2, "morocc", 27, 112, 725, "979", {
 
 customer(3, "izlude", 69, 181, 734, "1038", {
   waiting = {
-    { "...", "...When will that sword arrive >_>" },
-    { "I need that sword for my training!", "Nooo... I mustn't get rusty!" },
+    { "...", "...When will my sword come >_>" },
+    { "I need that sword to train!", "Nooo... I mustn't get rusty!" },
     { "Noooooo T_T..." },
   },
   wrong = { "Sorry, you've got the wrong", "person." },
@@ -621,7 +621,7 @@ customer(4, "payon", 151, 39, 59, "1096", {
   no_item_emotion = 7,
   thanks = {
     { "...Ohhh! It's finally here!!!", "Let me see it!" },
-    { "Wow... Not bad... not bad at all!!", "Look at this curve!! It's", "wonderful!! I love it." },
+    { "Wow... Not bad... not bad!!", "Look at this curve!! It's", "wonderful!! I love it." },
     { "Thank you!!!" },
   },
   scribble = "~scribble, scribble~ ~rip~",

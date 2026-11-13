@@ -378,7 +378,8 @@ a pouch for his eye patch; eAthena: the Arbalest); jAthena's Mitmayer
 counts any answer to "which ore do you have most of", eAthena all but
 Wind of Verdure. jAthena's Gromgast refuses a Tsurugi with cards or
 refines; eAthena does not check. Open: a player's account of the
-Blacksmith test before autumn 2004 (queue T1).
+Blacksmith test before autumn 2004 (queue T1). Played in the client from the
+application to the job change (Gladius order, Mitmayer at 80 points).
 
 ### 9. Refining details
 Phracon price (iRO page 2000z vs data 200z), armor DEF per refine (1, 5 or
