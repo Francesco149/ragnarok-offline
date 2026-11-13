@@ -1074,7 +1074,7 @@ impl Game {
 }
 
 pub(crate) fn step_cost(speed: u16, dir: u8) -> u32 {
-    if path::is_diagonal(dir) { speed as u32 * 14 / 10 } else { speed as u32 }
+    path::step_time(speed as u32, dir)
 }
 
 pub(crate) fn random_cell(g: &ro_data::MapGrid) -> Option<(u16, u16)> {

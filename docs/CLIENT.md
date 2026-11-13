@@ -55,3 +55,39 @@ inside; the original is kept as `data.grf.original`. The exe is untouched.
 Settings live in `HKLM\Software\Gravity Soft\Ragnarok` (`Wow6432Node` on
 64-bit systems), written by the client's `Setup.exe`
 (`tools/client-test/ragnarok-settings.reg` is a working example).
+
+## The path finder
+
+The client walks every unit along a path it finds itself: the server only
+says where from and where to (0x0087, 0x007b). `CPathFinder::FindPath` is at
+`0x4d2300` (found through its log strings "find path failed : no path found"
+and "find path aborted : buffer overflow"); one instance lives at `0x66e0b8`.
+It is an A*:
+
+* f = g + 10 x the Manhattan distance to the target; a straight step costs
+  10, a diagonal 14. The neighbours are tried in the order SE, E, NE, N, NW,
+  W, SW, S (`0x4d2524`-`0x4d26c6`).
+* A step (`0x4d2be0`) needs the cell stepped onto to be in the map and of a
+  GAT type other than 1 and 5 (the whole dword is compared); a diagonal
+  step needs both cells beside it as well. The cell stepped from is not
+  looked at.
+* The open list is a binary heap in a `std::vector`, kept with MSVC 6's
+  `push_heap`/`pop_heap` (`_Adjust_heap` at `0x4d4770`): equal f go to the
+  right child, a node moves up only past a strictly greater f. A node already
+  open that is reached more cheaply is found by a linear search of the heap
+  and moved up from there.
+* Quirk: a closed node that is reached more cheaply gets the new cost and
+  parent and is marked open, but is not put back on the heap (`0x4d2a1f`),
+  so it is never expanded again. Its children keep pointing at it.
+* At most 149 nodes (`0x95`, 28 bytes each in a fixed pool): a search that
+  needs more fails. Nothing else limits a path's length; the server's
+  32-step limit is Athena's.
+* The path (`0x4d2cf0`) keeps each cell's direction and a time: a straight
+  step takes the unit's speed in ms, a diagonal `(int)(speed * 1.414f)`.
+
+`crates/ro-game/src/path.rs` (`client_search`) is a port of it, checked
+against the exe's code run under an emulator (`research/client_paths/`):
+4,800 paths on synthetic grids (`tests/client_paths.rs`) and 5,760 on
+windows of the 269 maps, all the same. Athena's path.c, which the server
+used before, chose a different route on 22 of 4,122 real-map paths that
+both could walk.

@@ -10,9 +10,13 @@ Ordered by "confirmable first". Each item says where the truth would come from.
   right" vouch for: 0x0079, 0x007b, 0x00a0, 0x00a3/0x00a4, 0x00bd, 0x01d7,
   0x009d/0x009e, 0x0119. Find each handler via the zone-mode dispatch (like
   the login-mode jump table at `0x52fa88`).
-- **Path finder**: the client walks its own path to the target; extract its
-  algorithm (`CPathFinder`) and make `path.rs` produce identical paths.
-- **Walk/attack timing** the client animates (sub-cell, half-step) vs ours.
+- **Walk/attack timing** the client animates vs ours. Done: the path
+  finder is the client's (`0x4d2300`, docs/CLIENT.md, checked under an
+  emulator) and so is the diagonal step's time. Open: the first step's
+  time from the sub-cell position, and what `0x4f6ae0` does after a
+  path is found: when a time it reads from the path (`0x4d30f0`, not
+  read yet) is already past, it searches again from now with 10/13 of
+  the speed's time, which looks like a catch-up walk.
 - Client tables not used yet: skill names/descriptions, `itemslottable`,
   `leveluseskillspamount`, `mapnametable` (for messages), `num2cardillustnametable`.
 

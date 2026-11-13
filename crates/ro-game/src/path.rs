@@ -1,17 +1,16 @@
-//! Cell pathfinding, modelled on Athena's `path.c` of the period:
-//! 1. try the "easy" path: diagonal steps while both axes differ, then
-//!    straight, stopping at the first blocked step;
-//! 2. otherwise A* over 8 directions, cost 10 straight / 14 diagonal,
-//!    heuristic 10 × Manhattan distance, diagonals need both orthogonal
-//!    neighbours walkable.
+//! Cell pathfinding.
 //!
-//! Tier: athena2003 reconstruction. The client runs its own path finder to
-//! animate walks; agreement with it is a TODO (docs/ROADMAP.md).
+//! [`find`] is the client's own path finder (tier `client`: Ragexe
+//! 2003-12-18, `CPathFinder` at `0x4d2300`), checked against the exe's code
+//! run under an emulator (`tests/client_paths.rs`). The client walks its own
+//! path to the cell it is told; the server walks the same one, so a unit
+//! stands on the cell the client draws it on. [`find_easy`] is Athena's
+//! straight-line path (path.c, flag 1) for monsters' random walks, which
+//! take no detours; [`can_shoot`] is Athena's battle_check_range.
 //!
 //! Directions (RO convention): 0 N(+y) 1 NW 2 W 3 SW 4 S 5 SE 6 E 7 NE.
 
-use std::cmp::Reverse;
-use std::collections::{BinaryHeap, HashMap};
+use std::collections::HashMap;
 
 use ro_data::MapGrid;
 
@@ -26,6 +25,13 @@ pub fn dir_of(dx: i32, dy: i32) -> u8 {
 
 pub fn is_diagonal(dir: u8) -> bool {
     dir & 1 == 1
+}
+
+/// Milliseconds a step takes at `speed` (ms a cell), as the client times its
+/// walk (`0x4d2cf0`): a diagonal step is `(int)(speed * 1.414f)` (the float
+/// at `0x5e4440`), where Athena has `speed * 14 / 10`.
+pub fn step_time(speed: u32, dir: u8) -> u32 {
+    if is_diagonal(dir) { (speed as f64 * 1.414f32 as f64) as u32 } else { speed }
 }
 
 fn can_move(g: &MapGrid, x0: i32, y0: i32, x1: i32, y1: i32) -> bool {
@@ -88,7 +94,10 @@ pub fn can_shoot(g: &MapGrid, x0: i32, y0: i32, x1: i32, y1: i32) -> bool {
     false
 }
 
-/// Path from (x0,y0) to (x1,y1) as a list of directions, or None.
+/// Path from (x0,y0) to (x1,y1) as a list of directions, or None: the
+/// client's own path finder (`CPathFinder`, Ragexe 2003-12-18 `0x4d2300`),
+/// so that the cells the server walks are the cells the client draws.
+/// Paths longer than [`MAX_WALKPATH`] are refused, as Athena does.
 pub fn find(g: &MapGrid, x0: i32, y0: i32, x1: i32, y1: i32) -> Option<Vec<u8>> {
     if !g.walkable(x1, y1) {
         return None;
@@ -96,57 +105,144 @@ pub fn find(g: &MapGrid, x0: i32, y0: i32, x1: i32, y1: i32) -> Option<Vec<u8>> 
     if (x0, y0) == (x1, y1) {
         return Some(vec![]);
     }
-    // 1. easy path
-    let (dx, dy) = ((x1 - x0).signum(), (y1 - y0).signum());
-    let (mut x, mut y) = (x0, y0);
-    let mut path = Vec::new();
-    while (x, y) != (x1, y1) && path.len() < MAX_WALKPATH {
-        let (sx, sy) = (if x != x1 { dx } else { 0 }, if y != y1 { dy } else { 0 });
-        if !can_move(g, x, y, x + sx, y + sy) {
+    client_search(g, x0, y0, x1, y1).filter(|p| p.len() <= MAX_WALKPATH)
+}
+
+/// Nodes the client's path finder can hold (`cmp eax, 0x95` at `0x4d2902`);
+/// a search that needs more fails ("find path aborted : buffer overflow").
+pub const CLIENT_NODES: usize = 149;
+
+/// The neighbours in the order the client tries them (`0x4d2524`-`0x4d26c6`):
+/// (dx, dy, cost, direction).
+const CLIENT_NEIGHBOURS: [(i32, i32, i32, u8); 8] =
+    [(1, -1, 14, 5), (1, 0, 10, 6), (1, 1, 14, 7), (0, 1, 10, 0), (-1, 1, 14, 1), (-1, 0, 10, 2), (-1, -1, 14, 3), (0, -1, 10, 4)];
+
+struct Node {
+    x: i32,
+    y: i32,
+    parent: usize, // usize::MAX: none
+    g: i32,
+    f: i32,
+    state: u8, // 0 new, 1 open, 2 closed
+    dir: u8,
+}
+
+/// `0x4d2be0`: the target cell walkable and, for a diagonal step, both
+/// cells beside it. The cell stepped from is not looked at.
+fn client_can_move(g: &MapGrid, x0: i32, y0: i32, x1: i32, y1: i32) -> bool {
+    g.walkable(x1, y1) && (x0 == x1 || y0 == y1 || (g.walkable(x0, y1) && g.walkable(x1, y0)))
+}
+
+/// MSVC 6's `_Push_heap` on the open list ordered by f, smallest first.
+fn sift_up(heap: &mut [usize], nodes: &[Node], mut hole: usize, top: usize, v: usize) {
+    while hole > top {
+        let parent = (hole - 1) / 2;
+        if nodes[heap[parent]].f <= nodes[v].f {
             break;
         }
-        x += sx;
-        y += sy;
-        path.push(dir_of(sx, sy));
+        heap[hole] = heap[parent];
+        hole = parent;
     }
-    if (x, y) == (x1, y1) {
-        return Some(path);
-    }
-    // 2. A* inside a box around the endpoints
-    let lim = MAX_WALKPATH as i32;
-    let (minx, maxx) = (x0.min(x1) - lim, x0.max(x1) + lim);
-    let (miny, maxy) = (y0.min(y1) - lim, y0.max(y1) + lim);
-    let h = |x: i32, y: i32| ((x - x1).abs() + (y - y1).abs()) * 10;
-    let mut open = BinaryHeap::new();
-    let mut best: HashMap<(i32, i32), (i32, (i32, i32), u8)> = HashMap::new();
-    best.insert((x0, y0), (0, (x0, y0), 0));
-    open.push(Reverse((h(x0, y0), 0, x0, y0)));
-    while let Some(Reverse((_, dist, x, y))) = open.pop() {
-        if best.get(&(x, y)).is_some_and(|b| b.0 < dist) {
-            continue;
+    heap[hole] = v;
+}
+
+/// MSVC 6's `pop_heap` (`_Adjust_heap`, `0x4d4770`): on equal f the right
+/// child moves up.
+fn pop(heap: &mut Vec<usize>, nodes: &[Node]) -> usize {
+    let n = heap.len();
+    let front = heap[0];
+    let last = heap[n - 1];
+    heap[n - 1] = front;
+    let len = n - 1;
+    let (mut hole, mut j) = (0, 2);
+    while j < len {
+        if nodes[heap[j]].f > nodes[heap[j - 1]].f {
+            j -= 1;
         }
-        if (x, y) == (x1, y1) {
+        heap[hole] = heap[j];
+        hole = j;
+        j = 2 * j + 2;
+    }
+    if j == len {
+        heap[hole] = heap[j - 1];
+        hole = j - 1;
+    }
+    sift_up(heap, nodes, hole, 0, last);
+    heap.pop();
+    front
+}
+
+/// The client's A* (`0x4d2300`), step for step: f = g + 10 x the Manhattan
+/// distance left, 10 a straight step and 14 a diagonal, the node pool of
+/// [`CLIENT_NODES`], and its quirk: a closed node that is reached more
+/// cheaply is marked open again but not put back on the open list
+/// (`0x4d2a1f`), so it is never expanded again.
+pub fn client_search(g: &MapGrid, x0: i32, y0: i32, x1: i32, y1: i32) -> Option<Vec<u8>> {
+    if (x0, y0) == (x1, y1) {
+        return None;
+    }
+    let h = |x: i32, y: i32| ((x - x1).abs() + (y - y1).abs()) * 10;
+    let mut nodes: Vec<Node> = Vec::with_capacity(CLIENT_NODES);
+    let mut at: HashMap<(i32, i32), usize> = HashMap::new();
+    let mut heap: Vec<usize> = Vec::new();
+    nodes.push(Node { x: x0, y: y0, parent: usize::MAX, g: 0, f: h(x0, y0), state: 1, dir: 0 });
+    at.insert((x0, y0), 0);
+    heap.push(0);
+    while !heap.is_empty() {
+        let cur = pop(&mut heap, &nodes);
+        let (cx, cy) = (nodes[cur].x, nodes[cur].y);
+        if (cx, cy) == (x1, y1) {
             let mut dirs = Vec::new();
-            let mut cur = (x, y);
-            while cur != (x0, y0) {
-                let (_, prev, d) = best[&cur];
-                dirs.push(d);
-                cur = prev;
+            let mut n = cur;
+            while nodes[n].parent != usize::MAX {
+                dirs.push(nodes[n].dir);
+                n = nodes[n].parent;
             }
             dirs.reverse();
-            return (dirs.len() <= MAX_WALKPATH).then_some(dirs);
+            return Some(dirs);
         }
-        for (d, &(sx, sy)) in DIRS.iter().enumerate() {
-            let (nx, ny) = (x + sx, y + sy);
-            if nx < minx || nx > maxx || ny < miny || ny > maxy || !can_move(g, x, y, nx, ny) {
+        for &(dx, dy, cost, dir) in &CLIENT_NEIGHBOURS {
+            let (nx, ny) = (cx + dx, cy + dy);
+            if !client_can_move(g, cx, cy, nx, ny) {
                 continue;
             }
-            let nd = dist + if sx != 0 && sy != 0 { 14 } else { 10 };
-            if best.get(&(nx, ny)).is_none_or(|b| nd < b.0) {
-                best.insert((nx, ny), (nd, (x, y), d as u8));
-                open.push(Reverse((nd + h(nx, ny), nd, nx, ny)));
+            // 0x4d28b0
+            let ng = nodes[cur].g + cost;
+            let i = match at.get(&(nx, ny)) {
+                Some(&i) => i,
+                None => {
+                    if nodes.len() >= CLIENT_NODES {
+                        return None;
+                    }
+                    nodes.push(Node { x: nx, y: ny, parent: usize::MAX, g: 0, f: 0, state: 0, dir: 0 });
+                    at.insert((nx, ny), nodes.len() - 1);
+                    nodes.len() - 1
+                }
+            };
+            let n = &mut nodes[i];
+            if n.state != 0 && n.g <= ng {
+                continue;
+            }
+            n.parent = cur;
+            n.g = ng;
+            n.f = ng + h(nx, ny);
+            n.dir = dir;
+            match n.state {
+                0 => {
+                    n.state = 1;
+                    heap.push(i);
+                    let last = heap.len() - 1;
+                    sift_up(&mut heap, &nodes, last, 0, i);
+                }
+                1 => {
+                    if let Some(pos) = heap.iter().position(|&k| nodes[k].x == nx && nodes[k].y == ny) {
+                        sift_up(&mut heap, &nodes, pos, 0, i);
+                    }
+                }
+                _ => n.state = 1,
             }
         }
+        nodes[cur].state = 2;
     }
     None
 }
@@ -177,6 +273,14 @@ mod tests {
             y += dy;
         }
         assert_eq!((x, y), (8, 2));
+    }
+
+    #[test]
+    fn diagonal_steps_take_the_clients_time() {
+        assert_eq!(step_time(150, 6), 150);
+        assert_eq!(step_time(150, 7), 212); // Athena: 210
+        assert_eq!(step_time(100, 1), 141);
+        assert_eq!(step_time(200, 3), 282);
     }
 
     #[test]

@@ -852,8 +852,8 @@ impl Game {
                 break;
             }
         }
-        let speed = self.world.units[&id].speed as u64;
-        let steps: u64 = self.world.units[&id].walk.as_ref().map(|w| w.path.iter().map(|d| if path::is_diagonal(*d) { speed * 14 / 10 } else { speed }).sum()).unwrap_or(0);
+        let speed = self.world.units[&id].speed as u32;
+        let steps: u64 = self.world.units[&id].walk.as_ref().map(|w| w.path.iter().map(|d| path::step_time(speed, *d) as u64).sum()).unwrap_or(0);
         let m = self.world.units.get_mut(&id).unwrap().mob_mut().unwrap();
         // (after 1000 rounds without a cell mod0631 respawns the monster; here it keeps trying)
         m.move_fail = if walked { 0 } else { m.move_fail + 1 };
