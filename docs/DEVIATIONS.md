@@ -483,6 +483,14 @@ eAthena 817 (2004-02-19), bugs included. The translator is
   `skillnametable.txt`: every monster-only skill (an Ant Egg hatching) and
   every 2-2 skill. Those casts take their time without the bar. Ours;
   what the official server sent is not known (THREADS.md #23).
+* **Step times are the client's.** Athena moves a unit into the next cell
+  after half a step, then half of each step plus half of the next. The
+  halves are rounded down, so odd step times lose 1 ms a cell, and the
+  speed is read again at every step. Here the server walks on the times
+  the client gives the path's cells (docs/CLIENT.md, "The walk clock and
+  step times"): it crosses into a cell halfway between two cells' times,
+  and a walk keeps its speed to the end, since the client goes on drawing
+  it at that speed. A new speed counts from the next walk.
 * **Cell types.** Only types 1 and 5 block, as in Athena (mod0631
   `map.c:1052`, `path.c:153`). One map of this client depends on it: the
   whole floor of `c_tower1` has the type `0x444c74` (some builder's stray

@@ -696,8 +696,7 @@ impl Game {
         let now = self.now();
         let tick = self.tick32();
         let u = self.world.units.get_mut(&unit).unwrap();
-        let first = step_cost(u.speed, dirs[0]) / 2;
-        u.walk = Some(Walk { path: dirs, pos: 0, next_at: now + first as u64, to: (x, y), retarget: None });
+        u.walk = Some(Walk::new(dirs, x0, y0, u.speed, now, (x, y)));
         if let Some(p) = u.player() {
             let sid = p.sid;
             self.send(sid, packets::player_move(tick, x0, y0, x, y));
@@ -736,11 +735,11 @@ impl Game {
         u.y = (u.y as i32 + dy) as u16;
         u.dir = d;
         w.pos += 1;
-        let cur_cost = step_cost(u.speed, d);
         let retarget = w.retarget.take();
         let done = w.pos >= w.path.len();
-        let next_cost = if done { 0 } else { step_cost(u.speed, w.path[w.pos]) };
-        w.next_at += (cur_cost / 2 + next_cost / 2) as u64;
+        if !done {
+            w.next_at = w.cross_at(w.pos);
+        }
         let (map, x, y, is_player) = (u.map.clone(), u.x, u.y, u.is_player());
         if done || retarget.is_some() {
             u.walk = None;
@@ -1071,10 +1070,6 @@ impl Game {
         self.dialogs.remove(&unit);
         self.dialog_open.remove(&unit);
     }
-}
-
-pub(crate) fn step_cost(speed: u16, dir: u8) -> u32 {
-    path::step_time(speed as u32, dir)
 }
 
 pub(crate) fn random_cell(g: &ro_data::MapGrid) -> Option<(u16, u16)> {

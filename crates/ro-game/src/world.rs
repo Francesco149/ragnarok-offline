@@ -21,11 +21,39 @@ pub const OBJ_ID_START: u32 = 1_000; // mobs and floor items (below player ids)
 pub struct Walk {
     pub path: Vec<u8>,
     pub pos: usize,
+    /// When the move began (ms): the tick the client was sent.
+    pub start: u64,
+    /// When the client has the unit at each cell's centre, in ms from
+    /// `start` (path::client_times, from the centre of the first cell).
+    pub times: Vec<u32>,
     /// When the unit enters the next cell (ms tick).
     pub next_at: u64,
     pub to: (u16, u16),
     /// New destination requested mid-walk; applied at the next cell.
     pub retarget: Option<(u16, u16)>,
+}
+
+impl Walk {
+    /// A walk along `path` from (x0, y0), begun at `start`, timed as the
+    /// client times it. Its speed holds to the end, as in the client: a new
+    /// speed shows from the next walk.
+    pub fn new(path: Vec<u8>, x0: u16, y0: u16, speed: u16, start: u64, to: (u16, u16)) -> Walk {
+        let times = crate::path::client_times(x0 as i32, y0 as i32, (8, 8), &path, speed as u32);
+        let mut w = Walk { path, pos: 0, start, times, next_at: 0, to, retarget: None };
+        w.next_at = w.cross_at(0);
+        w
+    }
+
+    /// When the unit crosses from the path's cell `i` into the next: the
+    /// first ms at or past the midpoint of their times.
+    pub fn cross_at(&self, i: usize) -> u64 {
+        self.start + (self.times[i] as u64 + self.times[i + 1] as u64).div_ceil(2)
+    }
+
+    /// Ms from `start` to the last cell's centre.
+    pub fn duration(&self) -> u64 {
+        *self.times.last().unwrap_or(&0) as u64
+    }
 }
 
 #[derive(Debug, Clone)]
