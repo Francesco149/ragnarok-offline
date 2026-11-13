@@ -94,7 +94,8 @@ Working with the real client:
 - pets: taming, eggs, hunger, intimacy, accessories;
 - **skills**: the Novice, the six first jobs and the six 2-1 jobs, with cast
   times, delays, SP and item costs, ground skills and traps, status changes
-  and ailments with their icons;
+  and ailments with their icons. The Assassin's, Blacksmith's, Hunter's,
+  Wizard's, Priest's and Knight's skills have been tried in the real client;
 - battle as the period emulators have it: elements, sizes, cards, refine
   bonuses, criticals, arrows; monsters with their period AI and skills;
   EXP, drops, MVP rewards;
