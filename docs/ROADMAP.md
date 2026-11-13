@@ -4,8 +4,11 @@ Ordered by "confirmable first". Each item says where the truth would come from.
 
 ## 1. Confirm more from the client binary (tier `client`)
 
-- **Client→server lengths**: read the send code for 0x01d5 / 0x019c (and
-  scan all `send` call sites) instead of trusting `CLIENT_SEND_OVERRIDES`.
+- **Client→server lengths**: done for the direct call sites of the send
+  routine (docs/PROTOCOL.md): 0x01d5 and 0x019c are variable as
+  `CLIENT_SEND_OVERRIDES` says, the rest take the table's length. Open:
+  whether every packet goes through those 44 call sites (walk and attack
+  are built from a message switch, not found as `push id` yet).
 - **Remaining layouts** the server already sends but only Athena + "it draws
   right" vouch for: 0x0079, 0x007b, 0x00a0, 0x00a3/0x00a4, 0x00bd, 0x01d7,
   0x009d/0x009e, 0x0119. Find each handler via the zone-mode dispatch (like

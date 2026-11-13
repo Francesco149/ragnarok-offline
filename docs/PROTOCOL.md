@@ -15,11 +15,25 @@ initialiser (`sub_418030`, two idioms: `map::insert` → `[eax+0x10]` and
 `Writer::finish`, which panics if a fixed-length packet's size differs from
 the client's table, so a layout mistake can never silently desync the client.
 
-The table is what the client uses to frame what it **receives**. Two
-client→server packets are sent variable-length although the receive table
-lists them fixed (`ro_proto::lengths::CLIENT_SEND_OVERRIDES`): `0x01d5`
-(NPC text input) and `0x019c` (local broadcast). Still to verify from the
-send code (ROADMAP).
+The table is what the client uses to frame what it **receives**, and also
+what it sends: every packet goes out through `SendPacket(len, buf)`
+(`0x417d80`, on the connection at `0x6182e0`), and a fixed-size one takes
+`len` from the same table (`0x417ec0(id)`). Fourteen of the 44 call sites
+compute `len` themselves. Their ids are ones the table marks variable
+(chat, whisper, chat rooms, vending, guild, the ignore list; two guild
+packets are built in helpers at `0x515ba0` and `0x515d00`, not read), except
+two that are sent variable-length although the table lists them fixed
+(`ro_proto::lengths::CLIENT_SEND_OVERRIDES`):
+
+* `0x01d5` (NPC text input, table 8), built at `0x513dd0`: id, u16 length
+  = 8 + the text with its NUL, u32 NPC id, the text and its NUL;
+* `0x019c` (local broadcast, table 4), built at `0x511e7c` by the same code
+  as `0x0099`: id, u16 length = 4 + the text, the text.
+
+One more send is odd and seems unreachable: case 0x81 of the zone mode's
+`SendMsg` (`0x50f390`, case at `0x5143d4`) sends a 4-byte `0x008c` whose
+length field says 2. No caller of that slot passes 0x81 as an immediate.
+A server that frames by the length field (Athena, and us) would refuse it.
 
 ## Layouts confirmed from the client's receive code
 

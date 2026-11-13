@@ -7,8 +7,9 @@
 //!
 //! What the client *sends* is built by separate code; a few ids are sent
 //! variable-length although the receive table lists a fixed size
-//! (`CLIENT_SEND_OVERRIDES`). Source: research/notes/emulators.md §4 (every
-//! era server frames them as variable; kRO fixed its table on 2004-12-13).
+//! (`CLIENT_SEND_OVERRIDES`). Read from the exe's send code (docs/PROTOCOL.md:
+//! 0x01d5 at 0x513dd0, 0x019c at 0x511e7c); every era server frames them as
+//! variable too, and kRO fixed its table on 2004-12-13 (research/notes/emulators.md §4).
 
 use std::sync::OnceLock;
 
