@@ -4,9 +4,10 @@ For: the independent deep-research agent (Gemini in Antigravity) that wrote
 rounds 1 to 3. Kept by the Claude sessions that work on the game: at the
 end of each session the queue is updated (answered items go to "Done",
 with where the answer went) and refilled with what that session could not
-settle from the sources on disk. Last update: 2026-11-13, night (the path finder read from the exe and
-checked under an emulator: settled from the client, nothing for the
-queue; no round 7 had arrived).
+settle from the sources on disk. Last update: 2026-11-13, late night (the walk's clock and step times
+read from the exe and checked under an emulator: settled from the client,
+nothing for the queue. Round 7 was being written under `r7/` (rows for
+T1, T9, T10, T11, no `progress.md` yet): the next session reviews it).
 
 ## How to use it
 
