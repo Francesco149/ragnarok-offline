@@ -331,6 +331,28 @@ eAthena 817 (2004-02-19), bugs included. The translator is
   dialogue in our English of jAthena's Japanese, cut to the window, with
   eAthena 1.0's English names. Sir Grey makes Knights a Claymore for
   74,000 zeny and a Steel, as both scripts have it.
+* **The Blacksmith test** (`scripts/npc/blacksmith_test.lua`). 817 changes
+  a Merchant into a Blacksmith at job level 40 with no test, as mod0631's
+  guild member does ("conditions will come with an update"). The test here
+  is eAthena 1.0's of 2004-11-04, a translation of the official script and
+  the only complete one on disk: Altiregen's application in Geffen (job
+  level 40), Geshupenschte's ten questions in Alberta (all right, or nine
+  on a retry), one of his five orders (three materials and a weapon from a
+  store), the delivery to that order's customer in Geffen, Morroc, Izlude,
+  Payon or Comodo and the receipt back, Mitmayer's five questions in Morroc
+  (four right) and her Hammer of Blacksmiths, then the change (no skill
+  points left) and five Steel, ten from job level 50. jAthena's script of
+  2004-09-12 has the same NPCs, question sets and two of the orders, but
+  changes you unconditionally "for lack of data"; where it differs
+  (THREADS.md #8) we keep eAthena: its pass marks (jAthena: 90, 80 and
+  Mitmayer 100), its level 4 refining question (jAthena counts +6 for a
+  level 3 weapon) and the Trunk of the Arbalest order (jAthena: an Eye
+  Patch). No account dates the test before autumn 2004: it is here because
+  the other 2-1 tests are. Ours: Tilpitz on jAthena's `payon 151,39`
+  (eAthena's cell is in the rebuilt Payon, off this client's map); jAthena's
+  Ring Pommel Saber for eAthena's Buster in one question; eAthena's slips
+  mended (Geshupenschte checked for a Knife instead of the Gladius he made;
+  three customers ran on into their next line); dialogue cut to the window.
 * **Alberta's sailor** (`scripts/npc/alberta_sailor.lua`) no longer sells
   passage to Amatsu and Gonryun: the client has neither map (they are later
   additions 817 took from jAthena), so the fare went and the ship did not.

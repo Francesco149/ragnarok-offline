@@ -360,6 +360,25 @@ cells and Sir Edmond's room (eAthena: eight Spores, live Chonchons, 240
 seconds). Open: a player's account of the Knight test before September
 2004 (which questions, which items, and whether it existed at all before
 then: pRO had none in February); what Sir Grey's pass condition was.
+**2026-11-13: the Blacksmith test is in** (`scripts/npc/blacksmith_test.lua`,
+DEVIATIONS), from eAthena 1.0's `npc/jobs/2-1/blacksmith.txt` (2004-11-04,
+"EREMES (Aegis), translated by yoshiki", the only complete script on
+disk). jAthena //1046's `npc_job_10blacksmith.txt` (2004-09-12) has the
+same NPCs (アルトアイゼン, ゲッシュ, ミットマイヤ and the five customers),
+the same two sets of Geshupenschte's ten questions and two of Mitmayer's
+three, but its guild member changes you "for lack of data" and its
+Mitmayer is "未調査"; so it is a witness, not a script to play. Where it
+parts from eAthena: pass marks (jAthena 90 first, 80 on a retry, Mitmayer
+100; eAthena 100, 90, 80); question 8 (jAthena: a level 3 weapon, +6;
+eAthena: level 3 +5 and level 4 +4); question 6 of the first set (jAthena
+a Ring Pommel Saber, eAthena a Buster); the Arbalest order (jAthena an
+Eye Patch, eAthena a Trunk); Tilpitz's cell (jAthena `payon 151,39`;
+eAthena's `214,79` is off this client's Payon) and his order (jAthena:
+a pouch for his eye patch; eAthena: the Arbalest); jAthena's Mitmayer
+counts any answer to "which ore do you have most of", eAthena all but
+Wind of Verdure. jAthena's Gromgast refuses a Tsurugi with cards or
+refines; eAthena does not check. Open: a player's account of the
+Blacksmith test before autumn 2004 (queue T1).
 
 ### 9. Refining details
 Phracon price (iRO page 2000z vs data 200z), armor DEF per refine (1, 5 or

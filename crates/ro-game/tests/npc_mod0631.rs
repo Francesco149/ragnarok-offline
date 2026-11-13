@@ -181,11 +181,12 @@ impl T {
     }
 }
 
-const MAPS: [&str; 32] = [
+const MAPS: [&str; 33] = [
     "prontera", "izlude", "aldeba_in", "moc_prydb1", "payon", "alberta_in", "morocc", "prt_in", "prt_castle", "geffen",
     "geffen_in", "morocc_in", "alberta", "tur_dun01", "tur_dun02", "izlude_in", "alb2trea", "pay_fild08",
     "gef_tower", "job_wiz", "new_zone02", "new_zone03", "new_zone04", "payon_in02",
     "izlu2dun", "job_prist", "prt_church", "prt_fild03", "moc_fild07", "prt_fild00", "c_tower2", "prt_fild05",
+    "comodo",
 ];
 /// Maps no script reaches beyond 260,260: smaller stand-ins, so that the
 /// eighteen tests side by side stay under the workbench's 2 GiB.
@@ -1251,4 +1252,83 @@ fn knight_test() {
     t.eval("player.zeny = 80000; give_item(999, 1)");
     t.talk(grey.0, grey.1, grey.2, &[2]);
     assert_eq!(t.eval("return count_item(1163) .. ' ' .. count_item(999) .. ' ' .. player.zeny"), "1 0 6000");
+}
+
+/// Answers a quiz whose question set is drawn at random: each set is known
+/// by its first menu, and its right answers follow in order. Menus before
+/// the quiz ("Ready?") get 1.
+fn quiz(sets: &'static [(&'static str, &'static [u8])]) -> impl FnMut(&str) -> u8 {
+    let mut cur: Option<(&[u8], usize)> = None;
+    move |menu: &str| {
+        if let Some(&(_, answers)) = sets.iter().find(|(first, _)| menu.starts_with(first)) {
+            cur = Some((answers, 0));
+        }
+        match &mut cur {
+            Some((answers, i)) if *i < answers.len() => {
+                *i += 1;
+                answers[*i - 1]
+            }
+            _ => 1,
+        }
+    }
+}
+
+/// The Blacksmith test (scripts/npc/blacksmith_test.lua): the application,
+/// Geshupenschte's quiz (failed, then passed on the retry), his order and
+/// the work, a delivery refused by the wrong customer and taken by the
+/// right one, the receipt, Mitmayer's quiz (failed, then passed), the
+/// hammer, and the job change with its Steel.
+#[test]
+fn blacksmith_test() {
+    const GESH: &[(&str, &[u8])] =
+        &[("Morroc - Thief Clothes", &[4, 1, 4, 3, 1, 4, 2, 3, 1, 1]), ("Al De Baran - Yggdrasil Leaf", &[4, 3, 1, 1, 4, 2, 2, 2, 4, 1])];
+    const MIT: &[(&str, &[u8])] =
+        &[("Pushcart Lv 3", &[4, 1, 2, 4, 3]), ("Zerom", &[3, 1, 2, 2, 1]), ("Ask what they need", &[1, 2, 2, 4, 2])];
+    let mut t = setup("blacksmith_test");
+    let alt = ("geffen_in", 110, 169);
+    let gesh = ("alberta_in", 174, 22);
+    let mit = ("morocc", 95, 133);
+    let q = |t: &mut T| t.eval("return v.bsmith_q .. ' ' .. v.bsmith_q2 .. ' ' .. v.bsmith_q3");
+    t.eval("job_change(5); player.job_level = 39");
+    t.talk(alt.0, alt.1, alt.2, &[1]);
+    assert_eq!(q(&mut t), "0 0 0", "Job Level 39");
+    t.eval("player.job_level = 45");
+    t.talk(alt.0, alt.1, alt.2, &[1]);
+    assert_eq!(q(&mut t), "1 0 0");
+    // the quiz: first answer everything 1 (at most four right), then all right
+    t.talk(gesh.0, gesh.1, gesh.2, &[1; 11]);
+    assert_eq!(q(&mut t), "1 1 0", "failed");
+    t.talk_by(gesh.0, gesh.1, gesh.2, quiz(GESH));
+    assert_eq!(q(&mut t), "2 0 0", "passed on the retry");
+    // the order; made the Tsurugi one for the test
+    t.talk(gesh.0, gesh.1, gesh.2, &[]);
+    let order = t.eval("return v.bsmith_q2");
+    assert!(["1", "2", "3", "4", "5"].contains(&order.as_str()), "{order}");
+    t.eval("v.bsmith_q2 = 3; give_item(1003, 2); give_item(935, 2); give_item(990, 2)");
+    t.talk(gesh.0, gesh.1, gesh.2, &[]);
+    assert_eq!(q(&mut t), "2 3 0", "no Tsurugi yet");
+    t.eval("give_item(1119, 1)");
+    t.talk(gesh.0, gesh.1, gesh.2, &[]);
+    assert_eq!(t.eval("return v.bsmith_q .. ' ' .. count_item(1003) .. ' ' .. count_item(1119)"), "3 0 1");
+    // the wrong customer, then Gromgast
+    t.talk("geffen", 46, 164, &[]);
+    assert_eq!(t.eval("return v.bsmith_q3 .. ' ' .. count_item(1119)"), "0 1");
+    t.talk("izlude", 69, 181, &[]);
+    assert_eq!(t.eval("return v.bsmith_q3 .. ' ' .. count_item(1119) .. ' ' .. count_item(1073)"), "1 0 1");
+    t.talk(gesh.0, gesh.1, gesh.2, &[1]);
+    assert_eq!(t.eval("return v.bsmith_q .. ' ' .. count_item(1073)"), "4 0");
+    // the guild sends you to Morroc; Mitmayer: all 1 fails (one right at most), then all right
+    t.talk(alt.0, alt.1, alt.2, &[1]);
+    assert_eq!(q(&mut t), "4 1 0");
+    t.talk(mit.0, mit.1, mit.2, &[1; 6]);
+    assert_eq!(t.eval("return v.bsmith_q .. ' ' .. count_item(1005)"), "4 0");
+    t.talk_by(mit.0, mit.1, mit.2, quiz(MIT));
+    assert_eq!(t.eval("return v.bsmith_q .. ' ' .. count_item(1005)"), "5 1");
+    // skill points first, then the change
+    t.eval("player.skill_point = 1");
+    t.talk(alt.0, alt.1, alt.2, &[]);
+    assert_eq!(t.eval("return player.class"), "5");
+    t.eval("player.skill_point = 0");
+    t.talk(alt.0, alt.1, alt.2, &[]);
+    assert_eq!(t.eval("return player.class .. ' ' .. count_item(1005) .. ' ' .. count_item(999) .. ' ' .. v.bsmith_q"), "10 0 5 0", "a Blacksmith, with five Steel");
 }
