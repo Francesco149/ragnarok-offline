@@ -87,7 +87,7 @@ def run_case(w, h, cells, pairs):
     mu.mem_write(cell_base, bytes(buf))
     w32(PF, attr)
     res = []
-    for sx, sy, tx, ty in pairs:
+    for sx, sy, tx, ty in (p[:4] for p in pairs):  # also takes the fixture's rows
         mu.mem_write(OUTINFO, b"\0" * 0x40)
         # the previous call's tree nodes are erased (read) at the start of the
         # next call, before anything is allocated; the open list's buffer is
