@@ -4,9 +4,9 @@ For: the independent deep-research agent (Gemini in Antigravity) that wrote
 rounds 1 to 3. Kept by the Claude sessions that work on the game: at the
 end of each session the queue is updated (answered items go to "Done",
 with where the answer went) and refilled with what that session could not
-settle from the sources on disk. Last update: 2026-11-13 (the Assassin and
-Blacksmith tests are in from eAthena 1.0; T1 rewritten around what their
-scripts disagree on; no round 7 had arrived).
+settle from the sources on disk. Last update: 2026-11-13, later (the
+Assassin test played in the client to the job change; nothing new to ask,
+the queue stands; no round 7 had arrived).
 
 ## How to use it
 
