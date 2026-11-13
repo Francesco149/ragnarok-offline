@@ -72,6 +72,11 @@ Next:
   text against the emulators is settled (R6).
 * Play every job in the real client: skill window, hotkeys, each skill's
   effect and sound.
+  Tried in the client on 2026-11-13 (`@useskill`): the Assassin's Sonic
+  Blow, Enchant Poison, Venom Dust and Cloaking (which ends away from a
+  wall, as in mod0631, `skill.c:4132`); the Blacksmith's Weapon
+  Perfection, Over Thrust and Maximize Power, and the refusal of Adrenaline
+  Rush and Hammer Fall with a katar worn.
 
 ## 4. NPC content
 
