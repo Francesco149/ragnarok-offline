@@ -461,8 +461,13 @@ happened in 2003 (Lutie toy factory 2003-04-08).
 Rune-Midgarts Library (monster locations).
 
 ### 11. Shop NPC names and stock
-Done in part: shops are named from 817 by cell. 18 of 80 have no English
-name in 817 (none nearby, or only a Japanese one) and show "Shop".
+Done in part: shops are named from 817 by cell. Two of 817's lines have a
+space before the tab and were missed until 2026-11-14 (Izlude's Butcher,
+the church's Nun). Where 817 has no shop near the cell, the importer takes
+the English 817 gives most often to shops mod0631 names alike (its
+道具商人, 武器商人, 防具商人 and テイミング商人 become Tool, Weapon and
+Armor Dealer and Pet Merchant). Two still show "Shop": Prontera's
+野菜商人 at `48,58` and Juno's 王窓商会, words 817 never translates.
 **Impact:** shop names over NPC heads; stock lists vs iRO 2004.
 **Look:** match 817 `npc/shops/shop.txt` by cell; the iRO item library
 (2004) for prices.

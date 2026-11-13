@@ -2,7 +2,8 @@
 -- conf/map_athena.conf npc list. GPL data. Map names follow this client (tools/import/maps.py);
 -- entries on maps the client lacks are skipped by the server at load time.
 -- Price {id} = the item's db price; {id, n} = n zeny. Shop names: eAthena 817 by cell
--- (mod0631's are Japanese); "Shop" where 817 has none within 3 cells.
+-- (mod0631's are Japanese). Where 817 has none within 3 cells, the English 817 gives
+-- most often to shops mod0631 names alike ("Tool Dealer" for its 道具商人); else "Shop".
 -- delay/delay2: respawn ms (0 = Athena default 5000)
 spawn { map = "new_zone03", x = 0, y = 0, xs = 0, ys = 0, mob = 1184, count = 40, delay = 0, delay2 = 0 } -- npc_mob_job.txt:7
 spawn { map = "job_thief1", x = 0, y = 0, xs = 0, ys = 0, mob = 1182, count = 180, delay = 0, delay2 = 0 } -- npc_mob_job.txt:11

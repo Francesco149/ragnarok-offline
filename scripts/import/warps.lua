@@ -2,7 +2,8 @@
 -- conf/map_athena.conf npc list. GPL data. Map names follow this client (tools/import/maps.py);
 -- entries on maps the client lacks are skipped by the server at load time.
 -- Price {id} = the item's db price; {id, n} = n zeny. Shop names: eAthena 817 by cell
--- (mod0631's are Japanese); "Shop" where 817 has none within 3 cells.
+-- (mod0631's are Japanese). Where 817 has none within 3 cells, the English 817 gives
+-- most often to shops mod0631 names alike ("Tool Dealer" for its 道具商人); else "Shop".
 warp { map = "mag_dun01", x = 126, y = 66, span = { 1, 1 }, to = { "yuno_fild03", 34, 139 } } -- npc_warp30.txt:8
 warp { map = "mag_dun01", x = 242, y = 241, span = { 1, 1 }, to = { "mag_dun02", 47, 30 } } -- npc_warp30.txt:9
 warp { map = "mag_dun02", x = 47, y = 28, span = { 1, 1 }, to = { "mag_dun01", 242, 239 } } -- npc_warp30.txt:10
