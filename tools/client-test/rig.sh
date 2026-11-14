@@ -4,7 +4,7 @@
 #   rig.sh server-start | server-stop | server-log [N]
 #   rig.sh client-start | client-stop
 #   rig.sh shot <name>             screenshot -> /data/shots/<name>.png
-#   rig.sh click X Y | type TEXT | key KEY...
+#   rig.sh click X Y | dclick X Y | rclick X Y | drag X1 Y1 X2 Y2 | type TEXT | key KEY...
 #
 # Display :99 (Xvfb 1024x768), client = /data/play/RagnarokOnline (after `setup`),
 # Wine prefix /data/wine, settings from tools/client-test/ragnarok-settings.reg.
@@ -40,6 +40,10 @@ case "$cmd" in
   click) focus; xdotool mousemove "$1" "$2" sleep 0.3 mousedown 1 sleep 0.15 mouseup 1 ;;
   dclick) focus; xdotool mousemove "$1" "$2" sleep 0.3 mousedown 1 sleep 0.08 mouseup 1 sleep 0.08 mousedown 1 sleep 0.08 mouseup 1 ;;
   rclick) focus; xdotool mousemove "$1" "$2" sleep 0.3 mousedown 3 sleep 0.15 mouseup 3 ;;
+  drag) # rig.sh drag X1 Y1 X2 Y2: press at the first point, move in steps (the client needs motion), let go at the second
+    focus; xdotool mousemove "$1" "$2" sleep 0.3 mousedown 1 sleep 0.2
+    for i in 1 2 3 4 5 6 7 8; do xdotool mousemove $(( $1 + ($3 - $1) * i / 8 )) $(( $2 + ($4 - $2) * i / 8 )) sleep 0.05; done
+    xdotool sleep 0.2 mouseup 1 ;;
   type) focus; xdotool type --delay 90 "$*" ;;
   key) focus; xdotool key --delay 120 "$@" ;;
   *) sed -n '2,12p' "$0"; exit 2 ;;
