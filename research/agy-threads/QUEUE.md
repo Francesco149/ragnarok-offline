@@ -455,6 +455,13 @@ Sets: `skill_castend_*` for those skills.
   Do not quote jAthena //0988 or the guide's Talkie Box lines again.
 * Arrows: answered by round 19 (RODataZone's combat page; its capture of
   2003-12-16 already has "rnd( 0 , ArrowATK - 1 )"): built.
+* **Bow damage, a second witness** (new 2026-11-14). The game now follows
+  RODataZone's combat page (2003-12-16) for bows: least ATK x DEX / 100,
+  arrow 0 to ATK - 1. 817 parts from it twice: the arrow adds 0 to ATK,
+  and above DEX = ATK its least is ATK x ATK / 100. Wanted: any other
+  player's damage formula for bows dated 2003-04, any server (Ragu Memo's
+  damage or archer page, a kRO or jRO guide, a forum measurement), with
+  its date. Do not quote RODataZone's combat page again.
 * Frost Nova's look is settled from the exe (THREADS.md #22): not wanted.
 * The iRO guide's pages on disk have been read against all of these
   (THREADS.md #22, 2026-11-11): do not repeat that. Wanted is anything
