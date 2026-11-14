@@ -97,8 +97,10 @@ Working with the real client:
   and ailments with their icons. The Assassin's, Blacksmith's, Hunter's,
   Wizard's, Priest's and Knight's skills have been tried in the real client;
 - battle as the period emulators have it: elements, sizes, cards, refine
-  bonuses, criticals, arrows; monsters with their period AI and skills;
-  EXP, drops, MVP rewards;
+  bonuses, criticals, arrows; monsters with their period AI and skills,
+  and the 93 skills an iRO player's list of April 2004 gives monsters that
+  the December 2003 emulator lacks (Endure, Increase Agility, Piercing
+  Attack...); EXP, drops, MVP rewards;
 - a drop-in Windows launcher that runs the CD's own patcher against a local
   patch server, and an all-in-one installer built from your own disc.
 
