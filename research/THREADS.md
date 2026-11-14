@@ -1079,8 +1079,7 @@ Shelf, `other/books.txt`). **Left as 817 has them, open:**
   still lists is harmless: `comodo_npc` (above), and Kafras whose bodies
   are replaced or off with `juno` (`CheckCart`, `frst_job_quest`).
   A side-by-side of the item ids each NPC counts, takes and gives, 817
-  against mod0631 on the same cell (`target/re/item_xcheck.py`, not kept:
-  rewrite from the commit message of 2026-11-14 if needed), and a scan for
+  against mod0631 on the same cell (`research/npc_item_xcheck.py`), and a scan for
   zeny taken without a test, found more of the same, all mended with
   mod0631 as the second witness (DEVIATIONS): the Clock Tower's 3F and B3
   gates let anyone through (`countitem < 0`), Aldebaran's Trader took an
