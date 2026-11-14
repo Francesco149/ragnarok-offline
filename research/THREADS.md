@@ -1303,6 +1303,32 @@ the panic line naming the skill was not kept. **Look:** loop the workspace
 run and keep the panic line; suspects are a skill whose packet is sent later
 than 500 ms or a random miss sending nothing.
 
+### 31. Items the client knows that nothing gives (cut content leads)
+`research/unobtainable_items.py` (2026-11-14) lists 107 items with a
+sprite or a description in the merged client and no drop, box, pet or
+script that gives them. Groups worth building, after research
+(DEVIATIONS.md, "Content the client ships"):
+* **Hats with Gravity's description and no name** (5020-5052 less the
+  Alberta eight): Kafra Band, Money Loser's Grief, Parcel Hat, Cake Hat,
+  Chef's Hat, Candle, Spore Hat, Panda Cap, Miner's Helmet, Smokie Hat,
+  Lightbulb Hairband, Poring Hat, Cross Hairband, Apple Hat, Deviruchi
+  Hat, Spotted Eggshell, Innocence of Maiden, Opera Ghost Mask, Wings of
+  Demon, Bongun Hat, Striped Bandana, Mysterious Apple Hat, Bell of
+  Pussycat, Blue Bandana. RODataZone's quest list (#29) has makers for some
+  (Payon's Young Man, Comodo's Traveler and Hair Ornament Girl, Lutie's
+  vending machine): read it for each before inventing one.
+* **Kafra things**: the payroll (7056) and the free tickets for storage,
+  teleport and cart (7059-7061), with descriptions: a Kafra part-time job?
+* **Named, described, never given**: Mini Glasses, Army Cap, Eye of
+  Dullahan, Critical Ring, Rogue's Treasure, Machoman's Glasses, Lord
+  Kaho's Horn, Gladius [3], Invite/Admission for Duel, Coupon, Yarn,
+  Megaphone, Vigorgra, Magic Paint, Cart Parts, Cotton and Silk Mats,
+  Wasted Magazine, Animal Poop.
+* Not leads: the Alchemist's books and bottles (2-2, `jobs2_2`), the
+  godly items (WoE, #17), items with only a resource name (later patches'
+  sprites, no text).
+Each id the client cannot name needs a line in `data/client/item_names.tsv`.
+
 ## Resolved
 
 ### R1. Basic Skill levels

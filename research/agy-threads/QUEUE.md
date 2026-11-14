@@ -402,6 +402,20 @@ Sets: `skill_castend_*` for those skills.
 
 ### T9. Small, independent
 
+* **(new 2026-11-14) Who made the hats the client ships (THREADS.md
+  #31).** The client describes 24 hats that no period emulator gives:
+  Kafra Band, Money Loser's Grief, Parcel Hat, Cake Hat, Chef's Hat,
+  Candle, Spore Hat, Panda Cap, Miner's Helmet, Smokie Hat, Lightbulb
+  Hairband, Poring Hat, Cross Hairband, Apple Hat, Deviruchi Hat, Spotted
+  Eggshell, Innocence of Maiden, Opera Ghost Mask, Wings of Demon, Bongun
+  Hat, Striped Bandana, Mysterious Apple Hat, Bell of Pussycat, Blue
+  Bandana. For each, on iRO, euRO or jRO in 2003-04: which NPC made it or
+  which monster dropped it, where, for what, and the English name a server
+  of the time gave it. Also the Kafra payroll and free tickets (7056,
+  7059-7061): what quest gave them. Start from RODataZone's `quests.js`
+  HATS list (rows not yet taken: Payon's Young Man, Comodo's Traveler and
+  Hair Ornament Girl, Lutie's vending machine) and Ragu Memo's `trade.html`.
+
 * **(new 2026-11-14) Item numbers: the client's text against mod0631
   (THREADS.md R6, "Items").** `research/item_desc_check.py` lists 81 items
   whose description in this client states another weight, attack, defence
