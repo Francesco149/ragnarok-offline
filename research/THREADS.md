@@ -462,6 +462,15 @@ Blacksmith test as eAthena 1.0 has it: a quiz in Alberta, materials, a
 "Reciept", a quiz in Morroc, the "Hammer of Blacksmith". Still no account
 of the Knight's, the Assassin's or the Blacksmith's test before autumn
 2004.
+**Round 12 (2026-11-14):** iRO Wiki's walkthroughs of 2008-09, in a
+Russian translation (sharonov.ru; grade D, later evidence only). Knight:
+Sir James's answers are jAthena's, which we ask; Sir Andrew picks one of
+four lists (jAthena's set 1 or eAthena's set 2, each whole or less one
+item), where we ask set 1; seven Awakening Potions at the change.
+Blacksmith: the "old" orders (8 Iron Ore + 1 Trunk + 2 Blue Gemstone for
+the Arbalest) and the level-4 answer (+4 "before the 2008 patch") are
+eAthena's, as we have them; the Eye Bandage list is of June 2008.
+Assassin: the rewards and the necklace as eAthena 1.0. Nothing older.
 
 
 ### 9. Refining details
@@ -704,6 +713,20 @@ the same rate as the chance", and takes Stone Curse's time from the
 2channel mage thread's template ("マジスレテンプレ準拠"). So jRO's players
 had a resistance worked out by January 2004; 817's `3 +` and LUK-only
 curse/sleep terms are a step later.
+**Round 12 (2026-11-14, `research/notes/round12-review.md`): a dated
+English copy of that research.** RODataZone's "Status Effects" page
+(`data:refs/web/rodatazone-2004/`, written between 2004-01-19 and
+2004-02-10 by the site's directory listing) says "This information comes
+from Ragu Memo" (a Japanese research site). Its chances are 817's to the
+letter: `BaseChance * (97 - VIT - LUK/3) / 100` for stun and silence,
+MDEF for freeze, INT for sleep and blind. It parts from 817 on: Stone
+Curse resisted by INT (817 MDEF), 17 - MDEF/20 s; Poison by VIT + LUK/5,
+3% of max HP every 3 s down to a quarter, 10-30 s on monsters and 5-60 s
+on players; Blind `30 - BaseLevel/10 - INT/15` s (at least 15); Stun
+`3 * (97 - VIT - LUK/3) / 100` s; Curse "LUK helps, formula unknown".
+The nearest-dated source we have for the lengths (817's come from its
+`cast_db.txt` per skill): set them side by side, skill by skill, before
+changing any. A pRO guide of 2004-08 (GameFAQs 31808) copies the page.
 **Impact:** `skill_additional_effect` and the ailment part of
 `skill_status_change_start` in `scripts/rules/`.
 **Look:** period player guides on stun and freeze resistance ("VIT 97
@@ -1024,8 +1047,9 @@ Shelf, `other/books.txt`). **Left as 817 has them, open:**
   (it is 3318702): the official script's own slip, it seems.
 * *Acolyte.* Yosuke stands at `prt_fild00 208,218` in 817 and `208,255`
   in mod0631; the second is a blocked cell on this client's map, so 817's
-  is kept. 817 saves you a few cells from each ascetic, mod0631 on the
-  ascetic's own cell.
+  is kept (iRO Wiki of 2009 has `208,218` too: round 12, grade D). 817
+  saves you a few cells from each ascetic, mod0631 on the ascetic's own
+  cell.
 * *Mage* (817 only; jAthena's of 2004-03-02 has the same numbers): the
   Mixing Machine checks each solution's own amounts and then takes two
   Jellopy and three Fluff whatever the solution.

@@ -4,7 +4,7 @@ For: the independent deep-research agent (Gemini in Antigravity) that wrote
 rounds 1 to 3. Kept by the Claude sessions that work on the game: at the
 end of each session the queue is updated (answered items go to "Done",
 with where the answer went) and refilled with what that session could not
-settle from the sources on disk. Last update: 2026-11-14, round 11 reviewed (`research/notes/round11-review.md`: Charge Arrow's Crossbow, Gershaun's juice and the doomed swords' lists moved to Done and built or confirmed; T5, T6, T7, T9 narrowed; a WoE item added to T9); before that, later (thread 28 built from the client: T9's ground-skill item widened); before that, round 10 reviewed (`research/notes/round10-review.md`: T8's Skid Trap item and two T9 items moved to Done, T8 asks when euRO got iRO's Comodo skill patch, thread 28 narrowed; the boss rule built); before that, later (T9 monster skills: the FAQ pairs added, the rate question); before that, round 9 reviewed (`research/notes/round9-review.md`: two T9 items moved to Done, the monster-skill item rewritten); before that, later the same day (thread 28 added to T9); before that, round 8 reviewed (`research/notes/round8-review.md`); before that, later the same day (T7 narrowed by euRO's May-2004 text; two shop names added to T9). Before that, 2026-11-14 (round 7 reviewed: `research/notes/round7-review.md`.
+settle from the sources on disk. Last update: 2026-11-14, round 12 reviewed (`research/notes/round12-review.md`: T4 points at Ragu Memo behind RODataZone's status page; T1 closed to iRO Wiki copies; Cart Revolution's Iron decided at 20); before that, round 11 reviewed (`research/notes/round11-review.md`: Charge Arrow's Crossbow, Gershaun's juice and the doomed swords' lists moved to Done and built or confirmed; T5, T6, T7, T9 narrowed; a WoE item added to T9); before that, later (thread 28 built from the client: T9's ground-skill item widened); before that, round 10 reviewed (`research/notes/round10-review.md`: T8's Skid Trap item and two T9 items moved to Done, T8 asks when euRO got iRO's Comodo skill patch, thread 28 narrowed; the boss rule built); before that, later (T9 monster skills: the FAQ pairs added, the rate question); before that, round 9 reviewed (`research/notes/round9-review.md`: two T9 items moved to Done, the monster-skill item rewritten); before that, later the same day (thread 28 added to T9); before that, round 8 reviewed (`research/notes/round8-review.md`); before that, later the same day (T7 narrowed by euRO's May-2004 text; two shop names added to T9). Before that, 2026-11-14 (round 7 reviewed: `research/notes/round7-review.md`.
 T11 answered and moved to Done; T1, T9 and T10 updated with what it found).
 
 ## How to use it
@@ -40,7 +40,7 @@ T11 answered and moved to Done; T1, T9 and T10 updated with what it found).
 2. Take tasks from the top; the order is by how much of the game waits on
    the answer. A round need not take them all. Say in `progress.md` which
    ones you took.
-3. Write only inside `research/agy-threads/r<N>/` for round N (round 9 is
+3. Write only inside `research/agy-threads/r<N>/` for round N (round 13 is
    next): `rows/<task id>.jsonl`, `pages/` for saved web pages, `check.txt`
    for your own checker run. No summary report: rows only, plus one line per
    task in `progress.md`: "answered" only if every bullet of the task has a
@@ -79,6 +79,10 @@ What is on this machine is listed in `HANDOFF-r3.md` §3. Since then:
 ## Queue
 
 ### T1. The 2-1 job tests: dating and sharpening them (threads 5, 8)
+
+**After round 12:** iRO Wiki and its translations (sharonov.ru) describe
+iRO of 2008 and later: they agree with what the game has and date
+nothing. Do not quote them again for T1.
 
 **After round 9:** do not quote eAthena 1.0's or jAthena's test scripts
 again. THREADS #8 and the headers of `scripts/npc/*_test.lua` already
@@ -233,6 +237,13 @@ Round 6 found jAthena's first resistance (//0729, 2004-01-21; //0736 takes
 Stone Curse's time from "マジスレテンプレ", the 2channel mage thread's
 template): THREADS.md #21. Wanted now: that template itself, or any 2003
 copy of it (2ch archives, mirrors), with its numbers.
+Round 12 led to RODataZone's "Status Effects" page (written between
+2004-01-19 and 2004-02-10, saved in `data:refs/web/rodatazone-2004/`),
+which credits "Ragu Memo" (THREADS.md #21). Wanted now: **Ragu Memo**
+itself (ラグメモ or similar; a Japanese RO research site of 2003-04) on
+Wayback or in mirrors, its status-effect page with its date, and above
+all its ailment *lengths* by skill and level. Do not quote RODataZone's
+page or the GameFAQs guides that copy it again.
 Sets: `skill_additional_effect` and the ailment part of
 `skill_status_change_start`.
 
