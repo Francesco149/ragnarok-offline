@@ -3302,6 +3302,54 @@ source = "the commonest of 31 NPC_PIERCINGATT rows in rAthena pre-renewal db/mob
 faq = "Piercing Attack / INCANTATION_SAMURAI (every boss)"
 
 [[skill]]
+mob = 1035
+state = "chase"
+skill = 111
+lv = 1
+rate = 10
+cast = 3000
+delay = 30000
+cancel = true
+target = "self"
+cond = "always"
+cond_val = 0
+tier = "athena2003"
+source = "jAthena //0953 (2004-04-27) db/mob_skill_db.txt"
+faq = "Adrenaline Rush / Hunter Fly (client action table)"
+
+[[skill]]
+mob = 1214
+state = "chase"
+skill = 152
+lv = 1
+rate = 600
+cast = 1000
+delay = 10000
+cancel = true
+target = "target"
+cond = "myhpltmaxrate"
+cond_val = 30
+tier = "athena2003"
+source = "jAthena //0953 (2004-04-27) db/mob_skill_db.txt"
+faq = "Stone Fling / Choco (client action table)"
+
+[[skill]]
+mob = 1214
+state = "chase"
+skill = 152
+lv = 1
+rate = 200
+cast = 1000
+delay = 10000
+cancel = true
+target = "target"
+cond = "always"
+cond_val = 0
+tier = "athena2003"
+source = "jAthena //0953 (2004-04-27) db/mob_skill_db.txt"
+faq = "Stone Fling / Choco (client action table)"
+
+[[skill]]
 mob = 1038
 state = "any"
 skill = 26

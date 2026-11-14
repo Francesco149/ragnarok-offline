@@ -118,6 +118,15 @@ for line in open(ROOT / "tools/import/mob_skills_faq.tsv", encoding="utf-8"):
 for faq_skill, name in BOSS_SKILLS:
     for mid, mname in mvps:
         pairs.append((faq_skill, f"{mname} (every boss)", [sid[name]], [mid]))
+# The client's own monster action table (data\monsterskillinfo.xml, Atbash-encoded, shipped with
+# the Turtle Island patch of 2003-04-30; tier client) gives these monsters an animation for these
+# skills, so Gravity's monsters used them. Only pairs with a row in a period table are taken here;
+# NPC_PROVOCATION (a taunt, on 28 monsters there) is left out: this client shouts "Unknown Skill !!"
+# for it (THREADS.md #23).
+CLIENT_PAIRS = [("Adrenaline Rush", "Hunter Fly (client action table)", "BS_ADRENALINE", 1035),
+                ("Stone Fling", "Choco (client action table)", "TF_THROWSTONE", 1214)]
+for faq_skill, faq_mob, name, mid in CLIENT_PAIRS:
+    pairs.append((faq_skill, faq_mob, [sid[name]], [mid]))
 
 out, missing, seen, nfound = [], [], set(), 0
 for faq_skill, faq_mob, skills, cands in pairs:

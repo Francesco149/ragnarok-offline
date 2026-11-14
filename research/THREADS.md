@@ -883,6 +883,19 @@ for them are the reverse of their names. Still open:
   mod0631 skipped every friend row.
 * **Not placed:** Detoxify (Obeaune), Lazy Attack (Merman), and the FAQ's
   "Grimtooth" as a monster (Maximize Power, Piercing Attack).
+**The client's own monster action table (2026-11-14).** The Turtle Island
+patch file ships `data\monsterskillinfo.xml` (Atbash-encoded: a<->z;
+decoded copy in `target/re/`): for 41 monster sprites, the skills that play
+a special animation (action 6 to 9). 19 of its 52 pairs are in our tables.
+Of the rest, 28 are NPC_PROVOCATION, a taunt jAthena //0953 gives some
+monsters (Poring, Peco Peco, Lunatic, Hunter Fly: "挑発", idle, rate 2) and
+plays as a pet "performance"; tried in the rig, this client shouts
+"Unknown Skill !!" over a Poring for it, so it is left out (the same open
+question as above). Taken (`CLIENT_PAIRS` in
+`tools/import/mob_skills_faq.py`): the Hunter Fly's Adrenaline Rush and
+Choco's Stone Fling, with jAthena's rows. Left, no period table has a row:
+Baphomet's Adrenaline Rush, the Peco Peco's summoning, the Rocker's Lex
+Divina.
 **Impact:** how every fight feels; `data/db/mob_skills.toml`,
 `data/db/mob_skills_faq.toml`.
 **Look:** kRO notices on monster skills (2003); period monster databases
