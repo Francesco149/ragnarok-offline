@@ -466,6 +466,10 @@ eAthena 817 (2004-02-19), bugs included. The translator is
   (`npc_town_kafra.txt:4805`). 817 has `54,232`, a hundred cells south and
   inside a cliff on this client's map: a typing slip, found by
   `ragnarok-offline check`.
+* **`aldeg_cas05`'s tile at `188,49` lands on `165,228`**
+  (`scripts/npc/castle_warps.lua`). mod0631 and 817 both have `165,288`, off
+  the 240x240 map; every other pair in that castle lands four cells from its
+  partner tile (`165,232` here), and rAthena has `228`.
 * **"morroc"** in the Juno Kafras is a typo for `morocc`.
 * **Shop names** come from 817 by cell (mod0631's are Japanese). "Shop" is
   used where 817 has none within 3 cells, or only a Japanese one.
