@@ -690,6 +690,11 @@ period guides. Round 1: research/agy-threads/HANDOFF.md.
 ### 19. Lutie (Xmas) in January
 Was Lutie a permanent town on euRO, or seasonal? The CD patcher carries
 `2003-10-31gdata_xmas.gpf`.
+**2026-11-14:** the Turtle Island patch file euRO listed in January 2004
+(entry 400, `2003-04-30gdata_turtle_ph_1.gpf`) itself carries `xmas.gat`,
+`.gnd` and `.rsw`: Lutie's map reached every euRO client with the island,
+whatever the servers did with it. The game has Lutie open (mod0631's
+warps).
 **Look:** euRO notices Dec 2003–Jan 2004.
 
 ### 21. Ailments: which emulator is nearer the official servers
