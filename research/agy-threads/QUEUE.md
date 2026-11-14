@@ -665,7 +665,7 @@ Sets: `skill_castend_*` for those skills.
   (c) how much faster a castle's owners recovered HP/SP (the iRO page:
   "faster", no number), and whether it was for the guild or the master
   alone; (d) when "Increased guild castle regen [Valaris]" came into
-  eAthena (an SVN or forum date; it is in rAthena's `pc.cpp`). Also still
+  eAthena before 2004-11-04 (rAthena's first commit, eAthena's tree, has it). Also still
   open: euRO's second siege day, if it had one.
 
 ## Done
