@@ -710,7 +710,10 @@ impl Game {
         if !walkable {
             self.battle.walls.push((map.to_string(), x, y));
         }
-        let pkt = packets::change_map_cell(x, y, if walkable { 0 } else { 5 }, map);
+        // A freed cell gets its own type back (3 for water), as Athena sends
+        // the gat's; the client stores whatever it is given (0x518cd0).
+        let freed = if m.grid.flags(x as i32, y as i32) & ro_data::gat::WATER != 0 { 3 } else { 0 };
+        let pkt = packets::change_map_cell(x, y, if walkable { freed } else { 5 }, map);
         for pid in self.world.players_on(map) {
             if let Some(sid) = self.sid_of(pid) {
                 self.send(sid, pkt.clone());

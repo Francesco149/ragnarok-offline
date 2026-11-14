@@ -312,7 +312,9 @@ impl Game {
             return;
         }
         if let Some(p) = self.char_of_unit_mut(unit).and_then(|c| c.pets.get_mut(&pet.id)) {
-            p.name = name.chars().take(23).collect();
+            // No '%': the client copies its own pet's name with sprintf(name)
+            // (0x0095 at 0x516917, 0x01a2 at 0x52933b). mod0631 keeps it.
+            p.name = name.chars().filter(|&c| c != '%').take(23).collect();
             p.renamed = true;
         }
         self.spawn_pet(unit);

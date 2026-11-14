@@ -120,9 +120,25 @@ impl Writer {
         self.buf.extend_from_slice(&enc[..n]);
         self.zeros(size - n)
     }
+    /// Fixed-size string that may fill the whole field with no NUL, for
+    /// fields the client terminates itself (0x0091's map name, 0x519e00).
+    pub fn str_fixed_full(&mut self, s: &str, size: usize) -> &mut Self {
+        let enc = encode_text(s);
+        let n = enc.len().min(size);
+        self.buf.extend_from_slice(&enc[..n]);
+        self.zeros(size - n)
+    }
     /// NUL-terminated string (for variable packets).
     pub fn str_nul(&mut self, s: &str) -> &mut Self {
         self.buf.extend_from_slice(&encode_text(s));
+        self.u8(0)
+    }
+    /// NUL-terminated string cut to fit `max` bytes with its NUL, for text
+    /// the client copies unchecked into a fixed buffer (chat: 256 bytes).
+    pub fn str_nul_max(&mut self, s: &str, max: usize) -> &mut Self {
+        let enc = encode_text(s);
+        let n = enc.len().min(max.saturating_sub(1));
+        self.buf.extend_from_slice(&enc[..n]);
         self.u8(0)
     }
     /// Packed cell position + facing (3 bytes).

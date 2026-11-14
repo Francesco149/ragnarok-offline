@@ -197,14 +197,18 @@ pub fn server_tick(tick: u32) -> Vec<u8> {
     Writer::new(ZC_NOTIFY_TIME).u32(tick).finish()
 }
 
+/// The client copies 0x008d/0x008e text unchecked into a 256-byte stack
+/// buffer (0x519bd0, 0x5167a0); longer text crashes it.
+const CHAT_MAX: usize = 256;
+
 /// 0x008d: chat bubble + log line from a unit ("name : text").
 pub fn unit_chat(id: u32, text: &str) -> Vec<u8> {
-    Writer::new(ZC_NOTIFY_CHAT).u32(id).str_nul(text).finish()
+    Writer::new(ZC_NOTIFY_CHAT).u32(id).str_nul_max(text, CHAT_MAX).finish()
 }
 
 /// 0x008e: chat line shown as your own.
 pub fn self_chat(text: &str) -> Vec<u8> {
-    Writer::new(ZC_NOTIFY_PLAYERCHAT).str_nul(text).finish()
+    Writer::new(ZC_NOTIFY_PLAYERCHAT).str_nul_max(text, CHAT_MAX).finish()
 }
 
 /// 0x009a: broadcast (yellow, top of screen).
@@ -224,9 +228,11 @@ pub fn emotion(id: u32, kind: u8) -> Vec<u8> {
     Writer::new(ZC_EMOTION).u32(id).u8(kind).finish()
 }
 
-/// 0x0091: change map on the same server.
+/// 0x0091: change map on the same server. The client NUL-terminates the
+/// 16-byte name and drops its last four characters (0x519e00), so a
+/// 12-character map ("mjolnir_04_1") needs all 16 bytes.
 pub fn map_move(map: &str, x: u16, y: u16) -> Vec<u8> {
-    Writer::new(ZC_NPCACK_MAPMOVE).str_fixed(&format!("{map}.gat"), 16).u16(x).u16(y).finish()
+    Writer::new(ZC_NPCACK_MAPMOVE).str_fixed_full(&format!("{map}.gat"), 16).u16(x).u16(y).finish()
 }
 
 // ---- NPC dialog ----
@@ -288,7 +294,8 @@ pub fn shop_sell_list(items: &[(u16, u32, u32)]) -> Vec<u8> {
     }
     w.finish()
 }
-/// 0x00ca: 0 ok, 1 no zeny, 2 overweight
+/// 0x00ca: 0 ok, 1 no zeny, 2 overweight, 3 no room (msgstringtable 54, 55,
+/// 56, 221; client 0x51eca0). Any code closes the shop window.
 pub fn shop_buy_result(code: u8) -> Vec<u8> {
     Writer::new(ZC_PC_PURCHASE_RESULT).u8(code).finish()
 }
@@ -479,7 +486,8 @@ pub fn viewpoint(npc: u32, kind: u32, x: u32, y: u32, id: u8, color: u32) -> Vec
     Writer::new(ZC_COMPASS).u32(npc).u32(kind).u32(x).u32(y).u8(id).u32(color).finish()
 }
 
-/// 0x0189: "Unable to Teleport in this area" (kind 0); 1 = can't memo here.
+/// 0x0189: "Unable to Teleport in this area" (kind 0, red; kind 1 is the same text in
+/// yellow, 0x518273).
 pub fn map_info(kind: u16) -> Vec<u8> {
     Writer::new(0x0189).u16(kind).finish()
 }
@@ -569,7 +577,8 @@ pub fn pet_food(ok: bool, food: u32) -> Vec<u8> {
     Writer::new(0x01a3).u8(ok as u8).u16(food as u16).finish()
 }
 
-/// 0x01a4: a pet value (0 spawn, 1 intimacy, 2 hunger, 3 accessory, 4 performance, 5 0x14).
+/// 0x01a4: a pet value (0 spawn, 1 intimacy, 2 hunger, 3 accessory, 4 performance, 5 0x14:
+/// the client ignores kind 5's value and stores 20, 0x529030).
 pub fn pet_data(kind: u8, pet: u32, value: u32) -> Vec<u8> {
     Writer::new(0x01a4).u8(kind).u32(pet).u32(value).finish()
 }
@@ -811,7 +820,9 @@ pub fn mvp_exp(exp: u32) -> Vec<u8> {
     Writer::new(0x010b).u32(exp).finish()
 }
 
-/// 0x018d: what can be forged or refined now: (item, 0x0012, maker's char id) each.
+/// 0x018d: what can be forged or refined now: (item, 0x0012, maker's char id) each,
+/// as Athena sends them; the client reads only the item (0x51833c), and an
+/// empty list shows "You can't create items yet."
 pub fn produce_list(ids: &[u16], char_id: u32) -> Vec<u8> {
     let mut w = Writer::new(0x018d);
     for i in ids {
@@ -820,7 +831,8 @@ pub fn produce_list(ids: &[u16], char_id: u32) -> Vec<u8> {
     w.finish()
 }
 
-/// 0x018f: forging result (0 made, 1 failed).
+/// 0x018f: forging result (0 made, 1 failed; 2 and 3 play the pharmacy effects).
+/// The client plays an effect only: its message is built and never shown (0x527bb0).
 pub fn produce_effect(flag: u16, nameid: u16) -> Vec<u8> {
     Writer::new(0x018f).u16(flag).u16(nameid).finish()
 }
@@ -844,5 +856,23 @@ mod tests {
         assert!(text.split(':').zip(&opts).all(|(a, b)| a == b));
         let short = npc_menu(1, &["Yes".into(), "No".into()]);
         assert_eq!(&short[8..], b"Yes:No\0");
+    }
+
+    #[test]
+    fn chat_fits_the_client_buffer() {
+        let long = "x".repeat(1000);
+        let p = self_chat(&long);
+        assert_eq!(p.len() - 4, 256);
+        assert_eq!(*p.last().unwrap(), 0);
+        let p = unit_chat(7, &long);
+        assert_eq!(p.len() - 8, 256);
+        assert_eq!(&self_chat("hi")[4..], b"hi\0");
+    }
+
+    #[test]
+    fn map_move_keeps_a_sixteen_byte_name() {
+        let p = map_move("mjolnir_04_1", 3, 4);
+        assert_eq!(&p[2..18], b"mjolnir_04_1.gat");
+        assert_eq!(&map_move("prontera", 3, 4)[2..18], b"prontera.gat\0\0\0\0");
     }
 }
