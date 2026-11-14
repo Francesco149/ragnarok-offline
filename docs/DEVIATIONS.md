@@ -574,12 +574,42 @@ there is, marked as ours where it is ours, and listed here.
   boxes, which this game has none of yet (THREADS.md #17), so the Helm
   cannot be made until that is reworked. The hats' stats are mod0631's item
   rows as they were (Fashionable Glasses sit in the upper headgear slot).
+* **Four more hat makers** (`scripts/npc/hat_makers.lua`), for eighteen
+  hats the client describes and draws: Payon's Young Man (`payon_in01
+  122,41`, in the weapon and armour shop: Angel Helm, Hat of Petite
+  Diablo), Comodo's Hair Ornament Girl (`comodo 228,159`: Cross Hat, Bulb
+  Band, Stripe Band, Blue Hairband) and Traveler (`273,137`: Mine Helmet,
+  Parcel Hat, Money Loser's Grief, Phantom of Opera), and Lutie's Vending
+  Machine, the snowman at `xmas 115,297` (Raccoon Hat, Spore Hat, Wonder
+  Nutshell, Rainbow Eggshell, Blush, Chef Hat, Candle, Cake Hat). Makers,
+  cells and recipes: RODataZone's iRO quest list (2004-04) and Ragu Memo's
+  jRO list (2004-02), which agree but for the Chef Hat's Feathers (300 and
+  330: 330, as rAthena has it too). Dialogue and sprites: rAthena's
+  (iRO's later official text, tier later), cut to the client's window. Its
+  Titicupe, who tells Lutie's recipes, is left out; the machine shows them
+  itself. No period emulator has any of the four. Every material drops in
+  this world (the Nut Shell since 2026-11-14, below); the Blush wants 100
+  Alice's Aprons, and Alice is one of a kind in Glast Heim's castle. The
+  hats' stats and who may wear them are mod0631's item rows as they were
+  (the Angel Helm is for second jobs; the Mine Helmet's job list is
+  narrower than the client's "All", THREADS.md #31).
+* **Drops mod0631 left empty.** mod0631's monster table writes `512,0` (an
+  Apple at rate 0) in 95 drop slots; eAthena 817 (2004-01) has an item and
+  a rate in each, and RODataZone's iRO table of 2004-02 names about 80 of
+  them for the same monster. Those slots take 817's (`tools/import/
+  athena_import.py`, `research/mob_drop_holes.py`). Among them three hats
+  the client ships and nothing else gave: the Nut Shell (Wild Rose), the
+  Poring Hat (Marin) and the Bongun Hat; and the Elunium and Oridecon of
+  Baphomet and Phreeoni. The rates are 817's: neither the client nor
+  RODataZone gives one.
 * **English names for items the client cannot name.** The Turtle Island
   patch brought these hats with a sprite and a description but no line in
   `idnum2itemdisplaynametable.txt` ("You got 1"). `ragnarok-offline setup`
   (and the Windows launcher) adds a line for each id in
   `data/client/item_names.tsv` that the client's table lacks, with iRO's
-  names as RODataZone gave them; a client already set up is set up again.
+  names as RODataZone gave them (the hats above, and the materials and
+  drops a player needs to tell apart); a client already set up is set up
+  again.
   Gravity's table is never in the repository: setup appends to the copy in
   your data.grf.
 

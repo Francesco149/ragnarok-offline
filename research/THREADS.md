@@ -1285,7 +1285,7 @@ never captured (checked 2026-11-14); from 2004-04-17 the page loads
 Moon Hair Pin, Hair Protector) and Hat Store Girl (`136/79`: Sunday Hat,
 Mage Hat, Magician Hat for 1200 Solid Shell, Helm of Solar God), Payon's
 Young Man, Comodo's Traveler and Hair Ornament Girl, Lutie's vending
-machine (eight hats). Ragu Memo's `trade.html` (jRO, 2004-02) has the
+machine (eight hats; these four built 2026-11-14, #31). Ragu Memo's `trade.html` (jRO, 2004-02) has the
 Alberta two with their cells and how they are asked (the Hat Store Girl
 wants a Yellow Potion before she talks). Two of them want Turtle Island's
 drops, and iRO's notice of the island (2003-12-09) promised "new headgears
@@ -1348,6 +1348,37 @@ script that gives them. Groups worth building, after research
   godly items (WoE, #17), items with only a resource name (later patches'
   sprites, no text).
 Each id the client cannot name needs a line in `data/client/item_names.tsv`.
+**Built 2026-11-14** (`scripts/npc/hat_makers.lua`, DEVIATIONS.md): the
+four makers RODataZone and Ragu Memo list (Payon's Young Man, Comodo's Hair
+Ornament Girl and Traveler, Lutie's Vending Machine), eighteen hats, played
+in the client (a trade at each). Three more hats now drop as 817 has them
+(#32): the Nut Shell (5037, which our item table misnames "Apple Hat"), the
+Poring Hat and the Bongun Hat. **Left without a maker:** the Kafra Band
+(5020), Panda Cap (5030), Wings of Demon (5044) and Bell of Pussycat (5051):
+neither period list has them; rAthena's makers are later. The Kafra things
+and the named trinkets are as above.
+**Who may wear them:** the hats keep mod0631's job masks. The client's text
+says "All" for the Mine Helmet, mod0631 gives it to a dozen jobs; for the
+Cake Hat RODataZone says "All except Novice", mod0631 lets a Novice wear it.
+Nobody has set the client's "Available Job" lines against the item table
+the way `research/item_desc_check.py` did for weights.
+
+### 32. Drops mod0631 left empty
+mod0631's `db/mob_db.txt` writes `512,0` (an Apple, rate 0) in drop slots it
+had no item for. In 95 of them eAthena 817 (2004-01) has an item and a rate;
+`research/mob_drop_holes.py` lists them and checks RODataZone's iRO monster
+table of 2004-02 (names, no rates), which names the item for about 80 (the
+script matches 56 by name; Petite, Moonlight Flower, Soldier Skeleton and
+others match by hand). Taken from 817 since 2026-11-14 (the importer).
+**Open:** RODataZone does not name Magnolia's Yellow Herb, Nine Tail's Royal
+Jelly and Rough Oridecon, the Zombie Prisoner's Empty Potion Bottle,
+Mysteltainn's Elunium (it has Rough Elunium), the Wanderer's Yggdrasil Seed,
+nor anything of Arclouse, Rideword, Zherlthsh and the Clock Tower Manager
+(not in its table). The rates are 817's alone; were they iRO's or kRO's,
+and did jRO really lack these drops in December 2003 or did mod0631 just
+not know them?
+**Look:** RODataZone's monster pages per dungeon (rates?), GameFAQs monster
+guides of early 2004, Ragu Memo's monster pages (jRO).
 
 ## Resolved
 

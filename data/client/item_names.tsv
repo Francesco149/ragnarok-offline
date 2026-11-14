@@ -4,7 +4,8 @@
 # Island patch brought them without names, and euRO's later patches that may
 # have named them are not archived. An id the client already names is left
 # alone. Ours, not Gravity's: the names are iRO's as RODataZone listed them
-# (items/quests.js, Wayback 2004-05-02; research round 13, T5-001..008).
+# (items/quests.js, Wayback 2004-05-02; research round 13, T5-001..008; its
+# item and monster tables of 2004-02 for the drops), the Pole Axe eAthena 0.5.2's.
 # Tier: `period` (docs/PROVENANCE.md). Spaces become `_` in the table.
 #
 # id	name	used by
@@ -18,3 +19,31 @@
 5048	First Moon Hair Pin	scripts/npc/alberta_hats.lua (Stylish Merchant)
 7063	Soft Feather	Sunday Hat's material (Owl Baron, Owl Duke)
 7086	Emblem of the Sun God	Helm of Solar God's material (castle treasure)
+5035	Poring Hat	Marin's drop (eAthena 817, in a slot mod0631 left empty; mobs.toml)
+5037	Nut Shell	Wild Rose's drop (same); Wonder Nutshell's material
+5046	Bongun Hat	Bongun's drop (same)
+1306	War Axe	Chimera's drop (same)
+1417	Pole Axe	Gryphon's drop (same; RODataZone spells it "Poll Axe" and "Poleaxe", this is eAthena 0.5.2's)
+2109	Memory Book	Clock Tower Manager's drop (same; RODataZone: "Memory Book", from the "Tower Keeper")
+5025	Angel Helm	scripts/npc/hat_makers.lua (Young Man); castle treasure
+5038	Hat of Petite Diablo	scripts/npc/hat_makers.lua (Young Man)
+5036	Cross Hat	scripts/npc/hat_makers.lua (Hair Ornament Girl)
+5034	Bulb Band	scripts/npc/hat_makers.lua (Hair Ornament Girl)
+5049	Stripe Band	scripts/npc/hat_makers.lua (Hair Ornament Girl)
+5052	Blue Hairband	scripts/npc/hat_makers.lua (Hair Ornament Girl)
+5031	Mine Helmet	scripts/npc/hat_makers.lua (Traveler)
+5023	Parcel Hat	scripts/npc/hat_makers.lua (Traveler)
+5021	Money Loser's Grief	scripts/npc/hat_makers.lua (Traveler)
+5043	Phantom of Opera	scripts/npc/hat_makers.lua (Traveler)
+5033	Raccoon Hat	scripts/npc/hat_makers.lua (Vending Machine; RODataZone spells it "Raccon Hat")
+5029	Spore Hat	scripts/npc/hat_makers.lua (Vending Machine)
+5050	Wonder Nutshell	scripts/npc/hat_makers.lua (Vending Machine)
+5039	Rainbow Eggshell	scripts/npc/hat_makers.lua (Vending Machine)
+5040	Blush	scripts/npc/hat_makers.lua (Vending Machine)
+5026	Chef Hat	scripts/npc/hat_makers.lua (Vending Machine)
+5028	Candle	scripts/npc/hat_makers.lua (Vending Machine); the Mine Helmet's material
+5024	Cake Hat	scripts/npc/hat_makers.lua (Vending Machine)
+7069	Destroyed Armor	Cross Hat's material (Assulter, Turtle Island)
+7068	Burnt Tree	Spore Hat's material (Skeleton General, Heater)
+7065	Sea-Otter Fur	Raccoon Hat's material (See Otter)
+7064	Wing of Dragonfly	Wonder Nutshell's material (Dragon Tail, Turtle Island)

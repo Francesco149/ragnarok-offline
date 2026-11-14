@@ -85,9 +85,10 @@ Working with the real client:
   anything a player could not reach;
 - about 600 period NPCs: towns, the novice training ground, job quests,
   guides, Kafras (fares, storage, saving, carts, points), refiners, dye
-  makers, quests, shops; the Turtle Island chain, and Alberta's two hat
-  makers for the eight hats its patch ships (cut content: no period
-  emulator has them, the dialogue is ours); the job test of every 2-1
+  makers, quests, shops; the Turtle Island chain, and six hat makers no
+  period emulator has, for 26 hats the client ships (Alberta's two,
+  Payon's Young Man, Comodo's two, Lutie's snowman vending machine; cut
+  content, recipes from period quest lists); the job test of every 2-1
   job (Knight, Priest, Wizard, Blacksmith, Hunter, Assassin), on the maps this
   client has for them. Every first-job and 2-1 test has been played through
   in the real client;
