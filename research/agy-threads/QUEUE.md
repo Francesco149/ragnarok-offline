@@ -398,6 +398,15 @@ Sets: `skill_castend_*` for those skills.
 
 ### T9. Small, independent
 
+* **(new 2026-11-14) Item numbers: the client's text against mod0631
+  (THREADS.md R6, "Items").** `research/item_desc_check.py` lists 81 items
+  whose description in this client states another weight, attack, defence
+  or level than mod0631's table. RODataZone's item database (Wayback has
+  `www.rodatazone.com/items/` pages from 2003-08) gave iRO's numbers: one
+  row per item of that list it covers, with the capture's date. The
+  weights of potions and herbs and the attacks of Grimtooth, Swordbreaker,
+  Mailbreaker and the books first.
+
 * **(new 2026-11-14) iRO against jRO, item by item (THREADS.md #29).** For
   each of: the Baphomet Doll's trade (5 Panacea or 2 Royal Jelly), Marx
   Hansen's juices (one fruit or three), the Merchant test's letter (100z
