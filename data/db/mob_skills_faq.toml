@@ -2373,6 +2373,1286 @@ tier = "athena2003"
 source = "jAthena //0953 (2004-04-27) db/mob_skill_db.txt"
 faq = "Earth Spike / Phreeoni"
 
+[[skill]]
+mob = 1157
+state = "attack"
+skill = 60
+lv = 10
+rate = 1000
+cast = 3000
+delay = 300000
+cancel = false
+target = "self"
+cond = "myhpltmaxrate"
+cond_val = 20
+tier = "athena2003"
+source = "jAthena //0953 (2004-04-27) db/mob_skill_db.txt"
+faq = "Two-Hand Quicken / PHARAOH (every boss)"
+
+[[skill]]
+mob = 1373
+state = "attack"
+skill = 60
+lv = 10
+rate = 500
+cast = 3000
+delay = 300000
+cancel = false
+target = "self"
+cond = "myhpltmaxrate"
+cond_val = 20
+tier = "guess"
+source = "the commonest of 21 KN_TWOHANDQUICKEN rows in jAthena //0953 (2004-04-27) db/mob_skill_db.txt"
+faq = "Two-Hand Quicken / LORD_OF_DEATH (every boss)"
+
+[[skill]]
+mob = 1389
+state = "attack"
+skill = 60
+lv = 10
+rate = 500
+cast = 3000
+delay = 300000
+cancel = true
+target = "self"
+cond = "myhpltmaxrate"
+cond_val = 20
+tier = "athena2003"
+source = "jAthena //0953 (2004-04-27) db/mob_skill_db.txt"
+faq = "Two-Hand Quicken / DRACULA (every boss)"
+
+[[skill]]
+mob = 1399
+state = "attack"
+skill = 60
+lv = 10
+rate = 500
+cast = 3000
+delay = 300000
+cancel = false
+target = "self"
+cond = "myhpltmaxrate"
+cond_val = 20
+tier = "athena2003"
+source = "jAthena //0953 (2004-04-27) db/mob_skill_db.txt"
+faq = "Two-Hand Quicken / EVENT_BAPHO (every boss)"
+
+[[skill]]
+mob = 1418
+state = "attack"
+skill = 60
+lv = 10
+rate = 500
+cast = 3000
+delay = 300000
+cancel = true
+target = "self"
+cond = "myhpltmaxrate"
+cond_val = 20
+tier = "athena2003"
+source = "jAthena //0953 (2004-04-27) db/mob_skill_db.txt"
+faq = "Two-Hand Quicken / DARK_SNAKE_LORD (every boss)"
+
+[[skill]]
+mob = 1492
+state = "attack"
+skill = 60
+lv = 10
+rate = 500
+cast = 3000
+delay = 300000
+cancel = true
+target = "self"
+cond = "myhpltmaxrate"
+cond_val = 20
+tier = "athena2003"
+source = "jAthena //0953 (2004-04-27) db/mob_skill_db.txt"
+faq = "Two-Hand Quicken / INCANTATION_SAMURAI (every boss)"
+
+[[skill]]
+mob = 1038
+state = "chase"
+skill = 29
+lv = 1
+rate = 500
+cast = 3000
+delay = 120000
+cancel = true
+target = "self"
+cond = "myhpltmaxrate"
+cond_val = 50
+tier = "athena2003"
+source = "jAthena //0953 (2004-04-27) db/mob_skill_db.txt"
+faq = "Increase Agility / OSIRIS (every boss)"
+
+[[skill]]
+mob = 1039
+state = "chase"
+skill = 29
+lv = 1
+rate = 500
+cast = 3000
+delay = 120000
+cancel = false
+target = "self"
+cond = "myhpltmaxrate"
+cond_val = 50
+tier = "athena2003"
+source = "jAthena //0953 (2004-04-27) db/mob_skill_db.txt"
+faq = "Increase Agility / BAPHOMET (every boss)"
+
+[[skill]]
+mob = 1046
+state = "chase"
+skill = 29
+lv = 1
+rate = 500
+cast = 3000
+delay = 120000
+cancel = false
+target = "self"
+cond = "myhpltmaxrate"
+cond_val = 50
+tier = "athena2003"
+source = "jAthena //0953 (2004-04-27) db/mob_skill_db.txt"
+faq = "Increase Agility / DOPPELGANGER (every boss)"
+
+[[skill]]
+mob = 1059
+state = "chase"
+skill = 29
+lv = 1
+rate = 500
+cast = 3000
+delay = 120000
+cancel = false
+target = "self"
+cond = "myhpltmaxrate"
+cond_val = 50
+tier = "athena2003"
+source = "jAthena //0953 (2004-04-27) db/mob_skill_db.txt"
+faq = "Increase Agility / MISTRESS (every boss)"
+
+[[skill]]
+mob = 1086
+state = "chase"
+skill = 29
+lv = 1
+rate = 500
+cast = 3000
+delay = 120000
+cancel = false
+target = "self"
+cond = "myhpltmaxrate"
+cond_val = 50
+tier = "athena2003"
+source = "jAthena //0953 (2004-04-27) db/mob_skill_db.txt"
+faq = "Increase Agility / GOLDEN_BUG (every boss)"
+
+[[skill]]
+mob = 1087
+state = "chase"
+skill = 29
+lv = 1
+rate = 500
+cast = 3000
+delay = 120000
+cancel = false
+target = "self"
+cond = "myhpltmaxrate"
+cond_val = 50
+tier = "athena2003"
+source = "jAthena //0953 (2004-04-27) db/mob_skill_db.txt"
+faq = "Increase Agility / ORK_HERO (every boss)"
+
+[[skill]]
+mob = 1112
+state = "chase"
+skill = 29
+lv = 1
+rate = 500
+cast = 3000
+delay = 120000
+cancel = false
+target = "self"
+cond = "myhpltmaxrate"
+cond_val = 50
+tier = "guess"
+source = "the commonest of 24 AL_INCAGI rows in jAthena //0953 (2004-04-27) db/mob_skill_db.txt"
+faq = "Increase Agility / DRAKE (every boss)"
+
+[[skill]]
+mob = 1115
+state = "chase"
+skill = 29
+lv = 1
+rate = 500
+cast = 3000
+delay = 120000
+cancel = false
+target = "self"
+cond = "myhpltmaxrate"
+cond_val = 50
+tier = "athena2003"
+source = "jAthena //0953 (2004-04-27) db/mob_skill_db.txt"
+faq = "Increase Agility / EDDGA (every boss)"
+
+[[skill]]
+mob = 1147
+state = "chase"
+skill = 29
+lv = 1
+rate = 500
+cast = 3000
+delay = 120000
+cancel = false
+target = "self"
+cond = "myhpltmaxrate"
+cond_val = 50
+tier = "athena2003"
+source = "jAthena //0953 (2004-04-27) db/mob_skill_db.txt"
+faq = "Increase Agility / MAYA (every boss)"
+
+[[skill]]
+mob = 1150
+state = "chase"
+skill = 29
+lv = 1
+rate = 500
+cast = 3000
+delay = 120000
+cancel = false
+target = "self"
+cond = "myhpltmaxrate"
+cond_val = 50
+tier = "athena2003"
+source = "jAthena //0953 (2004-04-27) db/mob_skill_db.txt"
+faq = "Increase Agility / MOONLIGHT (every boss)"
+
+[[skill]]
+mob = 1157
+state = "chase"
+skill = 29
+lv = 1
+rate = 500
+cast = 3000
+delay = 120000
+cancel = false
+target = "self"
+cond = "myhpltmaxrate"
+cond_val = 50
+tier = "guess"
+source = "the commonest of 24 AL_INCAGI rows in jAthena //0953 (2004-04-27) db/mob_skill_db.txt"
+faq = "Increase Agility / PHARAOH (every boss)"
+
+[[skill]]
+mob = 1159
+state = "chase"
+skill = 29
+lv = 1
+rate = 500
+cast = 3000
+delay = 120000
+cancel = false
+target = "self"
+cond = "myhpltmaxrate"
+cond_val = 50
+tier = "athena2003"
+source = "jAthena //0953 (2004-04-27) db/mob_skill_db.txt"
+faq = "Increase Agility / PHREEONI (every boss)"
+
+[[skill]]
+mob = 1190
+state = "chase"
+skill = 29
+lv = 1
+rate = 500
+cast = 3000
+delay = 120000
+cancel = false
+target = "self"
+cond = "myhpltmaxrate"
+cond_val = 50
+tier = "athena2003"
+source = "jAthena //0953 (2004-04-27) db/mob_skill_db.txt"
+faq = "Increase Agility / ORC_LORD (every boss)"
+
+[[skill]]
+mob = 1251
+state = "chase"
+skill = 29
+lv = 1
+rate = 300
+cast = 3000
+delay = 120000
+cancel = false
+target = "self"
+cond = "myhpltmaxrate"
+cond_val = 50
+tier = "athena2003"
+source = "jAthena //0953 (2004-04-27) db/mob_skill_db.txt"
+faq = "Increase Agility / KNIGHT_OF_WINDSTORM (every boss)"
+
+[[skill]]
+mob = 1252
+state = "chase"
+skill = 29
+lv = 1
+rate = 500
+cast = 3000
+delay = 120000
+cancel = false
+target = "self"
+cond = "myhpltmaxrate"
+cond_val = 50
+tier = "athena2003"
+source = "jAthena //0953 (2004-04-27) db/mob_skill_db.txt"
+faq = "Increase Agility / GARM (every boss)"
+
+[[skill]]
+mob = 1272
+state = "chase"
+skill = 29
+lv = 1
+rate = 500
+cast = 0
+delay = 120000
+cancel = true
+target = "self"
+cond = "myhpltmaxrate"
+cond_val = 50
+tier = "athena2003"
+source = "jAthena //0953 (2004-04-27) db/mob_skill_db.txt"
+faq = "Increase Agility / DARK_LORD (every boss)"
+
+[[skill]]
+mob = 1312
+state = "chase"
+skill = 29
+lv = 1
+rate = 500
+cast = 3000
+delay = 120000
+cancel = false
+target = "self"
+cond = "myhpltmaxrate"
+cond_val = 50
+tier = "athena2003"
+source = "jAthena //0953 (2004-04-27) db/mob_skill_db.txt"
+faq = "Increase Agility / TURTLE_GENERAL (every boss)"
+
+[[skill]]
+mob = 1373
+state = "chase"
+skill = 29
+lv = 1
+rate = 500
+cast = 3000
+delay = 120000
+cancel = false
+target = "self"
+cond = "myhpltmaxrate"
+cond_val = 50
+tier = "guess"
+source = "the commonest of 24 AL_INCAGI rows in jAthena //0953 (2004-04-27) db/mob_skill_db.txt"
+faq = "Increase Agility / LORD_OF_DEATH (every boss)"
+
+[[skill]]
+mob = 1389
+state = "chase"
+skill = 29
+lv = 1
+rate = 500
+cast = 3000
+delay = 120000
+cancel = false
+target = "self"
+cond = "myhpltmaxrate"
+cond_val = 50
+tier = "guess"
+source = "the commonest of 24 AL_INCAGI rows in jAthena //0953 (2004-04-27) db/mob_skill_db.txt"
+faq = "Increase Agility / DRACULA (every boss)"
+
+[[skill]]
+mob = 1399
+state = "chase"
+skill = 29
+lv = 1
+rate = 500
+cast = 3000
+delay = 120000
+cancel = false
+target = "self"
+cond = "myhpltmaxrate"
+cond_val = 50
+tier = "athena2003"
+source = "jAthena //0953 (2004-04-27) db/mob_skill_db.txt"
+faq = "Increase Agility / EVENT_BAPHO (every boss)"
+
+[[skill]]
+mob = 1418
+state = "chase"
+skill = 29
+lv = 1
+rate = 500
+cast = 3000
+delay = 120000
+cancel = false
+target = "self"
+cond = "myhpltmaxrate"
+cond_val = 50
+tier = "guess"
+source = "the commonest of 24 AL_INCAGI rows in jAthena //0953 (2004-04-27) db/mob_skill_db.txt"
+faq = "Increase Agility / DARK_SNAKE_LORD (every boss)"
+
+[[skill]]
+mob = 1492
+state = "chase"
+skill = 29
+lv = 1
+rate = 500
+cast = 3000
+delay = 120000
+cancel = false
+target = "self"
+cond = "myhpltmaxrate"
+cond_val = 50
+tier = "guess"
+source = "the commonest of 24 AL_INCAGI rows in jAthena //0953 (2004-04-27) db/mob_skill_db.txt"
+faq = "Increase Agility / INCANTATION_SAMURAI (every boss)"
+
+[[skill]]
+mob = 1038
+state = "chase"
+skill = 172
+lv = 1
+rate = 200
+cast = 0
+delay = 5000
+cancel = true
+target = "target"
+cond = "always"
+cond_val = 0
+tier = "athena2003"
+source = "jAthena //0953 (2004-04-27) db/mob_skill_db.txt"
+faq = "Guided Attack / OSIRIS (every boss)"
+
+[[skill]]
+mob = 1157
+state = "chase"
+skill = 172
+lv = 5
+rate = 100
+cast = 0
+delay = 20000
+cancel = false
+target = "target"
+cond = "always"
+cond_val = 0
+tier = "later"
+source = "rAthena pre-renewal db/mob_skill_db.txt"
+faq = "Guided Attack / PHARAOH (every boss)"
+
+[[skill]]
+mob = 1159
+state = "chase"
+skill = 172
+lv = 1
+rate = 200
+cast = 0
+delay = 5000
+cancel = true
+target = "target"
+cond = "always"
+cond_val = 0
+tier = "athena2003"
+source = "jAthena //0953 (2004-04-27) db/mob_skill_db.txt"
+faq = "Guided Attack / PHREEONI (every boss)"
+
+[[skill]]
+mob = 1373
+state = "attack"
+skill = 172
+lv = 1
+rate = 200
+cast = 0
+delay = 5000
+cancel = true
+target = "target"
+cond = "always"
+cond_val = 0
+tier = "guess"
+source = "the commonest of 31 NPC_GUIDEDATTACK rows in jAthena //0953 (2004-04-27) db/mob_skill_db.txt"
+faq = "Guided Attack / LORD_OF_DEATH (every boss)"
+
+[[skill]]
+mob = 1389
+state = "attack"
+skill = 172
+lv = 1
+rate = 200
+cast = 0
+delay = 5000
+cancel = true
+target = "target"
+cond = "always"
+cond_val = 0
+tier = "guess"
+source = "the commonest of 31 NPC_GUIDEDATTACK rows in jAthena //0953 (2004-04-27) db/mob_skill_db.txt"
+faq = "Guided Attack / DRACULA (every boss)"
+
+[[skill]]
+mob = 1399
+state = "attack"
+skill = 172
+lv = 1
+rate = 200
+cast = 0
+delay = 5000
+cancel = true
+target = "target"
+cond = "always"
+cond_val = 0
+tier = "athena2003"
+source = "jAthena //0953 (2004-04-27) db/mob_skill_db.txt"
+faq = "Guided Attack / EVENT_BAPHO (every boss)"
+
+[[skill]]
+mob = 1418
+state = "attack"
+skill = 172
+lv = 1
+rate = 200
+cast = 0
+delay = 5000
+cancel = true
+target = "target"
+cond = "always"
+cond_val = 0
+tier = "guess"
+source = "the commonest of 31 NPC_GUIDEDATTACK rows in jAthena //0953 (2004-04-27) db/mob_skill_db.txt"
+faq = "Guided Attack / DARK_SNAKE_LORD (every boss)"
+
+[[skill]]
+mob = 1492
+state = "attack"
+skill = 172
+lv = 5
+rate = 100
+cast = 0
+delay = 20000
+cancel = false
+target = "target"
+cond = "always"
+cond_val = 0
+tier = "later"
+source = "rAthena pre-renewal db/mob_skill_db.txt"
+faq = "Guided Attack / INCANTATION_SAMURAI (every boss)"
+
+[[skill]]
+mob = 1038
+state = "attack"
+skill = 158
+lv = 3
+rate = 100
+cast = 0
+delay = 5000
+cancel = true
+target = "target"
+cond = "always"
+cond_val = 0
+tier = "guess"
+source = "the commonest of 31 NPC_PIERCINGATT rows in rAthena pre-renewal db/mob_skill_db.txt"
+faq = "Piercing Attack / OSIRIS (every boss)"
+
+[[skill]]
+mob = 1039
+state = "attack"
+skill = 158
+lv = 3
+rate = 100
+cast = 0
+delay = 5000
+cancel = true
+target = "target"
+cond = "always"
+cond_val = 0
+tier = "guess"
+source = "the commonest of 31 NPC_PIERCINGATT rows in rAthena pre-renewal db/mob_skill_db.txt"
+faq = "Piercing Attack / BAPHOMET (every boss)"
+
+[[skill]]
+mob = 1046
+state = "attack"
+skill = 158
+lv = 3
+rate = 100
+cast = 0
+delay = 5000
+cancel = true
+target = "target"
+cond = "always"
+cond_val = 0
+tier = "guess"
+source = "the commonest of 31 NPC_PIERCINGATT rows in rAthena pre-renewal db/mob_skill_db.txt"
+faq = "Piercing Attack / DOPPELGANGER (every boss)"
+
+[[skill]]
+mob = 1059
+state = "attack"
+skill = 158
+lv = 3
+rate = 100
+cast = 0
+delay = 5000
+cancel = true
+target = "target"
+cond = "always"
+cond_val = 0
+tier = "guess"
+source = "the commonest of 31 NPC_PIERCINGATT rows in rAthena pre-renewal db/mob_skill_db.txt"
+faq = "Piercing Attack / MISTRESS (every boss)"
+
+[[skill]]
+mob = 1086
+state = "attack"
+skill = 158
+lv = 3
+rate = 100
+cast = 0
+delay = 5000
+cancel = true
+target = "target"
+cond = "always"
+cond_val = 0
+tier = "guess"
+source = "the commonest of 31 NPC_PIERCINGATT rows in rAthena pre-renewal db/mob_skill_db.txt"
+faq = "Piercing Attack / GOLDEN_BUG (every boss)"
+
+[[skill]]
+mob = 1087
+state = "attack"
+skill = 158
+lv = 3
+rate = 100
+cast = 0
+delay = 5000
+cancel = true
+target = "target"
+cond = "always"
+cond_val = 0
+tier = "guess"
+source = "the commonest of 31 NPC_PIERCINGATT rows in rAthena pre-renewal db/mob_skill_db.txt"
+faq = "Piercing Attack / ORK_HERO (every boss)"
+
+[[skill]]
+mob = 1112
+state = "attack"
+skill = 158
+lv = 3
+rate = 100
+cast = 0
+delay = 5000
+cancel = true
+target = "target"
+cond = "always"
+cond_val = 0
+tier = "guess"
+source = "the commonest of 31 NPC_PIERCINGATT rows in rAthena pre-renewal db/mob_skill_db.txt"
+faq = "Piercing Attack / DRAKE (every boss)"
+
+[[skill]]
+mob = 1115
+state = "attack"
+skill = 158
+lv = 3
+rate = 100
+cast = 0
+delay = 5000
+cancel = true
+target = "target"
+cond = "always"
+cond_val = 0
+tier = "guess"
+source = "the commonest of 31 NPC_PIERCINGATT rows in rAthena pre-renewal db/mob_skill_db.txt"
+faq = "Piercing Attack / EDDGA (every boss)"
+
+[[skill]]
+mob = 1147
+state = "attack"
+skill = 158
+lv = 3
+rate = 100
+cast = 0
+delay = 5000
+cancel = true
+target = "target"
+cond = "always"
+cond_val = 0
+tier = "guess"
+source = "the commonest of 31 NPC_PIERCINGATT rows in rAthena pre-renewal db/mob_skill_db.txt"
+faq = "Piercing Attack / MAYA (every boss)"
+
+[[skill]]
+mob = 1150
+state = "attack"
+skill = 158
+lv = 3
+rate = 100
+cast = 0
+delay = 5000
+cancel = true
+target = "target"
+cond = "always"
+cond_val = 0
+tier = "guess"
+source = "the commonest of 31 NPC_PIERCINGATT rows in rAthena pre-renewal db/mob_skill_db.txt"
+faq = "Piercing Attack / MOONLIGHT (every boss)"
+
+[[skill]]
+mob = 1157
+state = "attack"
+skill = 158
+lv = 3
+rate = 100
+cast = 0
+delay = 5000
+cancel = true
+target = "target"
+cond = "always"
+cond_val = 0
+tier = "guess"
+source = "the commonest of 31 NPC_PIERCINGATT rows in rAthena pre-renewal db/mob_skill_db.txt"
+faq = "Piercing Attack / PHARAOH (every boss)"
+
+[[skill]]
+mob = 1159
+state = "attack"
+skill = 158
+lv = 3
+rate = 100
+cast = 0
+delay = 5000
+cancel = true
+target = "target"
+cond = "always"
+cond_val = 0
+tier = "guess"
+source = "the commonest of 31 NPC_PIERCINGATT rows in rAthena pre-renewal db/mob_skill_db.txt"
+faq = "Piercing Attack / PHREEONI (every boss)"
+
+[[skill]]
+mob = 1190
+state = "attack"
+skill = 158
+lv = 3
+rate = 100
+cast = 0
+delay = 5000
+cancel = true
+target = "target"
+cond = "always"
+cond_val = 0
+tier = "guess"
+source = "the commonest of 31 NPC_PIERCINGATT rows in rAthena pre-renewal db/mob_skill_db.txt"
+faq = "Piercing Attack / ORC_LORD (every boss)"
+
+[[skill]]
+mob = 1251
+state = "attack"
+skill = 158
+lv = 3
+rate = 100
+cast = 0
+delay = 5000
+cancel = true
+target = "target"
+cond = "always"
+cond_val = 0
+tier = "guess"
+source = "the commonest of 31 NPC_PIERCINGATT rows in rAthena pre-renewal db/mob_skill_db.txt"
+faq = "Piercing Attack / KNIGHT_OF_WINDSTORM (every boss)"
+
+[[skill]]
+mob = 1252
+state = "attack"
+skill = 158
+lv = 3
+rate = 100
+cast = 0
+delay = 5000
+cancel = true
+target = "target"
+cond = "always"
+cond_val = 0
+tier = "guess"
+source = "the commonest of 31 NPC_PIERCINGATT rows in rAthena pre-renewal db/mob_skill_db.txt"
+faq = "Piercing Attack / GARM (every boss)"
+
+[[skill]]
+mob = 1272
+state = "attack"
+skill = 158
+lv = 3
+rate = 100
+cast = 0
+delay = 5000
+cancel = true
+target = "target"
+cond = "always"
+cond_val = 0
+tier = "guess"
+source = "the commonest of 31 NPC_PIERCINGATT rows in rAthena pre-renewal db/mob_skill_db.txt"
+faq = "Piercing Attack / DARK_LORD (every boss)"
+
+[[skill]]
+mob = 1312
+state = "attack"
+skill = 158
+lv = 3
+rate = 100
+cast = 0
+delay = 5000
+cancel = true
+target = "target"
+cond = "always"
+cond_val = 0
+tier = "guess"
+source = "the commonest of 31 NPC_PIERCINGATT rows in rAthena pre-renewal db/mob_skill_db.txt"
+faq = "Piercing Attack / TURTLE_GENERAL (every boss)"
+
+[[skill]]
+mob = 1373
+state = "attack"
+skill = 158
+lv = 3
+rate = 100
+cast = 0
+delay = 5000
+cancel = true
+target = "target"
+cond = "always"
+cond_val = 0
+tier = "guess"
+source = "the commonest of 31 NPC_PIERCINGATT rows in rAthena pre-renewal db/mob_skill_db.txt"
+faq = "Piercing Attack / LORD_OF_DEATH (every boss)"
+
+[[skill]]
+mob = 1389
+state = "attack"
+skill = 158
+lv = 3
+rate = 100
+cast = 0
+delay = 5000
+cancel = true
+target = "target"
+cond = "always"
+cond_val = 0
+tier = "guess"
+source = "the commonest of 31 NPC_PIERCINGATT rows in rAthena pre-renewal db/mob_skill_db.txt"
+faq = "Piercing Attack / DRACULA (every boss)"
+
+[[skill]]
+mob = 1399
+state = "attack"
+skill = 158
+lv = 3
+rate = 100
+cast = 0
+delay = 5000
+cancel = true
+target = "target"
+cond = "always"
+cond_val = 0
+tier = "guess"
+source = "the commonest of 31 NPC_PIERCINGATT rows in rAthena pre-renewal db/mob_skill_db.txt"
+faq = "Piercing Attack / EVENT_BAPHO (every boss)"
+
+[[skill]]
+mob = 1418
+state = "attack"
+skill = 158
+lv = 3
+rate = 100
+cast = 0
+delay = 5000
+cancel = true
+target = "target"
+cond = "always"
+cond_val = 0
+tier = "guess"
+source = "the commonest of 31 NPC_PIERCINGATT rows in rAthena pre-renewal db/mob_skill_db.txt"
+faq = "Piercing Attack / DARK_SNAKE_LORD (every boss)"
+
+[[skill]]
+mob = 1492
+state = "attack"
+skill = 158
+lv = 3
+rate = 100
+cast = 0
+delay = 5000
+cancel = true
+target = "target"
+cond = "always"
+cond_val = 0
+tier = "guess"
+source = "the commonest of 31 NPC_PIERCINGATT rows in rAthena pre-renewal db/mob_skill_db.txt"
+faq = "Piercing Attack / INCANTATION_SAMURAI (every boss)"
+
+[[skill]]
+mob = 1038
+state = "any"
+skill = 26
+lv = 1
+rate = 1000
+cast = 0
+delay = 0
+cancel = true
+target = "self"
+cond = "rudeattacked"
+cond_val = 0
+tier = "later"
+source = "unknown13's Monster Skill FAQ (GameFAQs 29608, 2004-04) quoting iRO: All boss monsters will Teleport if they are attacked from beyond their attacking range; the condition as rAthena reads it (src/map/mob.cpp:1936-1976)"
+faq = "Teleport / OSIRIS (every boss)"
+
+[[skill]]
+mob = 1039
+state = "any"
+skill = 26
+lv = 1
+rate = 1000
+cast = 0
+delay = 0
+cancel = true
+target = "self"
+cond = "rudeattacked"
+cond_val = 0
+tier = "later"
+source = "unknown13's Monster Skill FAQ (GameFAQs 29608, 2004-04) quoting iRO: All boss monsters will Teleport if they are attacked from beyond their attacking range; the condition as rAthena reads it (src/map/mob.cpp:1936-1976)"
+faq = "Teleport / BAPHOMET (every boss)"
+
+[[skill]]
+mob = 1046
+state = "any"
+skill = 26
+lv = 1
+rate = 1000
+cast = 0
+delay = 0
+cancel = true
+target = "self"
+cond = "rudeattacked"
+cond_val = 0
+tier = "later"
+source = "unknown13's Monster Skill FAQ (GameFAQs 29608, 2004-04) quoting iRO: All boss monsters will Teleport if they are attacked from beyond their attacking range; the condition as rAthena reads it (src/map/mob.cpp:1936-1976)"
+faq = "Teleport / DOPPELGANGER (every boss)"
+
+[[skill]]
+mob = 1059
+state = "any"
+skill = 26
+lv = 1
+rate = 1000
+cast = 0
+delay = 0
+cancel = true
+target = "self"
+cond = "rudeattacked"
+cond_val = 0
+tier = "later"
+source = "unknown13's Monster Skill FAQ (GameFAQs 29608, 2004-04) quoting iRO: All boss monsters will Teleport if they are attacked from beyond their attacking range; the condition as rAthena reads it (src/map/mob.cpp:1936-1976)"
+faq = "Teleport / MISTRESS (every boss)"
+
+[[skill]]
+mob = 1086
+state = "any"
+skill = 26
+lv = 1
+rate = 1000
+cast = 0
+delay = 0
+cancel = true
+target = "self"
+cond = "rudeattacked"
+cond_val = 0
+tier = "later"
+source = "unknown13's Monster Skill FAQ (GameFAQs 29608, 2004-04) quoting iRO: All boss monsters will Teleport if they are attacked from beyond their attacking range; the condition as rAthena reads it (src/map/mob.cpp:1936-1976)"
+faq = "Teleport / GOLDEN_BUG (every boss)"
+
+[[skill]]
+mob = 1087
+state = "any"
+skill = 26
+lv = 1
+rate = 1000
+cast = 0
+delay = 0
+cancel = true
+target = "self"
+cond = "rudeattacked"
+cond_val = 0
+tier = "later"
+source = "unknown13's Monster Skill FAQ (GameFAQs 29608, 2004-04) quoting iRO: All boss monsters will Teleport if they are attacked from beyond their attacking range; the condition as rAthena reads it (src/map/mob.cpp:1936-1976)"
+faq = "Teleport / ORK_HERO (every boss)"
+
+[[skill]]
+mob = 1112
+state = "any"
+skill = 26
+lv = 1
+rate = 1000
+cast = 0
+delay = 0
+cancel = true
+target = "self"
+cond = "rudeattacked"
+cond_val = 0
+tier = "later"
+source = "unknown13's Monster Skill FAQ (GameFAQs 29608, 2004-04) quoting iRO: All boss monsters will Teleport if they are attacked from beyond their attacking range; the condition as rAthena reads it (src/map/mob.cpp:1936-1976)"
+faq = "Teleport / DRAKE (every boss)"
+
+[[skill]]
+mob = 1115
+state = "any"
+skill = 26
+lv = 1
+rate = 1000
+cast = 0
+delay = 0
+cancel = true
+target = "self"
+cond = "rudeattacked"
+cond_val = 0
+tier = "later"
+source = "unknown13's Monster Skill FAQ (GameFAQs 29608, 2004-04) quoting iRO: All boss monsters will Teleport if they are attacked from beyond their attacking range; the condition as rAthena reads it (src/map/mob.cpp:1936-1976)"
+faq = "Teleport / EDDGA (every boss)"
+
+[[skill]]
+mob = 1147
+state = "any"
+skill = 26
+lv = 1
+rate = 1000
+cast = 0
+delay = 0
+cancel = true
+target = "self"
+cond = "rudeattacked"
+cond_val = 0
+tier = "later"
+source = "unknown13's Monster Skill FAQ (GameFAQs 29608, 2004-04) quoting iRO: All boss monsters will Teleport if they are attacked from beyond their attacking range; the condition as rAthena reads it (src/map/mob.cpp:1936-1976)"
+faq = "Teleport / MAYA (every boss)"
+
+[[skill]]
+mob = 1150
+state = "any"
+skill = 26
+lv = 1
+rate = 1000
+cast = 0
+delay = 0
+cancel = true
+target = "self"
+cond = "rudeattacked"
+cond_val = 0
+tier = "later"
+source = "unknown13's Monster Skill FAQ (GameFAQs 29608, 2004-04) quoting iRO: All boss monsters will Teleport if they are attacked from beyond their attacking range; the condition as rAthena reads it (src/map/mob.cpp:1936-1976)"
+faq = "Teleport / MOONLIGHT (every boss)"
+
+[[skill]]
+mob = 1157
+state = "any"
+skill = 26
+lv = 1
+rate = 1000
+cast = 0
+delay = 0
+cancel = true
+target = "self"
+cond = "rudeattacked"
+cond_val = 0
+tier = "later"
+source = "unknown13's Monster Skill FAQ (GameFAQs 29608, 2004-04) quoting iRO: All boss monsters will Teleport if they are attacked from beyond their attacking range; the condition as rAthena reads it (src/map/mob.cpp:1936-1976)"
+faq = "Teleport / PHARAOH (every boss)"
+
+[[skill]]
+mob = 1159
+state = "any"
+skill = 26
+lv = 1
+rate = 1000
+cast = 0
+delay = 0
+cancel = true
+target = "self"
+cond = "rudeattacked"
+cond_val = 0
+tier = "later"
+source = "unknown13's Monster Skill FAQ (GameFAQs 29608, 2004-04) quoting iRO: All boss monsters will Teleport if they are attacked from beyond their attacking range; the condition as rAthena reads it (src/map/mob.cpp:1936-1976)"
+faq = "Teleport / PHREEONI (every boss)"
+
+[[skill]]
+mob = 1190
+state = "any"
+skill = 26
+lv = 1
+rate = 1000
+cast = 0
+delay = 0
+cancel = true
+target = "self"
+cond = "rudeattacked"
+cond_val = 0
+tier = "later"
+source = "unknown13's Monster Skill FAQ (GameFAQs 29608, 2004-04) quoting iRO: All boss monsters will Teleport if they are attacked from beyond their attacking range; the condition as rAthena reads it (src/map/mob.cpp:1936-1976)"
+faq = "Teleport / ORC_LORD (every boss)"
+
+[[skill]]
+mob = 1251
+state = "any"
+skill = 26
+lv = 1
+rate = 1000
+cast = 0
+delay = 0
+cancel = true
+target = "self"
+cond = "rudeattacked"
+cond_val = 0
+tier = "later"
+source = "unknown13's Monster Skill FAQ (GameFAQs 29608, 2004-04) quoting iRO: All boss monsters will Teleport if they are attacked from beyond their attacking range; the condition as rAthena reads it (src/map/mob.cpp:1936-1976)"
+faq = "Teleport / KNIGHT_OF_WINDSTORM (every boss)"
+
+[[skill]]
+mob = 1252
+state = "any"
+skill = 26
+lv = 1
+rate = 1000
+cast = 0
+delay = 0
+cancel = true
+target = "self"
+cond = "rudeattacked"
+cond_val = 0
+tier = "later"
+source = "unknown13's Monster Skill FAQ (GameFAQs 29608, 2004-04) quoting iRO: All boss monsters will Teleport if they are attacked from beyond their attacking range; the condition as rAthena reads it (src/map/mob.cpp:1936-1976)"
+faq = "Teleport / GARM (every boss)"
+
+[[skill]]
+mob = 1272
+state = "any"
+skill = 26
+lv = 1
+rate = 1000
+cast = 0
+delay = 0
+cancel = true
+target = "self"
+cond = "rudeattacked"
+cond_val = 0
+tier = "later"
+source = "unknown13's Monster Skill FAQ (GameFAQs 29608, 2004-04) quoting iRO: All boss monsters will Teleport if they are attacked from beyond their attacking range; the condition as rAthena reads it (src/map/mob.cpp:1936-1976)"
+faq = "Teleport / DARK_LORD (every boss)"
+
+[[skill]]
+mob = 1312
+state = "any"
+skill = 26
+lv = 1
+rate = 1000
+cast = 0
+delay = 0
+cancel = true
+target = "self"
+cond = "rudeattacked"
+cond_val = 0
+tier = "later"
+source = "unknown13's Monster Skill FAQ (GameFAQs 29608, 2004-04) quoting iRO: All boss monsters will Teleport if they are attacked from beyond their attacking range; the condition as rAthena reads it (src/map/mob.cpp:1936-1976)"
+faq = "Teleport / TURTLE_GENERAL (every boss)"
+
+[[skill]]
+mob = 1373
+state = "any"
+skill = 26
+lv = 1
+rate = 1000
+cast = 0
+delay = 0
+cancel = true
+target = "self"
+cond = "rudeattacked"
+cond_val = 0
+tier = "later"
+source = "unknown13's Monster Skill FAQ (GameFAQs 29608, 2004-04) quoting iRO: All boss monsters will Teleport if they are attacked from beyond their attacking range; the condition as rAthena reads it (src/map/mob.cpp:1936-1976)"
+faq = "Teleport / LORD_OF_DEATH (every boss)"
+
+[[skill]]
+mob = 1389
+state = "any"
+skill = 26
+lv = 1
+rate = 1000
+cast = 0
+delay = 0
+cancel = true
+target = "self"
+cond = "rudeattacked"
+cond_val = 0
+tier = "later"
+source = "unknown13's Monster Skill FAQ (GameFAQs 29608, 2004-04) quoting iRO: All boss monsters will Teleport if they are attacked from beyond their attacking range; the condition as rAthena reads it (src/map/mob.cpp:1936-1976)"
+faq = "Teleport / DRACULA (every boss)"
+
+[[skill]]
+mob = 1399
+state = "any"
+skill = 26
+lv = 1
+rate = 1000
+cast = 0
+delay = 0
+cancel = true
+target = "self"
+cond = "rudeattacked"
+cond_val = 0
+tier = "later"
+source = "unknown13's Monster Skill FAQ (GameFAQs 29608, 2004-04) quoting iRO: All boss monsters will Teleport if they are attacked from beyond their attacking range; the condition as rAthena reads it (src/map/mob.cpp:1936-1976)"
+faq = "Teleport / EVENT_BAPHO (every boss)"
+
+[[skill]]
+mob = 1418
+state = "any"
+skill = 26
+lv = 1
+rate = 1000
+cast = 0
+delay = 0
+cancel = true
+target = "self"
+cond = "rudeattacked"
+cond_val = 0
+tier = "later"
+source = "unknown13's Monster Skill FAQ (GameFAQs 29608, 2004-04) quoting iRO: All boss monsters will Teleport if they are attacked from beyond their attacking range; the condition as rAthena reads it (src/map/mob.cpp:1936-1976)"
+faq = "Teleport / DARK_SNAKE_LORD (every boss)"
+
+[[skill]]
+mob = 1492
+state = "any"
+skill = 26
+lv = 1
+rate = 1000
+cast = 0
+delay = 0
+cancel = true
+target = "self"
+cond = "rudeattacked"
+cond_val = 0
+tier = "later"
+source = "unknown13's Monster Skill FAQ (GameFAQs 29608, 2004-04) quoting iRO: All boss monsters will Teleport if they are attacked from beyond their attacking range; the condition as rAthena reads it (src/map/mob.cpp:1936-1976)"
+faq = "Teleport / INCANTATION_SAMURAI (every boss)"
+
 # FAQ pairs left out:
 #   Maximize Power / Grimtooth: no monster or skill of that name
 #   Detoxify / Obeaune: no table has the skill

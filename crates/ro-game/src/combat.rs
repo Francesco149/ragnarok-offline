@@ -302,8 +302,26 @@ impl Game {
         }
         if dead {
             self.mob_dies(mob);
+        } else if by != mob && self.rude_attack(mob, by) {
+            self.mobskill_use(mob, now, "rudeattacked");
         }
         dead
+    }
+
+    /// A "rude attack": a hit from beyond the monster's attack range by someone it
+    /// cannot walk to within its chase range (rAthena's reading, src/map/mob.cpp:1936-1976,
+    /// tier later; mod0631 has no such condition). Only looked at for monsters that
+    /// have a `rudeattacked` row: the bosses' Teleport (iRO's rule, mob_skills_faq.toml).
+    fn rude_attack(&self, mob: u32, by: u32) -> bool {
+        let Some(u) = self.world.units.get(&mob) else { return false };
+        let Some(m) = u.mob() else { return false };
+        if !self.db.mob_skills.get(&m.mob_id).is_some_and(|l| l.iter().any(|r| r.cond == "rudeattacked")) {
+            return false;
+        }
+        let Some(a) = self.world.units.get(&by).filter(|a| a.map == u.map) else { return false };
+        let (x, y, ax, ay) = (u.x as i32, u.y as i32, a.x as i32, a.y as i32);
+        let chase = self.db.mob(m.mob_id).map(|d| d.chase_range as i32).unwrap_or(12);
+        path::distance(x, y, ax, ay) > mdb_range(self, m.mob_id) && !self.mob_can_reach(&u.map, x, y, ax, ay, chase)
     }
 
     pub(crate) fn mob_dies(&mut self, mob: u32) {

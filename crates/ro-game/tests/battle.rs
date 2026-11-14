@@ -36,12 +36,17 @@ fn u16_at(p: &[u8], at: usize) -> u16 {
 }
 
 fn gat(w: u32, h: u32, water: bool) -> Vec<u8> {
+    gat_with(w, h, |_, _| if water { 3 } else { 0 })
+}
+
+/// A map whose cell types come from `ty(x, y)` (0 open, 1 wall, 3 water, 5 cliff).
+fn gat_with(w: u32, h: u32, ty: impl Fn(u32, u32) -> u32) -> Vec<u8> {
     let mut b = b"GRAT\x01\x02".to_vec();
     b.extend_from_slice(&w.to_le_bytes());
     b.extend_from_slice(&h.to_le_bytes());
-    for _ in 0..w * h {
+    for i in 0..w * h {
         b.extend_from_slice(&[0u8; 16]);
-        b.extend_from_slice(&(if water { 3u32 } else { 0 }).to_le_bytes());
+        b.extend_from_slice(&ty(i % w, i / w).to_le_bytes());
     }
     b
 }
@@ -70,6 +75,8 @@ impl T {
         let mut vfs = Vfs::new();
         vfs.add_memory_file("data\\testmap.gat", gat(50, 50, false));
         vfs.add_memory_file("data\\watermap.gat", gat(50, 50, true));
+        // a cliff across the whole map at x = 28: shot over, never walked over
+        vfs.add_memory_file("data\\cliffmap.gat", gat_with(50, 50, |x, _| if x == 28 { 5 } else { 0 }));
         let mut content = ro_game::game::default_content();
         content.insert("castle_monsters".into(), false); // their maps are not in this test's client
         let cfg = GameConfig {
@@ -1601,6 +1608,37 @@ fn faq_monster_skills_run() {
             t.lua("warp('testmap', 25, 25)");
             t.send(Writer::new(0x007d));
         }
+    }
+}
+
+/// iRO's boss rule (the FAQ of 2004-04): "All boss monsters will Teleport if they are attacked
+/// from beyond their attacking range" -- here, from where they cannot walk to (rAthena's
+/// "rudeattacked"). An Osiris shot across a cliff goes; one that can reach its attacker, or a
+/// monster that is no boss, stays.
+#[test]
+fn boss_teleports_when_attacked_from_out_of_reach() {
+    let mut t = T::on("cliffmap");
+    let me = t.me;
+    let shot = |t: &mut T, m: u32| {
+        t.lua(&format!("skill_attack(BF.MAGIC, {me}, {me}, {m}, SK.MG_FIREBOLT, 1, 0)"));
+    };
+    // across the cliff: no way round, so every hit is a rude one
+    let m = t.spawn(31, 25, 1038);
+    shot(&mut t, m);
+    assert_ne!(t.pos(m), (31, 25), "Osiris teleports away");
+    t.kill(m);
+    // on this side, three cells off: it can walk up, so it stays
+    let m = t.spawn(25, 28, 1038);
+    for _ in 0..5 {
+        shot(&mut t, m);
+    }
+    assert_eq!(t.pos(m), (25, 28), "an Osiris that can reach its attacker stays");
+    t.kill(m);
+    // a monster that is no boss has no such rule
+    let m = t.spawn(31, 25, 1002);
+    shot(&mut t, m);
+    if t.g.world.units.contains_key(&m) {
+        assert_eq!(t.pos(m), (31, 25), "a Poring stays");
     }
 }
 

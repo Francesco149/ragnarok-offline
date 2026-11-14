@@ -585,6 +585,21 @@ skill on other monsters (guess). Which Goblin and Kobold the FAQ means by
 left out: Lazy Attack (no such skill in the table), Detoxify (no table gives
 it to a monster), and two pairs on a "Grimtooth" monster. THREADS.md #23.
 
+**The bosses' rule.** The same FAQ ends with what it says it took from iRO:
+"All boss monsters will use the Two-Hand Quicken, Increase Agility, Guided
+Attack, and Piercing Attack depending on the probability" and "will Teleport
+if they are attacked from beyond their attacking range". A boss here is an
+MVP (the 22 monsters with MVP EXP; jAthena //0953 gives Two-Hand Quicken to
+exactly those but Lord of Death). The four skills went through the same
+search: 24 rows from jAthena //0953, 2 from rAthena, 32 guesses (every
+Piercing Attack: no table gives one to a boss). Teleport is one row per MVP
+on a "rude attack": a hit from beyond its attack range by someone it cannot
+walk to within its chase range. That is rAthena's reading of the condition
+(`src/map/mob.cpp:1936-1976`, later); read word for word, the FAQ would send
+a boss away from every arrow. mod0631 has no such condition, and jAthena's
+boss Teleports fire on close hits instead. The FAQ names no chance, so it
+always fires.
+
 **Taken from eAthena 817 because mod0631 leaves it unfinished:**
 
 * **Ailments** (stone, frozen, stun, sleep, poison, curse, silence, blind):

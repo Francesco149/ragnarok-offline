@@ -773,10 +773,12 @@ for them are the reverse of their names. Still open:
   they should, and jAthena's five times too seldom. The game keeps
   mod0631's roll. A period player's word on how often a monster cast (a
   Marc's or a Hydra's skill per minute) would settle it.
-* **The boss rule.** The FAQ's "All boss monsters will use the Two-Hand
-  Quicken, Increase Agility, Guided Attack, and Piercing Attack" and
-  "Teleport if they are attacked from beyond their attacking range" are
-  not built as a rule; only the bosses' own lists are.
+* **The boss rule** is built (2026-11-14, DEVIATIONS.md): every MVP gets the
+  four skills, and a Teleport on a hit from someone it cannot walk to
+  (rAthena's "rudeattacked"). Open: whether "beyond their attacking range"
+  meant only that (a hunter could then shoot a boss that can walk up to
+  him), and what chance the four skills had. A period account of a boss
+  teleporting away from an archer would settle the first.
 * **47 rows are guesses** (the commonest row of that skill on other
   monsters, as no table has the pair: tables after 2004 were reworked).
   The Status Recovery rows target "friend", which this AI skips, as
