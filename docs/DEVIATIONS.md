@@ -601,7 +601,11 @@ there is, marked as ours where it is ours, and listed here.
   the client ships and nothing else gave: the Nut Shell (Wild Rose), the
   Poring Hat (Marin) and the Bongun Hat; and the Elunium and Oridecon of
   Baphomet and Phreeoni. The rates are 817's: neither the client nor
-  RODataZone gives one.
+  RODataZone gives one. One slot that is not empty is changed too: the
+  Sasquatch drops the Panda Cap (817, rate 1) where mod0631 has a Poo Poo
+  Hat (rate 7): RODataZone's iRO table and Ragu Memo's jRO page of 2003-08
+  (1/5000) give the Panda Cap, and this client describes the Panda Cap
+  but not the Poo Poo Hat.
 * **English names for items the client cannot name.** The Turtle Island
   patch brought these hats with a sprite and a description but no line in
   `idnum2itemdisplaynametable.txt` ("You got 1"). `ragnarok-offline setup`

@@ -1322,6 +1322,11 @@ The test alone passed 13 times in a row and the next workspace run passed;
 the panic line naming the skill was not kept. **Look:** loop the workspace
 run and keep the panic line; suspects are a skill whose packet is sent later
 than 500 ms or a random miss sending nothing.
+**Also `auto_counter`** (`battle.rs:620`, "the blow was turned aside": the
+Knight's HP changed), once in a full workspace run of 2026-11-14 after a
+data-only change (job masks, a drop); alone it passed 46 times in a row.
+Suspect for both: something in the full parallel run (a spawned monster
+off its cell, so the blow comes from behind and lands as a critical).
 
 ### 31. Items the client knows that nothing gives (cut content leads)
 `research/unobtainable_items.py` (2026-11-14) lists 107 items with a
@@ -1354,8 +1359,15 @@ Ornament Girl and Traveler, Lutie's Vending Machine), eighteen hats, played
 in the client (a trade at each). Three more hats now drop as 817 has them
 (#32): the Nut Shell (5037, which our item table misnames "Apple Hat"), the
 Poring Hat and the Bongun Hat. **Left without a maker:** the Kafra Band
-(5020), Panda Cap (5030), Wings of Demon (5044) and Bell of Pussycat (5051):
-neither period list has them; rAthena's makers are later. The Kafra things
+(5020), Wings of Demon (5044) and Bell of Pussycat (5051): neither period
+list has them; rAthena's makers are later, and its custom "new hats" script
+says the Kafra Band and Panda Hat could not be made on the real server
+(round 16, T9-100, grade D). Ragu Memo's jRO hat page of 2003-08 leaves the
+Kafra Band's source empty (T9-093). The May-2004 client names them
+Kafra_Band, Wing_of_Diablo, Bell_of_Pussycat, and 7056/7059 Payroll_of_Kafra,
+Cargo_Free_Ticket (T9-094..099). **The Panda Cap drops** since round 16: the
+Sasquatch (817 rate 1; Ragu Memo 2003-08 1/5000; RODataZone 2004-02) where
+mod0631 has a Poo Poo Hat (DEVIATIONS.md). The Kafra things
 and the named trinkets are as above.
 **Who may wear what (2026-11-14):** `research/item_jobs_check.py` sets the
 client's "Applicable Job" / "Available Job" lines (541, some wrapped onto a
@@ -1373,22 +1385,28 @@ lists him); knuckles are the Monk's, the Lance the Knight's and Crusader's,
 the Stunner the Priest's; Golden and Long Mace open to every mace user;
 Boys Cap, Mantle, Coat, High Heels, Goggle, Silk Robe, Saint's Robe and
 Spiky Band take the client's list; the Cake Hat, Munak Hat and Clip are
-not for Novices. Played in the client (a Novice wears a Saber, a Thief is
-refused an Axe). **Left with mod0631**, the client alone against it (57):
+not for Novices. After round 16 (its T9-104 found the Magic Hat under
+RODataZone's "Magician Hat"), names RODataZone spells otherwise are paired
+by weight and DEF/ATK: six more (122), the Magic Hat for all, Novices for
+the Apple o' Archer, Smokie Hat, Lightbulb Hairband, Fashion Sunglasses, not
+for the Ancient Belt. Played in the client (a Novice wears a Saber, a Thief is
+refused an Axe). **Left with mod0631**, the client alone against it (51 after round 16):
 Novice for the rest of the swords and daggers (Nagan, Excalibur,
 Mysteltainn, Swordbreaker, Zeny Knife...); Novice, Swordman and Merchant
 for Spike, Slash, Quadrille, Grand Cross; Priest out of the other knuckles;
 the Monk out of Stunner and Iron Driver, the Alchemist out of the War Axe
 (the text predates 2-2?); Thief for Rudra's Bow, Archer for the Army Cap,
 the Thief out of the Jewel Crown, the Merchant out of the Ancient Ring, the
-Novice out of the Ancient Belt; "All" for the Magic Hat (mod0631: Mage and
-Acolyte trees), the Miner's Helmet, and ten hats now open to all but the
-Novice (Smokie Hat, Deviruchi Hat...). Where RODataZone sides with mod0631
+Novice out of the Ancient Belt (taken since), "All" for the Magic Hat
+(taken since), the Miner's Helmet, and hats open to all but the Novice
+(Deviruchi Hat, Sunday Hat...). Where RODataZone sides with mod0631
 against the text (Panda Cap and Poring Hat "All except Novice", the Helm
 of the Solar God "All 2nd Jobs"), mod0631 stays too; so does the text's
 generic dagger line on the Assassin Dagger and Azoth. **Look:** a third
 witness for the 57 (GameFAQs equipment guides of 2003-04, the iRO guide's
-item pages, Ragu Memo's equipment tables for jRO).
+item pages, Ragu Memo's equipment tables for jRO: its hat pages mark each
+job On or Off, e.g. the Panda Cap On for the Novice, as the client says and
+RODataZone does not).
 
 ### 32. Drops mod0631 left empty
 mod0631's `db/mob_db.txt` writes `512,0` (an Apple, rate 0) in drop slots it
@@ -1401,7 +1419,9 @@ others match by hand). Taken from 817 since 2026-11-14 (the importer).
 Jelly and Rough Oridecon, the Zombie Prisoner's Empty Potion Bottle,
 Mysteltainn's Elunium (it has Rough Elunium), the Wanderer's Yggdrasil Seed,
 nor anything of Arclouse, Rideword, Zherlthsh and the Clock Tower Manager
-(not in its table). The rates are 817's alone; were they iRO's or kRO's,
+(not in its table). *Round 16:* they are, as Arclouze, Ride Word and
+Zealotus, and name what 817 put in those slots (Zargon; Pearl; Yellow
+Potion, Tights, Masquerade: T9-116, T9-117, T9-119). The rates are 817's alone; were they iRO's or kRO's,
 and did jRO really lack these drops in December 2003 or did mod0631 just
 not know them?
 **Look:** RODataZone's monster pages per dungeon (rates?), GameFAQs monster

@@ -7077,7 +7077,7 @@ speed = 300
 attack_delay = 1260
 attack_motion = 192
 damage_motion = 192
-drops = [{ item = 912, rate = 750 }, { item = 509, rate = 800 }, { item = 949, rate = 1000 }, { item = 2289, rate = 7 }, { item = 948, rate = 5000 }, { item = 727, rate = 30 }, { item = 757, rate = 90 }, { item = 4074, rate = 1 }]
+drops = [{ item = 912, rate = 750 }, { item = 509, rate = 800 }, { item = 949, rate = 1000 }, { item = 5030, rate = 1 }, { item = 948, rate = 5000 }, { item = 727, rate = 30 }, { item = 757, rate = 90 }, { item = 4074, rate = 1 }]
 
 [[mob]]
 id = 1244

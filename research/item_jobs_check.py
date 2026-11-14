@@ -90,7 +90,22 @@ def rdz_set(v):
 # RODataZone's spelling -> our display name (lower case, no apostrophes)
 RDZ_ALIAS = {'waghnak': 'waghnakh', 'cutlus': 'cutlas', 'fireblend': 'fire brand',
              'ice falchion': 'ice falchon', 'high heels': 'highheals', 'goggles': 'goggle',
-             'helm of the solar god': 'solar god helm', 'panda hat': 'panda cap'}
+             'helm of the solar god': 'solar god helm', 'panda hat': 'panda cap',
+             # paired by weight and DEF/ATK (2026-11-14); not "Kapra Band" (weight 10, ours 50)
+             # nor "Mage Hat" (DEF 1, ours 5); not the Assassin Dagger either: both sources give
+             # it the generic dagger list, a default rather than a statement about it
+             'apple oarcher': 'apple o archer', 'brisingamen': 'brysinggamen',
+             'bulb band': 'lightbulb hairband', 'diver goggles': 'divers goggles',
+             'ear muffs': 'ear mufs', 'fashionable glasses': 'fashion sunglasses',
+             'gangster mask': 'ganster mask', 'grampa beard': 'granpa beard', 'hallberd': 'halberd',
+             'hat of petite diablo': 'deviruchi hat', 'iron cain': 'iron cane',
+             'khatzbalger': 'katzbalger', 'magician hat': 'magic hat', 'megingard': 'magingiorde',
+             'mjolnir': 'mjollnir', 'nut shell': 'apple hat', 'poll axe': 'pole axe',
+             'purple sunglasses': 'purple glasses', 'raccon hat': 'smokie hat',
+             'ranbow eggshell': 'spotted eggshell', 'santa hat': 'santas hat',
+             'shaprpened legbone of ghoul': 'sharppened legbone of gh', 'stilleto': 'stiletto',
+             'stripe hairband': 'striped bandana', 'blue hairband': 'blue bandana',
+             'belt': 'ancient belt', 'jacket': 'leather jacket'}
 
 
 def rdz_tables(d):
