@@ -9,10 +9,11 @@ Ordered by "confirmable first". Each item says where the truth would come from.
   `CLIENT_SEND_OVERRIDES` says, the rest take the table's length. Open:
   whether every packet goes through those 44 call sites (walk and attack
   are built from a message switch, not found as `push id` yet).
-- **Remaining layouts** the server already sends but only Athena + "it draws
-  right" vouch for: 0x0079, 0x007b, 0x00a0, 0x00a3/0x00a4, 0x00bd, 0x01d7,
-  0x009d/0x009e, 0x0119. Find each handler via the zone-mode dispatch (like
-  the login-mode jump table at `0x52fa88`).
+- **Remaining layouts**: done on 2026-11-14 for 0x0078/0x0079/0x007b,
+  0x008a, 0x009d/0x009e, 0x00a0, 0x00a3/0x00a4, 0x00bd, 0x0119 and 0x01d7
+  (docs/PROTOCOL.md). Two differed from Athena's and are mended (the unit
+  packets' emblem, 0x00bd's ASPD). Next: the rest of what the server sends,
+  through the same dispatch.
 - **Walk/attack timing** the client animates vs ours. Done: the path
   finder is the client's (`0x4d2300`), and so are the walk's clock and
   every step's time, the first one from the sub-cell included, and the

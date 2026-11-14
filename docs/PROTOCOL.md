@@ -45,6 +45,16 @@ A server that frames by the length field (Athena, and us) would refuse it.
 | char record | 106 bytes; slot byte at +104, class u16 at +52 | `CLoginMode` array at `+0xe30` |
 | 0x006d char created | copies one 106-byte record | `0x52f7f6` |
 | login-mode dispatch | ids 0x69..0x74 via jump table at `0x52fa88`, 0x81 separately | `0x52f70d` |
+| zone-mode dispatch | `id - 0x73` indexes a byte table at `0x518b2c`, then a jump table at `0x5187b4`; each case calls a handler with the packet | `0x516642` |
+| 0x0078 / 0x0079 / 0x007b units | id, speed, opt1, opt2, option, class, hair, weapon, head bottom (0x007b: then a u32 tick), shield, head top, head mid, hair colour, clothes colour, head direction as i16; guild u32; then **three i16**: emblem, manner (below 0 the unit is marked, effect 0x22 at `0x535d90`), one more it stores; karma, sex bytes; position (0x007b: the 6-byte move) and two bytes; 0x0078 ends with the state (0 stand, 1 dead, 2 sit). 0x007b's last two bytes are never read. Athena writes a u32 emblem and the manner after it: one i16 off (fixed 2026-11-14) | `0x5191d0`, `0x518dc0`, `0x51b780` |
+| 0x008a action | src, dst, tick, src delay, dst delay (u32; a delay of 0 becomes 1440), damage, div (i16; damage -30000 drops the packet), kind byte, damage2 | `0x5198a0` |
+| 0x009d / 0x009e floor item | id u32, nameid, identified, x, y, then amount and sub-cell (0x009d) or sub-cell and amount (0x009e) | `0x51c100`, `0x51c270` |
+| 0x00a0 item added | idx, amount, nameid, identified, attribute, refine, four cards, location, type, result (switch over 0..6); type 10 is given the arrow slot by the client itself | `0x51c3f0` |
+| 0x00a3 item list | `(len-4)/10` records: idx, nameid, type, identified, amount, wear (mod0631: 0x8000 for arrows) | `0x51ca00` |
+| 0x00a4 equipment list | `(len-4)/20` records: idx, nameid, type, identified, location, worn location, attribute, refine, four cards. A pet egg (9001-9025) here with a non-zero attribute marks the egg whose pet is out; mod0631 lists eggs here as type 4, we list them in 0x00a3 (not tried in the client) | `0x51cc50` |
+| 0x00bd status | status points, the six stats with their costs, atk, atk2, matk max, matk min, def, def2, mdef, mdef2, hit, flee, flee2, crit, then the attack delay (the window shows (2000 - it) / 10, as for 0x00b0 SP_ASPD) and a word it stores but never reads. Athena sends karma and manner in those two (fixed 2026-11-14) | `0x51e390` |
+| 0x0119 state | id u32, opt1, opt2, option (i16), karma byte | `0x5226f0` |
+| 0x01d7 look | id u32, type byte, then a u32 (type 2: weapon in the low word, shield in the high one). Other units ignore type 8 here | `0x52af20` |
 
 ## Confirmed by running the real client against the server
 

@@ -35,7 +35,8 @@ impl Game {
             if d.is_some_and(|d| d.is_equip() && d.kind != 10) {
                 equips.push((idx, it, self.client_type(it.nameid), d.map(|d| d.loc).unwrap_or(0)));
             } else {
-                normal.push((idx, it, self.client_type(it.nameid)));
+                let wear = d.filter(|d| d.loc == 0x8000).map_or(0, |_| 0x8000);
+                normal.push((idx, it, self.client_type(it.nameid), wear));
             }
         }
         let (a, b) = (packets::item_list(&normal), packets::equip_list(&equips));

@@ -29,7 +29,7 @@ pub struct UnitLook {
     pub clothes_color: u16,
     pub head_dir: u16,
     pub guild_id: u32,
-    pub emblem_id: u32,
+    pub emblem_id: u16,
     pub manner: u16,
     pub karma: u8,
     pub sex: u8,
@@ -45,12 +45,16 @@ fn look_common(w: &mut Writer, u: &UnitLook) {
 }
 
 /// 0x0078 (52 bytes in this client = Athena's 54-byte layout without the
-/// trailing u16 level, which kRO added in 2004).
+/// trailing u16 level, which kRO added in 2004). After the guild id the
+/// client reads three i16s, not Athena's u32 emblem and u16 manner: the
+/// emblem, the manner (below 0 it marks the unit muted) and one more it only
+/// stores (handler 0x5191d0, reads at 0x51927d-0x519291; the same in 0x0079
+/// at 0x518e7a and 0x007b at 0x51b829; docs/PROTOCOL.md).
 pub fn stand_entry(u: &UnitLook) -> Vec<u8> {
     let mut w = Writer::new(ZC_NOTIFY_STANDENTRY);
     look_common(&mut w, u);
     w.u16(u.shield).u16(u.head_top).u16(u.head_mid).u16(u.hair_color).u16(u.clothes_color).u16(u.head_dir);
-    w.u32(u.guild_id).u32(u.emblem_id).u16(u.manner).u8(u.karma).u8(u.sex);
+    w.u32(u.guild_id).u16(u.emblem_id).u16(u.manner).u16(0).u8(u.karma).u8(u.sex);
     w.pos3(u.x, u.y, u.dir).u8(5).u8(5).u8(u.state);
     w.finish()
 }
@@ -60,7 +64,7 @@ pub fn new_entry(u: &UnitLook) -> Vec<u8> {
     let mut w = Writer::new(ZC_NOTIFY_NEWENTRY);
     look_common(&mut w, u);
     w.u16(u.shield).u16(u.head_top).u16(u.head_mid).u16(u.hair_color).u16(u.clothes_color).u16(u.head_dir);
-    w.u32(u.guild_id).u32(u.emblem_id).u16(u.manner).u8(u.karma).u8(u.sex);
+    w.u32(u.guild_id).u16(u.emblem_id).u16(u.manner).u16(0).u8(u.karma).u8(u.sex);
     w.pos3(u.x, u.y, u.dir).u8(5).u8(5);
     w.finish()
 }
@@ -71,7 +75,7 @@ pub fn move_entry(u: &UnitLook, tick: u32, to_x: u16, to_y: u16) -> Vec<u8> {
     look_common(&mut w, u);
     w.u32(tick);
     w.u16(u.shield).u16(u.head_top).u16(u.head_mid).u16(u.hair_color).u16(u.clothes_color).u16(u.head_dir);
-    w.u32(u.guild_id).u32(u.emblem_id).u16(u.manner).u8(u.karma).u8(u.sex);
+    w.u32(u.guild_id).u16(u.emblem_id).u16(u.manner).u16(0).u8(u.karma).u8(u.sex);
     w.move6(u.x, u.y, to_x, to_y).u8(5).u8(5);
     w.finish()
 }
@@ -316,11 +320,13 @@ pub struct FullStatus {
     pub flee: u16,
     pub flee2: u16,
     pub crit: u16,
-    pub karma: u16,
-    pub manner: u16,
+    /// The attack delay, as 0x00b0 SP_ASPD sends it: the client shows
+    /// (2000 - aspd) / 10 (handler 0x51e390 stores +40 where SP_ASPD goes).
+    pub aspd: u16,
 }
 
-/// 0x00bd (44)
+/// 0x00bd (44). The last word is a value the client stores and never reads
+/// (where 0x00b0 type 54 goes); Athena sends karma and manner in the last two.
 pub fn full_status(s: &FullStatus) -> Vec<u8> {
     let mut w = Writer::new(ZC_STATUS);
     w.u16(s.status_point);
@@ -328,7 +334,7 @@ pub fn full_status(s: &FullStatus) -> Vec<u8> {
         w.u8(s.stats[i]).u8(s.costs[i]);
     }
     w.u16(s.atk).u16(s.atk2).u16(s.matk_max).u16(s.matk_min).u16(s.def).u16(s.def2).u16(s.mdef).u16(s.mdef2);
-    w.u16(s.hit).u16(s.flee).u16(s.flee2).u16(s.crit).u16(s.karma).u16(s.manner);
+    w.u16(s.hit).u16(s.flee).u16(s.flee2).u16(s.crit).u16(s.aspd).u16(0);
     w.finish()
 }
 
@@ -354,11 +360,13 @@ pub fn attack_range(range: u16) -> Vec<u8> {
 // ---- items ----
 pub const INV_OFFSET: u16 = 2; // client inventory index = slot + 2 (Athena)
 
-/// 0x00a3: stackable items, 10 bytes each.
-pub fn item_list(items: &[(u16, &InvItem, u8)]) -> Vec<u8> {
+/// 0x00a3: stackable items, 10 bytes each. The last word is where the item is
+/// worn: 0x8000 for arrows, else 0 (mod0631 clif.c:1258); the client keeps it in
+/// the item's record (handler 0x51ca00 reads all five fields).
+pub fn item_list(items: &[(u16, &InvItem, u8, u16)]) -> Vec<u8> {
     let mut w = Writer::new(ZC_NORMAL_ITEMLIST);
-    for &(idx, it, kind) in items {
-        w.u16(idx).u16(it.nameid as u16).u8(kind).u8(it.identify as u8).u16(it.amount.min(30000) as u16).u16(0);
+    for &(idx, it, kind, wear) in items {
+        w.u16(idx).u16(it.nameid as u16).u8(kind).u8(it.identify as u8).u16(it.amount.min(30000) as u16).u16(wear);
     }
     w.finish()
 }

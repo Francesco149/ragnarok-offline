@@ -244,8 +244,7 @@ impl Game {
             flee: d.flee as u16,
             flee2: d.flee2 as u16,
             crit: (d.crit / 10) as u16,
-            karma: c.karma as u16,
-            manner: c.manner as u16,
+            aspd: d.amotion as u16,
         };
         let w = self.weight_of(&c);
         let mut out = vec![
