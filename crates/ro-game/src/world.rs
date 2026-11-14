@@ -174,6 +174,12 @@ pub struct MobUnit {
     /// Flinching from a hit taken while walking: no thinking before this
     /// tick (Athena MS_DELAY, for the monster's damage motion).
     pub delay_until: u64,
+    /// A side in a castle siege (ours, scripts/npc/castle_lord.lua): 0 none,
+    /// 1 an attacker (goes for players and defenders), 2 a defender (the
+    /// Emperium and the guardians: goes for attackers, never for players).
+    pub side: u8,
+    /// A siege attacker sets out for the Emperium at this tick (0: it does not).
+    pub march_at: u64,
 }
 
 /// Athena MSS_*: the state monster skills are conditioned on.

@@ -64,7 +64,7 @@ pub fn client_times(x0: i32, y0: i32, sub: (u8, u8), dirs: &[u8], speed: u32) ->
     t
 }
 
-fn can_move(g: &MapGrid, x0: i32, y0: i32, x1: i32, y1: i32) -> bool {
+pub fn can_move(g: &MapGrid, x0: i32, y0: i32, x1: i32, y1: i32) -> bool {
     if !g.walkable(x0, y0) || !g.walkable(x1, y1) {
         return false;
     }

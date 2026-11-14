@@ -226,6 +226,12 @@ function battle.is_boss(bl) return bl.kind == "mob" and ((bl.db.mode & 0x20) ~= 
 -- nothing else is anyone's enemy (no PvP, no guild wars).
 function battle.is_enemy(a, b)
   if not a or not b or a.id == b.id then return false end
+  -- a castle siege (ours, scripts/npc/castle_lord.lua): the attacking monsters
+  -- (side 1) and the castle's Emperium and guardians (side 2) are enemies; the
+  -- castle's own are no enemy of its master
+  local sa, sb = a.kind == "mob" and a.side or 0, b.kind == "mob" and b.side or 0
+  if sa ~= 0 and sb ~= 0 then return sa ~= sb end
+  if sa == 2 or sb == 2 then return false end
   return a.kind ~= b.kind
 end
 function battle.check_target(src, target, flag)
@@ -429,10 +435,14 @@ function battle.calc_damage(bl, damage, flag, src)
   -- nothing to it, nor does anything but a player ("only direct physical attacks",
   -- the iRO guide's War of Emperium page, 2004-04). 817 also refuses a player
   -- without a guild that has Official Guild Approval: a game of one has no guilds,
-  -- so any player may break it (ours, docs/DEVIATIONS.md "Guild castles").
-  if bl.kind == "mob" and bl.class == 1288 and ((flag & BF.SKILL) ~= 0 or (src and src.kind ~= "player")) then
-    damage = 0
+  -- so any player may break it, but not his own; and in a siege the attacking
+  -- monsters may (ours, docs/DEVIATIONS.md "Guild castles").
+  if bl.kind == "mob" and bl.class == 1288 then
+    local attacker = src and src.kind == "mob" and src.side == 1
+    if (flag & BF.SKILL) ~= 0 or not (attacker or (src and src.kind == "player")) then damage = 0 end
   end
+  -- a castle's master does not hurt its own Emperium or guardians (817: guild members, battle_check_target)
+  if bl.kind == "mob" and bl.side == 2 and src and src.kind == "player" then damage = 0 end
   if damage > 0 then
     for _, k in ipairs({ SC.STONE, SC.FREEZE, SC.SLEEP }) do
       if sc(bl, k) then sc_end(bl.id, k); break end

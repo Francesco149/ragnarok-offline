@@ -202,6 +202,13 @@ function area_monster(map, x1, y1, x2, y2, name, mob, n, event)
 end
 function kill_monster(map, event) _rt("kill_monster", map, event) end
 function mob_count(map, event) return _rt("mob_count", map, event) end
+function mob_ids(map, event) return _rt("mob_ids", map, event) end
+-- castle sieges (scripts/npc/castle_lord.lua): 0 none, 1 attacker, 2 defender
+function mob_side(id, side) _rt("mob_side", id, side) end
+function mob_max_hp(id, hp) _rt("mob_max_hp", id, hp) end
+function mob_vanish(id) _rt("mob_vanish", id) end
+function siege_field(map, x, y) _rt("siege_field", map, x or -1, y or -1) end -- no x: forget it
+function mob_march(id, ms) _rt("mob_march", id, ms) end -- sets out in ms; -1: never -- gone without dying (no drops, no event)
 function do_event(ev) _rt("do_event", ev) end
 function add_timer(ms, ev) _rt("add_timer", ms, ev) end
 function del_timer(ev) _rt("del_timer", ev) end

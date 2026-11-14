@@ -250,6 +250,9 @@ pub struct Game {
     /// Rule errors met where the game is only borrowed for reading (the
     /// status formula): moved into `notices` on the next tick, once each.
     pub(crate) soft_notices: std::cell::RefCell<Vec<String>>,
+    /// Castle sieges (ours): per map, every cell's walking distance to the
+    /// Emperium, which the attackers follow (combat.rs `siege_step`).
+    pub(crate) siege_fields: HashMap<String, std::sync::Arc<Vec<u16>>>,
 }
 
 impl Game {
@@ -290,6 +293,7 @@ impl Game {
             last_autosave: 0,
             notices: Vec::new(),
             soft_notices: Default::default(),
+            siege_fields: HashMap::new(),
         };
         g.reload_scripts()?;
         Ok(g)

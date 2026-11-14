@@ -527,6 +527,46 @@ impl Game {
                 Ok(Value::Null)
             }
             "mob_count" => Ok(json!(self.script_mobs(&map_name(a, 0), &text(a, 1)).len())),
+            // a script's monsters on a map, by event ("All": every one a script put there)
+            "mob_ids" => Ok(json!(self.script_mobs(&map_name(a, 0), &text(a, 1)))),
+            // a siege side (world.rs MobUnit::side) and the HP a castle's defence gives
+            "mob_side" => {
+                if let Some(m) = self.world.units.get_mut(&(int(a, 0) as u32)).and_then(|u| u.mob_mut()) {
+                    m.side = int(a, 1).clamp(0, 2) as u8;
+                }
+                Ok(Value::Null)
+            }
+            // a siege (ours): the attackers' way to the Emperium, and when each sets out
+            "siege_field" => {
+                let map = map_name(a, 0);
+                if int(a, 1) < 0 {
+                    self.siege_fields.remove(&map);
+                } else {
+                    self.siege_field(&map, int(a, 1) as i32, int(a, 2) as i32);
+                }
+                Ok(Value::Null)
+            }
+            "mob_march" => {
+                let now = self.now();
+                if let Some(m) = self.world.units.get_mut(&(int(a, 0) as u32)).and_then(|u| u.mob_mut()) {
+                    m.march_at = if int(a, 1) < 0 { 0 } else { now + int(a, 1) as u64 };
+                }
+                Ok(Value::Null)
+            }
+            "mob_vanish" => {
+                let id = int(a, 0) as u32;
+                if self.world.units.get(&id).is_some_and(|u| u.mob().is_some()) {
+                    self.despawn(id, 0);
+                }
+                Ok(Value::Null)
+            }
+            "mob_max_hp" => {
+                if let Some(m) = self.world.units.get_mut(&(int(a, 0) as u32)).and_then(|u| u.mob_mut()) {
+                    m.max_hp = int(a, 1).max(1) as u32;
+                    m.hp = m.max_hp;
+                }
+                Ok(Value::Null)
+            }
             // ---- messages, users, warps
             "announce" => {
                 // flag & 0x0f: 0 everyone, 1 map, 2 area, 3 self; 0x10 blue (Athena clif_GMmessage)

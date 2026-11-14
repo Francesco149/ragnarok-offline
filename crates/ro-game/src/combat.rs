@@ -130,6 +130,8 @@ impl Game {
                 loot: Vec::new(),
                 master_dist: 0,
                 delay_until: 0,
+                side: 0,
+                march_at: 0,
             })),
         });
         self.update_watchers(id, true);
@@ -278,6 +280,7 @@ impl Game {
     /// Athena mob_damage, the part before death. Returns true when it died.
     pub(crate) fn damage_mob(&mut self, mob: u32, by: u32, dmg: u32) -> bool {
         let by_player = self.world.units.get(&by).is_some_and(|u| u.is_player());
+        let by_side = self.world.units.get(&by).and_then(|u| u.mob()).map(|m| m.side).unwrap_or(0);
         let now = self.now();
         let flinch = self.world.units.get(&mob).and_then(|u| u.mob()).and_then(|m| self.db.mob(m.mob_id)).map(|d| d.damage_motion as u64).unwrap_or(0);
         let Some(u) = self.world.units.get_mut(&mob) else { return false };
@@ -294,6 +297,8 @@ impl Game {
             if m.attacked.is_none() {
                 m.attacked = Some(by);
             }
+        } else if by_side != 0 && m.side != 0 && by_side != m.side && m.attacked.is_none() {
+            m.attacked = Some(by); // a siege: the other side hit it (ours)
         }
         m.hp -= dmg;
         let dead = m.hp == 0;
@@ -435,6 +440,9 @@ impl Game {
     /// dead fool everything but bosses, insects and demons (mob.c:746).
     fn mob_sees(&self, mdb: &ro_data::db::Mob, target: u32) -> bool {
         let Some(t) = self.world.units.get(&target) else { return false };
+        if t.state != 1 && t.mob().is_some_and(|m| m.side != 0) {
+            return true; // the other side of a siege (ours)
+        }
         if t.state == 1 || !t.is_player() {
             return false;
         }
@@ -652,10 +660,21 @@ impl Game {
         // emulator has it)
         let sight = if self.has_sc(id, crate::battle::SC_BLIND) { 2 } else { 9 };
         let m = self.world.units[&id].mob().unwrap();
-        if (m.target.is_none() || m.looting) && mode & MD_AGGRESSIVE != 0 && !master_check {
+        // In a siege (ours) both sides look for the other side; defenders never for players.
+        let side = m.side;
+        let aggressive = mode & MD_AGGRESSIVE != 0 || (side != 0 && mode & MD_CANMOVE != 0) || (side == 2 && mode != 0);
+        if (m.target.is_none() || m.looting) && aggressive && !master_check {
             let mut n = 0u32;
             let mut pick = None;
-            for pid in self.world.players_on(&map) {
+            let mut prey: Vec<u32> = if side == 2 { Vec::new() } else { self.world.players_on(&map) };
+            if side != 0 {
+                if let Some(mi) = self.world.maps.get(&map) {
+                    prey.extend(mi.units.iter().copied().filter(|i| {
+                        self.world.units.get(i).and_then(|u| u.mob()).is_some_and(|om| om.side != 0 && om.side != side)
+                    }));
+                }
+            }
+            for pid in prey {
                 let p = &self.world.units[&pid];
                 let (px, py) = (p.x as i32, p.y as i32);
                 if p.state == 1 || path::distance(x, y, px, py) >= sight || !self.mob_sees(&mdb, pid) {
@@ -705,6 +724,15 @@ impl Game {
             }
         }
 
+        // a siege attacker with nothing to fight walks on toward the Emperium (ours)
+        let m = self.world.units[&id].mob().unwrap();
+        if m.target.is_none() && m.side == 1 && m.march_at != 0 && m.march_at <= now && mode & MD_CANMOVE != 0 {
+            if self.world.units[&id].walk.is_none() && self.can_move(id) {
+                self.siege_step(id, &map, x, y);
+            }
+            return;
+        }
+
         let m = self.world.units.get_mut(&id).unwrap().mob_mut().unwrap();
         let (target, looting, min_chase, next_walk) = (m.target, m.looting, m.min_chase, m.next_walk);
         // Athena's state MS_ATTACK: an attack timer is running. Anything but
@@ -724,7 +752,7 @@ impl Game {
                     let (_, _, option) = self.opts_of(t);
                     self.has_sc(t, crate::battle::SC_TRICKDEAD) || (option & 6 != 0 && mdb.race != 4 && mdb.race != 6)
                 };
-                if dist >= min_chase || fooled || !tu.is_player() {
+                if dist >= min_chase || fooled || !(tu.is_player() || tu.mob().is_some_and(|om| om.side != 0 && tu.state != 1)) {
                     self.mob_unlock(id, now);
                 } else if dist > mdb.range.max(1) as i32 || !self.grid(&map).is_some_and(|g| path::can_shoot(&g, x, y, tx, ty)) {
                     // out of reach, or no free line (battle_check_range): chase
@@ -905,6 +933,59 @@ impl Game {
         u.walk = Some(Walk::new(dirs, x0 as u16, y0 as u16, u.speed, now, (x1 as u16, y1 as u16)));
         self.area_send(id, packets::unit_move(id, x0 as u16, y0 as u16, x1 as u16, y1 as u16, tick), false);
         true
+    }
+
+    /// Castle sieges (ours): every walkable cell's walking distance to (gx, gy), 8 ways.
+    pub(crate) fn siege_field(&mut self, map: &str, gx: i32, gy: i32) {
+        let Some(g) = self.grid(map) else { return };
+        let (w, h) = (g.width as i32, g.height as i32);
+        let mut d = vec![u16::MAX; (w * h) as usize];
+        let mut q = std::collections::VecDeque::new();
+        if gx >= 0 && gy >= 0 && gx < w && gy < h {
+            d[(gy * w + gx) as usize] = 0;
+            q.push_back((gx, gy));
+        }
+        while let Some((x, y)) = q.pop_front() {
+            let here = d[(y * w + x) as usize];
+            for (dx, dy) in [(1, 0), (-1, 0), (0, 1), (0, -1), (1, 1), (1, -1), (-1, 1), (-1, -1)] {
+                let (nx, ny) = (x + dx, y + dy);
+                if nx < 0 || ny < 0 || nx >= w || ny >= h || !path::can_move(&g, x, y, nx, ny) {
+                    continue;
+                }
+                let i = (ny * w + nx) as usize;
+                if d[i] == u16::MAX {
+                    d[i] = here + 1;
+                    q.push_back((nx, ny));
+                }
+            }
+        }
+        self.siege_fields.insert(map.to_string(), std::sync::Arc::new(d));
+    }
+
+    /// Walk up to ten cells down the map's siege field (a path the server accepts).
+    fn siege_step(&mut self, id: u32, map: &str, x: i32, y: i32) {
+        let (Some(f), Some(g)) = (self.siege_fields.get(map).cloned(), self.grid(map)) else { return };
+        let w = g.width as i32;
+        let at = |x: i32, y: i32| f.get((y * w + x) as usize).copied().unwrap_or(u16::MAX);
+        let (mut cx, mut cy) = (x, y);
+        for _ in 0..10 {
+            let here = at(cx, cy);
+            if here <= 1 {
+                break;
+            }
+            let next = [(1, 0), (-1, 0), (0, 1), (0, -1), (1, 1), (1, -1), (-1, 1), (-1, -1)]
+                .into_iter()
+                .map(|(dx, dy)| (cx + dx, cy + dy))
+                .filter(|&(nx, ny)| nx >= 0 && ny >= 0 && path::can_move(&g, cx, cy, nx, ny))
+                .min_by_key(|&(nx, ny)| at(nx, ny));
+            match next {
+                Some((nx, ny)) if at(nx, ny) < here => (cx, cy) = (nx, ny),
+                _ => break,
+            }
+        }
+        if (cx, cy) != (x, y) {
+            self.mob_walk(id, map, x, y, cx, cy, false);
+        }
     }
 
     /// mob.c:314 mob_attack: a skill of the attack state, or a plain hit.

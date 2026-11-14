@@ -797,6 +797,7 @@ impl Game {
                 m.insert("hp".into(), json!(mob.hp));
                 m.insert("max_hp".into(), json!(mob.max_hp));
                 m.insert("class".into(), json!(mob.mob_id));
+                m.insert("side".into(), json!(mob.side));
                 m.insert("def_ele".into(), json!(mob.def_ele));
                 m.insert("master".into(), json!(mob.master));
                 m.insert("target".into(), json!(mob.target));
