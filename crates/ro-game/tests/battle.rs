@@ -1517,6 +1517,8 @@ fn endows_strips_protections_dispell() {
     assert_eq!(num(&mut t, picky, "def"), def - def * 15 / 100);
     assert_eq!(num(&mut t, picky, "int"), int - int * 40 / 100);
     assert_eq!(num(&mut t, picky, "mdef2"), mdef2 - mdef2 * 40 / 100);
+    // the stripped Picky turns on us, and a blow would break the Dispell's cast below
+    t.kill(picky);
 
     // Dispell 5 always works: a Yellow and a Red Gemstone, and the monster's blessing is gone
     t.lua(&format!("skill_status_change_start({egg}, SC.INCREASEAGI, 5, 0)"));
