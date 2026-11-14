@@ -483,6 +483,12 @@ the English 817 gives most often to shops mod0631 names alike (its
 道具商人, 武器商人, 防具商人 and テイミング商人 become Tool, Weapon and
 Armor Dealer and Pet Merchant). Two still show "Shop": Prontera's
 野菜商人 at `48,58` and Juno's 王窓商会, words 817 never translates.
+**Round 9 (2026-11-14):** no period English for either; later ones are
+"Vegetable Gardener" (rAthena) and, for Juno, "Equip Dealer" (eAthena 1.0,
+a role) or "Mr. King's Shop" (rAthena, a translation of mod0631's name).
+The game now shows "Vegetable Gardener" and "Mr. King's Shop" (tier later,
+`tools/import/athena_import.py`; research/notes/round9-review.md). Every
+shop has an English name.
 **Impact:** shop names over NPC heads; stock lists vs iRO 2004.
 **Look:** match 817 `npc/shops/shop.txt` by cell; the iRO item library
 (2004) for prices.
@@ -739,6 +745,22 @@ also comes with the skill's result. The goblins' elemental attacks
 over the goblin each time one lands; so does every monster with such an
 attack. Left as it is: whether Aegis sent these as skill damage (named or
 not) or as plain attacks (0x008a) is the same open question.
+**Round 9 (2026-11-14): a whole layer is missing.** unknown13's Monster
+Skill FAQ (GameFAQs 29608, April 2004; a pRO player writing up "the data
+on iRO") lists every monster skill. `research/mob_skills_faq.py` compares
+it with our table: of 325 (skill, monster) pairs, 209 are in ours, 96 are
+not, 20 name monsters it cannot match. mod0631 gives **no** monster
+Endure, Increase or Decrease Agility, Piercing Attack, Mental Breaker,
+Napalm Beat, Status Recovery or Pneuma; the FAQ has each on 3 to 11
+monsters, and quotes iRO: "All boss monsters will use the Two-Hand
+Quicken, Increase Agility, Guided Attack, and Piercing Attack depending on
+the probability", "All boss monsters will Teleport if they are attacked
+from beyond their attacking range". This fits New Comodo's "added monster
+skills" (January 2004) arriving after mod0631's table (December 2003).
+Next: add the FAQ's pairs, with levels, rates and conditions from a later
+table where the period gives none (owner's rule of 2026-11-14), then play
+it; the 20 unmatched names and the matcher's guesses need a hand check
+first (research/notes/round9-review.md).
 **Impact:** how every fight feels; `data/db/mob_skills.toml`.
 **Look:** kRO notices on monster skills (2003); period monster databases
 that list skills (RODataZone, RO Empire); later official data is tier

@@ -4,7 +4,7 @@ For: the independent deep-research agent (Gemini in Antigravity) that wrote
 rounds 1 to 3. Kept by the Claude sessions that work on the game: at the
 end of each session the queue is updated (answered items go to "Done",
 with where the answer went) and refilled with what that session could not
-settle from the sources on disk. Last update: 2026-11-14, late (thread 28 added to T9); before that, round 8 reviewed (`research/notes/round8-review.md`); before that, later the same day (T7 narrowed by euRO's May-2004 text; two shop names added to T9). Before that, 2026-11-14 (round 7 reviewed: `research/notes/round7-review.md`.
+settle from the sources on disk. Last update: 2026-11-14, round 9 reviewed (`research/notes/round9-review.md`: two T9 items moved to Done, the monster-skill item rewritten); before that, later the same day (thread 28 added to T9); before that, round 8 reviewed (`research/notes/round8-review.md`); before that, later the same day (T7 narrowed by euRO's May-2004 text; two shop names added to T9). Before that, 2026-11-14 (round 7 reviewed: `research/notes/round7-review.md`.
 T11 answered and moved to Done; T1, T9 and T10 updated with what it found).
 
 ## How to use it
@@ -79,6 +79,12 @@ What is on this machine is listed in `HANDOFF-r3.md` §3. Since then:
 ## Queue
 
 ### T1. The 2-1 job tests: dating and sharpening them (threads 5, 8)
+
+**After round 9:** do not quote eAthena 1.0's or jAthena's test scripts
+again. THREADS #8 and the headers of `scripts/npc/*_test.lua` already
+hold everything in them, and round 9's 23 T1 rows only repeated it. What
+is wanted is a *player's* account of 2003-04 (a guide, a forum post)
+saying what the tests asked.
 
 Changed on 2026-11-13: every 2-1 job now has its test in the game. The
 Assassin's (`scripts/npc/assassin_test.lua`) and the Blacksmith's
@@ -338,12 +344,6 @@ Sets: `skill_castend_*` for those skills.
 
 ### T9. Small, independent
 
-* **Two shops' English names** (thread 11, new on 2026-11-14). mod0631
-  calls them 野菜商人 (`prontera 48,58`, sells Carrots, Sweet Potatoes and
-  Pumpkins) and 王窓商会 (`yuno 205,103`, sells Full Plate, Greaves, a
-  Gemmed Sallet, a Repeating Crossbow and more); 817 has neither. What did iRO or euRO call them, in any capture
-  or guide of 2004? One `none` row per place searched if nothing.
-
 * **Three quest-skill differences** (thread 7, from round 8): Cart
   Revolution's Iron (817 15, RODataZone 20), Gershaun's Banana Juice, and
   a Crossbow for Charge Arrow (RODataZone only). Any other account of 2004
@@ -388,10 +388,13 @@ Sets: `skill_castend_*` for those skills.
   or an Ant Egg hatching shows "Unknown Skill !!". Did players of
   2003/04 see that on the official servers (a forum thread, a screenshot,
   a guide that mentions it), or nothing at all?
-* **Monster skills** (thread 23): any period monster database that lists
-  skills per monster (RODataZone, RO Empire, a Japanese one), for ten
-  monsters of your choice across the level range, against
-  `data/db/mob_skills.toml`.
+* **Monster skills, levels and rates** (thread 23, from round 9).
+  unknown13's FAQ (round 9) says which monster had which skill on iRO in
+  April 2004, but not at what level, how often or when. Any period source
+  that does, for the skills mod0631 gives no monster (Endure, Increase and
+  Decrease Agility, Piercing Attack, Mental Breaker, Napalm Beat, Status
+  Recovery, Pneuma); failing that, a later table's rows for the same
+  monsters, graded D.
 * **Others' traps and ground skills, seen twice** (thread 28, new on
   2026-11-14). This client draws a ground unit placed by someone else the
   first time it hears of it and hides it the second time. Did players of
@@ -452,3 +455,5 @@ that nobody researches them again.
 | The other quest skills, side by side | Five agree everywhere; three differences (round 8) | THREADS.md #7, `research/notes/round8-review.md` |
 | Sir Grey's pass condition | No period source; rAthena's official conversion scores 0, 5 or 10 to pass (later, round 8 review) | THREADS.md #8 |
 | Shop names 817 lacked | 14 of 16 from 817's English for the same Japanese role words (2026-11-14) | THREADS.md #11 |
+| The two shops 817 never names | No period English; later: Vegetable Gardener, Mr. King's Shop (rAthena) | THREADS.md #11, `research/notes/round9-review.md` |
+| Which monster had which skill, iRO April 2004 | unknown13's Monster Skill FAQ: 96 pairs mod0631 lacks | THREADS.md #23, `research/mob_skills_faq.py` |
