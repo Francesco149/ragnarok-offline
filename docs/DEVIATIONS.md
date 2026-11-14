@@ -557,9 +557,33 @@ research should check is in research/THREADS.md #21–#23 and #25.
   (`skill.c:3237, 3360`). jAthena //1082 (2004-12-18) fixed the request; here
   the cast end allows the same cell (ours: jAthena's cast end would have
   spent the SP and the item and failed).
+* **Monsters' element changes** (Myst and Angeling to Ghost, Carat to
+  Shadow, Sasquatch to Water...) did nothing: mod0631's `skill_db` marks
+  skills 161-169 as damage skills (`nk 0`), so `mob.c:1949` sends them to
+  `skill_castend_damage_id`, which has no case for them. jAthena //0850
+  (2004-02-29) made them support skills, as here. The elements stay
+  mod0631's by number (168 Ghost, 169 Shadow), which its monsters' rows and
+  the FAQ below agree with, though its `skill.h` names 168
+  NPC_CHANGEDARKNESS.
 * **Attack speed.** Not mod0631's slip but ours, fixed now: the server
   attacked twice as fast as the status window's ASPD says. The delay between
   two attacks is twice the "aspd" value (`pc.c:2458`).
+
+**Monster skills iRO had and mod0631 lacks.** mod0631's monster skills
+(December 2003) are jRO's as its authors knew them. unknown13's Monster
+Skill FAQ (GameFAQs 29608, April 2004) lists what iRO's monsters used: of
+its 325 pairs, 97 are not in mod0631's table (no monster there uses
+Endure, Increase or Decrease Agility, Piercing Attack, Mental Breaker,
+Napalm Beat, Status Recovery or Pneuma). euRO's "New Comodo" update
+(January 2004) announced "added monster skills". 93 of them are in
+`data/db/mob_skills_faq.toml` (`tools/import/mob_skills_faq.py`), read after
+mod0631's: 38 with jAthena's rows of 2004-04-27 (tier athena2003), 8 with
+rAthena's (later), and 47 that no table has (later tables were reworked:
+rAthena gives Golem Auto Guard, not Endure) with the commonest row of that
+skill on other monsters (guess). Which Goblin and Kobold the FAQ means by
+"Goblin (Hammer)" and the like is read from the client's sprites. The 4
+left out: Lazy Attack (no such skill in the table), Detoxify (no table gives
+it to a monster), and two pairs on a "Grimtooth" monster. THREADS.md #23.
 
 **Taken from eAthena 817 because mod0631 leaves it unfinished:**
 

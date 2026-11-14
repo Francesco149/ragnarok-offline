@@ -757,11 +757,34 @@ Quicken, Increase Agility, Guided Attack, and Piercing Attack depending on
 the probability", "All boss monsters will Teleport if they are attacked
 from beyond their attacking range". This fits New Comodo's "added monster
 skills" (January 2004) arriving after mod0631's table (December 2003).
-Next: add the FAQ's pairs, with levels, rates and conditions from a later
-table where the period gives none (owner's rule of 2026-11-14), then play
-it; the 20 unmatched names and the matcher's guesses need a hand check
-first (research/notes/round9-review.md).
-**Impact:** how every fight feels; `data/db/mob_skills.toml`.
+**Added (2026-11-14):** 93 of the missing pairs, in
+`data/db/mob_skills_faq.toml` (DEVIATIONS.md has the how; each row names its
+tier and source). The unmatched names were settled by hand
+(`tools/import/mob_skills_faq.tsv`, column 5); "Goblin (Hammer)" and the like
+by the weapon each `goblin_N`/`kobold_N` sprite carries. Found on the way:
+mod0631's element changes never ran (mended, DEVIATIONS.md), and its numbers
+for them are the reverse of their names. Still open:
+* **The rate scale.** mod0631 rolls a row's rate against 1000 (`mob.c:2168`);
+  817, eAthena 0.5.2 and jAthena from //0822 (2004-02-20, when Kalen's monster
+  skill database went in) against 10000, with the same numbers for the
+  rows they share: every monster skill there fires ten times less often.
+  rAthena's numbers are five times jAthena's (median), so by rAthena's
+  later reading mod0631's monsters use their skills twice as often as
+  they should, and jAthena's five times too seldom. The game keeps
+  mod0631's roll. A period player's word on how often a monster cast (a
+  Marc's or a Hydra's skill per minute) would settle it.
+* **The boss rule.** The FAQ's "All boss monsters will use the Two-Hand
+  Quicken, Increase Agility, Guided Attack, and Piercing Attack" and
+  "Teleport if they are attacked from beyond their attacking range" are
+  not built as a rule; only the bosses' own lists are.
+* **47 rows are guesses** (the commonest row of that skill on other
+  monsters, as no table has the pair: tables after 2004 were reworked).
+  The Status Recovery rows target "friend", which this AI skips, as
+  mod0631 skipped every friend row.
+* **Not placed:** Detoxify (Obeaune), Lazy Attack (Merman), and the FAQ's
+  "Grimtooth" as a monster (Maximize Power, Piercing Attack).
+**Impact:** how every fight feels; `data/db/mob_skills.toml`,
+`data/db/mob_skills_faq.toml`.
 **Look:** kRO notices on monster skills (2003); period monster databases
 that list skills (RODataZone, RO Empire); later official data is tier
 later but shows which monster has which skill at all.

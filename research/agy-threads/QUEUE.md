@@ -4,7 +4,7 @@ For: the independent deep-research agent (Gemini in Antigravity) that wrote
 rounds 1 to 3. Kept by the Claude sessions that work on the game: at the
 end of each session the queue is updated (answered items go to "Done",
 with where the answer went) and refilled with what that session could not
-settle from the sources on disk. Last update: 2026-11-14, round 9 reviewed (`research/notes/round9-review.md`: two T9 items moved to Done, the monster-skill item rewritten); before that, later the same day (thread 28 added to T9); before that, round 8 reviewed (`research/notes/round8-review.md`); before that, later the same day (T7 narrowed by euRO's May-2004 text; two shop names added to T9). Before that, 2026-11-14 (round 7 reviewed: `research/notes/round7-review.md`.
+settle from the sources on disk. Last update: 2026-11-14, later (T9 monster skills: the FAQ pairs added, the rate question); before that, round 9 reviewed (`research/notes/round9-review.md`: two T9 items moved to Done, the monster-skill item rewritten); before that, later the same day (thread 28 added to T9); before that, round 8 reviewed (`research/notes/round8-review.md`); before that, later the same day (T7 narrowed by euRO's May-2004 text; two shop names added to T9). Before that, 2026-11-14 (round 7 reviewed: `research/notes/round7-review.md`.
 T11 answered and moved to Done; T1, T9 and T10 updated with what it found).
 
 ## How to use it
@@ -394,7 +394,14 @@ Sets: `skill_castend_*` for those skills.
   that does, for the skills mod0631 gives no monster (Endure, Increase and
   Decrease Agility, Piercing Attack, Mental Breaker, Napalm Beat, Status
   Recovery, Pneuma); failing that, a later table's rows for the same
-  monsters, graded D.
+  monsters, graded D. **Since 2026-11-14** the 93 pairs are in the game
+  (`data/db/mob_skills_faq.toml`): 47 of them on a guessed row (column
+  `tier = "guess"`), so a source for *those* monsters comes first. And
+  **how often**: the period emulators disagree tenfold (mod0631 rolls a
+  row's rate against 1000, 817 and jAthena from 2004-02-20 against 10000,
+  same numbers; THREADS #23). A player's account of how often a monster
+  cast (how many Fire Bolts from a Marduk in a fight, how soon a Marc
+  went to Increase Agility) is worth a row, any server, dated.
 * **Others' traps and ground skills, seen twice** (thread 28, new on
   2026-11-14). This client draws a ground unit placed by someone else the
   first time it hears of it and hides it the second time. Did players of

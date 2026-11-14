@@ -5,7 +5,10 @@ unknown13's "Monster Skill FAQ" (GameFAQs 29608, v1.0 of 2004-04, iRO data writt
 pRO player; saved by research round 9 under research/agy-threads/r9/pages/). Prints, for
 each (skill, monster) pair the FAQ lists, whether mod0631's table has it.
 
-  python3 -I research/mob_skills_faq.py PAGE REPO_ROOT
+  python3 -I research/mob_skills_faq.py PAGE REPO_ROOT [--tsv]
+
+--tsv prints the pairs instead (FAQ skill, FAQ monster, skill names, matched monster ids):
+the start of tools/import/mob_skills_faq.tsv, whose unmatched names were then settled by hand.
 """
 import re, sys, html, tomllib, unicodedata
 page, root = sys.argv[1], sys.argv[2]
@@ -30,8 +33,10 @@ SK = {
  'Back Sliding': 'TF_BACKSLIDING', 'Cloaking': 'AS_CLOAKING', 'Detoxify': 'TF_DETOXIFY', 'Envenom': 'TF_POISON',
  'Grimtooth': 'AS_GRIMTOOTH', 'Hiding': 'TF_HIDING', 'Sand Attack': 'TF_SPRINKLESAND', 'Sonic Blow': 'AS_SONICBLOW',
  'Stone Fling': 'TF_THROWSTONE', 'Poison Attack': 'NPC_POISON', 'Venom Dust': 'AS_VENOMDUST', 'Changes to a Random Attribute': 'NPC_ATTRICHANGE',
- 'Changes to Shadow Attribute': 'NPC_CHANGEDARKNESS', 'Changes to Fire Attribute': 'NPC_CHANGEFIRE',
- 'Changes to Ghost Attribute': 'NPC_CHANGETELEKINESIS', 'Changes to Water Attribute': 'NPC_CHANGEWATER',
+ # by element, not by name: mod0631's skill_db (and its monsters' rows) make 168 Ghost and 169
+ # Shadow, though its skill.h calls 168 NPC_CHANGEDARKNESS and 169 NPC_CHANGETELEKINESIS
+ 'Changes to Shadow Attribute': 'NPC_CHANGETELEKINESIS', 'Changes to Fire Attribute': 'NPC_CHANGEFIRE',
+ 'Changes to Ghost Attribute': 'NPC_CHANGEDARKNESS', 'Changes to Water Attribute': 'NPC_CHANGEWATER',
  'Silence Attack': 'NPC_SILENCEATTACK', 'Sleep Attack': 'NPC_SLEEPATTACK', 'Stun Attack': 'NPC_STUNATTACK',
  'Blind Attack': 'NPC_BLINDATTACK', 'Blind': 'NPC_BLINDATTACK', 'Suicide': 'NPC_SUICIDE', 'Self-destruction': 'NPC_SELFDESTRUCTION',
  'Consecutive Attack': 'NPC_COMBOATTACK', 'Critical Slash': 'NPC_CRITICALSLASH', 'Guided Attack': 'NPC_GUIDEDATTACK',
@@ -88,6 +93,12 @@ for l in L[start:end]:
     for mob in rest.split(','):
         mob = mob.strip()
         if mob: pairs.append((cur, mob))
+if '--tsv' in sys.argv:
+    print('# faq_skill\tfaq_monster\tskills\tmonsters')
+    for s, mob in pairs:
+        ids = mob_ids(mob) or []
+        print(f"{s}\t{mob}\t{SK.get(s, '')}\t{','.join(str(i) for i in sorted(set(ids)))}")
+    sys.exit()
 ok = miss = unk = 0; out = []
 for s, mob in pairs:
     ids = mob_ids(mob)

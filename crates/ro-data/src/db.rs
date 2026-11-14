@@ -7,7 +7,8 @@
 //! Files (all optional; missing ones load empty with a warning):
 //!   data/db/items.toml  data/db/mobs.toml  data/db/exp.toml  data/db/jobs.toml
 //!   data/db/skills.toml  data/db/random.toml  data/db/mapflags.toml  data/db/pets.toml
-//!   data/db/mob_skills.toml
+//!   data/db/mob_skills.toml  data/db/mob_skills_faq.toml (read after it: the monster
+//!   skills iRO had in April 2004 that mod0631 lacks, tools/import/mob_skills_faq.py)
 
 use std::collections::HashMap;
 use std::path::Path;
@@ -227,6 +228,9 @@ pub struct MobSkill {
     pub cond_val: i32,
     /// Skill argument: monster to summon, emotion.
     pub val: i32,
+    /// The row's own tier and source, where it differs from the file's.
+    pub tier: Option<Tier>,
+    pub source: Option<String>,
 }
 
 #[derive(Debug, Default, Serialize, Deserialize)]
@@ -428,8 +432,10 @@ impl Database {
         let flags: MapFlagFile = read_toml(&dir.join("mapflags.toml"), &mut db.warnings)?;
         db.mapflags = flags.map.into_iter().map(|m| (m.name.clone(), m)).collect();
         db.pets = read_toml::<PetFile>(&dir.join("pets.toml"), &mut db.warnings)?.pet;
-        for ms in read_toml::<MobSkillFile>(&dir.join("mob_skills.toml"), &mut db.warnings)?.skill {
-            db.mob_skills.entry(ms.mob).or_default().push(ms);
+        for file in ["mob_skills.toml", "mob_skills_faq.toml"] {
+            for ms in read_toml::<MobSkillFile>(&dir.join(file), &mut db.warnings)?.skill {
+                db.mob_skills.entry(ms.mob).or_default().push(ms);
+            }
         }
         Ok(db)
     }

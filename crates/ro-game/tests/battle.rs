@@ -1546,3 +1546,75 @@ fn endows_strips_protections_dispell() {
     assert!(t.sc(52));
     t.check();
 }
+
+/// The monster skills added from the April-2004 FAQ (data/db/mob_skills_faq.toml):
+/// each runs with its monster as the caster, the way the AI ends a cast.
+#[test]
+fn faq_monster_skills_run() {
+    let mut t = T::new();
+    let mut rows: Vec<(u32, u16, u16, String)> = t
+        .g
+        .db
+        .mob_skills
+        .values()
+        .flatten()
+        .filter(|r| r.source.is_some())
+        .map(|r| (r.mob, r.skill, r.lv, r.target.clone()))
+        .collect();
+    rows.sort();
+    rows.dedup();
+    for (mob, skill, lv, target) in rows {
+        if t.hp() == 0 {
+            t = T::new();
+        }
+        t.lua("player.base_level = 99; player.vit = 99; player.agi = 30; heal(30000, 30000)");
+        let me = t.me;
+        let sk = t.g.db.skill(skill).cloned().expect("skill");
+        t.lua("heal(30000, 30000); _rt('sc_clear', player.id)");
+        let m = t.spawn(26, 25, mob);
+        t.cap.take();
+        let hp = t.hp();
+        let (tid, x, y) = match target.as_str() {
+            "self" => (m, 26, 25),
+            _ => (me, 25, 25),
+        };
+        let call = if sk.inf & 2 != 0 {
+            format!("rules.skill_castend{{src={m}, skill={skill}, lv={lv}, target=0, x={x}, y={y}, item=false, val=0}}")
+        } else {
+            format!("rules.skill_castend{{src={m}, skill={skill}, lv={lv}, target={tid}, x=0, y=0, item=false, val=0}}")
+        };
+        let r = t.g.console_eval(&call, me);
+        let n = std::mem::take(&mut t.g.notices);
+        assert!(!r.starts_with("error") && n.is_empty(), "{} by {mob}: {r} {:?}", sk.name, n.first());
+        t.run(500);
+        let mut ids: Vec<String> = t.cap.take().iter().map(|p| format!("{:04x}", id_of(p))).collect();
+        ids.sort();
+        ids.dedup();
+        let scs = |t: &mut T, u: u32| if t.g.world.units.contains_key(&u) { t.lua(&format!("(function() local s = {{}} for k in pairs(battle.get({u}).sc) do s[#s+1] = k end return table.concat(s, ',') end)()")).trim().to_string() } else { "gone".into() };
+        let (msc, psc) = (scs(&mut t, m), scs(&mut t, me));
+        let line = format!("{mob} {} lv{lv} {target}: r={} hp {} -> {} mob_sc=[{msc}] my_sc=[{psc}] pk={}", sk.name, r.trim(), hp, t.hp(), ids.join(","));
+        assert_eq!(r.trim(), "true", "{line}");
+        assert!(!ids.is_empty(), "nothing reached the client: {line}");
+        t.kill(m);
+        t.lua("_rt('sc_clear', player.id)");
+        if t.hp() > 0 && (t.pos(me), t.g.world.units[&me].map.as_str()) != ((25, 25), "testmap") {
+            t.lua("warp('testmap', 25, 25)");
+            t.send(Writer::new(0x007d));
+        }
+    }
+}
+
+/// A monster's element change takes the element its row means: mod0631's skill_db makes 168 Ghost
+/// and 169 Shadow (its names say the opposite), and it routes them as support skills only since
+/// jAthena //0850; before that they did nothing.
+#[test]
+fn monster_element_change() {
+    let mut t = T::new();
+    for (mob, skill, ele) in [(1151, 168, 8), (1267, 169, 7), (1243, 162, 1)] {
+        let m = t.spawn(26, 25, mob);
+        let r = t.lua(&format!("rules.skill_castend{{src={m}, skill={skill}, lv=1, target={m}, x=0, y=0, item=false, val=0}}"));
+        assert_eq!(r.trim(), "true");
+        assert_eq!(t.lua(&format!("battle.elem_type(battle.get({m}))")).trim(), ele.to_string(), "{mob} with {skill}");
+        t.kill(m);
+    }
+}

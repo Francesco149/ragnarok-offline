@@ -1,0 +1,332 @@
+# unknown13's "Monster Skill FAQ" (GameFAQs 29608, v1.0, 2004-04; iRO data written up by a pRO
+# player), every (skill, monster) pair it lists. Written by research/mob_skills_faq.py --tsv from
+# the page saved by research round 9; names it could not match settled by hand (column 5 says how).
+# Read by tools/import/mob_skills_faq.py. Columns: FAQ skill, FAQ monster, skill names,
+# candidate monster ids (the period table picks among them), note. Goblin and Kobold ids by
+# weapon: data\sprite\npc\goblin_N.spr's weapon parts, and kobold_N.act draws part 34.
+# Element changes by element: in mod0631 168 (named NPC_CHANGEDARKNESS) is Ghost, 169 Shadow.
+Decrease Agility	Khalitzburg	AL_DECAGI	1132,1438	
+Decrease Agility	Evil Druid	AL_DECAGI	1117,1435	
+Decrease Agility	Ghostring	AL_DECAGI	1120	
+Decrease Agility	Joker	AL_DECAGI	1131,1437	
+Decrease Agility	Wraith	AL_DECAGI	1192,1475	
+Decrease Agility	Earth Petite	AL_DECAGI	1155,1465	PETIT and PETIT_ (G_PETIT, G_PETIT_) by display name: the matcher took both
+Decrease Agility	Clock	AL_DECAGI	1269	
+Heal	Angeling	AL_HEAL	1096	
+Heal	Alice	AL_HEAL	1275	
+Heal	Chepet	AL_HEAL	1250,1444	
+Heal	Vitata	AL_HEAL	1176	
+Heal	Carat	AL_HEAL	1267	
+Heal	Cookie	AL_HEAL	1265	
+Holy Light	Angeling	AL_HOLYLIGHT	1096	
+Increase Agility	Isis	AL_INCAGI	1029,1421	
+Increase Agility	Alarm	AL_INCAGI	1193,1476	
+Increase Agility	Baphomet Jr.	AL_INCAGI	1101	
+Increase Agility	Orc Lady	AL_INCAGI	1273,1452	
+Increase Agility	Marc	AL_INCAGI	1045,1426	
+Increase Agility	Nightmare	AL_INCAGI	1061,1427	
+Increase Agility	Sky Petite	AL_INCAGI	1156,1466	PETIT and PETIT_ (G_PETIT, G_PETIT_) by display name: the matcher took both
+Increase Agility	Savage	AL_INCAGI	1166,1221	
+Lex Divina	Bathory	PR_LEXDIVINA	1102	
+Lex Divina	Metaller	PR_LEXDIVINA	1058	
+Lex Divina	Vocal	PR_LEXDIVINA	1088	
+Lex Aeterna	Baphomet Jr.	PR_LEXAETERNA	1101	
+Lex Aeterna	Christmas Cookie	PR_LEXAETERNA	1246	
+Pneuma	Nine Tails	AL_PNEUMA	1180	name settled by hand
+Pneuma	Greatest General	AL_PNEUMA	1277	
+Pneuma	Carat	AL_PNEUMA	1267	
+Status Recovery	Bathory	PR_STRECOVERY	1102	
+Status Recovery	Sage Worm	PR_STRECOVERY	1281	
+Status Recovery	Alice	PR_STRECOVERY	1275	
+Safety Wall	Angelring	MG_SAFETYWALL	1096	
+Safety Wall	Savage Worm	MG_SAFETYWALL	1281	read as Sage Worm (no Savage Worm exists; the FAQ also lists Sage Worm)
+Teleport	Creamy	AL_TELEPORT	1018,1231	
+Teleport	Ghostring	AL_TELEPORT	1120	
+Teleport	Clock Tower Keeper	AL_TELEPORT	1270	
+Teleport	Carat	AL_TELEPORT	1267	
+Teleport	Megalice	AL_TELEPORT	1274	
+Ankle Snare	Orc Archer	HT_ANKLESNARE	1189,1473	
+Arrow Repel	Raydric Archer	AC_CHARGEARROW	1276,1453	
+Arrow Repel	Gargoyle	AC_CHARGEARROW	1253	
+Arrow Shower	Orc Archer	AC_SHOWER	1189,1473	
+Claymore Trap	Clock Tower Keeper	HT_CLAYMORETRAP	1270	
+Double Strafe	Archer Skeleton	AC_DOUBLE	1016	
+Double Strafe	Goblin Archer	AC_DOUBLE	1258	
+Double Strafe	Cobold Archer	AC_DOUBLE	1282	name settled by hand
+Freezing Trap	Marionette	HT_FREEZINGTRAP	1143,1459	
+Sandman	Giearth	HT_SANDMAN	1121	
+Shockwave Trap	Wind Ghost	HT_SHOCKWAVE	1263,1450	
+Skid Trap	Yoyo	HT_SKIDTRAP	1057,1234	
+Cold Bolt	Sage Worm	MG_COLDBOLT	1281	
+Earth Spike	Wraith	WZ_EARTHSPIKE	1192,1475	
+Fire Ball	Mutant Dragon	MG_FIREBALL	1262	
+Fire Ball	Kaho	MG_FIREBALL	1072	
+Fire Ball	Marduk	MG_FIREBALL	1140,1458	
+Fire Bolt	Kaho	MG_FIREBOLT	1072	
+Fire Bolt	Savage Worm	MG_FIREBOLT	1281	read as Sage Worm (no Savage Worm exists; the FAQ also lists Sage Worm)
+Fire Bolt	Marduk	MG_FIREBOLT	1140,1458	
+Fire Bolt	Elder Willow	MG_FIREBOLT	1033	
+Fire Bolt	Jakk	MG_FIREBOLT	1130,1436	
+Fire Wall	Kaho	MG_FIREWALL	1072	
+Fire Wall	Marionette	MG_FIREWALL	1143,1459	
+Fire Wall	Chepet	MG_FIREWALL	1250,1444	
+Fire Wall	Marduk	MG_FIREWALL	1140,1458	
+Frost Diver	Strouf	MG_FROSTDIVER	1065	
+Frost Diver	Obeaune	MG_FROSTDIVER	1044,1425	
+Frost Diver	Christmas Goblin	MG_FROSTDIVER	1245	
+Heaven`s Drive	Chimera	WZ_HEAVENDRIVE	1283,1456	
+Heaven`s Drive	Minorous	WZ_HEAVENDRIVE	1149,1461	
+Heaven`s Drive	Evil Druid	WZ_HEAVENDRIVE	1117,1435	
+Jupital Thunder	Deviruchi	WZ_JUPITEL	1109,1433	
+Jupital Thunder	Joker	WZ_JUPITEL	1131,1437	
+Jupital Thunder	Wind Ghost	WZ_JUPITEL	1263,1450	
+Lightening Bolt	Sage Worm	MG_LIGHTNINGBOLT	1281	
+Lightening Bolt	Wind Ghost	MG_LIGHTNINGBOLT	1263,1450	
+Lightening Bolt	Strouf	MG_LIGHTNINGBOLT	1065	
+Lightening Bolt	Christmas	MG_LIGHTNINGBOLT	1245,1246	Christmas Cookie or Christmas Goblin
+Meteor Storm	Bloody Knight	WZ_METEOR	1268	
+Napalm Beat	Sky Petite	MG_NAPALMBEAT	1156,1466	PETIT and PETIT_ (G_PETIT, G_PETIT_) by display name: the matcher took both
+Napalm Beat	Earth Petite	MG_NAPALMBEAT	1155,1465	PETIT and PETIT_ (G_PETIT, G_PETIT_) by display name: the matcher took both
+Napalm Beat	Cookie	MG_NAPALMBEAT	1265	
+Napalm Beat	Elder Willow	MG_NAPALMBEAT	1033	
+Napalm Beat	Willow	MG_NAPALMBEAT	1010	
+Quagmire	Sting	WZ_QUAGMIRE	1207,1489	
+Quagmire	Strouf	WZ_QUAGMIRE	1065	
+Sight	Horong	MG_SIGHT	1129	
+Soul Strike	Ghostring	MG_SOULSTRIKE	1120	
+Water Ball	Sword Fish	WZ_WATERBALL	1069	
+Water Ball	Strouf	WZ_WATERBALL	1065	
+Water Ball	Deviace	WZ_WATERBALL	1108	
+Adrenaline Rush	Verit	BS_ADRENALINE	1032	
+Adrenaline Rush	Desert Wolf	BS_ADRENALINE	1106,1220,1432	
+Adrenaline Rush	Desert Wolf Baby	BS_ADRENALINE	1107	
+Adrenaline Rush	Dokebi	BS_ADRENALINE	1110,1407,1491	
+Adrenaline Rush	Axe Goblin	BS_ADRENALINE	1124	weapon read from the client sprite (goblin_1 knife, _2 flail, _3 axe, _4 hammer, _5 morning star; kobold_1 axe, _2 hammer, _3 morning star)
+Adrenaline Rush	Axe Cobold	BS_ADRENALINE	1133	weapon read from the client sprite (goblin_1 knife, _2 flail, _3 axe, _4 hammer, _5 morning star; kobold_1 axe, _2 hammer, _3 morning star)
+Hammer Fall	Minorous	BS_HAMMERFALL	1149,1461	
+Mammonite	Dokebi	MC_MAMMONITE	1110,1407,1491	
+Maximize Power	Khalitzburg	BS_MAXIMIZE	1132,1438	
+Maximize Power	Abysmal Knight	BS_MAXIMIZE	1219	
+Maximize Power	Raydric	BS_MAXIMIZE	1163,1467	
+Maximize Power	Mysteltainn	BS_MAXIMIZE	1203,1485	
+Maximize Power	Executioner	BS_MAXIMIZE	1205,1487	
+Maximize Power	Grimtooth	BS_MAXIMIZE		no monster of that name: left out
+Bash	Mysteltainn	SM_BASH	1203,1485	
+Bash	Pirate Skel	SM_BASH	1071	
+Brandish Spear	Bloody Knight	KN_BRANDISHSPEAR	1268	
+Brandish Spear	Abysmal Knight	KN_BRANDISHSPEAR	1219	
+Counter Attack	Wanderer	KN_AUTOCOUNTER	1208	
+Counter Attack	Executioner	KN_AUTOCOUNTER	1205,1487	
+Counter Attack	Mimic	KN_AUTOCOUNTER	1191,1474	
+Counter Attack	Sohee	KN_AUTOCOUNTER	1170	
+Endure	Big Foot	SM_ENDURE	1060	
+Endure	Golem	SM_ENDURE	1040	
+Endure	Stalactic Golem	SM_ENDURE	1278	
+Endure	Savage	SM_ENDURE	1166,1221	
+Endure	Sasquatch	SM_ENDURE	1243,1442	
+Magnum Break	Raydric	SM_MAGNUM	1163,1467	
+Magnum Break	Steam Goblin	SM_MAGNUM	1280	
+Magnum Break	Mutant Dragon	SM_MAGNUM	1262	
+Pierce	Gryphon	KN_PIERCE	1259,1447	
+Pierce	Sidewinder	KN_PIERCE	1037,1424	
+Provoke	Carat	SM_PROVOKE	1267	
+Provoke	Yoyo	SM_PROVOKE	1057,1234	
+Provoke	Jealotous	SM_PROVOKE	1200	name settled by hand
+Provoke	High Orc	SM_PROVOKE	1213,1222,1439	
+Provoke	Zealotus	SM_PROVOKE	1200	name settled by hand
+Spear Boomerang	Executioner	KN_SPEARBOOMERANG	1205,1487	
+Back Sliding	Bongun	TF_BACKSLIDING	1188,1472	
+Back Sliding	Sage Worm	TF_BACKSLIDING	1281	
+Cloaking	Frilldora	AS_CLOAKING	1119	
+Cloaking	Ghostring	AS_CLOAKING	1120	
+Cloaking	Whisper	AS_CLOAKING	1179,1185	
+Detoxify	Obeaune	TF_DETOXIFY	1044,1425	
+Envenom	Anacondaq	TF_POISON	1030	
+Envenom	Argiope	TF_POISON	1099,1429	
+Envenom	Cramp	TF_POISON	1209	
+Envenom	Myst	TF_POISON	1151	
+Envenom	Fest	TF_POISON	1256	read as Pest
+Envenom	Scorpion	TF_POISON	1001	
+Grimtooth	Khalitzburg	AS_GRIMTOOTH	1132,1438	
+Hiding	Hode	TF_HIDING	1127	
+Hiding	Smokie	TF_HIDING	1056	
+Hiding	Martin	TF_HIDING	1145	
+Hiding	Sting	TF_HIDING	1207,1489	
+Hiding	Sandman	TF_HIDING	1165	
+Sand Attack	Sandman	TF_SPRINKLESAND	1165	
+Sand Attack	Martin	TF_SPRINKLESAND	1145	
+Sand Attack	Giearth	TF_SPRINKLESAND	1121	
+Sonic Blow	Jealotus	AS_SONICBLOW	1200	name settled by hand
+Sonic Blow	Injustice	AS_SONICBLOW	1257,1446	
+Sonic Blow	Matyr	AS_SONICBLOW	1146,1460	
+Sonic Blow	Wild Rose	AS_SONICBLOW	1261	
+Sonic Blow	Peco Peco	AS_SONICBLOW	1019,1233	
+Stone Fling	Yoyo	TF_THROWSTONE	1057,1234	
+Stone Fling	Coco	TF_THROWSTONE	1104	
+Venom Dust	Argiope	AS_VENOMDUST	1099,1429	
+Changes to a Random Attribute	Frilldora	NPC_ATTRICHANGE	1119	
+Changes to a Random Attribute	Joker	NPC_ATTRICHANGE	1131,1437	
+Changes to a Random Attribute	Nine Tails	NPC_ATTRICHANGE	1180	name settled by hand
+Changes to a Random Attribute	Dokebi	NPC_ATTRICHANGE	1110,1407,1491	
+Changes to Shadow Attribute	Carat	NPC_CHANGETELEKINESIS	1267	
+Changes to Fire Attribute	Bloody Knight	NPC_CHANGEFIRE	1268	
+Changes to Fire Attribute	Matyr	NPC_CHANGEFIRE	1146,1460	
+Changes to Ghost Attribute	Myst	NPC_CHANGEDARKNESS	1151	
+Changes to Ghost Attribute	Angelring	NPC_CHANGEDARKNESS	1096	
+Changes to Water Attribute	Sasquatch	NPC_CHANGEWATER	1243,1442	
+Changes to Water Attribute	Muka	NPC_CHANGEWATER	1055	
+Changes to Water Attribute	Sting	NPC_CHANGEWATER	1207,1489	
+Silence Attack	Deviruchi	NPC_SILENCEATTACK	1109,1433	
+Silence Attack	Stainer	NPC_SILENCEATTACK	1174	
+Silence Attack	Steel Chonchon	NPC_SILENCEATTACK	1042	
+Silence Attack	Dragon Fly	NPC_SILENCEATTACK	1091	
+Sleep Attack	Creamy	NPC_SLEEPATTACK	1018,1231	
+Sleep Attack	Dustiness	NPC_SLEEPATTACK	1114	
+Sleep Attack	Spore	NPC_SLEEPATTACK	1014	
+Stun Attack	Bigfoot	NPC_STUNATTACK	1060	
+Stun Attack	Golem	NPC_STUNATTACK	1040	
+Stun Attack	Goblin (Hammer)	NPC_STUNATTACK	1125	weapon read from the client sprite (goblin_1 knife, _2 flail, _3 axe, _4 hammer, _5 morning star; kobold_1 axe, _2 hammer, _3 morning star)
+Stun Attack	Kobold (Hammer)	NPC_STUNATTACK	1134	weapon read from the client sprite (goblin_1 knife, _2 flail, _3 axe, _4 hammer, _5 morning star; kobold_1 axe, _2 hammer, _3 morning star)
+Stun Attack	Requiem	NPC_STUNATTACK	1164	
+Stun Attack	Savage	NPC_STUNATTACK	1166,1221	
+Stun Attack	Stalactic Golem	NPC_STUNATTACK	1278	
+Stun Attack	Anolian	NPC_STUNATTACK	1206,1488	
+Stun Attack	Munak	NPC_STUNATTACK	1026	
+Stun Attack	Orc Warrior	NPC_STUNATTACK	1023	
+Blind Attack	Familiar	NPC_BLINDATTACK	1005	
+Blind Attack	Drainliar	NPC_BLINDATTACK	1111,1434	
+Blind Attack	Clock Tower Keeper	NPC_BLINDATTACK	1270	
+Blind Attack	Male Thief Bug	NPC_BLINDATTACK	1021,1054	
+Blind Attack	Dark Frame	NPC_BLINDATTACK	1260,1448	
+Blind Attack	Mars	NPC_BLINDATTACK	1144	
+Suicide	Sohee	NPC_SUICIDE	1170	
+Consecutive Attack	Frilldora	NPC_COMBOATTACK	1119	
+Consecutive Attack	Horong	NPC_COMBOATTACK	1129	
+Consecutive Attack	Hunter Fly	NPC_COMBOATTACK	1035,1422	
+Consecutive Attack	Mantis	NPC_COMBOATTACK	1139,1457	
+Consecutive Attack	Mummy	NPC_COMBOATTACK	1041	
+Consecutive Attack	Soldier Skeleton	NPC_COMBOATTACK	1028	
+Consecutive Attack	Vagabond Wolf	NPC_COMBOATTACK	1092	
+Consecutive Attack	Vocal	NPC_COMBOATTACK	1088	
+Consecutive Attack	Pest Raggler	NPC_COMBOATTACK	1256	
+Consecutive Attack	Goblin (Sword)	NPC_COMBOATTACK	1122	weapon read from the client sprite (goblin_1 knife, _2 flail, _3 axe, _4 hammer, _5 morning star; kobold_1 axe, _2 hammer, _3 morning star)
+Consecutive Attack	Penomena	NPC_COMBOATTACK	1216,1441	
+Consecutive Attack	Cruiser	NPC_COMBOATTACK	1248,1443	
+Critical Slash	Goblin (Morning Star)	NPC_CRITICALSLASH	1126	weapon read from the client sprite (goblin_1 knife, _2 flail, _3 axe, _4 hammer, _5 morning star; kobold_1 axe, _2 hammer, _3 morning star)
+Critical Slash	Kobold (Morning Star)	NPC_CRITICALSLASH	1135	weapon read from the client sprite (goblin_1 knife, _2 flail, _3 axe, _4 hammer, _5 morning star; kobold_1 axe, _2 hammer, _3 morning star)
+Critical Slash	Orc Skeleton	NPC_CRITICALSLASH	1152,1462	
+Critical Slash	Marina	NPC_CRITICALSLASH	1141	
+Critical Slash	Orc Zombie	NPC_CRITICALSLASH	1153,1463	
+Guided Attack	Zealotus	NPC_GUIDEDATTACK	1200	name settled by hand
+Guided Attack	Stem Worm	NPC_GUIDEDATTACK	1215,1440	
+Guided Attack	Mysteltainn	NPC_GUIDEDATTACK	1203,1485	
+Guided Attack	Eclipse	NPC_GUIDEDATTACK	1093	
+Guided Attack	Isis	NPC_GUIDEDATTACK	1029,1421	
+Splash Attack	Khalitzburg	NPC_SPLASHATTACK	1132,1438	
+Splash Attack	Abysmal Knight	NPC_SPLASHATTACK	1219	
+Splash Attack	Wanderer	NPC_SPLASHATTACK	1208	
+Splash Attack	Alarm	NPC_SPLASHATTACK	1193,1476	
+Splash Attack	Skel Prisoner	NPC_SPLASHATTACK	1196	
+Splash Attack	Chimera	NPC_SPLASHATTACK	1283,1456	
+Splash Attack	Mutant Dragon	NPC_SPLASHATTACK	1262	
+Magical Attack	Clock Tower Keeper	NPC_DARKNESSATTACK|NPC_TELEKINESISATTACK|NPC_MAGICALATTACK	1270	
+Magical Attack	Marduk	NPC_DARKNESSATTACK|NPC_TELEKINESISATTACK|NPC_MAGICALATTACK	1140,1458	
+Magical Attack	Wind Ghost	NPC_DARKNESSATTACK|NPC_TELEKINESISATTACK|NPC_MAGICALATTACK	1263,1450	
+Piercing Attack	Horn	NPC_PIERCINGATT	1128	
+Piercing Attack	Caramel	NPC_PIERCINGATT	1103	
+Piercing Attack	Hornet	NPC_PIERCINGATT	1004	
+Piercing Attack	Riding Word	NPC_PIERCINGATT	1195	name settled by hand
+Piercing Attack	Muka	NPC_PIERCINGATT	1055	
+Piercing Attack	Grimtooth	NPC_PIERCINGATT		no monster of that name: left out
+Piercing Attack	Desert Wolf	NPC_PIERCINGATT	1106,1220,1432	
+Piercing Attack	Arclouse	NPC_PIERCINGATT	1194,1477	
+Mental Breaker	Nightmare	NPC_MENTALBREAKER	1061,1427	
+Mental Breaker	Bathory	NPC_MENTALBREAKER	1102	
+Mental Breaker	Myst	NPC_MENTALBREAKER	1151	
+Mental Breaker	Clock	NPC_MENTALBREAKER	1269	
+Stone Curse	Evil Druid	NPC_PETRIFYATTACK|MG_STONECURSE	1117,1435	
+Stone Curse	Punk	NPC_PETRIFYATTACK|MG_STONECURSE	1199,1481	
+Poison Attack	Argos	NPC_POISON	1100	
+Poison Attack	Verit	NPC_POISON	1032	
+Poison Attack	Poporing	NPC_POISON	1031	
+Poison Attack	Zenorc	NPC_POISON	1177	
+Poison Attack	Anacondaq	NPC_POISON	1030	
+Poison Attack	Poison Spore	NPC_POISON	1077,1224,1428	
+Poison Attack	Zombie Prisoner	NPC_POISON	1197,1480	
+Poison Attack	Ghoul	NPC_POISON	1036,1423	
+Poison Attack	Zombie	NPC_POISON	1015	
+Poison Attack	Tarou	NPC_POISON	1175	
+Poison Attack	Side Winder	NPC_POISON	1037,1424	
+Lazy Attack	Merman	NPC_SLOWCAST	1264,1451	
+Lord of Vermilion	Baphomet	WZ_VERMILION	1039,1399	BAPHOMET_ (1101, 1431) is Baphomet Jr.: the matcher took it
+Curse	Baphomet	NPC_CURSEATTACK	1039,1399	BAPHOMET_ (1101, 1431) is Baphomet Jr.: the matcher took it
+Brandish Spear	Baphomet	KN_BRANDISHSPEAR	1039,1399	BAPHOMET_ (1101, 1431) is Baphomet Jr.: the matcher took it
+Maximize Power	Baphomet	BS_MAXIMIZE	1039,1399	BAPHOMET_ (1101, 1431) is Baphomet Jr.: the matcher took it
+Teleport	Baphomet	AL_TELEPORT	1039,1399	BAPHOMET_ (1101, 1431) is Baphomet Jr.: the matcher took it
+Meteor Storm	Dark Lord	WZ_METEOR	1272	
+Fire Wall	Dark Lord	MG_FIREWALL	1272	
+Magical Attack	Dark Lord	NPC_DARKNESSATTACK|NPC_TELEKINESISATTACK|NPC_MAGICALATTACK	1272	
+Curse	Dark Lord	NPC_CURSEATTACK	1272	
+Heal	Doppleganger	AL_HEAL	1046	
+Pierce	Doppleganger	KN_PIERCE	1046	
+Frost Diver	Doppleganger	MG_FROSTDIVER	1046	
+Blind	Doppleganger	NPC_BLINDATTACK	1046	
+Maximize Power	Doppleganger	BS_MAXIMIZE	1046	
+Endure	Doppleganger	SM_ENDURE	1046	
+Counter Attack	Doppleganger	KN_AUTOCOUNTER	1046	
+Endure	Drake	SM_ENDURE	1112	
+Spear Boomerang	Drake	KN_SPEARBOOMERANG	1112	
+Water Ball	Drake	WZ_WATERBALL	1112	
+Maximize Power	Drake	BS_MAXIMIZE	1112	
+Fire Ball	Eddga	MG_FIREBALL	1115	
+Magnum Break	Eddga	SM_MAGNUM	1115	
+Spear Stab	Eddga	KN_SPEARSTAB	1115	
+Endure	Eddga	SM_ENDURE	1115	
+Mammonite	Gold Thief Bug	MC_MAMMONITE	1086	
+Magnum Break	Gold Thief Bug	SM_MAGNUM	1086	
+Fire Wall	Gold Thief Bug	MG_FIREWALL	1086	
+Fire Bolt	Gold Thief Bug	MG_FIREBOLT	1086	
+Adrenaline Rush	Hatii	BS_ADRENALINE	1252	
+Frost Diver	Hatii	MG_FROSTDIVER	1252	
+Endure	Hatii	SM_ENDURE	1252	
+Decrease Agility	Hatii	AL_DECAGI	1252	
+Pierce	Maya	KN_PIERCE	1147	
+Heal	Maya	AL_HEAL	1147	
+Safety Wall	Maya	MG_SAFETYWALL	1147	
+Heavens Drive	Maya	WZ_HEAVENDRIVE	1147	
+Brandish Spear	Maya	KN_BRANDISHSPEAR	1147	
+Jupital Thunder	Mistress	WZ_JUPITEL	1059	
+Heal	Mistress	AL_HEAL	1059	
+Lex Divina	Mistress	PR_LEXDIVINA	1059	
+Consecutive Attack	Mistress	NPC_COMBOATTACK	1059	
+Pneuma	Mistress	AL_PNEUMA	1059	
+Mammonite	Moonlight Flower	MC_MAMMONITE	1150	name settled by hand
+Heal	Moonlight Flower	AL_HEAL	1150	name settled by hand
+Earth Spike	Moonlight Flower	WZ_EARTHSPIKE	1150	name settled by hand
+Fire Bolt	Moonlight Flower	MG_FIREBOLT	1150	name settled by hand
+Lightning Bolt	Moonlight Flower	MG_LIGHTNINGBOLT	1150	name settled by hand
+Cold Bolt	Moonlight Flower	MG_COLDBOLT	1150	name settled by hand
+Provoke	Orc Lord	SM_PROVOKE	1190	
+Spear Stab	Orc Lord	KN_SPEARSTAB	1190	
+Lex Divina	Orc Lord	PR_LEXDIVINA	1190	
+Fire Bolt	Orc Lord	MG_FIREBOLT	1190	
+Cold Bolt	Orc Lord	MG_COLDBOLT	1190	
+Endure	Orc Lord	SM_ENDURE	1190	
+Thunder Storm	Orc Hero	MG_THUNDERSTORM	1087	
+Adrenaline Rush	Orc Hero	BS_ADRENALINE	1087	
+Maximize Power	Orc Hero	BS_MAXIMIZE	1087	
+Endure	Orc Hero	SM_ENDURE	1087	
+Quagmire	Osiris	WZ_QUAGMIRE	1038	
+Venom Dust	Osiris	AS_VENOMDUST	1038	
+Earth Spike	Osiris	WZ_EARTHSPIKE	1038	
+Bash	Osiris	SM_BASH	1038	
+Curse	Osiris	NPC_CURSEATTACK	1038	
+Stone Curse	Phreeoni	NPC_PETRIFYATTACK|MG_STONECURSE	1159	
+Mental Breaker	Phreeoni	NPC_MENTALBREAKER	1159	
+Heavens Drive	Phreeoni	WZ_HEAVENDRIVE	1159	
+Earth Spike	Phreeoni	WZ_EARTHSPIKE	1159	
+Brandish Spear	Phreeoni	KN_BRANDISHSPEAR	1159	
+Storm Gust	Stormy Knight	WZ_STORMGUST	1251	
+Lightning Bolt	Stormy Knight	MG_LIGHTNINGBOLT	1251	
+Safety Wall	Stormy Knight	MG_SAFETYWALL	1251	
+Maximize Power	Stormy Knight	BS_MAXIMIZE	1251	
