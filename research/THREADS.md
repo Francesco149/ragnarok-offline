@@ -1302,3 +1302,15 @@ says +4 for the masteries too. So the text is an older state of the game
 mod0631's numbers. The guide says nothing on how many Traps Shockwave Trap
 takes (client text: 2; mod0631: 1; we use 1). Tier: athena2003, confirmed
 for the international servers three months after our date.
+**Items, the same way (2026-11-14):** `research/item_desc_check.py` reads the
+client's `idnum2itemdesctable.txt` against `data/db/items.toml` (mod0631's
+numbers). 81 disagreements: 48 weights (nearly all consumables and
+materials, the text heavier: a Red Potion 10 against 7, Meat 20 against
+15), 25 weapon attacks (mostly the text lower: Grimtooth 150 against 180,
+the Swordbreaker 40 against 70, but the books and the Golden Mace higher),
+5 defences, the Orcish Axe's and the Partizan's weapon level, the
+Partizan's required level (18 against 33: the text looks copied from a
+lighter spear). Kept as mod0631 has them, as for the skills: no other
+witness checked yet; RODataZone's item pages of 2003-04 would say which.
+The client's slot table (data, not text) was taken where it differs
+(ROADMAP §1).
