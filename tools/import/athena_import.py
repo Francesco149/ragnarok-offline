@@ -223,6 +223,9 @@ CLIENT_IRO = {
     1363: {'atk': 160},  # Bloody Axe
     1364: {'atk': 185},  # Great Axe
     1466: {'atk': 150},  # Crescent Scythe
+    # Partizan without slots: mod0631's other two Partizans say 2/18 too, and so does Ragu Memo's
+    # jRO spear table (weapon4.html, Wayback 2003-12-18)
+    1459: {'weapon_level': 2, 'equip_level': 18},
     1468: {'weight': 1200},  # Zephyrus
     1524: {'atk': 130},  # Golden Mace
     1550: {'atk': 100},  # Book

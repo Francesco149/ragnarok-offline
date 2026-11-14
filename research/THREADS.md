@@ -688,6 +688,13 @@ are twRO/kRO data via fan sites) names the god-item material of each
 castle. 817's forty treasure boxes, read in pairs in region order (Al De
 Baran 1-5, Geffen, Payon, Prontera), drop exactly those materials from the
 second box of each pair, all twenty: the box-to-castle pairing is period.
+**Round 16:** Ragu Memo's jRO treasure page (`gvg_box.html`, Wayback
+2004-02-06, `data:refs/web/ragmemo-2003/`) gives every castle's box with
+rates: twelve items common to all (3 Carat Diamond 1/2.5, Yggdrasil Seed 1/6,
+Old Card Album 1/20, Elunium 1/3...), and four per castle (its god-item
+material always 1/250, then three rarer: Luina 1's Poison Knife 1/13, Wizard
+Hat 1/263, Masamune 1/2222), and the god items' recipes. Not yet set against
+817's forty boxes; it is the table to use when treasure rooms are built.
 Rate: 1/250 in the guide, 10/10000 in 817. Also: two investments a day,
 each twice the last; trade (and defence) -2 when a castle changes hands
 ("Unconfirmed" in the guide); castle Kafra free storage, warps to every
@@ -886,6 +893,19 @@ for them are the reverse of their names. Still open:
   they should, and jAthena's five times too seldom. The game keeps
   mod0631's roll. A period player's word on how often a monster cast (a
   Marc's or a Hydra's skill per minute) would settle it.
+  **Ragu Memo sides with mod0631 (round 16, 2026-11-14).** Its jRO table of
+  monster attack magic (`at_monskill.html`, Wayback 2003-12-05; saved in
+  `data:refs/web/ragmemo-2003/`) gives each row's rate in percent: of 76 rows
+  with numbers, 71 are mod0631's rows exactly with rate/10 = the page's
+  percent (Willow's Napalm Beat 10%, mod0631 100; "10-30%" its HP-under-30%
+  row, a third figure its "attackpcge 2" row). So mod0631's roll against
+  1000 reads its numbers as a jRO player of December 2003 did, and jAthena's
+  against 10000 makes them ten times rarer than that. The other five rows
+  are taken (DEVIATIONS.md; `research/ragmemo_mob_magic.py`: 77 of 77 now).
+  Still open: what one roll is (per AI tick, as Athena, or per attack): the
+  page calls the rate a "使用率" and does not say.
+  The page also rows the bosses without numbers, and gives each spell's
+  damage ("威力", the monster's INT taken as MATK); not compared yet.
 * **The boss rule** is built (2026-11-14, DEVIATIONS.md): every MVP gets the
   four skills, and a Teleport on a hit from someone it cannot walk to
   (rAthena's "rudeattacked"). Open: whether "beyond their attacking range"
@@ -1407,6 +1427,15 @@ witness for the 57 (GameFAQs equipment guides of 2003-04, the iRO guide's
 item pages, Ragu Memo's equipment tables for jRO: its hat pages mark each
 job On or Off, e.g. the Panda Cap On for the Novice, as the client says and
 RODataZone does not).
+**Round 16: Ragu Memo is no third witness for these.** It is jRO, the server
+mod0631 rebuilt, and on every item the round read it sides with mod0631:
+Novices refused the Zeny Knife, Fortune Sword, Moonlight Dagger and
+Mysteltainn, the Miner's Helmet for the Swordman, Acolyte and Merchant
+trees, the Deviruchi, Smokie and Spore Hats not for Novices. Where iRO
+differed it shows the split rather than settling it: its Magic Hat
+(シルクハット) is the Mage's and Acolyte's trees, RODataZone's "All". A
+third witness has to be iRO or euRO. (Its Partizan level, 18, is the
+text's: taken, R6.)
 
 ### 32. Drops mod0631 left empty
 mod0631's `db/mob_db.txt` writes `512,0` (an Apple, rate 0) in drop slots it
@@ -1521,5 +1550,8 @@ Axe's weapon level 4, Puppy Love's DEF 0. Those are taken (`CLIENT_IRO` in
 jRO's. Where the text sides with mod0631 against RODataZone (axes' weights,
 diamonds' weight 10 against 1...), or no two agree, mod0631's stay. The
 Safety Ring gains 817's MDEF +3, which the text and RODataZone also give.
+The slotless Partizan (1459) takes weapon level 2 and level 18 (round 16):
+the text, RODataZone, Ragu Memo's jRO spear table (2003-12-18) and
+mod0631's own two slotted Partizans; its 3/33 was a slip in one row.
 The client's slot table (data, not text) was taken where it differs
 (ROADMAP §1).

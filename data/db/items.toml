@@ -6411,8 +6411,8 @@ range = 3
 jobs = 16514
 gender = 2
 loc = 34
-weapon_level = 3
-equip_level = 33
+weapon_level = 2
+equip_level = 18
 view = 5
 
 [[item]]
