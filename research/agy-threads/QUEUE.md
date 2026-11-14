@@ -4,7 +4,7 @@ For: the independent deep-research agent (Gemini in Antigravity) that wrote
 rounds 1 to 3. Kept by the Claude sessions that work on the game: at the
 end of each session the queue is updated (answered items go to "Done",
 with where the answer went) and refilled with what that session could not
-settle from the sources on disk. Last update: 2026-11-14, round 12 reviewed (`research/notes/round12-review.md`: T4 points at Ragu Memo behind RODataZone's status page; T1 closed to iRO Wiki copies; Cart Revolution's Iron decided at 20); before that, round 11 reviewed (`research/notes/round11-review.md`: Charge Arrow's Crossbow, Gershaun's juice and the doomed swords' lists moved to Done and built or confirmed; T5, T6, T7, T9 narrowed; a WoE item added to T9); before that, later (thread 28 built from the client: T9's ground-skill item widened); before that, round 10 reviewed (`research/notes/round10-review.md`: T8's Skid Trap item and two T9 items moved to Done, T8 asks when euRO got iRO's Comodo skill patch, thread 28 narrowed; the boss rule built); before that, later (T9 monster skills: the FAQ pairs added, the rate question); before that, round 9 reviewed (`research/notes/round9-review.md`: two T9 items moved to Done, the monster-skill item rewritten); before that, later the same day (thread 28 added to T9); before that, round 8 reviewed (`research/notes/round8-review.md`); before that, later the same day (T7 narrowed by euRO's May-2004 text; two shop names added to T9). Before that, 2026-11-14 (round 7 reviewed: `research/notes/round7-review.md`.
+settle from the sources on disk. Last update: 2026-11-14, round 13 reviewed (`research/notes/round13-review.md`: T4 answered and built from Ragu Memo; T10, T6 mostly answered by RODataZone's quests.js; T5 and T9 narrowed to thread 29's iRO/jRO splits); before that, round 12 reviewed (`research/notes/round12-review.md`: T4 points at Ragu Memo behind RODataZone's status page; T1 closed to iRO Wiki copies; Cart Revolution's Iron decided at 20); before that, round 11 reviewed (`research/notes/round11-review.md`: Charge Arrow's Crossbow, Gershaun's juice and the doomed swords' lists moved to Done and built or confirmed; T5, T6, T7, T9 narrowed; a WoE item added to T9); before that, later (thread 28 built from the client: T9's ground-skill item widened); before that, round 10 reviewed (`research/notes/round10-review.md`: T8's Skid Trap item and two T9 items moved to Done, T8 asks when euRO got iRO's Comodo skill patch, thread 28 narrowed; the boss rule built); before that, later (T9 monster skills: the FAQ pairs added, the rate question); before that, round 9 reviewed (`research/notes/round9-review.md`: two T9 items moved to Done, the monster-skill item rewritten); before that, later the same day (thread 28 added to T9); before that, round 8 reviewed (`research/notes/round8-review.md`); before that, later the same day (T7 narrowed by euRO's May-2004 text; two shop names added to T9). Before that, 2026-11-14 (round 7 reviewed: `research/notes/round7-review.md`.
 T11 answered and moved to Done; T1, T9 and T10 updated with what it found).
 
 ## How to use it
@@ -40,7 +40,7 @@ T11 answered and moved to Done; T1, T9 and T10 updated with what it found).
 2. Take tasks from the top; the order is by how much of the game waits on
    the answer. A round need not take them all. Say in `progress.md` which
    ones you took.
-3. Write only inside `research/agy-threads/r<N>/` for round N (round 13 is
+3. Write only inside `research/agy-threads/r<N>/` for round N (round 14 is
    next): `rows/<task id>.jsonl`, `pages/` for saved web pages, `check.txt`
    for your own checker run. No summary report: rows only, plus one line per
    task in `progress.md`: "answered" only if every bullet of the task has a
@@ -153,6 +153,15 @@ and whether each belongs in the default world of early 2004.
 
 ### T10. The novice training ground outside Japan (thread 6)
 
+**After round 13:** RODataZone's `items/quests.js` (iRO, 2004-05) answered
+the Usher (50z: built), Leo's prizes (1 Banana, 3 Sweet Potatoes, 1 Apple,
+1 Meat, 1 Milk, 4 Red Herbs), the end (3 Red Herbs, 1 Milk, 100z, or 5,
+1, 150z) and every job's subsidy (THREADS.md #29). Those differ from the
+mod0631 numbers the game plays and are dated four months after our
+client. Wanted now: the same facts from an account dated 2003-11 to
+2004-02 (iRO or euRO), to say whether they held then; and the Fabre
+forest. Do not quote `quests.js` again.
+
 New on 2026-11-11, and placed here because every character starts with it.
 The game runs eAthena 817's English script (`npc/jobs/novice.txt`,
 2004-02-19), mended in six places from mod0631's Japanese one
@@ -224,6 +233,13 @@ Sets: the content defaults in `[game.content]` and the rates.
 
 ### T4. Ailments and their resistance (thread 21)
 
+**After round 13: answered and built** from Ragu Memo's `abnormal.html`
+(2003-08-02, 2003-12-12; THREADS.md #21). Left: how long poison lasted
+(the page: 10-30 s on monsters, 5-60 s on players, "by VIT and LUK", no
+formula) and Curse ("unknown"); any later Ragu Memo capture (2004) that
+gives them; whether an international server's players measured the same
+(an iRO/euRO forum thread, 2004). Do not quote the 2003 captures again.
+
 When does "VIT resists stun", "LUK resists curse", "MDEF resists freeze
 and stone" first appear in a player guide or an official page, and with
 what formula? mod0631 (2003-12) has fixed chances and no resistance; 817
@@ -248,6 +264,15 @@ Sets: `skill_additional_effect` and the ailment part of
 `skill_status_change_start`.
 
 ### T5. Turtle Island: who took you there, and the quests of its patch (thread 24)
+
+**After round 13:** RODataZone (iRO, 2004-05) and Ragu Memo's `trade.html`
+(jRO, 2004-02) have two Alberta NPCs our game lacks, the Stylish Merchant
+(`alberta 120/53`) and the Hat Store Girl (`136/79`), whose hats want
+Turtle Island's Coral Reef and Solid Shell (THREADS.md #29). Wanted: when
+they appeared on iRO or euRO (a dated page before 2004-05), what they said
+and how a player started them (Ragu Memo: the Hat Store Girl wants a
+Yellow Potion first), and RODataZone's `maps/city/alberta.html` of
+2003-12 to 2004-05 if it lists them.
 
 The game now has mod0631's chain (`scripts/npc/turtle_island.lua`): an old
 man in Alberta's inn, then the sailor at `alberta 247,122`, 10000z. Known:
@@ -274,6 +299,12 @@ international server of 2004. Only that is wanted.
 Sets: the fare, and which hat quests belong to the default world.
 
 ### T6. Dyeing (thread 13; asked in round 4, not answered)
+
+**After round 13:** RODataZone answered the eight dye recipes, the
+English names and "Clothe Dying: Not Yet Implemented" on iRO. Left: the
+kRO notice that added hair dyeing (date), and anything older than 2004-05
+on the Darkgreen dye's Mixture and the Violet dye's Red Herbs (RODataZone
+and mod0631 differ: THREADS.md #29).
 
 mod0631's chain is in the game and needs no more rows. Wanted, from
 anything that is **not** mod0631's `npc_event_dye.txt`:
@@ -366,6 +397,13 @@ Sets: `skill_castend_*` for those skills.
   period screenshot, video or player's description of its animation.
 
 ### T9. Small, independent
+
+* **(new 2026-11-14) iRO against jRO, item by item (THREADS.md #29).** For
+  each of: the Baphomet Doll's trade (5 Panacea or 2 Royal Jelly), Marx
+  Hansen's juices (one fruit or three), the Merchant test's letter (100z
+  or 500z and 3 Bananas), Kafra points for storage, a dated iRO or euRO
+  account from before 2004-05. RODataZone's `quests.js` is the only one so
+  far; do not quote it again.
 
 * **Cart Revolution's Iron** (thread 7): 817 15, RODataZone 20,
   mod0631 one of 23/20/15, Battousai X (pRO, 2004-01) 30. The game asks
