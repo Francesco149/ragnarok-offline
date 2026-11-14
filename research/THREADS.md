@@ -501,6 +501,11 @@ efficient than the armor's own DEF". mod0631's refiners charge ten times
 817's fees: that is jRO.
 **Open:** how much DEF a refine level gives (not 1, by kRO's notice; no
 official number), and the size of the random bonus above the safe limit.
+**2026-11-14:** RODataZone's sub-stats page (iRO, captured 2003-12-11,
+`data:refs/web/rodatazone-2004/`) gives the number: "The true value of
+Armor DEF is BasicArmor + Refinements*2/3 ... +6 Plate is actually worth
+10 + 6*2/3 = 14 DEF". Built (`scripts/rules/status.lua`, DEVIATIONS.md).
+The random bonus above the safe limit stays mod0631's.
 
 ### 10. Monster spawns, Dec 2003
 mod0631's spawn lists are the closest in time. Some kRO spawn rebalances

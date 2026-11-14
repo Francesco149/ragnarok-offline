@@ -707,6 +707,10 @@ always fires.
   come from 817's `cast_db.txt` (`data/db/skills.toml` `time`, `time2`).
   mod0631 has fixed chances, placeholder lengths ("some length or other" in
   its comments), and no Curse at all (the status is refused).
+* **Armour refines give two thirds of a DEF point a level** (all worn
+  armour together, rounded down), as RODataZone's sub-stats page of
+  2003-12 says and kRO's notice of 2003-02 implies; mod0631 gave a whole
+  point (THREADS.md #9).
 * **A blind monster sees only the cells next to it** when it looks for a
   target or for loot (ours; neither emulator has it): Ragu Memo's page of
   2003 and RODataZone's Monster AI page (iRO, 2004-02) both say so.

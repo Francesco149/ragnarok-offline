@@ -132,6 +132,7 @@ function rules.status(c)
 
   -- pc.c:757 equipment: ATK, DEF, refine bonuses, the item's script
   local items = (c.equip or {}).items or {}
+  local armor_refines = 0
   for _, it in ipairs(items) do
     s.def = s.def + (it.def or 0)
     if it.type == 4 then
@@ -156,7 +157,7 @@ function rules.status(c)
       end
     elseif it.type == 5 then
       s.watk = s.watk + (it.atk or 0)
-      s.def = s.def + (it.refine or 0) * refinebonus[0][1]
+      armor_refines = armor_refines + (it.refine or 0)
       if (it.loc & 0x20) ~= 0 then
         s.shield = true
         -- what a thrown shield adds (eAthena 817 battle.c:2695): a tenth of its weight and its refine bonus
@@ -165,6 +166,11 @@ function rules.status(c)
       run_script(s, it.script, false)
     end
   end
+  -- Armour refines: two thirds of a DEF point a level, all worn armour together, rounded
+  -- down. RODataZone's sub-stats page (iRO, captured 2003-12-11): "+6 Plate is actually worth
+  -- 10 + 6*2/3 = 14 DEF"; kRO's notice of 2003-02-04: refine DEF is "less efficient than the
+  -- armor's own DEF" (THREADS.md #9). mod0631 (pc.c:785, db/refine_db.txt) gave a whole point.
+  s.def = s.def + floor(armor_refines * 2 / 3)
   -- pc.c:812 cards
   for _, it in ipairs(items) do
     for _, card in ipairs(it.cards or {}) do

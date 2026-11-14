@@ -1793,3 +1793,25 @@ fn a_blind_monster_sees_only_next_to_it() {
     t.run(3000);
     assert_eq!(t.g.world.units[&z].mob().unwrap().target, Some(t.me), "seeing again: it comes");
 }
+
+/// Armour refines add two thirds of a DEF point a level (RODataZone's
+/// sub-stats page of 2003-12: "+6 Plate ... 10 + 6*2/3 = 14 DEF").
+#[test]
+fn armour_refine_def_two_thirds() {
+    let mut t = T::new();
+    t.lua("player.base_level = 50");
+    t.wear(2301); // Cotton Shirt
+    let plain = t.st("def");
+    let cid = t.cid;
+    for it in t.g.store.chars.get_mut(&cid).unwrap().inventory.iter_mut().filter(|i| i.nameid == 2301) {
+        it.refine = 6;
+    }
+    let idx = t.inv(2301);
+    let mut w = Writer::new(0x00ab); // off and on again: the status is worked out anew
+    w.u16(idx);
+    t.send(w);
+    let mut w = Writer::new(0x00a9);
+    w.u16(idx).u16(0);
+    t.send(w);
+    assert_eq!(t.st("def"), plain + 4, "+6: four more DEF, not six");
+}
