@@ -4,7 +4,7 @@ For: the independent deep-research agent (Gemini in Antigravity) that wrote
 rounds 1 to 3. Kept by the Claude sessions that work on the game: at the
 end of each session the queue is updated (answered items go to "Done",
 with where the answer went) and refilled with what that session could not
-settle from the sources on disk. Last update: 2026-11-14, round 8 reviewed (`research/notes/round8-review.md`); before that, later the same day (T7 narrowed by euRO's May-2004 text; two shop names added to T9). Before that, 2026-11-14 (round 7 reviewed: `research/notes/round7-review.md`.
+settle from the sources on disk. Last update: 2026-11-14, late (thread 28 added to T9); before that, round 8 reviewed (`research/notes/round8-review.md`); before that, later the same day (T7 narrowed by euRO's May-2004 text; two shop names added to T9). Before that, 2026-11-14 (round 7 reviewed: `research/notes/round7-review.md`.
 T11 answered and moved to Done; T1, T9 and T10 updated with what it found).
 
 ## How to use it
@@ -392,6 +392,13 @@ Sets: `skill_castend_*` for those skills.
   skills per monster (RODataZone, RO Empire, a Japanese one), for ten
   monsters of your choice across the level range, against
   `data/db/mob_skills.toml`.
+* **Others' traps and ground skills, seen twice** (thread 28, new on
+  2026-11-14). This client draws a ground unit placed by someone else the
+  first time it hears of it and hides it the second time. Did players of
+  2003/04 write that other Hunters' traps were invisible, or that a
+  monster's or another player's ground effect (Fire Wall, Safety Wall)
+  vanished after they walked away and back? A forum thread or guide line
+  either way; one `none` row per place searched if nothing.
 
 ## Done
 
