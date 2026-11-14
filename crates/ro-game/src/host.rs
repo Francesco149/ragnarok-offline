@@ -141,6 +141,12 @@ impl Game {
         if let Some((kind, val)) = look {
             self.area_send(unit, packets::look(unit, kind, val as u8), true);
         }
+        // as mod0631's @blvl / @jlvl do (atcommand.c:386, 415)
+        match key {
+            "base_level" => self.send_level(unit, crate::status::SP_BASELEVEL),
+            "job_level" => self.send_level(unit, crate::status::SP_JOBLEVEL),
+            _ => {}
+        }
         self.send_full_status(unit);
         Ok(())
     }
@@ -301,6 +307,7 @@ impl Host for Game {
                     self.unequip(unit, idx);
                 }
                 self.area_send(unit, packets::look(unit, 0, job as u8), true);
+                self.send_level(unit, crate::status::SP_JOBLEVEL);
                 // pc_jobchange ends in pc_calcstatus, which brings HP and SP down to the
                 // new job's maxima (mod0631 pc.c:3122, 983)
                 self.refresh_status(unit); // sends the status window too

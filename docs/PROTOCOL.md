@@ -55,6 +55,16 @@ A server that frames by the length field (Athena, and us) would refuse it.
 | 0x00bd status | status points, the six stats with their costs, atk, atk2, matk max, matk min, def, def2, mdef, mdef2, hit, flee, flee2, crit, then the attack delay (the window shows (2000 - it) / 10, as for 0x00b0 SP_ASPD) and a word it stores but never reads. Athena sends karma and manner in those two (fixed 2026-11-14) | `0x51e390` |
 | 0x0119 state | id u32, opt1, opt2, option (i16), karma byte | `0x5226f0` |
 | 0x01d7 look | id u32, type byte, then a u32 (type 2: weapon in the low word, shield in the high one). Other units ignore type 8 here | `0x52af20` |
+| 0x0080 vanish | id u32, type 0..3 (0 out of sight, 1 died: for oneself the restart window, 2 logged out with effect 7, 3 teleported with effect 0x22) | `0x51bb50` |
+| 0x0086 / 0x0087 move | 0x0086: id u32, the 6-byte move, tick u32. 0x0087: tick u32, the 6-byte move (12 bytes: no trailing byte) | `0x5166c6`, `0x516734` |
+| 0x0088 stop | id u32, x, y (i16) | `0x516ac9` |
+| 0x00b0 parameter | u16 type at +2 (switch to 0x82), u32 value. **Types 11 and 55 (base and job level) play the level-up sound and effect on every receipt**, so they go out on a real change only (fixed 2026-11-14; the full status refresh sent them each time). Weight in tenths; 24 crossing 50% and 90% gives the client's own messages | `0x51ce73` |
+| 0x00b1 / 0x00be / 0x0141 | 0x00b1 types 1, 2, 20, 22, 23 (u32); 0x00be stat cost (types 32..37, u8); 0x0141 type read as u32, base and bonus u32 | `0x51d9e0`, `0x51e5e0`, `0x524e20` |
+| 0x0196 status icon | type i16, id u32, flag byte (0 off) | `0x527e10` |
+| 0x00b4 / 0x00b7 NPC text, menu | npc id u32 at +4, text from +8. 0x00b7's text is copied unchecked into a 2048-byte buffer and split on `:` (empty options dropped): our menus are capped to fit (2026-11-14) | `0x516c1c`, `0x51ded0` |
+| 0x010f skill list | `(len-4)/37` records: id (1..158, others skipped), inf read as u32, level, sp, range; the 24-byte name is never read | `0x521e90` |
+| 0x013e casting | src, dst (0: on the ground at x, y), x, y, skill, element u32 (picks the circle for magic), cast ms. Brandish Spear and Bowling Bash get no bar | `0x523ba0` |
+| 0x011a / 0x01de / 0x0117 skill results | as Athena's. For skills 12, 18, 21, 70, 79, 83, 85, 89 and 110, 0x011a's target is read as a packed cell to turn the caster; we send Hammer Fall a unit id there, as mod0631 does | `0x523e20`, `0x52bd40`, `0x522620` |
 
 ## Confirmed by running the real client against the server
 

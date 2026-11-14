@@ -239,8 +239,23 @@ pub fn npc_next(npc: u32) -> Vec<u8> {
 pub fn npc_close(npc: u32) -> Vec<u8> {
     Writer::new(ZC_CLOSE_DIALOG).u32(npc).finish()
 }
+/// 0x00b7. The client copies the text into a 2048-byte stack buffer with no
+/// check and puts a NUL after it (handler 0x51ded0), so the text stays within
+/// 2046 bytes: trailing options that would pass that are left off.
 pub fn npc_menu(npc: u32, options: &[String]) -> Vec<u8> {
-    Writer::new(ZC_MENU_LIST).u32(npc).str_nul(&options.join(":")).finish()
+    const MAX: usize = 0x800 - 2;
+    let mut text = String::new();
+    for (i, o) in options.iter().enumerate() {
+        let add = o.len() + usize::from(i > 0);
+        if text.len() + add > MAX {
+            break;
+        }
+        if i > 0 {
+            text.push(':');
+        }
+        text.push_str(o);
+    }
+    Writer::new(ZC_MENU_LIST).u32(npc).str_nul(&text).finish()
 }
 pub fn npc_input_number(npc: u32) -> Vec<u8> {
     Writer::new(ZC_OPEN_EDITDLG).u32(npc).finish()
@@ -813,4 +828,21 @@ pub fn produce_effect(flag: u16, nameid: u16) -> Vec<u8> {
 /// 0x0194: the name behind a character id (the maker of a forged weapon).
 pub fn char_name(char_id: u32, name: &str) -> Vec<u8> {
     Writer::new(0x0194).u32(char_id).str_fixed(name, 24).finish()
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn npc_menu_fits_the_client_buffer() {
+        let opts: Vec<String> = (0..300).map(|i| format!("Option number {i}")).collect();
+        let p = npc_menu(1, &opts);
+        // id, len, npc id, text, NUL: the client copies len - 8 bytes, then adds a NUL
+        assert!(p.len() - 8 <= 0x7ff, "{}", p.len());
+        let text = std::str::from_utf8(&p[8..p.len() - 1]).unwrap();
+        assert!(text.split(':').zip(&opts).all(|(a, b)| a == b));
+        let short = npc_menu(1, &["Yes".into(), "No".into()]);
+        assert_eq!(&short[8..], b"Yes:No\0");
+    }
 }

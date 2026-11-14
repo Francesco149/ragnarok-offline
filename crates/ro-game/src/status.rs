@@ -254,8 +254,9 @@ impl Game {
             packets::par(SP_MAXHP, d.max_hp),
             packets::par(SP_SP, c.sp),
             packets::par(SP_MAXSP, d.max_sp),
-            packets::par(SP_BASELEVEL, c.base_level as u32),
-            packets::par(SP_JOBLEVEL, c.job_level as u32),
+            // no SP_BASELEVEL / SP_JOBLEVEL here: the client plays the level-up
+            // sound and effect whenever one arrives (0x00b0 cases at 0x51d264 and
+            // 0x51d850); they go out on a real change only, see send_level
             packets::par(SP_STATUSPOINT, c.status_point as u32),
             packets::par(SP_SKILLPOINT, c.skill_point as u32),
             packets::par(SP_WEIGHT, w),
@@ -310,6 +311,16 @@ impl Game {
     /// pc_gainexp, pc_checkbaselevelup, pc_checkjoblevelup): a base level
     /// gives (level + 14) / 5 status points (22 at 99) and heals fully, a job
     /// level one skill point. The dead gain nothing.
+    /// A level the player's client must be told of (mod0631 pc.c:2524, 2550,
+    /// 3115): it plays the level-up sound and effect on receipt.
+    pub(crate) fn send_level(&mut self, unit: u32, kind: u16) {
+        let Some(c) = self.char_of_unit(unit) else { return };
+        let v = if kind == SP_BASELEVEL { c.base_level } else { c.job_level } as u32;
+        if let Some(sid) = self.sid_of(unit) {
+            self.send(sid, packets::par(kind, v));
+        }
+    }
+
     pub(crate) fn gain_exp(&mut self, unit: u32, base: u64, job: u64) {
         if self.sid_of(unit).is_none() || self.world.units.get(&unit).is_none_or(|u| u.state == 1) {
             return;
@@ -350,6 +361,12 @@ impl Game {
                 cm.hp = d.max_hp;
                 cm.sp = d.max_sp;
             }
+        }
+        if base_ups > 0 {
+            self.send_level(unit, SP_BASELEVEL);
+        }
+        if job_ups > 0 {
+            self.send_level(unit, SP_JOBLEVEL);
         }
         for _ in 0..base_ups {
             self.area_send(unit, packets::misc_effect(unit, 0), true);

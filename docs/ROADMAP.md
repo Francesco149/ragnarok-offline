@@ -11,9 +11,12 @@ Ordered by "confirmable first". Each item says where the truth would come from.
   are built from a message switch, not found as `push id` yet).
 - **Remaining layouts**: done on 2026-11-14 for 0x0078/0x0079/0x007b,
   0x008a, 0x009d/0x009e, 0x00a0, 0x00a3/0x00a4, 0x00bd, 0x0119 and 0x01d7
-  (docs/PROTOCOL.md). Two differed from Athena's and are mended (the unit
-  packets' emblem, 0x00bd's ASPD). Next: the rest of what the server sends,
-  through the same dispatch.
+  (docs/PROTOCOL.md); later the same day 0x0080, 0x0086-0x0088, 0x00b0,
+  0x00b1, 0x00b4, 0x00b7, 0x00be, 0x010f, 0x0117, 0x011a, 0x013e, 0x0141,
+  0x0196 and 0x01de. Mended: the unit packets' emblem, 0x00bd's ASPD, the
+  level-up effect on every status refresh, menus longer than the client's
+  buffer. Next: the rest of what the server sends (about 80 ids), through
+  the same dispatch.
 - **Walk/attack timing** the client animates vs ours. Done: the path
   finder is the client's (`0x4d2300`), and so are the walk's clock and
   every step's time, the first one from the sub-cell included, and the
