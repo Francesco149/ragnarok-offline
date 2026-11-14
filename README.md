@@ -132,7 +132,9 @@ Emperium; break the Emperium and the castle is yours, with its steward,
 Kafra, daily treasure (jRO's table of February 2004) and the lever into the
 guild dungeon. On Sunday evenings, euRO's War of Emperium hour, the old
 garrison comes back for every castle you hold: defend its Emperium, with
-guardians if you bought them, or lose it.
+guardians if you bought them, or lose it. Each castle's flag on its grounds
+says who holds it and takes its master home, and the master recovers faster
+inside.
 
 ## Why accuracy is slow
 
