@@ -913,6 +913,14 @@ so they stay: one witness. Its base EXP table matches ours but for level
 36 (15,755 against 15,775). The sub-stats page is read and used (#9; HP
 factors, DEVIATIONS.md); the combat page agrees with Athena's model in
 outline.
+**RODataZone's monster table has a skills column** (iRO, 2004-02-11, two
+months before the FAQ above). `research/rdz_mob_skills.py` maps its names
+(the FAQ's map plus common ones): 418 of its pairs are in our tables, 44
+are not (13 emotions; Spear Boomerang, Piercing Attack, Endure, Increase
+and Decrease AGI, Heal, Detoxify... on a few monsters each), and 317
+pairs wait on names not mapped yet (the elemental attacks, "Summon
+Followers", "Multi Attack", "Life Drain"...). Next: map those, then add
+what is missing as the FAQ pairs were (`tools/import/mob_skills_faq.py`).
 **The client's own monster action table (2026-11-14).** The Turtle Island
 patch file ships `data\monsterskillinfo.xml` (Atbash-encoded: a<->z;
 decoded copy in `target/re/`): for 41 monster sprites, the skills that play
