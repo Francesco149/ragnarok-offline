@@ -696,6 +696,18 @@ steward (2004-02-12) takes a flat 10,000z in a test script.
   puts one in a castle**, so which box belongs to which castle, and how
   many appear, has no period source. Still no period number for investment
   beyond the test steward's 10,000z, twice a period.
+* **Ragu Memo's treasure table** (jRO, capture 2004-02-06 of
+  `ragmemo.s33.xrea.com/gvg_box.html`, in `data:refs/web/ragmemo-2003/`;
+  round 18): every castle's God-item material at 1/250, three other items
+  a castle with rates (Luina 1: Poison Knife 1/13, Wizard Hat 1/263,
+  Masamune 1/2222), twelve items common to all (Oridecon 1/4, Elunium 1/3,
+  Yggdrasil Seed 1/6...), and the God-item recipes.
+  `research/ragmemo_gvg_box.py` sets it against mod0631's (= 817's) forty
+  boxes: the same split into a common and an own box a castle, each
+  castle's material in its own box, but at 1/1000, and the castles' other
+  items a different set. The page is the period table to build treasure
+  rooms from, if they are built; mod0631's boxes look like an emulator's
+  stand-in.
 * 817's Emperium cells fit this client's maps in 19 of 20 castles
   (`prtg_cas02 158,174` is rock: this client's castle has an older, smaller
   inner room at x 184-203, y 162-182, #26), and every guild dungeon switch target
@@ -1165,10 +1177,14 @@ script names. After its first fixes it still reports:
 * **`pay_dun04 193,43`**, one of the four random arrivals from Payon Cave
   3F (`npc_warp.txt:511`), is a wall on this client's map; `192,43` is
   floor. As in Athena, the player lands on a random cell of the map
-  instead. An older or newer `pay_dun04`? (rAthena has `189,43`, round 10.)
+  instead. An older or newer `pay_dun04`? (rAthena has `189,43`, round 10;
+  817, eAthena 0.5.2 and jAthena all have `193,43`, round 18, and the
+  May-2004 client's map has the same wall.)
 * **`prt_in` 280-285, 36-130**: four exits to Prontera on cells this
   client's `prt_in` has no room around, and no warp leads to them.
-  Rooms of a later Prontera?
+  Rooms of a later Prontera? rAthena commented out three of them on
+  2007-03-15 (`c6d5f38b7`, round 18); the fourth, `285,130`, is on a floor
+  cell that nothing reaches.
 * **`prt_are_in 31,122` and `169,122`**, **`yuno_in03 104,115`**: warp
   tiles that cannot be stepped on.
 * **Castles** (settled): `aldeg_cas05 188,49`'s "165,288" was a slip for

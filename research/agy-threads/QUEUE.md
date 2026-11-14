@@ -4,7 +4,7 @@ For: the independent deep-research agent (Gemini in Antigravity) that wrote
 rounds 1 to 3. Kept by the Claude sessions that work on the game: at the
 end of each session the queue is updated (answered items go to "Done",
 with where the answer went) and refilled with what that session could not
-settle from the sources on disk. Last update: 2026-11-14, later (T8: Talkie Box built, its open points asked); before that, round 17 reviewed (`research/notes/round17-review.md`: no quote invented, dates right; one wrong item id (2281 written 5043); a perma-Novice guide's weapon list is the item text again, not a witness; RODataZone's "Tower Keeper" closes the Clock Tower Manager's drops; Ragu Memo's hat pages of 2003-08 and 2003-12 show the client's job lines are release-day text); before that, round 16's second half reviewed (`research/notes/round16-review.md`: eight wrong item ids; Ragu Memo's monster magic table settles mod0631's rate scale, five rows built; Ragu Memo dropped as the job lead; the Partizan's level taken); before that, round 16 reviewed (`research/notes/round16-review.md`: no quote invented; three dates found nowhere, progress.md's row list garbled; the Panda Cap built as the Sasquatch's drop, six more job masks, three of #32's monsters settled); before that, later (T9's "who may wear which item" done mechanically from the client and RODataZone, 116 masks taken; narrowed to the 57 where the client alone differs); before that, round 15 reviewed (`research/notes/round15-review.md`: no quote invented; 19 rows misdated, three rAthena rows graded B, two new rules; the hat item narrowed to four hats, two items added: who may wear what, and the drops mod0631 left empty); before that, round 14 reviewed (`research/notes/round14-review.md`: twelve GameFAQs rows carried invented Wayback URLs (a new rule below); five T7 claims false, corrected there; T7's list of skills to build answered; T9's juice and T6's dye items gained pRO witnesses); before that, later the same day (T9: the makers of the 24 hats the client ships, thread 31); before that, round 13 reviewed (`research/notes/round13-review.md`: T4 answered and built from Ragu Memo; T10, T6 mostly answered by RODataZone's quests.js; T5 and T9 narrowed to thread 29's iRO/jRO splits); before that, round 12 reviewed (`research/notes/round12-review.md`: T4 points at Ragu Memo behind RODataZone's status page; T1 closed to iRO Wiki copies; Cart Revolution's Iron decided at 20); before that, round 11 reviewed (`research/notes/round11-review.md`: Charge Arrow's Crossbow, Gershaun's juice and the doomed swords' lists moved to Done and built or confirmed; T5, T6, T7, T9 narrowed; a WoE item added to T9); before that, later (thread 28 built from the client: T9's ground-skill item widened); before that, round 10 reviewed (`research/notes/round10-review.md`: T8's Skid Trap item and two T9 items moved to Done, T8 asks when euRO got iRO's Comodo skill patch, thread 28 narrowed; the boss rule built); before that, later (T9 monster skills: the FAQ pairs added, the rate question); before that, round 9 reviewed (`research/notes/round9-review.md`: two T9 items moved to Done, the monster-skill item rewritten); before that, later the same day (thread 28 added to T9); before that, round 8 reviewed (`research/notes/round8-review.md`); before that, later the same day (T7 narrowed by euRO's May-2004 text; two shop names added to T9). Before that, 2026-11-14 (round 7 reviewed: `research/notes/round7-review.md`.
+settle from the sources on disk. Last update: 2026-11-14, round 18 reviewed (`research/notes/round18-review.md`: two URLs invented again, a GameFAQs page dated to its first version; this client's `prtg_cas02` inner room built from it; Ragu Memo's castle treasure table set against mod0631's boxes); before that, later (T8: Talkie Box built, its open points asked); before that, round 17 reviewed (`research/notes/round17-review.md`: no quote invented, dates right; one wrong item id (2281 written 5043); a perma-Novice guide's weapon list is the item text again, not a witness; RODataZone's "Tower Keeper" closes the Clock Tower Manager's drops; Ragu Memo's hat pages of 2003-08 and 2003-12 show the client's job lines are release-day text); before that, round 16's second half reviewed (`research/notes/round16-review.md`: eight wrong item ids; Ragu Memo's monster magic table settles mod0631's rate scale, five rows built; Ragu Memo dropped as the job lead; the Partizan's level taken); before that, round 16 reviewed (`research/notes/round16-review.md`: no quote invented; three dates found nowhere, progress.md's row list garbled; the Panda Cap built as the Sasquatch's drop, six more job masks, three of #32's monsters settled); before that, later (T9's "who may wear which item" done mechanically from the client and RODataZone, 116 masks taken; narrowed to the 57 where the client alone differs); before that, round 15 reviewed (`research/notes/round15-review.md`: no quote invented; 19 rows misdated, three rAthena rows graded B, two new rules; the hat item narrowed to four hats, two items added: who may wear what, and the drops mod0631 left empty); before that, round 14 reviewed (`research/notes/round14-review.md`: twelve GameFAQs rows carried invented Wayback URLs (a new rule below); five T7 claims false, corrected there; T7's list of skills to build answered; T9's juice and T6's dye items gained pRO witnesses); before that, later the same day (T9: the makers of the 24 hats the client ships, thread 31); before that, round 13 reviewed (`research/notes/round13-review.md`: T4 answered and built from Ragu Memo; T10, T6 mostly answered by RODataZone's quests.js; T5 and T9 narrowed to thread 29's iRO/jRO splits); before that, round 12 reviewed (`research/notes/round12-review.md`: T4 points at Ragu Memo behind RODataZone's status page; T1 closed to iRO Wiki copies; Cart Revolution's Iron decided at 20); before that, round 11 reviewed (`research/notes/round11-review.md`: Charge Arrow's Crossbow, Gershaun's juice and the doomed swords' lists moved to Done and built or confirmed; T5, T6, T7, T9 narrowed; a WoE item added to T9); before that, later (thread 28 built from the client: T9's ground-skill item widened); before that, round 10 reviewed (`research/notes/round10-review.md`: T8's Skid Trap item and two T9 items moved to Done, T8 asks when euRO got iRO's Comodo skill patch, thread 28 narrowed; the boss rule built); before that, later (T9 monster skills: the FAQ pairs added, the rate question); before that, round 9 reviewed (`research/notes/round9-review.md`: two T9 items moved to Done, the monster-skill item rewritten); before that, later the same day (thread 28 added to T9); before that, round 8 reviewed (`research/notes/round8-review.md`); before that, later the same day (T7 narrowed by euRO's May-2004 text; two shop names added to T9). Before that, 2026-11-14 (round 7 reviewed: `research/notes/round7-review.md`.
 T11 answered and moved to Done; T1, T9 and T10 updated with what it found).
 
 ## How to use it
@@ -67,6 +67,13 @@ T11 answered and moved to Done; T1, T9 and T10 updated with what it found).
      witness for who could use the item. Round 17's perma-Novice guide
      listed weapons "in the database but cannot obtain in iRO yet", with
      the client's own effect lines.
+   * **Ragu Memo is `ragmemo.s33.xrea.com`.** Round 18 cited
+     `www.ragmemo.com`, which Wayback has never seen, and a truncated
+     timestamp. Cite the capture CDX lists, all fourteen digits.
+   * **A GameFAQs page is the version its header names.** Round 18 again
+     cited a `db.gamefaqs.com` capture of 2004 that CDX lacks, and dated a
+     page of "Version 1.4, Last Updated 2005-07-23" to 2004-01 although
+     v1.4's history line rewrote the very section quoted.
    * **progress.md lists the rows as they are.** Round 16's list was off by
      one to two ids and described rows that do not exist.
    * **817's ground skills keep their bonuses in `pc.c`** (Volcano, Deluge,
@@ -79,7 +86,7 @@ T11 answered and moved to Done; T1, T9 and T10 updated with what it found).
 2. Take tasks from the top; the order is by how much of the game waits on
    the answer. A round need not take them all. Say in `progress.md` which
    ones you took.
-3. Write only inside `research/agy-threads/r<N>/` for round N (round 18 is
+3. Write only inside `research/agy-threads/r<N>/` for round N (round 19 is
    next): `rows/<task id>.jsonl`, `pages/` for saved web pages, `check.txt`
    for your own checker run. Scripts you write there to build the rows are
    yours to keep and are not committed (git ignores `r<N>/*.py`): nothing
@@ -539,27 +546,24 @@ Sets: `skill_castend_*` for those skills.
   `conf/npc_event_doll.txt`): which doll brought what on iRO/euRO in
   2003/04? (The doomed swords are in T5. The arrow makers are closed:
   mod0631's file says they are its author's own.)
-* **A castle warp onto a blocked cell**: `prtg_cas02 184,44` to `157,140`
-  is the same in mod0631, 817, eAthena 0.5.2, jAthena and rAthena, and
-  the target is solid on this client's map. Where did that door lead?
-  (`aldeg_cas05`'s is settled: round 10.)
 * **WoE numbers for the castle rework** (thread 17, from round 11). Arctic
   Breeze's guide (GameFAQs 28786; read whole, do not quote it again) gives
   the castle-to-material table and guild-dungeon respawns from a Taiwanese
   fan site. Wanted, from iRO, euRO or kRO in 2004: what an investment cost
   (the first one, in zeny); how many treasure boxes a day for a given
   trade level; whether trade and defence fell on capture (the guide says
-  "unconfirmed"); the material's rate in a box (the guide 1/250, 817
-  1/1000).
+  "unconfirmed"). (The material's rate and every castle's items are
+  settled for jRO by Ragu Memo's table of 2004-02-06, round 18, THREADS
+  #17: wanted is the same table, or any castle's treasure, from iRO, euRO
+  or kRO; do not quote Ragu Memo's page again.)
 * **Places the world audit cannot reach** (thread 26, new on 2026-11-11):
   `tur_dun05` has monsters and two exits in mod0631 and no way in: was a
   fifth Turtle Island map in play in 2003/04, and how was it entered?
-  `pay_dun04 193,43` (one of four random arrivals from Payon Cave 3F) is a
-  wall on this client's map: do 817, eAthena 0.5.2 or jAthena have another
-  cell? Four exits on `prt_in` at x 280 to 285 stand where this client's
-  map has no room: which rooms of Prontera were they, and since when?
-  Rows as computed results (`research/gat_cells.py` on the merged GRF,
-  `grep -n` on each emulator's warp file).
+  (`pay_dun04 193,43`: every period emulator has it, round 18; settled.)
+  Four exits on `prt_in` at x 280 to 285 stand where this client's
+  map has no room: which rooms of Prontera were they, and since when? A
+  player's account or a screenshot of 2003-04, not emulator files (round
+  18 read them all).
 * **(new 2026-11-14) Dungeon spawns: did euRO have jRO's late-2003
   rebalance? (THREADS.md #10).** Ragu Memo's dungeon pages agree with ours
   on 430 of 456 counts; between its July and December 2003 captures jRO
@@ -617,6 +621,7 @@ that nobody researches them again.
 
 | Question | Answer | Where |
 |---|---|---|
+| Where `prtg_cas02`'s door at 184,44 led | Into this client's own, smaller inner room (x 184-203, y 162-182; the CD's patch of 2003-04-30); the emulators' cells are the May-2004 map's | `scripts/npc/castle_warps.lua`, THREADS.md #26, round 18 |
 | 2-1 jobs in the closed beta | Job change at job level 40 with no test; quests came with New Comodo (2004-01) | THREADS.md #5, `research/notes/round2-review.md` |
 | Kafra points | A tenth of each teleport fare (mod0631) | `scripts/npc/kafra.lua`, THREADS.md #4 |
 | Thief and Novice quest skills | mod0631's NPCs, confirmed for the international servers by RODataZone (2003-12) | `scripts/npc/thief_skills.lua`, `novice_skills.lua` |

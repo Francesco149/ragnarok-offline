@@ -1,0 +1,46 @@
+# Computed results for Round 18
+
+## prtg_cas02 cell checks in Dec 2003 vs May 2004 GRF
+python3 /opt/src/ragnarok-offline/research/gat_cells.py /home/headpats/data/ragnarok-cd/play/RagnarokOnline/data.grf prtg_cas02 184,44 157,140 157,135 157,174 190,163 193,181
+prtg_cas02.gat 184,44: walkable (type 0)
+prtg_cas02.gat 157,140: blocked (type 1)
+prtg_cas02.gat 157,135: blocked (type 1)
+prtg_cas02.gat 157,174: blocked (type 1)
+prtg_cas02.gat 190,163: walkable (type 0)
+prtg_cas02.gat 193,181: walkable (type 0)
+3 of 6 walkable
+
+python3 /opt/src/ragnarok-offline/research/gat_cells.py "/home/headpats/data/ragnarok-cd/mico07/client/out/Program Files/Gravity/RagnarokOnline/data.grf" prtg_cas02 184,44 157,140 157,135 157,174 190,163 193,181
+prtg_cas02.gat 184,44: walkable (type 0)
+prtg_cas02.gat 157,140: walkable (type 0)
+prtg_cas02.gat 157,135: walkable (type 0)
+prtg_cas02.gat 157,174: walkable (type 0)
+prtg_cas02.gat 190,163: blocked (type 1)
+prtg_cas02.gat 193,181: blocked (type 1)
+4 of 6 walkable
+
+## pay_dun04 cell check in Dec 2003 and May 2004 GRF
+python3 /opt/src/ragnarok-offline/research/gat_cells.py /home/headpats/data/ragnarok-cd/play/RagnarokOnline/data.grf pay_dun04 193,43 191,43 191,41
+pay_dun04.gat 193,43: blocked (type 1)
+pay_dun04.gat 191,43: walkable (type 0)
+pay_dun04.gat 191,41: walkable (type 0)
+2 of 3 walkable
+
+python3 /opt/src/ragnarok-offline/research/gat_cells.py "/home/headpats/data/ragnarok-cd/mico07/client/out/Program Files/Gravity/RagnarokOnline/data.grf" pay_dun04 193,43 191,43 191,41
+pay_dun04.gat 193,43: blocked (type 1)
+pay_dun04.gat 191,43: walkable (type 0)
+pay_dun04.gat 191,41: walkable (type 0)
+2 of 3 walkable
+
+## prt_in eastern cells check
+python3 /opt/src/ragnarok-offline/research/gat_cells.py /home/headpats/data/ragnarok-cd/play/RagnarokOnline/data.grf prt_in 281,36 280,68 282,100 285,130
+prt_in.gat 281,36: blocked (type 5)
+prt_in.gat 280,68: blocked (type 5)
+prt_in.gat 282,100: blocked (type 5)
+prt_in.gat 285,130: walkable (type 0)
+1 of 4 walkable
+
+## client table check for dormant items (5020, 5044, 5051, 7056, 7059, 7060, 7061)
+python3 -c 'import sys; sys.path.insert(0, "research"); import gat_cells; raw_desc = gat_cells.cat("/home/headpats/data/ragnarok-cd/play/RagnarokOnline/data.grf", "data\\idnum2itemdesctable.txt"); raw_names = gat_cells.cat("/home/headpats/data/ragnarok-cd/play/RagnarokOnline/data.grf", "data\\idnum2itemdisplaynametable.txt"); print([id in raw_desc for id in [b"5020#", b"5044#", b"5051#", b"7056#", b"7059#", b"7060#", b"7061#"]]); print([id in raw_names for id in [b"5020#", b"5044#", b"5051#", b"7056#", b"7059#", b"7060#", b"7061#"]])'
+[True, True, True, True, True, True, True]
+[False, False, False, False, False, False, False]
