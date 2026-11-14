@@ -503,7 +503,12 @@ function battle.calc_weapon_attack(src, target, skill_num, skill_lv, wflag, opt)
     if st.weapontype1 == 11 then
       local d10 = floor(dex / 10)
       damage = d10 * d10 + dex + floor(str / 5) + floor(luk / 5)
-      atkmin = (st.watk ~= 0 and dex < st.watk) and dex or st.watk -- battle.c:914 as it evaluates
+      -- a bow's least: ATK * DEX / 100 (no more than the most, below). RODataZone's iRO combat
+      -- page, capture 2003-12-16: "rnd( ATK * DEX / 100 , ATK + AtkBonusCards )". mod0631 bug:
+      -- battle.c:914 writes `sd->watk * (dex<sd->watk)?dex:sd->watk`, which C reads as
+      -- `(watk * (dex < watk)) ? dex : watk`; 817 (battle.c:2167, :2178) mends it to
+      -- watk * min(dex, watk) / 100, the same as the page while DEX is at most the ATK
+      atkmin = floor(st.watk * dex / 100)
       flag = (flag & ~0xf0) | BF.LONG
     end
     if target.kind == "mob" then

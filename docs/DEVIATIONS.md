@@ -712,6 +712,13 @@ every emulator asks one; we keep one (text, as in THREADS.md R6).
 * **Magnum Break** did 65% damage at every level and distance: C operator
   precedence in `5*skill_lv +(wflag)?65:115`. Here: 115% + 5% a level on the
   target, 65% + 5% a level around it, as the expression was meant.
+* **A bow's least damage** was the archer's DEX below the bow's ATK and the
+  whole ATK above it, the same kind of precedence slip (`battle.c:914`).
+  Here it is ATK x DEX / 100, as RODataZone's iRO combat page has it
+  (capture 2003-12-16; 817 mends the line to the same while DEX is at most
+  the ATK, `battle.c:2167`). A DEX 60 archer with a 50 ATK bow rolls from
+  30, not 50; with DEX 30, from 15, not 30. The page's better roll above
+  100 DEX is not built.
 * **Faith, Invulnerable Siegfried, Providence** added to the *attack* bonus
   against an element or race (`addele`, `addrace`) where a resistance was
   meant. Here they resist (`subele`, `subrace`).
