@@ -306,6 +306,20 @@ SOURCE_FIXES = {
         "if((GetJob==Job_Swordman) || (GetJob==Job_Knight)) goto L01;",
         "if((Class==Job_Swordman) || (Class==Job_Knight)) goto L01;",
         "the same slip"),
+    ("cities/aldebaran.txt", 824): (
+        "if(countitem(7026) < 0) goto CheckKey;", "if(countitem(7027) < 1) goto CheckKey;",
+        "no count is below 0, so the Clock Tower's B3 gate let anyone through; mod0631's gatekeeper of "
+        "the same gate (conf/npc_cTower.txt:194, \"From jRO, by Kalen\") wants one Key of Underground "
+        "(7027), the key for 3F is the Key of Clock Tower (7026)"),
+    ("cities/aldebaran.txt", 830): ("delitem 7026,1;", "delitem 7027,1;", "the same: the key it takes (mod0631 :202)"),
+    ("cities/aldebaran.txt", 925): (
+        "if(countitem(7026) < 0) goto CheckKey;", "if(countitem(7026) < 1) goto CheckKey;",
+        "the same test on 3F's gate, which let anyone up to 4F (mod0631 conf/npc_cTower.txt:88)"),
+    ("quests/headgearquest.txt", 658): (
+        "if(countitem(999)<100) goto LNoBinoculars;",
+        "if((countitem(999)<100) || (Zeny<50000)) goto LNoBinoculars;",
+        "the 50000z were taken without a test, so with less the Binoculars cost whatever one had; "
+        "mod0631's Alchemist tests it (conf/npc_event_making.txt, morocc_in 76,163)"),
     ("quests/headgearquest.txt", 82): (
         "LKeyDork:", "LHeyDork:",
         "both jumps name LHeyDork, as does 817's other copy of this NPC (quests/all_quest.txt:150): "

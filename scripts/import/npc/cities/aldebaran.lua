@@ -3,6 +3,9 @@
 -- the emulator authors' (often fan-translated), not Gravity's. GPL, like its source.
 -- Don't edit: override in scripts/npc/ (npc{replaces=}, wrap_npc, remove_npc) and list the
 -- change in docs/DEVIATIONS.md.
+-- source fix (cities/aldebaran.txt:824): if(countitem(7026) < 0) goto CheckKey; -> if(countitem(7027) < 1) goto CheckKey;: no count is below 0, so the Clock Tower's B3 gate let anyone through; mod0631's gatekeeper of the same gate (conf/npc_cTower.txt:194, "From jRO, by Kalen") wants one Key of Underground (7027), the key for 3F is the Key of Clock Tower (7026)
+-- source fix (cities/aldebaran.txt:830): delitem 7026,1; -> delitem 7027,1;: the same: the key it takes (mod0631 :202)
+-- source fix (cities/aldebaran.txt:925): if(countitem(7026) < 0) goto CheckKey; -> if(countitem(7026) < 1) goto CheckKey;: the same test on 3F's gate, which let anyone up to 4F (mod0631 conf/npc_cTower.txt:88)
 
 npc {
   map = "aldeba_in", x = 152, y = 47, dir = 4, sprite = 97, name = "Giddy Fellow",
@@ -927,13 +930,13 @@ npc {
     do return end
     ::M2::
     mes "[Gatekeeper Boy]"
-    if count_item(7026) < 0 then goto CheckKey end
+    if count_item(7027) < 1 then goto CheckKey end
     mes "Hmm! I already felt that you are not an Ordinary person,"
     mes "Now it seems to be successful in Speculation."
     mes "Please,You may enter."
     mes "May God bless you .."
     next()
-    take_item(7026, 1)
+    take_item(7027, 1)
     warp("alde_dun04", 79, 267)
     close()
     do return end
@@ -1035,7 +1038,7 @@ npc {
     do return end
     ::M2::
     mes "[Gatekeeper Riku]"
-    if count_item(7026) < 0 then goto CheckKey end
+    if count_item(7026) < 1 then goto CheckKey end
     mes "Hmm! I already felt that you are not an Ordinary person,"
     mes "Now it seems to be successful in Speculation."
     mes "Please, You may enter."

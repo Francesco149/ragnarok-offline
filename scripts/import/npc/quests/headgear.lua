@@ -3,6 +3,7 @@
 -- the emulator authors' (often fan-translated), not Gravity's. GPL, like its source.
 -- Don't edit: override in scripts/npc/ (npc{replaces=}, wrap_npc, remove_npc) and list the
 -- change in docs/DEVIATIONS.md.
+-- source fix (quests/headgearquest.txt:658): if(countitem(999)<100) goto LNoBinoculars; -> if((countitem(999)<100) || (Zeny<50000)) goto LNoBinoculars;: the 50000z were taken without a test, so with less the Binoculars cost whatever one had; mod0631's Alchemist tests it (conf/npc_event_making.txt, morocc_in 76,163)
 -- source fix (quests/headgearquest.txt:82): LKeyDork: -> LHeyDork:: both jumps name LHeyDork, as does 817's other copy of this NPC (quests/all_quest.txt:150): short of Steel or zeny, the Welding Mask smith ended without a word
 
 npc {
@@ -700,7 +701,7 @@ npc {
     do return end
     ::LManuf::
     if count_item(2243) < 1 then goto LNoBinoculars end
-    if count_item(999) < 100 then goto LNoBinoculars end
+    if (count_item(999) < 100) or (player.zeny < 50000) then goto LNoBinoculars end
     mes "[Marius]"
     mes "Gr~~~~eat !"
     mes "This Magic Glasses will be happy"

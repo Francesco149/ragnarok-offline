@@ -448,6 +448,15 @@ eAthena 817 (2004-02-19), bugs included. The translator is
   1000z Iron Hammer. Each is mended as jAthena's script of 2003-10-30 has
   it (//0505, `conf/npc_town_geffen.txt`), whose overweight line we
   translated; 817's wording otherwise.
+* **Aldebaran's Trader** (`scripts/npc/aldebaran_trader.lua`). 817's took
+  an Apple o' Archer for the Doctor Band where it had counted the Red
+  Bandana, never asked for the Cracked Diamond its list names, and took
+  Iron for the Opera Masque where its list says Steel. mod0631 loads the
+  same NPC (`conf/npc_event_making.txt`) and takes what the list says.
+* **Izlude's sailor** (`scripts/npc/izlude_sailor.lua`) tests the fare,
+  as mod0631's on the same cell does (817's took it untested, so a
+  passenger with too little sailed for what he had), and no longer offers
+  817's "Turtle Island: Under development".
 * **The Arrow Maker of Morroc** (`scripts/npc/arrow_maker.lua`). 817's
   taught Arrow Crafting to any archer who spoke to him (its answers ran
   on into "Congratulations" with no close), asked for Powder of Butterfly
@@ -496,7 +505,14 @@ eAthena 817 (2004-02-19), bugs included. The translator is
   the misspelt label of Geffen's Welding Mask smith
   (`quests/headgearquest.txt:82`, `LKeyDork` for `LHeyDork`, which 817's
   other copy of the NPC spells right): short of Steel or zeny, he ended
-  without a word.
+  without a word. Source fixes too, each with mod0631's NPC on the same
+  cell as the second witness: the Clock Tower's gatekeepers on 3F and B3
+  tested `countitem(7026) < 0`, which never holds, and so let anyone
+  through to 4F and B4; they want a key again, the Key of Clock Tower on
+  3F and the Key of Underground on B3 (817 took the Clock Tower key for
+  both; mod0631 `conf/npc_cTower.txt`, "From jRO, by Kalen"). Morroc's
+  optician (the Binoculars) took 50000z without testing for them, and
+  since zeny stops at 0 the Binoculars then cost whatever one had.
 * **Monsters and warps of the job tests.** The world's monsters and warps
   are mod0631's. 817's job files place some of their own, and those are
   taken where mod0631 has none: the Chonchons along the Swordman course and

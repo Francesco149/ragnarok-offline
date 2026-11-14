@@ -1078,6 +1078,15 @@ Shelf, `other/books.txt`). **Left as 817 has them, open:**
   lines for a Swordman were never said) and the Arrow Maker (#7). What it
   still lists is harmless: `comodo_npc` (above), and Kafras whose bodies
   are replaced or off with `juno` (`CheckCart`, `frst_job_quest`).
+  A side-by-side of the item ids each NPC counts, takes and gives, 817
+  against mod0631 on the same cell (`target/re/item_xcheck.py`, not kept:
+  rewrite from the commit message of 2026-11-14 if needed), and a scan for
+  zeny taken without a test, found more of the same, all mended with
+  mod0631 as the second witness (DEVIATIONS): the Clock Tower's 3F and B3
+  gates let anyone through (`countitem < 0`), Aldebaran's Trader took an
+  Apple o' Archer for the Doctor Band, the Binoculars and Izlude's ferry
+  cost whatever one had. Left: Payon's Drunk takes his 100z untested
+  (zeny stops at 0; mod0631 has no such NPC).
 * *Swordman and Archer*, read against jAthena //0854 of 2004-03-02
   (`conf/npc/npc_job_swordman.txt`, `npc_job_archer.txt`,
   `conf/warp/npc_warp_job.txt`; the same official tests). Mended: the
