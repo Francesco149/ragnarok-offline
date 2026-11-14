@@ -6,6 +6,7 @@
 -- most often to shops mod0631 names alike ("Tool Dealer" for its 道具商人); two from
 -- rAthena's official names (tier later); else "Shop".
 -- delay/delay2: respawn ms (0 = Athena default 5000)
+-- Counts marked "Ragu Memo 2003-12": jRO's late-2003 rebalance (SPAWNS_2003_12).
 spawn { map = "new_zone03", x = 0, y = 0, xs = 0, ys = 0, mob = 1184, count = 40, delay = 0, delay2 = 0 } -- npc_mob_job.txt:7
 spawn { map = "job_thief1", x = 0, y = 0, xs = 0, ys = 0, mob = 1182, count = 180, delay = 0, delay2 = 0 } -- npc_mob_job.txt:11
 spawn { map = "job_thief1", x = 0, y = 0, xs = 0, ys = 0, mob = 1184, count = 50, delay = 0, delay2 = 0 } -- npc_mob_job.txt:12
@@ -417,8 +418,8 @@ spawn { map = "cmd_fild09", x = 0, y = 0, xs = 0, ys = 0, mob = 1113, count = 30
 spawn { map = "cmd_fild09", x = 0, y = 0, xs = 0, ys = 0, mob = 1127, count = 30, delay = 0, delay2 = 0 } -- npc_monster.txt:429
 spawn { map = "cmd_fild09", x = 140, y = 323, xs = 40, ys = 50, mob = 1282, count = 2, delay = 150000, delay2 = 0 } -- npc_monster.txt:430
 spawn { map = "cmd_fild09", x = 142, y = 325, xs = 40, ys = 50, mob = 1258, count = 3, delay = 150000, delay2 = 0 } -- npc_monster.txt:431
-spawn { map = "gef_dun00", x = 0, y = 0, xs = 0, ys = 0, mob = 1005, count = 30, delay = 0, delay2 = 0 } -- npc_monster.txt:434
-spawn { map = "gef_dun00", x = 0, y = 0, xs = 0, ys = 0, mob = 1031, count = 25, delay = 0, delay2 = 0 } -- npc_monster.txt:435
+spawn { map = "gef_dun00", x = 0, y = 0, xs = 0, ys = 0, mob = 1005, count = 20, delay = 0, delay2 = 0 } -- npc_monster.txt:434 (count: Ragu Memo 2003-12)
+spawn { map = "gef_dun00", x = 0, y = 0, xs = 0, ys = 0, mob = 1031, count = 15, delay = 0, delay2 = 0 } -- npc_monster.txt:435 (count: Ragu Memo 2003-12)
 spawn { map = "gef_dun00", x = 0, y = 0, xs = 0, ys = 0, mob = 1077, count = 45, delay = 0, delay2 = 0 } -- npc_monster.txt:436
 spawn { map = "gef_dun00", x = 0, y = 0, xs = 0, ys = 0, mob = 1114, count = 15, delay = 0, delay2 = 0 } -- npc_monster.txt:437
 spawn { map = "gef_dun00", x = 109, y = 121, xs = 0, ys = 0, mob = 1078, count = 1, delay = 300000, delay2 = 150000 } -- npc_monster.txt:438
@@ -430,20 +431,20 @@ spawn { map = "gef_dun00", x = 91, y = 106, xs = 0, ys = 0, mob = 1078, count = 
 spawn { map = "gef_dun00", x = 92, y = 108, xs = 0, ys = 0, mob = 1081, count = 1, delay = 300000, delay2 = 150000 } -- npc_monster.txt:444
 spawn { map = "gef_dun01", x = 0, y = 0, xs = 0, ys = 0, mob = 1005, count = 20, delay = 0, delay2 = 0 } -- npc_monster.txt:447
 spawn { map = "gef_dun01", x = 0, y = 0, xs = 0, ys = 0, mob = 1077, count = 20, delay = 0, delay2 = 0 } -- npc_monster.txt:448
-spawn { map = "gef_dun01", x = 0, y = 0, xs = 0, ys = 0, mob = 1100, count = 40, delay = 0, delay2 = 0 } -- npc_monster.txt:449
+spawn { map = "gef_dun01", x = 0, y = 0, xs = 0, ys = 0, mob = 1100, count = 25, delay = 0, delay2 = 0 } -- npc_monster.txt:449 (count: Ragu Memo 2003-12)
 spawn { map = "gef_dun01", x = 0, y = 0, xs = 0, ys = 0, mob = 1102, count = 1, delay = 0, delay2 = 0 } -- npc_monster.txt:450
-spawn { map = "gef_dun01", x = 0, y = 0, xs = 0, ys = 0, mob = 1114, count = 30, delay = 0, delay2 = 0 } -- npc_monster.txt:451
+spawn { map = "gef_dun01", x = 0, y = 0, xs = 0, ys = 0, mob = 1114, count = 20, delay = 0, delay2 = 0 } -- npc_monster.txt:451 (count: Ragu Memo 2003-12)
 spawn { map = "gef_dun01", x = 0, y = 0, xs = 0, ys = 0, mob = 1130, count = 20, delay = 300000, delay2 = 100000 } -- npc_monster.txt:452
 spawn { map = "gef_dun01", x = 0, y = 0, xs = 0, ys = 0, mob = 1179, count = 30, delay = 0, delay2 = 0 } -- npc_monster.txt:453
 spawn { map = "gef_dun01", x = 234, y = 121, xs = 0, ys = 0, mob = 1079, count = 1, delay = 300000, delay2 = 100000 } -- npc_monster.txt:454
 spawn { map = "gef_dun02", x = 0, y = 0, xs = 0, ys = 0, mob = 1046, count = 1, delay = 7200000, delay2 = 3600000 } -- npc_monster.txt:457
 spawn { map = "gef_dun02", x = 0, y = 0, xs = 0, ys = 0, mob = 1061, count = 8, delay = 300000, delay2 = 100000 } -- npc_monster.txt:458
-spawn { map = "gef_dun02", x = 0, y = 0, xs = 0, ys = 0, mob = 1100, count = 30, delay = 0, delay2 = 0 } -- npc_monster.txt:459
+spawn { map = "gef_dun02", x = 0, y = 0, xs = 0, ys = 0, mob = 1100, count = 20, delay = 0, delay2 = 0 } -- npc_monster.txt:459 (count: Ragu Memo 2003-12)
 spawn { map = "gef_dun02", x = 0, y = 0, xs = 0, ys = 0, mob = 1102, count = 4, delay = 300000, delay2 = 100000 } -- npc_monster.txt:460
 spawn { map = "gef_dun02", x = 0, y = 0, xs = 0, ys = 0, mob = 1130, count = 12, delay = 100000, delay2 = 50000 } -- npc_monster.txt:461
 spawn { map = "gef_dun02", x = 0, y = 0, xs = 0, ys = 0, mob = 1143, count = 14, delay = 0, delay2 = 0 } -- npc_monster.txt:462
 spawn { map = "gef_dun02", x = 0, y = 0, xs = 0, ys = 0, mob = 1151, count = 10, delay = 0, delay2 = 0 } -- npc_monster.txt:463
-spawn { map = "gef_dun02", x = 0, y = 0, xs = 0, ys = 0, mob = 1179, count = 30, delay = 0, delay2 = 0 } -- npc_monster.txt:464
+spawn { map = "gef_dun02", x = 0, y = 0, xs = 0, ys = 0, mob = 1179, count = 20, delay = 0, delay2 = 0 } -- npc_monster.txt:464 (count: Ragu Memo 2003-12)
 spawn { map = "gef_dun03", x = 0, y = 0, xs = 0, ys = 0, mob = 1109, count = 10, delay = 0, delay2 = 0 } -- npc_monster.txt:467
 spawn { map = "gef_dun03", x = 0, y = 0, xs = 0, ys = 0, mob = 1131, count = 8, delay = 300000, delay2 = 100000 } -- npc_monster.txt:468
 spawn { map = "gef_dun03", x = 0, y = 0, xs = 0, ys = 0, mob = 1371, count = 10, delay = 0, delay2 = 0 } -- npc_monster.txt:469
@@ -624,15 +625,15 @@ spawn { map = "gef_fild14", x = 0, y = 0, xs = 0, ys = 0, mob = 1087, count = 1,
 spawn { map = "gef_fild14", x = 0, y = 0, xs = 0, ys = 0, mob = 1189, count = 20, delay = 0, delay2 = 0 } -- npc_monster.txt:674
 spawn { map = "gef_fild14", x = 0, y = 0, xs = 0, ys = 0, mob = 1213, count = 20, delay = 0, delay2 = 0 } -- npc_monster.txt:675
 spawn { map = "gef_fild14", x = 0, y = 0, xs = 0, ys = 0, mob = 1273, count = 40, delay = 0, delay2 = 0 } -- npc_monster.txt:676
-spawn { map = "gl_cas01", x = 0, y = 0, xs = 0, ys = 0, mob = 1131, count = 10, delay = 0, delay2 = 0 } -- npc_monster.txt:679
+spawn { map = "gl_cas01", x = 0, y = 0, xs = 0, ys = 0, mob = 1131, count = 5, delay = 0, delay2 = 0 } -- npc_monster.txt:679 (count: Ragu Memo 2003-12)
 spawn { map = "gl_cas01", x = 0, y = 0, xs = 0, ys = 0, mob = 1132, count = 5, delay = 0, delay2 = 0 } -- npc_monster.txt:680
 spawn { map = "gl_cas01", x = 0, y = 0, xs = 0, ys = 0, mob = 1179, count = 10, delay = 0, delay2 = 0 } -- npc_monster.txt:681
-spawn { map = "gl_cas01", x = 0, y = 0, xs = 0, ys = 0, mob = 1195, count = 30, delay = 0, delay2 = 0 } -- npc_monster.txt:682
+spawn { map = "gl_cas01", x = 0, y = 0, xs = 0, ys = 0, mob = 1195, count = 15, delay = 0, delay2 = 0 } -- npc_monster.txt:682 (count: Ragu Memo 2003-12)
 spawn { map = "gl_cas01", x = 0, y = 0, xs = 0, ys = 0, mob = 1204, count = 1, delay = 7200000, delay2 = 3600000 } -- npc_monster.txt:683
 spawn { map = "gl_cas01", x = 0, y = 0, xs = 0, ys = 0, mob = 1260, count = 20, delay = 0, delay2 = 0 } -- npc_monster.txt:684
-spawn { map = "gl_cas01", x = 0, y = 0, xs = 0, ys = 0, mob = 1267, count = 40, delay = 0, delay2 = 0 } -- npc_monster.txt:685
+spawn { map = "gl_cas01", x = 0, y = 0, xs = 0, ys = 0, mob = 1267, count = 30, delay = 0, delay2 = 0 } -- npc_monster.txt:685 (count: Ragu Memo 2003-12)
 spawn { map = "gl_cas01", x = 0, y = 0, xs = 0, ys = 0, mob = 1275, count = 1, delay = 0, delay2 = 0 } -- npc_monster.txt:686
-spawn { map = "gl_cas01", x = 0, y = 0, xs = 0, ys = 0, mob = 1281, count = 50, delay = 0, delay2 = 0 } -- npc_monster.txt:687
+spawn { map = "gl_cas01", x = 0, y = 0, xs = 0, ys = 0, mob = 1281, count = 40, delay = 0, delay2 = 0 } -- npc_monster.txt:687 (count: Ragu Memo 2003-12)
 spawn { map = "gl_cas01", x = 0, y = 0, xs = 0, ys = 0, mob = 1320, count = 3, delay = 0, delay2 = 0 } -- npc_monster.txt:688
 spawn { map = "gl_cas02", x = 0, y = 0, xs = 0, ys = 0, mob = 1039, count = 1, delay = 3600000, delay2 = 1800000 } -- npc_monster.txt:691
 spawn { map = "gl_cas02", x = 0, y = 0, xs = 0, ys = 0, mob = 1061, count = 10, delay = 0, delay2 = 0 } -- npc_monster.txt:692
@@ -680,12 +681,12 @@ spawn { map = "gl_dun01", x = 0, y = 0, xs = 0, ys = 0, mob = 1194, count = 100,
 spawn { map = "gl_dun01", x = 0, y = 0, xs = 0, ys = 0, mob = 1278, count = 40, delay = 0, delay2 = 0 } -- npc_monster.txt:740
 spawn { map = "gl_dun02", x = 0, y = 0, xs = 0, ys = 0, mob = 1253, count = 20, delay = 0, delay2 = 0 } -- npc_monster.txt:743
 spawn { map = "gl_dun02", x = 0, y = 0, xs = 0, ys = 0, mob = 1310, count = 40, delay = 0, delay2 = 0 } -- npc_monster.txt:744
-spawn { map = "gl_in01", x = 0, y = 0, xs = 0, ys = 0, mob = 1143, count = 10, delay = 0, delay2 = 0 } -- npc_monster.txt:747
-spawn { map = "gl_in01", x = 0, y = 0, xs = 0, ys = 0, mob = 1195, count = 10, delay = 0, delay2 = 0 } -- npc_monster.txt:748
+spawn { map = "gl_in01", x = 0, y = 0, xs = 0, ys = 0, mob = 1143, count = 8, delay = 0, delay2 = 0 } -- npc_monster.txt:747 (count: Ragu Memo 2003-12)
+spawn { map = "gl_in01", x = 0, y = 0, xs = 0, ys = 0, mob = 1195, count = 8, delay = 0, delay2 = 0 } -- npc_monster.txt:748 (count: Ragu Memo 2003-12)
 spawn { map = "gl_in01", x = 0, y = 0, xs = 0, ys = 0, mob = 1208, count = 1, delay = 0, delay2 = 0 } -- npc_monster.txt:749
 spawn { map = "gl_in01", x = 0, y = 0, xs = 0, ys = 0, mob = 1260, count = 10, delay = 0, delay2 = 0 } -- npc_monster.txt:750
 spawn { map = "gl_in01", x = 0, y = 0, xs = 0, ys = 0, mob = 1275, count = 1, delay = 0, delay2 = 0 } -- npc_monster.txt:751
-spawn { map = "gl_in01", x = 0, y = 0, xs = 0, ys = 0, mob = 1281, count = 20, delay = 0, delay2 = 0 } -- npc_monster.txt:752
+spawn { map = "gl_in01", x = 0, y = 0, xs = 0, ys = 0, mob = 1281, count = 14, delay = 0, delay2 = 0 } -- npc_monster.txt:752 (count: Ragu Memo 2003-12)
 spawn { map = "gl_in01", x = 0, y = 0, xs = 0, ys = 0, mob = 1320, count = 12, delay = 0, delay2 = 0 } -- npc_monster.txt:753
 spawn { map = "gl_knt01", x = 0, y = 0, xs = 0, ys = 0, mob = 1163, count = 60, delay = 0, delay2 = 0 } -- npc_monster.txt:756
 spawn { map = "gl_knt01", x = 0, y = 0, xs = 0, ys = 0, mob = 1276, count = 20, delay = 0, delay2 = 0 } -- npc_monster.txt:757
@@ -2007,3 +2008,4 @@ spawn { map = "xmas_fild01", x = 0, y = 0, xs = 0, ys = 0, mob = 1242, count = 2
 spawn { map = "xmas_fild01", x = 0, y = 0, xs = 0, ys = 0, mob = 1243, count = 20, delay = 0, delay2 = 0 } -- npc_monster.txt:2301
 spawn { map = "xmas_fild01", x = 0, y = 0, xs = 0, ys = 0, mob = 1252, count = 1, delay = 3600000, delay2 = 7200000 } -- npc_monster.txt:2302
 spawn { map = "mag_dun02", x = 0, y = 0, xs = 0, ys = 0, mob = 1379, count = 3, delay = 0, delay2 = 0 } -- npc_monster30.txt:44
+spawn { map = "pay_dun00", x = 0, y = 0, xs = 0, ys = 0, mob = 1076, count = 25, delay = 0, delay2 = 0 } -- Ragu Memo map_payond.html 2003-12-05 (not in mod0631)

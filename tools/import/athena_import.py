@@ -247,6 +247,49 @@ CLIENT_IRO = {
 # better one-handed swords, daggers, flails, staves and the hats for "Every Job"; Thieves no
 # axes or maces; knuckles are the Monk's, the Lance the Knight's and Crusader's, the Stunner
 # the Priest's (THREADS.md #31). Where only one of the two speaks, mod0631's mask stays.
+# Spawn counts of late 2003 (research/THREADS.md #10). Ragu Memo's jRO dungeon pages of 2003-07
+# have mod0631's and 817's counts on these floors; its captures of 2003-12-05 (and 2003-12 for
+# Glast Heim) have these, and rAthena's pre-renewal spawns (tier later) keep the December figure
+# wherever they did not change the monster again (Poporing 15, Whisper 20, Rideword 15 and 8,
+# Sage Worm 14; Skeletons on Payon Cave 1F). Total per map and monster; a new pair is added as
+# one group anywhere on the map. data:refs/web/ragmemo-2003/ragmemo_map_*.html.
+SPAWNS_2003_12 = {
+    ("gef_dun00", 1005): 20, ("gef_dun00", 1031): 15,
+    ("gef_dun01", 1100): 25, ("gef_dun01", 1114): 20,
+    ("gef_dun02", 1100): 20, ("gef_dun02", 1179): 20,
+    ("gl_cas01", 1131): 5, ("gl_cas01", 1195): 15, ("gl_cas01", 1267): 30, ("gl_cas01", 1281): 40,
+    ("gl_in01", 1143): 8, ("gl_in01", 1195): 8, ("gl_in01", 1281): 14,
+    ("pay_dun00", 1076): 25,
+}
+
+
+def spawns_2003_12(spawns):
+    """Set SPAWNS_2003_12's totals: the first anywhere-on-the-map group of each pair takes the
+    difference (fixed-cell groups keep theirs); a pair with no group gets one."""
+    pat = re.compile(r'map = "(\w+)", x = (\d+), y = (\d+), .*mob = (\d+), count = (\d+)')
+    total = Counter()
+    for line in spawns:
+        m = pat.search(line)
+        if m:
+            total[(m.group(1), int(m.group(4)))] += int(m.group(5))
+    out, done = [], set()
+    for line in spawns:
+        m = pat.search(line)
+        key = m and (m.group(1), int(m.group(4)))
+        if key in SPAWNS_2003_12 and key not in done and m.group(2) == "0" and m.group(3) == "0":
+            n = int(m.group(5)) + SPAWNS_2003_12[key] - total[key]
+            done.add(key)
+            if n <= 0:
+                continue
+            line = line.replace(f"count = {m.group(5)},", f"count = {n},", 1) + " (count: Ragu Memo 2003-12)"
+        out.append(line)
+    for (mp, mob), n in SPAWNS_2003_12.items():
+        if (mp, mob) not in done:
+            out.append(f'spawn {{ map = "{mp}", x = 0, y = 0, xs = 0, ys = 0, mob = {mob}, count = {n}, '
+                       f'delay = 0, delay2 = 0 }} -- Ragu Memo map_payond.html 2003-12-05 (not in mod0631)')
+    return out
+
+
 CLIENT_IRO_JOBS = {
     1119: 0x654e3,  # Tsurugi: + Novice
     1120: 0x654e3,  # Tsurugi: + Novice
@@ -977,7 +1020,8 @@ def import_npcs():
         "-- which remember the field you came in from. A rand(n) with fewer branches than\n"
         "-- n falls through to the first one, as the source's goto chain does.\n"
         + "\n".join(t for t in touch_npcs if t) + "\n", encoding="utf-8")
-    (out / "spawns.lua").write_text(hdr + "-- delay/delay2: respawn ms (0 = Athena default 5000)\n" + "\n".join(spawns) + "\n", encoding="utf-8")
+    spawns = spawns_2003_12(spawns)
+    (out / "spawns.lua").write_text(hdr + "-- delay/delay2: respawn ms (0 = Athena default 5000)\n-- Counts marked \"Ragu Memo 2003-12\": jRO's late-2003 rebalance (SPAWNS_2003_12).\n" + "\n".join(spawns) + "\n", encoding="utf-8")
     (out / "shops.lua").write_text(hdr + "\n".join(shops) + "\n", encoding="utf-8")
     return len(warps), len(spawns), len(shops)
 

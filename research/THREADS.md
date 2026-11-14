@@ -537,8 +537,16 @@ emulators' counts, so **jRO rebalanced these floors between 2003-07 and
   there later), Pyramid B3F 10 Ghouls;
 * older than July: Payon Cave 4F Sohee 45/65, Sandaruman east Goblin
   Archer 23/28.
-The game keeps the emulators' counts: whether euRO's servers of January
-2004 had jRO's rebalance is not known (queue T9). Magma Dungeon (`mag_dun`,
+**Taken (2026-11-14, owner: best guess, later sources may decide).**
+rAthena's pre-renewal spawns keep December's figure on the rebalanced
+floors wherever they did not change that monster again (Poporing 15,
+Whisper 20, Rideword 15 and 8, Sage Worm 14, Skeletons on Payon Cave 1F),
+so the rebalance was official and lasting: the importer sets Ragu Memo's
+December counts on those floors (`SPAWNS_2003_12`, 14 pairs; Glast Heim's
+July capture also has the emulators' counts). Kept as the emulators have
+them, rAthena siding with them: Sohee 65, Goblin Archer 28, no Ghouls on
+Pyramid B3F, no Andre Eggs on Ant Hell 2F. Now 444 of 456 agree. An iRO or
+euRO account of 2004 would still settle euRO's side (queue T9). Magma Dungeon (`mag_dun`,
 behind `juno`) has no counts on the page.
 
 ### 11. Shop NPC names and stock
