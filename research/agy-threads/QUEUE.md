@@ -4,7 +4,7 @@ For: the independent deep-research agent (Gemini in Antigravity) that wrote
 rounds 1 to 3. Kept by the Claude sessions that work on the game: at the
 end of each session the queue is updated (answered items go to "Done",
 with where the answer went) and refilled with what that session could not
-settle from the sources on disk. Last update: 2026-11-14, round 13 reviewed (`research/notes/round13-review.md`: T4 answered and built from Ragu Memo; T10, T6 mostly answered by RODataZone's quests.js; T5 and T9 narrowed to thread 29's iRO/jRO splits); before that, round 12 reviewed (`research/notes/round12-review.md`: T4 points at Ragu Memo behind RODataZone's status page; T1 closed to iRO Wiki copies; Cart Revolution's Iron decided at 20); before that, round 11 reviewed (`research/notes/round11-review.md`: Charge Arrow's Crossbow, Gershaun's juice and the doomed swords' lists moved to Done and built or confirmed; T5, T6, T7, T9 narrowed; a WoE item added to T9); before that, later (thread 28 built from the client: T9's ground-skill item widened); before that, round 10 reviewed (`research/notes/round10-review.md`: T8's Skid Trap item and two T9 items moved to Done, T8 asks when euRO got iRO's Comodo skill patch, thread 28 narrowed; the boss rule built); before that, later (T9 monster skills: the FAQ pairs added, the rate question); before that, round 9 reviewed (`research/notes/round9-review.md`: two T9 items moved to Done, the monster-skill item rewritten); before that, later the same day (thread 28 added to T9); before that, round 8 reviewed (`research/notes/round8-review.md`); before that, later the same day (T7 narrowed by euRO's May-2004 text; two shop names added to T9). Before that, 2026-11-14 (round 7 reviewed: `research/notes/round7-review.md`.
+settle from the sources on disk. Last update: 2026-11-14, round 14 reviewed (`research/notes/round14-review.md`: twelve GameFAQs rows carried invented Wayback URLs (a new rule below); five T7 claims false, corrected there; T7's list of skills to build answered; T9's juice and T6's dye items gained pRO witnesses); before that, later the same day (T9: the makers of the 24 hats the client ships, thread 31); before that, round 13 reviewed (`research/notes/round13-review.md`: T4 answered and built from Ragu Memo; T10, T6 mostly answered by RODataZone's quests.js; T5 and T9 narrowed to thread 29's iRO/jRO splits); before that, round 12 reviewed (`research/notes/round12-review.md`: T4 points at Ragu Memo behind RODataZone's status page; T1 closed to iRO Wiki copies; Cart Revolution's Iron decided at 20); before that, round 11 reviewed (`research/notes/round11-review.md`: Charge Arrow's Crossbow, Gershaun's juice and the doomed swords' lists moved to Done and built or confirmed; T5, T6, T7, T9 narrowed; a WoE item added to T9); before that, later (thread 28 built from the client: T9's ground-skill item widened); before that, round 10 reviewed (`research/notes/round10-review.md`: T8's Skid Trap item and two T9 items moved to Done, T8 asks when euRO got iRO's Comodo skill patch, thread 28 narrowed; the boss rule built); before that, later (T9 monster skills: the FAQ pairs added, the rate question); before that, round 9 reviewed (`research/notes/round9-review.md`: two T9 items moved to Done, the monster-skill item rewritten); before that, later the same day (thread 28 added to T9); before that, round 8 reviewed (`research/notes/round8-review.md`); before that, later the same day (T7 narrowed by euRO's May-2004 text; two shop names added to T9). Before that, 2026-11-14 (round 7 reviewed: `research/notes/round7-review.md`.
 T11 answered and moved to Done; T1, T9 and T10 updated with what it found).
 
 ## How to use it
@@ -33,6 +33,16 @@ T11 answered and moved to Done; T1, T9 and T10 updated with what it found).
      quests were added since. Version numbers and dates go in
      `reasoning` only as the page gives them (round 7 wrote "v3.3
      (2003-11-14)" for a page that says 3.2 and gives no date).
+   * **A row's URL is the address the saved page came from.** Round 14
+     gave twelve GameFAQs rows Wayback captures of `db.gamefaqs.com` of
+     2004 that do not exist (CDX has none) for pages fetched from
+     `www.gamefaqs.com/pc/561051-ragnarok-online/faqs/<id>` as captured in
+     2010. Cite that capture, with its own timestamp; date the text by the
+     version line in `reasoning`. If you think an older capture exists,
+     check CDX and say what it returned.
+   * **817's ground skills keep their bonuses in `pc.c`** (Volcano, Deluge,
+     Violent Gale), not only `battle.c`: grep the whole `map/` tree before
+     writing "absent".
    * **Do not quote back what THREADS.md already says.** Round 4's rows
      for dyes and for the skill table repeated lines the game was built
      from. If a task has nothing beyond that, write one `none` row per
@@ -40,7 +50,7 @@ T11 answered and moved to Done; T1, T9 and T10 updated with what it found).
 2. Take tasks from the top; the order is by how much of the game waits on
    the answer. A round need not take them all. Say in `progress.md` which
    ones you took.
-3. Write only inside `research/agy-threads/r<N>/` for round N (round 14 is
+3. Write only inside `research/agy-threads/r<N>/` for round N (round 15 is
    next): `rows/<task id>.jsonl`, `pages/` for saved web pages, `check.txt`
    for your own checker run. No summary report: rows only, plus one line per
    task in `progress.md`: "answered" only if every bullet of the task has a
@@ -358,7 +368,13 @@ server):
   and the Chemical Protections (`skill.c:2313`); the guide says "all
   magical effects".
 
-Still to build, for each of which two rows are wanted (817: "implemented",
+**Answered by round 14** (with five of its claims corrected in
+`research/notes/round14-review.md`; THREADS.md #25 has the result): the
+list below, 817 against the guide for each. Not wanted again. Still open:
+a third witness of 2004 for any of them, above all Acid Terror's and
+Demonstration's damage, which 817 lacks.
+
+Was to build, for each of which two rows are wanted (817: "implemented",
 "effect only", "commented out" or "absent", with the formula line quoted;
 the guide's line or table), and one row per disagreement with both quotes
 in it: Grand Cross; Potion Pitcher, Acid Terror, Demonstration; Volcano,

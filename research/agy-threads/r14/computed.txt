@@ -1,0 +1,7 @@
+# Computed results for Round 14
+
+## prt_fild00 Yosuke ascetic cell check
+python3 /opt/src/ragnarok-offline/research/gat_cells.py /home/headpats/data/ragnarok-cd/play/RagnarokOnline/data.grf prt_fild00 208,218 208,255
+prt_fild00.gat 208,218: walkable (type 0)
+prt_fild00.gat 208,255: blocked (type 5)
+1 of 2 walkable

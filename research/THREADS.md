@@ -212,6 +212,11 @@ kRO/jRO notices on the training ground (초보자 수련장), the iRO guide's
 beginner pages. Round 1: research/agy-threads/HANDOFF.md.
 **Round 7 (2026-11-14):** nothing new: round 5's Weggy rows and the
 Usher's lines above again (`research/notes/round7-review.md`).
+**Round 14 (2026-11-14):** an iRO Assassin guide of 2003-12-13
+(Mistiknoname3k, GameFAQs 20164): rewards by right answers, a recommended
+job, a warp to its town, "extra zenny" for taking the recommended job.
+That is the shape we built from mod0631; no numbers
+(`research/notes/round14-review.md`).
 
 
 ### 7. Quest skills and their NPCs in iRO, Dec 2003
@@ -1050,6 +1055,19 @@ and 0x014e is gone; 0x01f1 to 0x01ff are new. **Owner, 2026-11-11:** that client
 this one is complete; until then nothing is built for it, and what
 matters to it is collected in `research/notes/may2004-client.md`
 (packets, skill text, the 35 maps whose cells differ).
+**Round 14 (2026-11-14), the 2-2 skills not yet built**, 817 against the
+iRO guide (`research/notes/round14-review.md`, with the round's five false
+claims corrected): Potion Pitcher (817 1 SP, and only level 1 works: `a=500
+> 503` is 0; guide 10 SP, Red to Blue Potion at 110% to 150%); Acid Terror
+(817 no damage, armour break commented out; guide 140% to 300% ATK, 3% to
+13% armour break, 15 SP); Demonstration (817 a hit every 2 s for 5 s a
+level; guide every 1 s, 120% to 200%, 1% to 5% weapon break); Magic Rod
+(817 no code; guide 0.4 to 1.2 s, 20% to 100% of the spell's SP); Spell
+Breaker (817 10 SP, guide 2 SP; both give back 0% to 100% by level).
+Grand Cross, Volcano, Deluge and Violent Gale agree (817's bonuses are in
+`pc.c`: +10 ATK, +3 Flee a level, +5/9/12/14/15% Max HP); Land Protector
+lasts 2 to 4 minutes in 817, 2 to 5 in the guide. Enough to draft them
+the way the first lots were, with the guide where 817 is broken or empty.
 **Look:** first of all whether either of those two exes is archived: a
 client that lists the skills is what the 2-2 jobs wait on, more than any
 skill's numbers (answered: see the paragraph above). Then what this client does with the skills' effects (does
@@ -1239,10 +1257,12 @@ for iRO:**
 * the Baphomet Doll: 2 Royal Jelly (mod0631, Ragu Memo's jRO list of
   2004-02) against 5 Panacea;
 * JavaDullihan's dyes: Darkgreen also takes a Mixture (RODataZone: no;
-  mod0631 and Ragu Memo's jRO list: yes). Violet's Red Herbs are 30 since
-  2026-11-14: mod0631's own line, Ragu Memo and RODataZone say 30, only
-  mod0631's code took 20;
-* Marx Hansen's juices: one fruit a bottle (RODataZone: three);
+  mod0631 and Ragu Memo's jRO list: yes; blood3d's pRO guide of 2004:
+  yes). Violet's Red Herbs are 30 since
+  2026-11-14: mod0631's own line, Ragu Memo, RODataZone and blood3d say 30,
+  only mod0631's code took 20;
+* Marx Hansen's juices: one fruit a bottle (RODataZone: three; two pRO
+  guides of 2004, blood3d and Guide Maker: one, round 14);
 * the training ground: Leo Von Frisch's 2 Bananas (RODataZone 1), the last
   Helper's tiers (ours 1 herb + 100z ... 10 herbs + 500z; RODataZone 3
   herbs + 100z or 5 + 150z), and every job's subsidy (RODataZone: Swordman
