@@ -108,8 +108,13 @@ impl Default for GameConfig {
 /// Client-derived resources.
 pub struct Resources {
     pub vfs: Vfs,
-    /// Maps the client has a .gat for (lowercase, no extension).
+    /// Maps the client can load (lowercase, no extension): its own .gat
+    /// files and the names its `data\resnametable.txt` redirects to one.
     pub maps: HashSet<String>,
+    /// Map name -> the .gat stem the client reads for it, for the names
+    /// `resnametable.txt` redirects (`pvp_y_room` -> `pvp_room`). The server
+    /// keeps the name, as the official servers did, and the client resolves it.
+    pub map_files: HashMap<String, String>,
     /// SP per level by Aegis skill name, from the client's
     /// `data\leveluseskillspamount.txt` (tier client).
     pub skill_sp: HashMap<String, Vec<u16>>,
@@ -129,13 +134,36 @@ impl Resources {
                 }
             }
         }
+        let mut map_files = HashMap::new();
+        if let Ok(b) = vfs.read("data\\resnametable.txt") {
+            for (from, to) in parse_resnametable(&b) {
+                let (Some(f), Some(t)) = (from.strip_suffix(".gat"), to.strip_suffix(".gat")) else { continue };
+                if maps.contains(t) && !maps.contains(f) {
+                    map_files.insert(f.to_string(), t.to_string());
+                }
+            }
+        }
+        maps.extend(map_files.keys().cloned());
         let skill_sp = vfs.read("data\\leveluseskillspamount.txt").map(|b| parse_skill_sp(&b)).unwrap_or_default();
         let skill_names = vfs
             .read("data\\skillnametable.txt")
             .map(|b| String::from_utf8_lossy(&b).lines().filter_map(|l| l.split_once('#')).map(|(n, _)| n.trim().to_string()).collect())
             .unwrap_or_default();
-        Resources { vfs, maps, skill_sp, skill_names }
+        Resources { vfs, maps, map_files, skill_sp, skill_names }
     }
+}
+
+/// `data\resnametable.txt`: `name#file#` lines, lowercased (the client
+/// looks every resource name up here before opening it).
+pub fn parse_resnametable(data: &[u8]) -> Vec<(String, String)> {
+    String::from_utf8_lossy(data)
+        .lines()
+        .filter_map(|l| {
+            let mut p = l.split('#');
+            let (a, b) = (p.next()?.trim(), p.next()?.trim());
+            (!a.is_empty() && !b.is_empty() && !a.starts_with("//")).then(|| (a.to_ascii_lowercase(), b.to_ascii_lowercase()))
+        })
+        .collect()
 }
 
 /// `NAME#\nsp#\nsp#...\n@` blocks (the client's own format).
@@ -303,7 +331,8 @@ impl Game {
         if !self.res.maps.contains(&name) {
             return false;
         }
-        match self.res.vfs.read(&format!("data\\{name}.gat")) {
+        let file = self.res.map_files.get(&name).unwrap_or(&name);
+        match self.res.vfs.read(&format!("data\\{file}.gat")) {
             Ok(b) => match MapGrid::from_gat(&name, &b) {
                 Ok(grid) => {
                     self.world.maps.insert(

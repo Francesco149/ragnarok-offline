@@ -14,8 +14,9 @@ chosen by checking every NPC/warp cell the scripts use against the client's
 .gat (research/notes/maps.md); the counts are kept as a second witness.
 
 Parallel copies the official servers ran for crowding (new_2-1 .. new_5-4,
-sword_2-1, priest_2-1 ...) are left unaliased: a single player needs one,
-and the server skips entries on maps the client lacks. ordeal_a03/a04 are
+sword_2-1, priest_2-1 ...) are left unaliased: a single player needs one.
+The server reads resnametable.txt too (since 2026-11-14), so their NPCs load
+under their own names, and nothing in the default world leads to them. ordeal_a03/a04 are
 named in the table but their files are not in this client's data.
 
 Not aliases: `job_wiz`, `job_knt`, `job_prist`, `job_hunte` (warps of
