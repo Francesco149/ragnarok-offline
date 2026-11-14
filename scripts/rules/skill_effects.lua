@@ -502,6 +502,11 @@ function skill_castend_nodamage_id(src_id, bl_id, skillid, skilllv, opt)
     end
 
   elseif skillid == SK.WZ_FROSTNOVA then
+    -- The cast itself, on the target: this client draws Frost Nova only from
+    -- 0x011a with a non-zero result (handler 0x523e20: skill 88 -> effect 28,
+    -- Frost Diver's ice, on the target at 0x52449e; a zero result draws
+    -- nothing). mod0631 and 817 comment the packet out (THREADS.md #22).
+    nodamage(src_id, bl_id, skillid, skilllv)
     for _, t in ipairs(skill_area(src, bl.map, bl.x, bl.y, 1, BCT.ENEMY)) do
       skill_castend_damage_id(src_id, t.id, skillid, skilllv, { sub = true, main = bl_id, cx = bl.x, cy = bl.y })
     end

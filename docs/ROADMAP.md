@@ -109,8 +109,8 @@ Next:
   fixed as jAthena did), a skill asked for from one cell beyond its range
   was dropped (the client sends it from there), Sightrasher did nothing (now
   drafted), and a job change to less SP crashed the debug server at the next
-  recovery tick. Not built yet: Frost Nova draws nothing on a target
-  (THREADS.md #22).
+  recovery tick. Frost Nova drew nothing on its target until the exe showed
+  which packet draws it (2026-11-14, THREADS.md #22).
 
 ## 4. NPC content
 

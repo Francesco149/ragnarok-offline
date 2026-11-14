@@ -863,6 +863,14 @@ servers of Dec 2003? The client shows an ATK on arrow items.
   out its effect packet. The guide: "freezes all enemies around a target,
   however the target is not frozen", as built. jAthena (2004-05) makes it
   a ground unit around the target. What did the official client show?
+  **Settled 2026-11-14 from the exe:** 0x011a's handler (0x523e20) draws
+  nothing when its result byte is 0 (the hand test sent 0), and for skill
+  88 with a non-zero result draws effect 28, Frost Diver's ice, on the
+  target (0x52449e); 0x01de's per-skill hit table gives 88 the same effect
+  on each unit hit. jAthena's ground unit 0x86 draws nothing in this client.
+  The server now sends the cast's 0x011a on the target (result 1): played
+  in the client, the ice shows on the target, the units around it take the
+  hit and freeze, the target does not.
 **Impact:** Hunter, Assassin, Blacksmith and Wizard play.
 **Look:** jAthena's history (`refs/jathena`, `git log -S` on each skill
 name gives the date and often a source note), 817 and eathena-v0.5.2, the
