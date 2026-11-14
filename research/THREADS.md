@@ -1197,7 +1197,11 @@ for iRO:**
   the exchange counter's two lotteries are left out on purpose (#4);
 * Lutie: no Santa gift box for 3 Red Socks, no reward from the snowman.
 RODataZone describes iRO four months after our client; for each, a dated
-iRO or euRO account of 2003-04 would settle it (queue T10/T9).
+iRO or euRO account of 2003-04 would settle it (queue T10/T9). Its earlier
+list, `items/quests.php` (captures 2003-08-11, 2003-10-03, 2003-12-04),
+filled itself by IE databinding from `items/quests.txt`, which Wayback
+never captured (checked 2026-11-14); from 2004-04-17 the page loads
+`quests.js` instead.
 **Not in the game at all (48):** Alberta's Stylish Merchant (`alberta
 120/53`: Heart Hair Pin for 1200 Coral Reef, Fashionable Glasses, First
 Moon Hair Pin, Hair Protector) and Hat Store Girl (`136/79`: Sunday Hat,
