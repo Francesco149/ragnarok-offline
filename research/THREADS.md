@@ -938,6 +938,13 @@ pRO guide of March 2004 confirms (round 11, below).
 header says they are its author's ("huge") relief for archers "until the
 arrow-making skill is done", an event rather than a plain shop, with
 prices "made up". They are not from jRO, and Arrow Crafting works here.
+**Nameless drops (2026-11-14):** the island's monsters drop items this
+client has no English name for (7062 Broken Turtle Shell to 7072 Old
+Shuriken: "You got 1" on pick-up), as the island's hats are (#29). The
+patch file brought their sprites and resource names only; a euRO player of
+January 2004 saw the same until a later data patch named them. 106
+obtainable items are nameless in all, most dropped by monsters on maps this
+client lacks or in castle treasure.
 **Impact:** the fare (jRO's zeny amounts are not always the international
 ones: refine fees differ tenfold); three item quests.
 **Look:** who took a player there on iRO or euRO and for how much
