@@ -754,7 +754,11 @@ levers and treasure counts, the boxes dropping Ragu Memo's jRO table
 page does not split it). Given up, the castle refills with its garrison.
 Every cell was checked on this client's maps (`research/castle_cells.py`):
 jAthena's master rooms fit all but `payg_cas01`'s, which is at 286-295, 4-13
-here. Not played in the client yet.
+here. Played in the client the same day on `payg_cas01`: the Emperium drawn
+and broken by click-attacks (the announcements shown), the steward's menus,
+an investment, the Kafra appearing on her contract with her cut-in, the
+master room's four chests on this client's room, one broken open for its
+drop. Not tried there: the levers (the test covers them).
 Open, for the owner and for research:
 * **Losing a castle.** Three holders in four lost theirs by the next siege
   (Malaysia, 2004). Nothing attacks a held castle here, so defence investment

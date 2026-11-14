@@ -335,9 +335,8 @@ for i, c in ipairs(C) do
         mes "[ Kafra Service ]"
         mes "Hello, I came here to follow your order sir!^^."
         mes "I'll do the best I can."
-        next()
-        cutin("kafra_01", 255)
         close()
+        cutin("kafra_01", 255)
       elseif pick == 4 then
         mes(S)
         mes "Would you like to get into our treasure room?"
@@ -374,7 +373,7 @@ for i, c in ipairs(C) do
           if menu("Cancel", "Empty Guild Base") == 2 then
             mes(S)
             mes "Master!!....."
-            next()
+            close()
             clear(c)
             announce("Stronghold [" .. c[2] .. "], [" .. player.name .. "] has surrendered the castle", 0)
             -- an empty castle fills with monsters (castles.lua), and its Emperium stands again
