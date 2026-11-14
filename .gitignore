@@ -30,3 +30,5 @@ __pycache__/
 # later rounds: the same
 /research/agy-threads/r[0-9]*/pages/
 /research/agy-threads/r[0-9]*/rows/pages
+# a round's own helper scripts: they only write its rows (committed), and go stale once a review corrects them
+/research/agy-threads/r[0-9]*/*.py

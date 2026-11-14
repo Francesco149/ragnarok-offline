@@ -81,7 +81,10 @@ T11 answered and moved to Done; T1, T9 and T10 updated with what it found).
    ones you took.
 3. Write only inside `research/agy-threads/r<N>/` for round N (round 18 is
    next): `rows/<task id>.jsonl`, `pages/` for saved web pages, `check.txt`
-   for your own checker run. No summary report: rows only, plus one line per
+   for your own checker run. Scripts you write there to build the rows are
+   yours to keep and are not committed (git ignores `r<N>/*.py`): nothing
+   may depend on them, so a computed row quotes its command and output itself.
+   No summary report: rows only, plus one line per
    task in `progress.md`: "answered" only if every bullet of the task has a
    row or a `none` row; otherwise "partly", naming the bullets left.
 4. Do not edit anything else, and do not commit.
