@@ -4,7 +4,7 @@ For: the independent deep-research agent (Gemini in Antigravity) that wrote
 rounds 1 to 3. Kept by the Claude sessions that work on the game: at the
 end of each session the queue is updated (answered items go to "Done",
 with where the answer went) and refilled with what that session could not
-settle from the sources on disk. Last update: 2026-11-14, round 14 reviewed (`research/notes/round14-review.md`: twelve GameFAQs rows carried invented Wayback URLs (a new rule below); five T7 claims false, corrected there; T7's list of skills to build answered; T9's juice and T6's dye items gained pRO witnesses); before that, later the same day (T9: the makers of the 24 hats the client ships, thread 31); before that, round 13 reviewed (`research/notes/round13-review.md`: T4 answered and built from Ragu Memo; T10, T6 mostly answered by RODataZone's quests.js; T5 and T9 narrowed to thread 29's iRO/jRO splits); before that, round 12 reviewed (`research/notes/round12-review.md`: T4 points at Ragu Memo behind RODataZone's status page; T1 closed to iRO Wiki copies; Cart Revolution's Iron decided at 20); before that, round 11 reviewed (`research/notes/round11-review.md`: Charge Arrow's Crossbow, Gershaun's juice and the doomed swords' lists moved to Done and built or confirmed; T5, T6, T7, T9 narrowed; a WoE item added to T9); before that, later (thread 28 built from the client: T9's ground-skill item widened); before that, round 10 reviewed (`research/notes/round10-review.md`: T8's Skid Trap item and two T9 items moved to Done, T8 asks when euRO got iRO's Comodo skill patch, thread 28 narrowed; the boss rule built); before that, later (T9 monster skills: the FAQ pairs added, the rate question); before that, round 9 reviewed (`research/notes/round9-review.md`: two T9 items moved to Done, the monster-skill item rewritten); before that, later the same day (thread 28 added to T9); before that, round 8 reviewed (`research/notes/round8-review.md`); before that, later the same day (T7 narrowed by euRO's May-2004 text; two shop names added to T9). Before that, 2026-11-14 (round 7 reviewed: `research/notes/round7-review.md`.
+settle from the sources on disk. Last update: 2026-11-14, round 15 reviewed (`research/notes/round15-review.md`: no quote invented; 19 rows misdated, three rAthena rows graded B, two new rules; the hat item narrowed to four hats, two items added: who may wear what, and the drops mod0631 left empty); before that, round 14 reviewed (`research/notes/round14-review.md`: twelve GameFAQs rows carried invented Wayback URLs (a new rule below); five T7 claims false, corrected there; T7's list of skills to build answered; T9's juice and T6's dye items gained pRO witnesses); before that, later the same day (T9: the makers of the 24 hats the client ships, thread 31); before that, round 13 reviewed (`research/notes/round13-review.md`: T4 answered and built from Ragu Memo; T10, T6 mostly answered by RODataZone's quests.js; T5 and T9 narrowed to thread 29's iRO/jRO splits); before that, round 12 reviewed (`research/notes/round12-review.md`: T4 points at Ragu Memo behind RODataZone's status page; T1 closed to iRO Wiki copies; Cart Revolution's Iron decided at 20); before that, round 11 reviewed (`research/notes/round11-review.md`: Charge Arrow's Crossbow, Gershaun's juice and the doomed swords' lists moved to Done and built or confirmed; T5, T6, T7, T9 narrowed; a WoE item added to T9); before that, later (thread 28 built from the client: T9's ground-skill item widened); before that, round 10 reviewed (`research/notes/round10-review.md`: T8's Skid Trap item and two T9 items moved to Done, T8 asks when euRO got iRO's Comodo skill patch, thread 28 narrowed; the boss rule built); before that, later (T9 monster skills: the FAQ pairs added, the rate question); before that, round 9 reviewed (`research/notes/round9-review.md`: two T9 items moved to Done, the monster-skill item rewritten); before that, later the same day (thread 28 added to T9); before that, round 8 reviewed (`research/notes/round8-review.md`); before that, later the same day (T7 narrowed by euRO's May-2004 text; two shop names added to T9). Before that, 2026-11-14 (round 7 reviewed: `research/notes/round7-review.md`.
 T11 answered and moved to Done; T1, T9 and T10 updated with what it found).
 
 ## How to use it
@@ -40,6 +40,14 @@ T11 answered and moved to Done; T1, T9 and T10 updated with what it found).
      2010. Cite that capture, with its own timestamp; date the text by the
      version line in `reasoning`. If you think an older capture exists,
      check CDX and say what it returned.
+   * **Date a saved page by the capture Wayback serves.** RODataZone's
+     `quests.js` is the capture of 2004-05-02; `20040417` (round 13's file
+     name) is a date found nowhere, and round 15 copied it into 19 rows.
+     The checker prints the capture it was served: use that.
+   * **A later emulator is grade D**, whatever it says of itself (round 15
+     graded three rAthena rows B), and `source_date` is the source's date,
+     never the day you read it (round 15 dated ten RODataZone rows
+     2026-11-14).
    * **817's ground skills keep their bonuses in `pc.c`** (Volcano, Deluge,
      Violent Gale), not only `battle.c`: grep the whole `map/` tree before
      writing "absent".
@@ -50,7 +58,7 @@ T11 answered and moved to Done; T1, T9 and T10 updated with what it found).
 2. Take tasks from the top; the order is by how much of the game waits on
    the answer. A round need not take them all. Say in `progress.md` which
    ones you took.
-3. Write only inside `research/agy-threads/r<N>/` for round N (round 15 is
+3. Write only inside `research/agy-threads/r<N>/` for round N (round 16 is
    next): `rows/<task id>.jsonl`, `pages/` for saved web pages, `check.txt`
    for your own checker run. No summary report: rows only, plus one line per
    task in `progress.md`: "answered" only if every bullet of the task has a
@@ -418,19 +426,34 @@ Sets: `skill_castend_*` for those skills.
 
 ### T9. Small, independent
 
-* **(new 2026-11-14) Who made the hats the client ships (THREADS.md
-  #31).** The client describes 24 hats that no period emulator gives:
-  Kafra Band, Money Loser's Grief, Parcel Hat, Cake Hat, Chef's Hat,
-  Candle, Spore Hat, Panda Cap, Miner's Helmet, Smokie Hat, Lightbulb
-  Hairband, Poring Hat, Cross Hairband, Apple Hat, Deviruchi Hat, Spotted
-  Eggshell, Innocence of Maiden, Opera Ghost Mask, Wings of Demon, Bongun
-  Hat, Striped Bandana, Mysterious Apple Hat, Bell of Pussycat, Blue
-  Bandana. For each, on iRO, euRO or jRO in 2003-04: which NPC made it or
-  which monster dropped it, where, for what, and the English name a server
-  of the time gave it. Also the Kafra payroll and free tickets (7056,
-  7059-7061): what quest gave them. Start from RODataZone's `quests.js`
-  HATS list (rows not yet taken: Payon's Young Man, Comodo's Traveler and
-  Hair Ornament Girl, Lutie's vending machine) and Ragu Memo's `trade.html`.
+* **(narrowed after round 15) The four hats nobody makes yet (THREADS.md
+  #31).** Eighteen of the 24 are built from RODataZone and Ragu Memo, three
+  drop (#32). Left: the Kafra Band (5020), Panda Cap (5030), Wings of Demon
+  (5044) and Bell of Pussycat (5051). Neither of those two lists has them.
+  Wanted: who gave each on iRO, euRO, pRO or jRO in 2004 (an event? a
+  quest added after 2004-05?), with a dated page; then, failing that, the
+  earliest later source (grade D, with its date). Also the Kafra payroll
+  and free tickets (7056, 7059-7061): round 15 found rAthena's training
+  ground giving the tickets (T9-077/078, grade D); when did an official
+  server start doing that, and did any server of 2004 give them?
+
+* **(new after round 15) Who may wear which item (THREADS.md #31).** The
+  client's descriptions end with "Available Job : ..." and "Required Level
+  : ..."; mod0631's item table has a job mask and a level. Round 15 did not
+  look. Wanted: a computed row per item where the two disagree (run
+  `research/item_desc_check.py` as a model; write the script into your
+  `r<N>/`), then RODataZone's job column (`items/*.js`, 2004-02) for the
+  same item. Known so far: the Mine Helmet (client "All", mod0631 a dozen
+  jobs), the Cake Hat (RODataZone "All except Novice", mod0631 all).
+
+* **(new after round 15) Drops mod0631 left empty (THREADS.md #32).** The
+  importer now takes 817's item and rate in 95 slots; `research/
+  mob_drop_holes.py` lists them. Wanted: a period source naming or rating
+  the drops RODataZone's monster table lacks (Magnolia's Yellow Herb, Nine
+  Tail's Royal Jelly and Rough Oridecon, the Zombie Prisoner's Empty Potion
+  Bottle, Mysteltainn's Elunium, the Wanderer's Yggdrasil Seed; anything of
+  Arclouse, Rideword, Zherlthsh, the Clock Tower Manager), and any drop
+  rate of 2003-04 for one of the 95 to set against 817's.
 
 * **(new 2026-11-14) Item numbers: the client's text against mod0631
   (THREADS.md R6, "Items").** `research/item_desc_check.py` lists 81 items
@@ -543,6 +566,7 @@ that nobody researches them again.
 | The arena | kRO opened it 2004-10-12: not in our period | THREADS.md R5 |
 | Hair colours of this client | 0 red, 1 yellow, 2 violet, 3 orange, 4 green, 5 blue, 6 white, 7 black, 8 red (read from the GRF's palettes, 2026-11-10) | THREADS.md #13 |
 | Who makes dyes | mod0631's chain (Dec 2003) | `scripts/npc/dyes.lua` |
+| Who made the hats the client ships (18 of 24) | RODataZone's quest list and Ragu Memo agree: Payon's Young Man, Comodo's Hair Ornament Girl and Traveler, Lutie's Vending Machine; Nut Shell, Poring Hat and Bongun Hat drop (817) | `scripts/npc/hat_makers.lua`, THREADS.md #31, #32, `research/notes/round15-review.md` |
 | Skill numbers where the client's text and the emulators part | The iRO guide of 2004-03/04 gives mod0631's number on every row; the text is older | THREADS.md R6 |
 | Moving HP Recovery's items | 500 Empty Bottles and a Rocker Doll (RODataZone, 817's dialogue); 817's code took mod0631's | `scripts/npc/moving_hp.lua`, THREADS.md #7 |
 | Fatal Blow, Auto Berserk items | The same in 817, mod0631 and on RODataZone | THREADS.md #7 |
