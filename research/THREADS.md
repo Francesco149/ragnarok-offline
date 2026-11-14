@@ -903,8 +903,16 @@ monsters and MVPs (ours, as mod0631: insects, demons and bosses), random
 walks of "roughly 9 tiles every 5 seconds or so", target changes (a
 monster switches to the latest attacker one cell away after its current
 attack; "Super Active" ones to a closer target), Loot keeps at most 10
-items, Cast Sensor reacts when the cast begins. The combat, stats and
-sub-stats pages are unread.
+items, Cast Sensor reacts when the cast begins. Its monster table
+(`monsters/monsters.js`, captured 2004-02-11, saved there too) agrees with
+`data/db/mobs.toml` on level, HP, EXP, ATK, DEF and stats for 204 monsters
+but for about 40 numbers, most of them DEX and AGI; the larger ones (the
+Mummy's EXP 789/493 against 488/314, the Owl Duke's HP 37805 against
+26623, the Sea Otter's 14199 against 9999) are 817's too where ours are,
+so they stay: one witness. Its base EXP table matches ours but for level
+36 (15,755 against 15,775). The sub-stats page is read and used (#9; HP
+factors, DEVIATIONS.md); the combat page agrees with Athena's model in
+outline.
 **The client's own monster action table (2026-11-14).** The Turtle Island
 patch file ships `data\monsterskillinfo.xml` (Atbash-encoded: a<->z;
 decoded copy in `target/re/`): for 41 monster sprites, the skills that play
