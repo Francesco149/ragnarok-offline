@@ -9,6 +9,8 @@
 //!   data/db/skills.toml  data/db/random.toml  data/db/mapflags.toml  data/db/pets.toml
 //!   data/db/mob_skills.toml  data/db/mob_skills_faq.toml (read after it: the monster
 //!   skills iRO had in April 2004 that mod0631 lacks, tools/import/mob_skills_faq.py)
+//!   data/db/treasure.toml (read after mobs.toml: the guild castles' treasure boxes drop
+//!   Ragu Memo's jRO table instead, tools/import/castle_treasure.py)
 
 use std::collections::HashMap;
 use std::path::Path;
@@ -353,6 +355,20 @@ struct MobFile {
     #[serde(default)]
     mob: Vec<Mob>,
 }
+/// data/db/treasure.toml: drops that replace a monster's own.
+#[derive(Debug, Default, Serialize, Deserialize)]
+struct TreasureFile {
+    #[serde(default)]
+    meta: Meta,
+    #[serde(default)]
+    r#box: Vec<TreasureBox>,
+}
+#[derive(Debug, Default, Serialize, Deserialize)]
+struct TreasureBox {
+    mob: u32,
+    #[serde(default)]
+    drops: Vec<Drop>,
+}
 #[derive(Debug, Default, Serialize, Deserialize)]
 struct JobFile {
     #[serde(default)]
@@ -410,6 +426,16 @@ impl Database {
         for m in mobs.mob {
             db.mobs_by_name.insert(m.name.to_ascii_lowercase(), m.id);
             db.mobs.insert(m.id, m);
+        }
+        let treasure: TreasureFile = read_toml(&dir.join("treasure.toml"), &mut db.warnings)?;
+        for b in treasure.r#box {
+            match db.mobs.get_mut(&b.mob) {
+                Some(m) => {
+                    m.drops = b.drops;
+                    m.tier = Some(treasure.meta.tier);
+                }
+                None => db.warnings.push(format!("treasure.toml: no monster {}", b.mob)),
+            }
         }
         db.exp = read_toml(&dir.join("exp.toml"), &mut db.warnings)?;
         let jobs: JobFile = read_toml(&dir.join("jobs.toml"), &mut db.warnings)?;
