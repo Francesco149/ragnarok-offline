@@ -1052,7 +1052,9 @@ re-sent only traps, or nothing.
 it is drawn hidden, as the patch notes say) and keeps any other unit of
 another's on the client while out of sight, taking it off only when it ends
 (DEVIATIONS.md); Detect sends 0x01ac for the traps within its 3 cells (test
-`others_ground_units_seen_again`).
+`others_ground_units_seen_again`). Seen in the client (rig, prt_fild08): a
+Pupa's Safety Wall stays drawn after walking 21 cells away and back, its
+Skid Trap comes back hidden, and Detect on its cell shows it again.
 **Still open:** whether the official server re-sent traps at all, or told a
 whole map of a new trap so that whoever came near later got their second
 showing at once ("invisible only to people who were off screen when it was

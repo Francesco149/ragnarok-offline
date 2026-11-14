@@ -4,7 +4,7 @@ For: the independent deep-research agent (Gemini in Antigravity) that wrote
 rounds 1 to 3. Kept by the Claude sessions that work on the game: at the
 end of each session the queue is updated (answered items go to "Done",
 with where the answer went) and refilled with what that session could not
-settle from the sources on disk. Last update: 2026-11-14, round 10 reviewed (`research/notes/round10-review.md`: T8's Skid Trap item and two T9 items moved to Done, T8 asks when euRO got iRO's Comodo skill patch, thread 28 narrowed; the boss rule built); before that, later (T9 monster skills: the FAQ pairs added, the rate question); before that, round 9 reviewed (`research/notes/round9-review.md`: two T9 items moved to Done, the monster-skill item rewritten); before that, later the same day (thread 28 added to T9); before that, round 8 reviewed (`research/notes/round8-review.md`); before that, later the same day (T7 narrowed by euRO's May-2004 text; two shop names added to T9). Before that, 2026-11-14 (round 7 reviewed: `research/notes/round7-review.md`.
+settle from the sources on disk. Last update: 2026-11-14, later (thread 28 built from the client: T9's ground-skill item widened); before that, round 10 reviewed (`research/notes/round10-review.md`: T8's Skid Trap item and two T9 items moved to Done, T8 asks when euRO got iRO's Comodo skill patch, thread 28 narrowed; the boss rule built); before that, later (T9 monster skills: the FAQ pairs added, the rate question); before that, round 9 reviewed (`research/notes/round9-review.md`: two T9 items moved to Done, the monster-skill item rewritten); before that, later the same day (thread 28 added to T9); before that, round 8 reviewed (`research/notes/round8-review.md`); before that, later the same day (T7 narrowed by euRO's May-2004 text; two shop names added to T9). Before that, 2026-11-14 (round 7 reviewed: `research/notes/round7-review.md`.
 T11 answered and moved to Done; T1, T9 and T10 updated with what it found).
 
 ## How to use it
@@ -414,7 +414,11 @@ Sets: `skill_castend_*` for those skills.
   Still wanted: did a monster's or another player's Fire Wall, Safety
   Wall, Pneuma or Warp Portal ever vanish after you walked away and back,
   or stay? A forum thread or guide line either way; one `none` row per
-  place searched if nothing. Do not quote FAQ 27633 again.
+  place searched if nothing. Do not quote FAQ 27633 again. (2026-11-14:
+  the client hides any such unit on its second showing, so the game now
+  sends only traps twice; THREADS #28.) Also wanted: did a player who
+  *arrived* after a trap was set see it? "Invisible only to people who
+  were off screen when it was planted" says no; any other account of it.
 
 ## Done
 
