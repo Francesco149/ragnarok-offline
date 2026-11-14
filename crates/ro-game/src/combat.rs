@@ -645,7 +645,12 @@ impl Game {
             }
         }
 
-        // aggressive monsters look for players within 9 cells, any of them equally (mob.c:785)
+        // aggressive monsters look for players within 9 cells, any of them equally (mob.c:785);
+        // a blind one only next to it: Ragu Memo's ailment page (2003-08, 2003-12) "モンスター -
+        // 視界が狭くなる(隣接セルしかタゲにできない?)", RODataZone's Monster AI page (iRO, 2004-02)
+        // "When under the Blind effect, this Sight range is reduced to 1 tile" (ours: neither
+        // emulator has it)
+        let sight = if self.has_sc(id, crate::battle::SC_BLIND) { 2 } else { 9 };
         let m = self.world.units[&id].mob().unwrap();
         if (m.target.is_none() || m.looting) && mode & MD_AGGRESSIVE != 0 && !master_check {
             let mut n = 0u32;
@@ -653,7 +658,7 @@ impl Game {
             for pid in self.world.players_on(&map) {
                 let p = &self.world.units[&pid];
                 let (px, py) = (p.x as i32, p.y as i32);
-                if p.state == 1 || path::distance(x, y, px, py) >= 9 || !self.mob_sees(&mdb, pid) {
+                if p.state == 1 || path::distance(x, y, px, py) >= sight || !self.mob_sees(&mdb, pid) {
                     continue;
                 }
                 if !self.mob_can_reach(&map, x, y, px, py, 12) {
@@ -684,7 +689,7 @@ impl Game {
             let mut n = 0u32;
             let mut pick = None;
             for (iid, ix, iy) in items {
-                if path::distance(x, y, ix, iy) >= 9 || !self.mob_can_reach(&map, x, y, ix, iy, 12) {
+                if path::distance(x, y, ix, iy) >= sight || !self.mob_can_reach(&map, x, y, ix, iy, 12) {
                     continue;
                 }
                 n += 1;

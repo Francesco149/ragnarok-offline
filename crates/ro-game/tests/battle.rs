@@ -1777,3 +1777,19 @@ fn logging_back_in_after_dying() {
     let c = &t.g.store.chars[&t.cid];
     assert_eq!((c.hp, c.base_exp), (1, 9900), "restart HP and the 1% penalty");
 }
+
+/// A blind monster only notices someone next to it (Ragu Memo 2003,
+/// RODataZone's Monster AI page 2004-02: sight reduced to 1 tile).
+#[test]
+fn a_blind_monster_sees_only_next_to_it() {
+    let mut t = T::new();
+    t.lua("player.base_level = 50; player.vit = 80; heal(9999, 9999)");
+    let z = t.spawn(30, 25, 1015); // a Zombie five cells off
+    t.lua(&format!("skill_status_change_start({z}, SC.BLIND, 1, 0, {{ tick = 60000, nodef = true }})"));
+    t.lua(&format!("skill_status_change_start({z}, SC.ANKLE, 1, 0, {{ tick = 60000, nodef = true }})")); // no wandering into us
+    t.run(3000);
+    assert!(t.g.world.units[&z].mob().unwrap().target.is_none(), "blind: five cells is too far");
+    t.lua(&format!("skill_status_change_end({z}, SC.BLIND)"));
+    t.run(3000);
+    assert_eq!(t.g.world.units[&z].mob().unwrap().target, Some(t.me), "seeing again: it comes");
+}

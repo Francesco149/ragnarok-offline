@@ -707,6 +707,9 @@ always fires.
   come from 817's `cast_db.txt` (`data/db/skills.toml` `time`, `time2`).
   mod0631 has fixed chances, placeholder lengths ("some length or other" in
   its comments), and no Curse at all (the status is refused).
+* **A blind monster sees only the cells next to it** when it looks for a
+  target or for loot (ours; neither emulator has it): Ragu Memo's page of
+  2003 and RODataZone's Monster AI page (iRO, 2004-02) both say so.
 * **Lengths of 2003** (2026-11-14). Where Ragu Memo's ailment page (jRO
   players' measurements, captures of 2003-08-02 and 2003-12-12; research
   round 13, THREADS.md #21) gives a rule, it replaces 817's per-skill

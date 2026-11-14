@@ -888,6 +888,18 @@ for them are the reverse of their names. Still open:
   mod0631 skipped every friend row.
 * **Not placed:** Detoxify (Obeaune), Lazy Attack (Merman), and the FAQ's
   "Grimtooth" as a monster (Maximize Power, Piercing Attack).
+**RODataZone's Monster AI page (2026-11-14):** `mechanics/monster_ai.php`,
+last modified 2004-01-04 by the site's directory listing, captured
+2004-02-11 (saved with its combat, stats, sub-stats and experience pages in
+`data:refs/web/rodatazone-2004/`): iRO's monster "protocols" as players saw
+them. Built from it: a blind monster's sight of one cell (with Ragu Memo).
+To set beside our AI, not yet done: "Detect" for insects, *Dark property*
+monsters and MVPs (ours, as mod0631: insects, demons and bosses), random
+walks of "roughly 9 tiles every 5 seconds or so", target changes (a
+monster switches to the latest attacker one cell away after its current
+attack; "Super Active" ones to a closer target), Loot keeps at most 10
+items, Cast Sensor reacts when the cast begins. The combat, stats and
+sub-stats pages are unread.
 **The client's own monster action table (2026-11-14).** The Turtle Island
 patch file ships `data\monsterskillinfo.xml` (Atbash-encoded: a<->z;
 decoded copy in `target/re/`): for 41 monster sprites, the skills that play
