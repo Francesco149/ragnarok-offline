@@ -375,7 +375,7 @@ end
 
 -- battle.c:619 battle_calc_damage: what stands between a computed hit and the
 -- target (Safety Wall, Pneuma, Lex Aeterna, Energy Coat, Kyrie Eleison).
-function battle.calc_damage(bl, damage, flag)
+function battle.calc_damage(bl, damage, flag, src)
   local t
   t = sc(bl, SC.SAFETYWALL)
   if t and damage > 0 and (flag & BF.WEAPON) ~= 0 and (flag & BF.SHORT) ~= 0 then
@@ -424,6 +424,14 @@ function battle.calc_damage(bl, damage, flag)
     damage = 0
     _rt("clif_skill_nodamage", bl.id, bl.id, SK.CR_AUTOGUARD, t.val1, 1)
     _rt("bl_set", bl.id, "canmove", 300)
+  end
+  -- The Emperium (eAthena 817 battle.c:1153; mod0631 has no rule): a skill does
+  -- nothing to it, nor does anything but a player ("only direct physical attacks",
+  -- the iRO guide's War of Emperium page, 2004-04). 817 also refuses a player
+  -- without a guild that has Official Guild Approval: a game of one has no guilds,
+  -- so any player may break it (ours, docs/DEVIATIONS.md "Guild castles").
+  if bl.kind == "mob" and bl.class == 1288 and ((flag & BF.SKILL) ~= 0 or (src and src.kind ~= "player")) then
+    damage = 0
   end
   if damage > 0 then
     for _, k in ipairs({ SC.STONE, SC.FREEZE, SC.SLEEP }) do
@@ -705,12 +713,12 @@ function battle.calc_weapon_attack(src, target, skill_num, skill_lv, wflag, opt)
   end
 
   if damage2 < 1 then
-    damage = battle.calc_damage(target, damage, flag)
+    damage = battle.calc_damage(target, damage, flag, src)
   elseif damage == 0 then
-    damage2 = battle.calc_damage(target, damage2, flag)
+    damage2 = battle.calc_damage(target, damage2, flag, src)
   else
     local d1, d2 = damage + damage2, damage2
-    damage = battle.calc_damage(target, damage + damage2, flag)
+    damage = battle.calc_damage(target, damage + damage2, flag, src)
     damage2 = floor(damage * d2 / d1)
     if damage2 <= 0 then damage2 = -1 end
     damage = damage - damage2
@@ -888,7 +896,7 @@ function battle.calc_magic_attack(bl, target, skill_num, skill_lv, flag)
     -- (mod0631 applies them to weapon attacks only)
     damage = floor(damage * (100 - target.st.subele[skill_get_pl(skill_num)]) / 100)
   end
-  damage = battle.calc_damage(target, damage, aflag)
+  damage = battle.calc_damage(target, damage, aflag, bl)
   if mdef1 >= 10000 and damage > 0 then damage = 1 end
   return { damage = damage, damage2 = 0, type = 0, div = div, amotion = battle.amotion(bl),
            dmotion = battle.dmotion(target), blewcount = blewcount, flag = aflag }
@@ -917,7 +925,7 @@ function battle.calc_misc_attack(bl, target, skill_num, skill_lv, flag)
   end
   div = skill_get_num(skill_num, skill_lv)
   if div > 1 then damage = damage * div end
-  damage = battle.calc_damage(target, damage, aflag)
+  damage = battle.calc_damage(target, damage, aflag, bl)
   if (damage > 0 and damage < div) or (battle.def(target) >= 10000 and battle.mdef(target) >= 10000 and damage > 0) then
     damage = div
   end
