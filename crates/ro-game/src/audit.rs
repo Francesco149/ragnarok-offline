@@ -86,13 +86,14 @@ impl Reach {
     }
 }
 
-/// `"name", 12, 34` triples in a script's text, skipping warp{} declarations.
+/// `"name", 12, 34` triples in a script's text, skipping warp{} declarations
+/// and remove_warp() calls.
 fn destinations(text: &str) -> Vec<(usize, String, i32, i32)> {
     let mut out = Vec::new();
     for (ln, line) in text.lines().enumerate() {
         let ln = ln + 1;
         let t = line.trim_start();
-        if t.starts_with("warp {") || t.starts_with("warp{") || t.starts_with("--") {
+        if t.starts_with("warp {") || t.starts_with("warp{") || t.starts_with("remove_warp(") || t.starts_with("--") {
             continue;
         }
         let b = line.as_bytes();

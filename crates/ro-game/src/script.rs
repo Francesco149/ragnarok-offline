@@ -192,8 +192,14 @@ pub struct ScriptEngine {
 const BUDGET_KILO_INSTRUCTIONS: u32 = 5_000;
 
 fn source_of(lua: &Lua) -> String {
-    // level 2 = the script line that called npc{}/warp{}/...
-    lua.inspect_stack(2)
+    // level 2 = the script line that called npc{}/warp{}/... through the prelude
+    source_at(lua, 2)
+}
+
+/// The script line `level` frames up (1 = the caller of a Rust function
+/// that scripts call directly, such as remove_warp).
+fn source_at(lua: &Lua, level: usize) -> String {
+    lua.inspect_stack(level)
         .map(|d| {
             let src = d.source();
             let name = src.short_src.as_deref().unwrap_or("?").to_string();
@@ -278,9 +284,14 @@ impl ScriptEngine {
             let gone: std::collections::HashSet<String> = defs.removed.iter().map(|(s, _)| s.clone()).collect();
             defs.npcs.retain(|n| !n.src.as_ref().is_some_and(|s| gone.contains(s)));
         }
+        // A script that removes a warp and puts another on the same cell keeps
+        // its own: only warps declared in other files go (the replacement used
+        // to go with them, so castle_warps.lua's tiles led nowhere).
+        let file = |s: &str| s.rsplit_once(':').map_or(s, |(f, _)| f).to_string();
         for (map, x, y, by) in std::mem::take(&mut defs.removed_warps) {
             let before = defs.warps.len();
-            defs.warps.retain(|w| !(w.map == map && w.x == x && w.y == y));
+            let mine = file(&by);
+            defs.warps.retain(|w| !(w.map == map && w.x == x && w.y == y && file(&w.source) != mine));
             if defs.warps.len() == before {
                 return Err(anyhow!("{by}: remove_warp {map} {x},{y}, but no warp is there (regenerated import?)"));
             }
@@ -451,7 +462,7 @@ impl ScriptEngine {
         g.set(
             "remove_warp",
             lua.create_function(move |lua, (map, x, y): (String, u16, u16)| {
-                d.borrow_mut().removed_warps.push((map, x, y, source_of(lua)));
+                d.borrow_mut().removed_warps.push((map, x, y, source_at(lua, 1)));
                 Ok(())
             })?,
         )?;
