@@ -307,10 +307,13 @@ fn monster_tamer() {
     t.talk("alberta_in", 173, 76, &[2]);
     assert_eq!(t.eval("return count_item(626)"), "1");
     assert_eq!(t.eval("return count_item(702) + count_item(512)"), "0");
-    // Al De Baran: Rocker Glasses from 2 Zargons and a Ribbon (6th recipe)
-    t.eval("give_item(912, 2); give_item(2208, 1)");
+    // Al De Baran: Rocker Glasses from 2 Zargons, a Ribbon and 400z (6th recipe; mod0631 :614)
+    t.eval("give_item(912, 2); give_item(2208, 1); player.zeny = 399");
     t.talk("aldeba_in", 168, 175, &[7]);
-    assert_eq!(t.eval("return count_item(10014)"), "1");
+    assert_eq!(t.eval("return count_item(10014)"), "0", "a zeny short");
+    t.eval("player.zeny = 400");
+    t.talk("aldeba_in", 168, 175, &[7]);
+    assert_eq!(t.eval("return count_item(10014) .. ' ' .. player.zeny"), "1 0");
 }
 
 #[test]

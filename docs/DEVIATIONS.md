@@ -219,7 +219,8 @@ eAthena 817 (2004-02-19), bugs included. The translator is
   jAthena's now. The pit at `job_sword1 17,251` no longer tells the faller
   a bare digit (a leftover `announce`), and the Sword Master says goodbye
   on "Cancel." (the menu named a label that does not exist).
-* **Monster Tamers** (`scripts/npc/monster_tamers.lua`): three NPCs from
+* **Monster Tamers** (`scripts/npc/monster_tamers.lua`; the Rocker
+  Glasses' 400z, which our first port of them dropped, since 2026-11-14): three NPCs from
   mod0631 that 817 lacks, in Alberta, Izlude and Al De Baran, where the iRO
   pet guide of 2004 says they stood. They turn ingredients into taming
   items and pet accessories. The guide says "available for purchase";
@@ -450,9 +451,11 @@ eAthena 817 (2004-02-19), bugs included. The translator is
   translated; 817's wording otherwise.
 * **Aldebaran's Trader** (`scripts/npc/aldebaran_trader.lua`). 817's took
   an Apple o' Archer for the Doctor Band where it had counted the Red
-  Bandana, never asked for the Cracked Diamond its list names, and took
-  Iron for the Opera Masque where its list says Steel. mod0631 loads the
-  same NPC (`conf/npc_event_making.txt`) and takes what the list says.
+  Bandana and never asked for the Cracked Diamond its list names. mod0631
+  loads the same NPC (`conf/npc_event_making.txt`) and takes what the list
+  says. The Opera Masque takes 20 Iron as 817's code and RODataZone's iRO
+  list have it (mod0631 and Ragu Memo, jRO: Steel), and his list now says
+  Iron.
 * **Izlude's sailor** (`scripts/npc/izlude_sailor.lua`) tests the fare,
   as mod0631's on the same cell does (817's took it untested, so a
   passenger with too little sailed for what he had), and no longer offers
@@ -513,6 +516,11 @@ eAthena 817 (2004-02-19), bugs included. The translator is
   both; mod0631 `conf/npc_cTower.txt`, "From jRO, by Kalen"). Morroc's
   optician (the Binoculars) took 50000z without testing for them, and
   since zeny stops at 0 the Binoculars then cost whatever one had.
+  Payon's Granny (Pretend Murdered) closed before her `getitem`, so she
+  took four Skirts of Virgin and gave nothing, and she let three through
+  her test for four; both mended as mod0631 has her. The training ground's
+  Usher pays the 50z his line names (and RODataZone's iRO list), not 817's
+  150z (mod0631's, jRO).
 * **Monsters and warps of the job tests.** The world's monsters and warps
   are mod0631's. 817's job files place some of their own, and those are
   taken where mod0631 has none: the Chonchons along the Swordman course and

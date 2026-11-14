@@ -8,6 +8,7 @@
 -- source fix (jobs/novice.txt:642): `'delete' - /stand` -> `'insert' - /Sit`: the same slip, in the answer to a wrong choice
 -- source fix (jobs/novice.txt:648): `'delete' - /stand` -> `'insert' - /Sit`: the same slip
 -- source fix (jobs/novice.txt:654): `'delete' - /stand` -> `'insert' - /Sit`: the same slip
+-- source fix (jobs/novice.txt:726): set Zeny,Zeny+150; -> set Zeny,Zeny+50;: the Usher's own line says "Training Subsidy 50 Zeny supplied" and RODataZone's iRO list (items/quests.js, 2004-05) has 50z; 150z is mod0631's, jRO's (conf/npc_job_newbie.txt:64)
 
 npc {
   map = "new_zone01", x = 66, y = 114, dir = 1, sprite = 111, name = "Bulletin Board",
@@ -789,7 +790,7 @@ npc {
     next()
     if v.nov_get_item01 ~= 0 then goto Lsign1 end
     v.nov_get_item01 = 1
-    player.zeny = player.zeny + 150
+    player.zeny = player.zeny + 50
     mes "[Usher]"
     mes "Training Subsidy 50 Zeny supplied.Please inquire at a Guide on the Centre when you need to know your Current Progress."
     mes "I will lead you into the Hall."

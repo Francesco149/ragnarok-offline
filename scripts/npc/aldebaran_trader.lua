@@ -2,10 +2,13 @@
 -- (quests/headgearquest.txt:230) with the items his own list names.
 --
 -- 817's code took an Apple o' Archer (2285) for the Doctor Band where it had
--- counted the Red Bandana (2275), never asked for the Cracked Diamond its list
--- names, and counted and took Iron for the Opera Masque where its list says
--- Steel. mod0631 loads the same NPC (conf/npc_event_making.txt, 2003-12-11),
--- whose code takes what the list says: so do we.
+-- counted the Red Bandana (2275), and never asked for the Cracked Diamond its
+-- list names. mod0631 loads the same NPC (conf/npc_event_making.txt,
+-- 2003-12-11), whose code takes what the list says, and RODataZone's iRO list
+-- (items/quests.js, 2004-05) and Ragu Memo's jRO one (trade.html, 2004-02) agree.
+-- The Opera Masque splits the witnesses: 20 Steel in mod0631, Ragu Memo and
+-- 817's list, 20 Iron in 817's code and RODataZone's iRO list. We take the
+-- international servers' Iron, and the list line says so.
 --
 -- docs/DEVIATIONS.md.
 
@@ -16,7 +19,7 @@ local DEALS = {
   { give = 5018, take = { { 2247, 1 }, { 916, 300 } }, zeny = 500, -- Feather Bonnet
     say = { "Umhahaha. You have good sense, Dude.",
             "I know you got a hard time to collect these stuffs, but this one is worth to deserve. Take it." } },
-  { give = 2281, take = { { 999, 20 }, { 707, 1 } }, zeny = 5000, -- Opera Masque
+  { give = 2281, take = { { 998, 20 }, { 707, 1 } }, zeny = 5000, -- Opera Masque
     say = { "This is pretty nice one.",
             "Well little bit Scary though.. I think it has an Magnetic Attraction. What about your idea?",
             ".. You like it ..Alright.. Take it!" } },
@@ -37,7 +40,7 @@ npc {
     next()
     mes "(1) · ^3355FFDoctor Band^000000 : 1 Red Bandana + 50 Iron + 1 Cracked Diamond + 3500 Zeny"
     mes "(2) · ^3355FFFeather Bonnet^000000 : 1 Romantic Gent + 300 Feather of Birds + 500 Zeny"
-    mes "(3) · ^3355FFPhantom of Opera^000000 : 20 Steel + 1 Singing Plant + 5000 Zeny"
+    mes "(3) · ^3355FFPhantom of Opera^000000 : 20 Iron + 1 Singing Plant + 5000 Zeny"
     mes "(4) · ^3355FFSakkat^000000 : 120 Trunk + 10000 Zeny"
     next()
     local d = DEALS[menu("Doctor Hat", "Feather Bonnet", "Phantom of Opera", "Sakkat")]

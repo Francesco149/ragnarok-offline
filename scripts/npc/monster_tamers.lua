@@ -34,7 +34,7 @@ local TAMERS = {
     { 10007, { 2208, 1 } },             -- Silk Ribbon: Ribbon
     { 10011, { 2294, 1 } },             -- Stellar Hairpin: Stellar
     { 10012, { 5015, 1 } },             -- Tiny Egg Shell: Egg Shell
-    { 10014, { 912, 2 }, { 2208, 1 } }, -- Rocker Glasses: 2 Zargons, Ribbon
+    { 10014, { 912, 2 }, { 2208, 1 }, zeny = 400 }, -- Rocker Glasses: 2 Zargons, Ribbon, 400z (:614, :634)
   },
 }
 
@@ -45,6 +45,7 @@ local function needs(recipe)
   for i = 2, #recipe do
     parts[#parts + 1] = recipe[i][2] .. " " .. name(recipe[i][1])
   end
+  if recipe.zeny then parts[#parts + 1] = recipe.zeny .. " Zeny" end
   return table.concat(parts, " and ")
 end
 
@@ -86,8 +87,8 @@ for _, t in ipairs(TAMERS) do
       mes("Its name: ^3355FF'" .. name(r[1]) .. "'^000000!!")
       mes "A treat exactly to the taste of monsters..."
       next()
-      for i = 2, #r do
-        if count_item(r[i][1]) < r[i][2] then
+      for i = 2, #r + 1 do
+        if (r[i] and count_item(r[i][1]) < r[i][2]) or (not r[i] and player.zeny < (r.zeny or 0)) then
           mes(who)
           mes("For you who are raising a monster that loves " .. name(r[1]) .. ", here is how it is made:")
           mes("^3355FF" .. needs(r) .. "!^000000")
@@ -107,6 +108,7 @@ for _, t in ipairs(TAMERS) do
       mes "Take good care of the cute monster you are raising."
       mes(name(r[1]) .. "!")
       for i = 2, #r do take_item(r[i][1], r[i][2]) end
+      player.zeny = player.zeny - (r.zeny or 0)
       give_item(r[1], 1)
       close()
     end,

@@ -4,6 +4,8 @@
 -- Don't edit: override in scripts/npc/ (npc{replaces=}, wrap_npc, remove_npc) and list the
 -- change in docs/DEVIATIONS.md.
 -- source fix (quests/headgearquest.txt:658): if(countitem(999)<100) goto LNoBinoculars; -> if((countitem(999)<100) || (Zeny<50000)) goto LNoBinoculars;: the 50000z were taken without a test, so with less the Binoculars cost whatever one had; mod0631's Alchemist tests it (conf/npc_event_making.txt, morocc_in 76,163)
+-- source fix (quests/headgearquest.txt:4): if(countitem(1049)<3) goto LNoHat; -> if(countitem(1049)<4) goto LNoHat;: Granny asks for four Skirts of Virgin and takes four; with three she took what there was. mod0631 tests for four (conf/npc_event_making.txt:10)
+-- source fix (quests/headgearquest.txt:22): close; -> next;: a close before the getitem ended the script, so she took the skirts and never gave Pretend Murdered; mod0631 gives it (conf/npc_event_making.txt:24), and RODataZone's iRO list has the trade
 -- source fix (quests/headgearquest.txt:82): LKeyDork: -> LHeyDork:: both jumps name LHeyDork, as does 817's other copy of this NPC (quests/all_quest.txt:150): short of Steel or zeny, the Welding Mask smith ended without a word
 
 npc {
@@ -11,7 +13,7 @@ npc {
   src = "817:quests/headgearquest.txt:3",
   on_click = function()
     local c
-    if count_item(1049) < 3 then goto LNoHat end
+    if count_item(1049) < 4 then goto LNoHat end
     mes "[Granny]"
     mes "I wish I could make Clothings for my Grand Children in this festive season.."
     mes "Could you give me your ^3355FF' Skirt of Virgin '^000000 ..I need Four of it ..Please ?"
@@ -28,8 +30,7 @@ npc {
     next()
     mes "[Granny]"
     mes "If it's Okay,I want to give you mine for your Fabrics."
-    close()
-    do return end
+    next()
     give_item(2293, 1)
     mes "Good Bye ~Young man~!"
     close()

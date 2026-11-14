@@ -320,6 +320,18 @@ SOURCE_FIXES = {
         "if((countitem(999)<100) || (Zeny<50000)) goto LNoBinoculars;",
         "the 50000z were taken without a test, so with less the Binoculars cost whatever one had; "
         "mod0631's Alchemist tests it (conf/npc_event_making.txt, morocc_in 76,163)"),
+    ("jobs/novice.txt", 726): (
+        "set Zeny,Zeny+150;", "set Zeny,Zeny+50;",
+        "the Usher's own line says \"Training Subsidy 50 Zeny supplied\" and RODataZone's iRO list "
+        "(items/quests.js, 2004-05) has 50z; 150z is mod0631's, jRO's (conf/npc_job_newbie.txt:64)"),
+    ("quests/headgearquest.txt", 4): (
+        "if(countitem(1049)<3) goto LNoHat;", "if(countitem(1049)<4) goto LNoHat;",
+        "Granny asks for four Skirts of Virgin and takes four; with three she took what there was. "
+        "mod0631 tests for four (conf/npc_event_making.txt:10)"),
+    ("quests/headgearquest.txt", 22): (
+        "close;", "next;",
+        "a close before the getitem ended the script, so she took the skirts and never gave Pretend "
+        "Murdered; mod0631 gives it (conf/npc_event_making.txt:24), and RODataZone's iRO list has the trade"),
     ("quests/headgearquest.txt", 82): (
         "LKeyDork:", "LHeyDork:",
         "both jumps name LHeyDork, as does 817's other copy of this NPC (quests/all_quest.txt:150): "
