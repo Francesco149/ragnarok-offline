@@ -1445,7 +1445,7 @@ Mask), and the Helm of the Solar God for Swordman, Thief and Merchant:
 the client's text line for line. Its `armor5.html` of 2003-12-12 has them
 Off for the Novice, the Miner's Helmet for the Swordman, Acolyte and
 Merchant trees, the Solar God helm for second jobs: mod0631's masks
-(saved in `research/agy-threads/r17/pages/`). The client's lines are
+(`data:refs/web/ragmemo-2003/`). The client's lines are
 release-day text, changed on the server or corrected by testing within
 four months; the game keeps the later masks. Soujiro's Perma-Novice guide
 (GameFAQs 24610, iRO, 2003-07) lists all the disputed Novice swords,
