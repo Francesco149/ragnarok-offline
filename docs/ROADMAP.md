@@ -30,8 +30,12 @@ Ordered by "confirmable first". Each item says where the truth would come from.
   client draws it doing so. Open: the attack motion's timing, and
   whether the client re-times a walk when the unit's speed changes
   mid-walk (0x00b0 SPEED; the server assumes it does not).
-- `itemslotcounttable` read against the item table on 2026-11-14: two weapons
-  take the client's slot count (`CLIENT_SLOTS` in `tools/import/athena_import.py`).
+- Read against our data on 2026-11-14: `itemslotcounttable` (two weapons take
+  the client's slot count), `idnum2itemdesctable` and `itemparamtable` (with
+  RODataZone's iRO tables of 2004-02: 49 weights and attacks taken,
+  THREADS.md R6), `itemslottable` (agrees), `metalprocessitemlist` (forging:
+  the Pike in, ore purifying out), `monsterskillinfo.xml` (Atbash-encoded:
+  two monster skills, THREADS.md #23).
 - Client tables not used yet: skill names/descriptions,
   `leveluseskillspamount`, `mapnametable` (for messages), `num2cardillustnametable`.
 
