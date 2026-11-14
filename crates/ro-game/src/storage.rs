@@ -4,7 +4,7 @@
 //! 1-based on the wire, as Athena sends them.
 
 use crate::game::Game;
-use crate::model::InvItem;
+use crate::model::{InvItem, Slots};
 use crate::packets;
 
 pub const MAX_STORAGE: usize = 100;
@@ -20,7 +20,7 @@ impl Game {
         let Some(acc) = self.store.accounts.get(&aid) else { return };
         let mut normal = Vec::new();
         let mut equips = Vec::new();
-        for (i, it) in acc.storage.iter().enumerate() {
+        for (i, it) in acc.storage.held() {
             let idx = i as u16 + 1;
             let d = self.db.item(it.nameid);
             let kind = match d.map(|d| d.kind).unwrap_or(3) {
@@ -36,7 +36,7 @@ impl Game {
         let pkts = [
             packets::storage_items(&normal),
             packets::storage_equips(&equips),
-            packets::storage_info(acc.storage.len() as u16, MAX_STORAGE as u16),
+            packets::storage_info(acc.storage.count_held() as u16, MAX_STORAGE as u16),
         ];
         for p in pkts {
             self.send(sid, p);
@@ -61,27 +61,24 @@ impl Game {
         }
         let Some(aid) = self.account_of_unit(unit) else { return };
         let slot = inv_idx.wrapping_sub(packets::INV_OFFSET) as usize;
-        let Some(it) = self.char_of_unit(unit).and_then(|c| c.inventory.get(slot)).cloned() else { return };
+        let Some(it) = self.char_of_unit(unit).and_then(|c| c.inventory.slot(slot)).cloned() else { return };
         if amount == 0 || amount > it.amount || it.equip != 0 {
             return;
         }
         let stackable = self.db.item(it.nameid).is_some_and(|d| !d.is_equip() || d.kind == 10);
         let Some(acc) = self.store.accounts.get_mut(&aid) else { return };
-        let pos = if stackable { acc.storage.iter().position(|s| s.nameid == it.nameid && s.cards == it.cards) } else { None };
+        let pos = if stackable { acc.storage.held().find(|(_, s)| s.nameid == it.nameid && s.cards == it.cards).map(|(i, _)| i) } else { None };
         let idx = match pos {
             Some(i) if acc.storage[i].amount + amount <= MAX_STACK => {
                 acc.storage[i].amount += amount;
                 i
             }
             Some(_) => return,
-            None if acc.storage.len() >= MAX_STORAGE => return,
-            None => {
-                acc.storage.push(InvItem { amount, equip: 0, ..it.clone() });
-                acc.storage.len() - 1
-            }
+            None if acc.storage.count_held() >= MAX_STORAGE => return,
+            None => acc.storage.put(InvItem { amount, equip: 0, ..it.clone() }),
         };
         let stored = acc.storage[idx].clone();
-        let n = acc.storage.len();
+        let n = acc.storage.count_held();
         self.remove_item(unit, slot, amount);
         if let Some(sid) = self.sid_of(unit) {
             self.send(sid, packets::storage_add(idx as u16 + 1, amount, &stored));
@@ -96,7 +93,7 @@ impl Game {
         }
         let Some(aid) = self.account_of_unit(unit) else { return };
         let i = idx.wrapping_sub(1) as usize;
-        let Some(it) = self.store.accounts.get(&aid).and_then(|a| a.storage.get(i)).cloned() else { return };
+        let Some(it) = self.store.accounts.get(&aid).and_then(|a| a.storage.slot(i)).cloned() else { return };
         if amount == 0 || amount > it.amount {
             return;
         }
@@ -105,16 +102,13 @@ impl Game {
         }
         let Some(acc) = self.store.accounts.get_mut(&aid) else { return };
         acc.storage[i].amount -= amount;
-        let emptied = acc.storage[i].amount == 0;
-        if emptied {
-            acc.storage.remove(i);
+        if acc.storage[i].amount == 0 {
+            acc.storage.clear_slot(i);
         }
+        let n = acc.storage.count_held();
         if let Some(sid) = self.sid_of(unit) {
             self.send(sid, packets::storage_remove(idx, amount));
-        }
-        if emptied {
-            // later indices shifted: resend the lot so the client agrees
-            self.send_storage(unit);
+            self.send(sid, packets::storage_info(n as u16, MAX_STORAGE as u16));
         }
     }
 

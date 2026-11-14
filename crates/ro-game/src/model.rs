@@ -54,6 +54,66 @@ impl InvItem {
     }
 }
 
+/// An item list kept as Athena keeps its arrays (inventory, cart, storage):
+/// an item keeps its index while it is held, a slot whose item id is 0 is
+/// empty, and a new item takes the first empty slot. The client is told of
+/// each change by index and never sees the list closed up (mod0631
+/// pc_delitem clears the slot; the indices are reassigned only when the
+/// character is loaded again).
+pub trait Slots {
+    /// The item in slot `i`, if the slot holds one.
+    fn slot(&self, i: usize) -> Option<&InvItem>;
+    fn slot_mut(&mut self, i: usize) -> Option<&mut InvItem>;
+    /// The held items with their slots.
+    fn held(&self) -> Box<dyn Iterator<Item = (usize, &InvItem)> + '_>;
+    /// How many slots hold an item.
+    fn count_held(&self) -> usize;
+    /// Put an item in the first empty slot (or a new one); returns the slot.
+    fn put(&mut self, it: InvItem) -> usize;
+    /// Empty slot `i` (trailing empty slots are dropped).
+    fn clear_slot(&mut self, i: usize);
+    /// Close up the empty slots (on loading a character).
+    fn compact(&mut self);
+}
+
+impl Slots for Vec<InvItem> {
+    fn slot(&self, i: usize) -> Option<&InvItem> {
+        self.get(i).filter(|it| it.nameid != 0)
+    }
+    fn slot_mut(&mut self, i: usize) -> Option<&mut InvItem> {
+        self.get_mut(i).filter(|it| it.nameid != 0)
+    }
+    fn held(&self) -> Box<dyn Iterator<Item = (usize, &InvItem)> + '_> {
+        Box::new(self.iter().enumerate().filter(|(_, it)| it.nameid != 0))
+    }
+    fn count_held(&self) -> usize {
+        self.iter().filter(|it| it.nameid != 0).count()
+    }
+    fn put(&mut self, it: InvItem) -> usize {
+        match self.iter().position(|s| s.nameid == 0) {
+            Some(i) => {
+                self[i] = it;
+                i
+            }
+            None => {
+                self.push(it);
+                self.len() - 1
+            }
+        }
+    }
+    fn clear_slot(&mut self, i: usize) {
+        if let Some(s) = self.get_mut(i) {
+            *s = InvItem::default();
+        }
+        while self.last().is_some_and(|s| s.nameid == 0) {
+            self.pop();
+        }
+    }
+    fn compact(&mut self) {
+        self.retain(|it| it.nameid != 0 && it.amount != 0);
+    }
+}
+
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(default)]
 pub struct Character {

@@ -7,7 +7,7 @@
 //! accessories, pet emotes (0x01a9). Data: data/db/pets.toml (mod0631 pet_db).
 
 use crate::game::Game;
-use crate::model::{InvItem, Pet};
+use crate::model::{InvItem, Pet, Slots};
 use crate::packets;
 use crate::path;
 use crate::world::{PetUnit, Unit, UnitKind};
@@ -124,7 +124,7 @@ impl Game {
     /// 0x01a7: hatch the egg at this inventory index.
     pub(crate) fn pet_hatch(&mut self, unit: u32, idx: u16) {
         let slot = idx.wrapping_sub(packets::INV_OFFSET) as usize;
-        let Some(it) = self.char_of_unit(unit).and_then(|c| c.inventory.get(slot)).cloned() else { return };
+        let Some(it) = self.char_of_unit(unit).and_then(|c| c.inventory.slot(slot)).cloned() else { return };
         let Some(pid) = egg_pet_id(&it) else { return };
         if self.pet_unit(unit).is_some() || !self.char_of_unit(unit).is_some_and(|c| c.pets.contains_key(&pid)) {
             return;
@@ -275,7 +275,7 @@ impl Game {
     pub(crate) fn pet_equip(&mut self, unit: u32, slot: usize) -> bool {
         let Some(pet) = self.active_pet(unit) else { return false };
         let Some(def) = self.db.pet_by_mob(pet.mob).cloned() else { return false };
-        let Some(it) = self.char_of_unit(unit).and_then(|c| c.inventory.get(slot)).cloned() else { return false };
+        let Some(it) = self.char_of_unit(unit).and_then(|c| c.inventory.slot(slot)).cloned() else { return false };
         if def.accessory == 0 || it.nameid != def.accessory || pet.equip != 0 {
             return false;
         }

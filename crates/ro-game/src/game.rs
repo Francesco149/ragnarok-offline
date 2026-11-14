@@ -14,7 +14,7 @@ use ro_proto::{Reader, ids::*};
 use serde::{Deserialize, Serialize};
 use tracing::{debug, info, warn};
 
-use crate::model::{Character, InvItem, Point};
+use crate::model::{Character, InvItem, Point, Slots};
 use crate::packets::{self, CharEntry};
 use crate::script::{Ctx, ScriptEngine, Wait};
 use crate::store::Store;
@@ -733,6 +733,15 @@ impl Game {
         // already in the world (reconnect)? drop the old unit
         if let Some(old) = self.world.units.values().find(|u| u.player().is_some_and(|p| p.char_id == cid)).map(|u| u.id) {
             self.leave_world(old, cid, 2);
+        }
+        // a character loaded afresh gets its items numbered afresh, as Athena's char server
+        // hands them over (the empty slots of the last session close up)
+        if let Some(c) = self.store.chars.get_mut(&cid) {
+            c.inventory.compact();
+            c.cart.compact();
+        }
+        if let Some(a) = self.store.accounts.get_mut(&aid) {
+            a.storage.compact();
         }
         let p = self.valid_point(cid);
         let gm = self.store.accounts.get(&aid).map(|a| a.gm_level).unwrap_or(0);

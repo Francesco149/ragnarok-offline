@@ -4,7 +4,7 @@
 //! cart with 0x012a. Cart indices are slot + 2 on the wire, as in Athena.
 
 use crate::game::Game;
-use crate::model::InvItem;
+use crate::model::{InvItem, Slots};
 use crate::npcrt::CART_BITS;
 use crate::packets;
 
@@ -29,7 +29,7 @@ impl Game {
         let Some(c) = self.char_of_unit(unit) else { return };
         let mut normal = Vec::new();
         let mut equips = Vec::new();
-        for (i, it) in c.cart.iter().enumerate() {
+        for (i, it) in c.cart.held() {
             let idx = i as u16 + packets::INV_OFFSET;
             let d = self.db.item(it.nameid);
             let kind = match d.map(|d| d.kind).unwrap_or(3) {
@@ -42,7 +42,7 @@ impl Game {
                 normal.push((idx, it, kind));
             }
         }
-        let n = c.cart.len() as u16;
+        let n = c.cart.count_held() as u16;
         let pkts = [packets::cart_items(&normal), packets::cart_equips(&equips)];
         let w = self.cart_weight(unit);
         for p in pkts {
@@ -57,7 +57,7 @@ impl Game {
             return;
         }
         let slot = inv_idx.wrapping_sub(packets::INV_OFFSET) as usize;
-        let Some(it) = self.char_of_unit(unit).and_then(|c| c.inventory.get(slot)).cloned() else { return };
+        let Some(it) = self.char_of_unit(unit).and_then(|c| c.inventory.slot(slot)).cloned() else { return };
         if amount == 0 || amount > it.amount || it.equip != 0 {
             return;
         }
@@ -67,18 +67,15 @@ impl Game {
         }
         let stackable = !d.is_equip() || d.kind == 10;
         let c = self.char_of_unit_mut(unit).unwrap();
-        let pos = if stackable { c.cart.iter().position(|s| s.nameid == it.nameid && s.cards == it.cards) } else { None };
+        let pos = if stackable { c.cart.held().find(|(_, s)| s.nameid == it.nameid && s.cards == it.cards).map(|(i, _)| i) } else { None };
         let idx = match pos {
             Some(i) if c.cart[i].amount + amount <= MAX_STACK => {
                 c.cart[i].amount += amount;
                 i
             }
             Some(_) => return,
-            None if c.cart.len() >= MAX_CART => return,
-            None => {
-                c.cart.push(InvItem { amount, equip: 0, ..it.clone() });
-                c.cart.len() - 1
-            }
+            None if c.cart.count_held() >= MAX_CART => return,
+            None => c.cart.put(InvItem { amount, equip: 0, ..it.clone() }),
         };
         let stored = c.cart[idx].clone();
         self.remove_item(unit, slot, amount);
@@ -94,7 +91,7 @@ impl Game {
             return;
         }
         let i = cart_idx.wrapping_sub(packets::INV_OFFSET) as usize;
-        let Some(it) = self.char_of_unit(unit).and_then(|c| c.cart.get(i)).cloned() else { return };
+        let Some(it) = self.char_of_unit(unit).and_then(|c| c.cart.slot(i)).cloned() else { return };
         if amount == 0 || amount > it.amount {
             return;
         }
@@ -103,23 +100,18 @@ impl Game {
         }
         let c = self.char_of_unit_mut(unit).unwrap();
         c.cart[i].amount -= amount;
-        let emptied = c.cart[i].amount == 0;
-        if emptied {
-            c.cart.remove(i);
+        if c.cart[i].amount == 0 {
+            c.cart.clear_slot(i);
         }
         if let Some(sid) = self.sid_of(unit) {
             self.send(sid, packets::cart_remove(cart_idx, amount));
         }
-        if emptied {
-            self.send_cart(unit); // later indices shifted
-        } else {
-            self.send_cart_info(unit);
-        }
+        self.send_cart_info(unit);
     }
 
     fn send_cart_info(&mut self, unit: u32) {
         let Some(sid) = self.sid_of(unit) else { return };
-        let n = self.char_of_unit(unit).map(|c| c.cart.len()).unwrap_or(0) as u16;
+        let n = self.char_of_unit(unit).map(|c| c.cart.count_held()).unwrap_or(0) as u16;
         let w = self.cart_weight(unit);
         self.send(sid, packets::cart_info(n, MAX_CART as u16, w, MAX_CART_WEIGHT));
     }

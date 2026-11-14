@@ -1,7 +1,7 @@
 //! Inventory, equipment, floor items, NPC shops.
 
 use crate::game::Game;
-use crate::model::InvItem;
+use crate::model::{InvItem, Slots};
 use crate::packets::{self, INV_OFFSET};
 use crate::script::{Ctx, CtxKind};
 use crate::world::{FloorItemUnit, Unit, UnitKind};
@@ -17,7 +17,7 @@ const EQP_ACC_R: u32 = 0x0080;
 
 impl Game {
     /// Client item type for list packets.
-    fn client_type(&self, nameid: u32) -> u8 {
+    pub(crate) fn client_type(&self, nameid: u32) -> u8 {
         match self.db.item(nameid).map(|d| d.kind).unwrap_or(3) {
             11 => 2,
             k => k,
@@ -29,7 +29,7 @@ impl Game {
         let Some(c) = self.char_of_unit(unit) else { return };
         let mut normal = Vec::new();
         let mut equips = Vec::new();
-        for (i, it) in c.inventory.iter().enumerate() {
+        for (i, it) in c.inventory.held() {
             let idx = i as u16 + INV_OFFSET;
             let d = self.db.item(it.nameid);
             if d.is_some_and(|d| d.is_equip() && d.kind != 10) {
@@ -61,7 +61,7 @@ impl Game {
         }
         let c = self.char_of_unit_mut(unit).unwrap();
         let slot = if stackable {
-            c.inventory.iter().position(|i| i.nameid == item.nameid && i.equip == 0 && i.cards == item.cards)
+            c.inventory.held().find(|(_, i)| i.nameid == item.nameid && i.equip == 0 && i.cards == item.cards).map(|(i, _)| i)
         } else {
             None
         };
@@ -74,14 +74,11 @@ impl Game {
                 self.send(sid, packets::item_add(0, 0, &item, loc, kind, 1));
                 return false;
             }
-            None if c.inventory.len() >= MAX_INVENTORY => {
+            None if c.inventory.count_held() >= MAX_INVENTORY => {
                 self.send(sid, packets::item_add(0, 0, &item, loc, kind, 1));
                 return false;
             }
-            None => {
-                c.inventory.push(item.clone());
-                c.inventory.len() - 1
-            }
+            None => c.inventory.put(item.clone()),
         };
         let it = c.inventory[idx].clone();
         let amount = item.amount as u16;
@@ -94,19 +91,15 @@ impl Game {
     pub(crate) fn remove_item(&mut self, unit: u32, idx: usize, amount: u32) -> bool {
         let Some(sid) = self.sid_of(unit) else { return false };
         let Some(c) = self.char_of_unit_mut(unit) else { return false };
-        let Some(it) = c.inventory.get_mut(idx) else { return false };
+        let Some(it) = c.inventory.slot_mut(idx) else { return false };
         if it.amount < amount || amount == 0 {
             return false;
         }
         it.amount -= amount;
         if it.amount == 0 {
-            c.inventory.remove(idx);
-            // indices shift: resend the whole inventory so the client agrees
-            self.send(sid, packets::item_remove(idx as u16 + INV_OFFSET, amount as u16));
-            self.send_inventory(unit);
-        } else {
-            self.send(sid, packets::item_remove(idx as u16 + INV_OFFSET, amount as u16));
+            c.inventory.clear_slot(idx);
         }
+        self.send(sid, packets::item_remove(idx as u16 + INV_OFFSET, amount as u16));
         self.send_weight(unit);
         true
     }
@@ -160,7 +153,7 @@ impl Game {
     pub(crate) fn use_item(&mut self, unit: u32, idx: u16) {
         let Some(sid) = self.sid_of(unit) else { return };
         let i = idx.wrapping_sub(INV_OFFSET) as usize;
-        let Some(it) = self.char_of_unit(unit).and_then(|c| c.inventory.get(i)).cloned() else { return };
+        let Some(it) = self.char_of_unit(unit).and_then(|c| c.inventory.slot(i)).cloned() else { return };
         let Some(d) = self.db.item(it.nameid).cloned() else { return };
         if self.world.units.get(&unit).is_some_and(|u| u.state != 1) {
             self.end_ghost(unit); // clif.c:5108
@@ -197,15 +190,12 @@ impl Game {
         let left = it.amount - 1;
         if let Some(c) = self.char_of_unit_mut(unit) {
             if left == 0 {
-                c.inventory.remove(i);
+                c.inventory.clear_slot(i);
             } else {
                 c.inventory[i].amount = left;
             }
         }
         self.send(sid, packets::use_item_ack(idx, left as u16, true));
-        if left == 0 {
-            self.send_inventory(unit);
-        }
         self.send_weight(unit);
     }
 
@@ -213,7 +203,7 @@ impl Game {
         let Some(sid) = self.sid_of(unit) else { return };
         let i = idx.wrapping_sub(INV_OFFSET) as usize;
         let Some(c) = self.char_of_unit(unit) else { return };
-        let Some(it) = c.inventory.get(i).cloned() else { return };
+        let Some(it) = c.inventory.slot(i).cloned() else { return };
         let Some(d) = self.db.item(it.nameid).cloned() else { return };
         if d.kind == 8 {
             // pet accessory: goes on the pet (mod0631 pet_equipitem)
@@ -275,11 +265,20 @@ impl Game {
         self.after_equip_change(unit);
     }
 
+    /// Put an item back on where it was (athena pc_equipitem with its old position).
+    pub(crate) fn wear_at(&mut self, unit: u32, idx: u16, loc: u32) {
+        let Some(sid) = self.sid_of(unit) else { return };
+        let Some(it) = self.char_of_unit_mut(unit).and_then(|c| c.inventory.slot_mut(idx.wrapping_sub(INV_OFFSET) as usize)) else { return };
+        it.equip = loc;
+        self.send(sid, packets::equip_ack(idx, loc, true));
+        self.after_equip_change(unit);
+    }
+
     pub(crate) fn unequip(&mut self, unit: u32, idx: u16) {
         let Some(sid) = self.sid_of(unit) else { return };
         let i = idx.wrapping_sub(INV_OFFSET) as usize;
         let Some(c) = self.char_of_unit_mut(unit) else { return };
-        let Some(it) = c.inventory.get_mut(i) else { return };
+        let Some(it) = c.inventory.slot_mut(i) else { return };
         let loc = it.equip;
         if loc == 0 {
             self.send(sid, packets::unequip_ack(idx, 0, false));
@@ -323,7 +322,7 @@ impl Game {
         let Some(sid) = self.sid_of(unit) else { return };
         let idx: Vec<u16> = self
             .char_of_unit(unit)
-            .map(|c| c.inventory.iter().enumerate().filter(|(_, i)| !i.identify).map(|(i, _)| i as u16 + INV_OFFSET).collect())
+            .map(|c| c.inventory.held().filter(|(_, i)| !i.identify).map(|(i, _)| i as u16 + INV_OFFSET).collect())
             .unwrap_or_default();
         self.send(sid, packets::identify_list(&idx));
     }
@@ -332,14 +331,14 @@ impl Game {
     pub(crate) fn identify_item(&mut self, unit: u32, idx: u16) {
         let Some(sid) = self.sid_of(unit) else { return };
         let i = idx.wrapping_sub(INV_OFFSET) as usize;
-        let ok = self.char_of_unit_mut(unit).and_then(|c| c.inventory.get_mut(i)).filter(|it| !it.identify).map(|it| it.identify = true).is_some();
+        let ok = self.char_of_unit_mut(unit).and_then(|c| c.inventory.slot_mut(i)).filter(|it| !it.identify).map(|it| it.identify = true).is_some();
         self.send(sid, packets::identified(idx, if ok { 0 } else { 1 }));
     }
 
     /// Can the card at `card` go into the equipment at `equip`? (mod0631 clif_use_card)
     fn card_fits(&self, unit: u32, card: usize, equip: usize) -> bool {
         let Some(c) = self.char_of_unit(unit) else { return false };
-        let (Some(ci), Some(ei)) = (c.inventory.get(card), c.inventory.get(equip)) else { return false };
+        let (Some(ci), Some(ei)) = (c.inventory.slot(card), c.inventory.slot(equip)) else { return false };
         let (Some(cd), Some(ed)) = (self.db.item(ci.nameid), self.db.item(ei.nameid)) else { return false };
         cd.kind == 6
             && matches!(ed.kind, 4 | 5)
@@ -376,8 +375,6 @@ impl Game {
         }
         self.send(sid, packets::card_inserted(equip_idx, card_idx, 0));
         self.remove_item(unit, card, 1);
-        // indices may have shifted
-        self.send_inventory(unit);
     }
 
     // ------------------------------------------------------------ floor items
@@ -434,7 +431,7 @@ impl Game {
 
     pub(crate) fn drop_item(&mut self, unit: u32, idx: u16, amount: u32) {
         let i = idx.wrapping_sub(INV_OFFSET) as usize;
-        let Some(it) = self.char_of_unit(unit).and_then(|c| c.inventory.get(i)).cloned() else { return };
+        let Some(it) = self.char_of_unit(unit).and_then(|c| c.inventory.slot(i)).cloned() else { return };
         if it.equip != 0 || amount == 0 || amount > it.amount {
             return;
         }
@@ -497,8 +494,7 @@ impl Game {
             let Some(c) = self.char_of_unit(unit) else { return };
             let list: Vec<(u16, u32, u32)> = c
                 .inventory
-                .iter()
-                .enumerate()
+                .held()
                 .filter(|(_, it)| it.equip == 0)
                 .filter_map(|(i, it)| self.db.item(it.nameid).map(|d| (i as u16 + INV_OFFSET, d.sell_price(), self.trade_price(unit, d.sell_price(), false))))
                 .collect();
@@ -579,7 +575,7 @@ impl Game {
         if weight as u64 + w > max_weight as u64 {
             return Some(2);
         }
-        if c.inventory.len() + new > MAX_INVENTORY {
+        if c.inventory.count_held() + new > MAX_INVENTORY {
             return Some(3);
         }
         None
@@ -587,12 +583,9 @@ impl Game {
 
     pub(crate) fn shop_sell(&mut self, unit: u32, list: &[(u16, u32)]) {
         let Some(sid) = self.sid_of(unit) else { return };
-        // sell from the highest index down so earlier indices stay valid
-        let mut list = list.to_vec();
-        list.sort_by(|a, b| b.0.cmp(&a.0));
-        for (idx, n) in list {
+        for &(idx, n) in list {
             let i = idx.wrapping_sub(INV_OFFSET) as usize;
-            let Some(it) = self.char_of_unit(unit).and_then(|c| c.inventory.get(i)).cloned() else { continue };
+            let Some(it) = self.char_of_unit(unit).and_then(|c| c.inventory.slot(i)).cloned() else { continue };
             let price = self.db.item(it.nameid).map(|d| self.trade_price(unit, d.sell_price(), false)).unwrap_or(0);
             if it.equip == 0 && self.remove_item(unit, i, n) {
                 if let Some(c) = self.char_of_unit_mut(unit) {

@@ -22,7 +22,7 @@ use std::collections::BTreeMap;
 use serde_json::{Value, json};
 
 use crate::game::Game;
-use crate::model::{InvItem, StatusChange};
+use crate::model::{InvItem, Slots, StatusChange};
 use crate::packets;
 use crate::path;
 use crate::script::{Ctx, CtxKind};
@@ -1141,7 +1141,7 @@ impl Game {
                 match idx {
                     Some(i) => {
                         self.equip(unit, i as u16 + packets::INV_OFFSET);
-                        json!(self.char_of_unit(unit).is_some_and(|c| c.inventory.get(i).is_some_and(|it| it.equip != 0)))
+                        json!(self.char_of_unit(unit).is_some_and(|c| c.inventory.slot(i).is_some_and(|it| it.equip != 0)))
                     }
                     None => json!(false),
                 }
@@ -1238,7 +1238,7 @@ impl Game {
                 while let Some(i) = self.char_of_unit(unit).and_then(|c| c.inventory.iter().position(|i| i.equip & mask != 0)) {
                     lost.push(self.char_of_unit(unit).map(|c| c.inventory[i].nameid).unwrap_or(0));
                     self.unequip(unit, i as u16 + packets::INV_OFFSET);
-                    if self.char_of_unit(unit).is_some_and(|c| c.inventory.get(i).is_some_and(|it| it.equip & mask != 0)) {
+                    if self.char_of_unit(unit).is_some_and(|c| c.inventory.slot(i).is_some_and(|it| it.equip & mask != 0)) {
                         break; // it would not come off
                     }
                     self.remove_item(unit, i, 1);

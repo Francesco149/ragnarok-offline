@@ -356,14 +356,20 @@ impl Game {
         let Some(sid) = self.sid_of(unit) else { return };
         let idx = slot as u16 + packets::INV_OFFSET;
         if success {
-            let refine = {
+            // athena-817 buildin_successrefitem: off, refined, gone, back, on again
+            let ep = self.char_of_unit(unit).map(|c| c.inventory[slot].equip).unwrap_or(0);
+            self.unequip(unit, idx);
+            let it = {
                 let c = self.char_of_unit_mut(unit).unwrap();
                 c.inventory[slot].refine = (c.inventory[slot].refine + 1).min(10);
-                c.inventory[slot].refine
+                c.inventory[slot].clone()
             };
-            self.send(sid, packets::refine_result(0, idx, refine as u16));
-            self.send_inventory(unit);
-            self.send_full_status(unit);
+            let loc = self.db.item(it.nameid).map(|d| d.loc).unwrap_or(0);
+            let kind = self.client_type(it.nameid);
+            self.send(sid, packets::refine_result(0, idx, it.refine as u16));
+            self.send(sid, packets::item_remove(idx, 1));
+            self.send(sid, packets::item_add(idx, 1, &it, loc, kind, 0));
+            self.wear_at(unit, idx, ep);
             self.area_send(unit, packets::misc_effect(unit, 3), true);
         } else {
             let refine = self.char_of_unit(unit).map(|c| c.inventory[slot].refine).unwrap_or(0);

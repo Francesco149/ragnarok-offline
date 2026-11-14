@@ -333,6 +333,31 @@ fn npc_runtime() {
     send(&mut g, 3, Writer::new(0x00f7));
     assert!(find(&cap.take(3), 0x00f8).is_some());
 
+    // items keep their index when a stack before them goes (Athena's arrays): no list sent
+    // again, the hole is filled by the next new item, and closed up at the next login
+    g.console_eval("give_item(502, 2); give_item(503, 2)", me);
+    let slot_of = |g: &Game, id: u32| g.store.chars.values().next().unwrap().inventory.iter().position(|i| i.nameid == id).unwrap() as u16;
+    let (s502, s503) = (slot_of(&g, 502), slot_of(&g, 503));
+    g.console_eval("open_storage()", me);
+    cap.take(3);
+    let mut w = Writer::new(0x00f3);
+    w.u16(s502 + 2).u32(2);
+    send(&mut g, 3, w);
+    let out = cap.take(3);
+    assert!(find(&out, 0x00af).is_some() && find(&out, 0x00a3).is_none(), "one removal, no new list");
+    assert_eq!(slot_of(&g, 503), s503, "the next item keeps its index");
+    g.console_eval("give_item(504, 1)", me);
+    assert_eq!(slot_of(&g, 504), s502, "a new item takes the empty slot");
+    // an autosave (or leaving the game) with the storage still open saves the storage too
+    let mut w = Writer::new(0x00f3);
+    w.u16(s502 + 2).u32(1);
+    send(&mut g, 3, w);
+    g.save_all();
+    let acc = std::fs::read_to_string(base.join(format!("saves/accounts/{me}.json"))).unwrap();
+    assert!(acc.contains("\"nameid\": 504"), "storage saved with the character: {acc}");
+    send(&mut g, 3, Writer::new(0x00f7));
+    cap.take(3);
+
     // usable items translated from the era's item scripts
     let use_item = |g: &mut Game, cap: &Cap, nameid: u32| {
         g.console_eval(&format!("give_item({nameid}, 1)"), me);
