@@ -707,6 +707,11 @@ always fires.
   come from 817's `cast_db.txt` (`data/db/skills.toml` `time`, `time2`).
   mod0631 has fixed chances, placeholder lengths ("some length or other" in
   its comments), and no Curse at all (the status is refused).
+* **Max HP of the Archer, Acolyte and Thief** use 817's factors (0.5, 0.4,
+  0.5), which RODataZone's sub-stats page of 2003-12 (iRO) gives too;
+  mod0631's (0.4, 0.504848, 0.4) look shuffled. The page's weights, SP
+  factors and every other HP factor agree with ours; its weapon delays
+  differ in a dozen places where 817 sides with mod0631, so those stay.
 * **Armour refines give two thirds of a DEF point a level** (all worn
   armour together, rounded down), as RODataZone's sub-stats page of
   2003-12 says and kRO's notice of 2003-02 implies; mod0631 gave a whole

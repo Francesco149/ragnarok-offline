@@ -380,6 +380,12 @@ JOBS = ["Novice", "Swordsman", "Magician", "Archer", "Acolyte", "Merchant", "Thi
         "Alchemist", "Bard", "Dancer", "Crusader (Peco)"]
 
 
+# HP factors where eAthena 817 (db/job_db1.txt) and RODataZone's sub-stats page (iRO,
+# captured 2003-12-11: "Class Modifiers to HP") agree against mod0631: its Archer,
+# Acolyte and Thief look shuffled (0.4, 0.504848, 0.4). Every other class agrees.
+JOB_HP = {3: 0.5, 4: 0.4, 6: 0.5}  # Archer, Acolyte, Thief
+
+
 def import_jobs():
     db1 = [line for line in csv_records(M631 / "db/job_db1.txt")]
     db2 = [line for line in csv_records(M631 / "db/job_db2.txt")]
@@ -392,7 +398,7 @@ def import_jobs():
         c = [x.strip() for x in db1[i].split(",")]
         bonus = [num(x) for x in db2[i].split(",")] if i < len(db2) else []
         out += ["[[job]]", f"id = {i}", f"name = {q(name)}", f"weight = {num(c[0])}",
-                f"hp_coef = {float(c[1] or 0)}", f"sp_coef = {num(c[2])}",
+                f"hp_coef = {JOB_HP.get(i, float(c[1] or 0))}", f"sp_coef = {num(c[2])}",
                 f"aspd_base = [{', '.join(str(num(x)) for x in c[3:20])}]",
                 f"job_bonus = {bonus}", ""]
     (ROOT / "data/db/jobs.toml").write_text("\n".join(out), encoding="utf-8")
