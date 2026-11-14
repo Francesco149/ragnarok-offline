@@ -3,6 +3,10 @@
 -- the emulator authors' (often fan-translated), not Gravity's. GPL, like its source.
 -- Don't edit: override in scripts/npc/ (npc{replaces=}, wrap_npc, remove_npc) and list the
 -- change in docs/DEVIATIONS.md.
+-- source fix (cities/izlude.txt:56): if((GetJob==Job_Swordman) || (GetJob==Job_Knight)) goto L00; -> if((Class==Job_Swordman) || (Class==Job_Knight)) goto L00;: GetJob is no variable any script sets, so a Swordman or Knight never reached the lines written for them ("I knew you'd choose so!!"); Class is the job everywhere else in 817
+-- source fix (cities/izlude.txt:72): if((GetJob==Job_Swordman) || (GetJob==Job_Knight)) goto L01; -> if((Class==Job_Swordman) || (Class==Job_Knight)) goto L01;: the same slip
+-- source fix (cities/izlude.txt:116): if((GetJob==Job_Swordman) || (GetJob==Job_Knight)) goto L00; -> if((Class==Job_Swordman) || (Class==Job_Knight)) goto L00;: the same slip
+-- source fix (cities/izlude.txt:132): if((GetJob==Job_Swordman) || (GetJob==Job_Knight)) goto L01; -> if((Class==Job_Swordman) || (Class==Job_Knight)) goto L01;: the same slip
 
 npc {
   map = "izlu2dun", x = 108, y = 27, dir = 4, sprite = 100, name = "Sailor",
@@ -72,7 +76,7 @@ npc {
     c = menu("Bash", "Magnum Break")
     if c == 1 then goto L0 elseif c == 2 then goto L1 end
     ::L0::
-    if (v.GetJob == Job_Swordman) or (v.GetJob == Job_Knight) then goto L00 end
+    if (player.class == Job_Swordman) or (player.class == Job_Knight) then goto L00 end
     mes "[Red]"
     mes "Hahahaha!! See!? Someone who pursues a different job agrees with me~! You really are a great guy!"
     mes "Hahaha!! Undoubtedly only 'Bash' suits a Swordman.."
@@ -89,7 +93,7 @@ npc {
     close()
     do return end
     ::L1::
-    if (v.GetJob == Job_Swordman) or (v.GetJob == Job_Knight) then goto L01 end
+    if (player.class == Job_Swordman) or (player.class == Job_Knight) then goto L01 end
     mes "[Cebalis]"
     mes "Right?! 'Magnum Break' is THE BEST!!! You know what you're talking about, huh? I don't know why this bonehead is sooooo stubborn."
     close()
@@ -138,7 +142,7 @@ npc {
     c = menu("Bash", "Magnum Break")
     if c == 1 then goto L0 elseif c == 2 then goto L1 end
     ::L0::
-    if (v.GetJob == Job_Swordman) or (v.GetJob == Job_Knight) then goto L00 end
+    if (player.class == Job_Swordman) or (player.class == Job_Knight) then goto L00 end
     mes "[Red]"
     mes "Hahahaha!! See!? Someone who pursues a different job agrees with me~! You really are a great guy!"
     mes "Hahaha!! Undoubtedly only 'Bash' suits a Swordman.."
@@ -155,7 +159,7 @@ npc {
     close()
     do return end
     ::L1::
-    if (v.GetJob == Job_Swordman) or (v.GetJob == Job_Knight) then goto L01 end
+    if (player.class == Job_Swordman) or (player.class == Job_Knight) then goto L01 end
     mes "[Cebalis]"
     mes "Right?! 'Magnum Break' is THE BEST!!! You know what you're talking about, huh? I don't know why this bonehead is sooooo stubborn."
     close()

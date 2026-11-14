@@ -1071,7 +1071,13 @@ Shelf, `other/books.txt`). **Left as 817 has them, open:**
   //0854). Comodo's Camp Ground Boy is left: his silent branch needs
   `comodo_npc`, which no script sets. Also found on the way: 817's `input`
   reads a negative number as 0, which the server now does too (its shops
-  test `!= 0` and would have paid out for -10).
+  test `!= 0` and would have paid out for -10). `research/npc_lint.py`
+  now also lists character variables read where no script sets them (a
+  param misspelt as a variable): that found Christopher's weight test,
+  Izlude's Red and Cebalis (`GetJob` for `Class`, source fixes: their
+  lines for a Swordman were never said) and the Arrow Maker (#7). What it
+  still lists is harmless: `comodo_npc` (above), and Kafras whose bodies
+  are replaced or off with `juno` (`CheckCart`, `frst_job_quest`).
 * *Swordman and Archer*, read against jAthena //0854 of 2004-03-02
   (`conf/npc/npc_job_swordman.txt`, `npc_job_archer.txt`,
   `conf/warp/npc_warp_job.txt`; the same official tests). Mended: the

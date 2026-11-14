@@ -3,10 +3,13 @@
 
   npc_lint.py [file ...]          default: scripts/import/npc/**/*.lua
 
-Two patterns, each found by playing the game first (THREADS.md #6, #27):
+Three patterns, each found by playing the game first (THREADS.md #6, #27):
   missing   a jump to a label the source does not have (the script just ends)
   hollow    `if X goto L;` directly followed by `L:`: the test decides nothing,
             usually because the line that should refuse was lost
+  unset     a character variable (`v.X`) read where no script anywhere sets it:
+            always 0, so the test is fixed (Christopher's `GetMaxWeight`, the
+            Izlude pair's `GetJob`: params misspelt as variables)
 (A third, `or` where `and` was meant, needs reading: Kay's "no box" test.)
 Per NPC: its place, its `src`, and the Lua line of each hit. NPCs that a
 hand-written file replaces (`replaces = "<src>"` under scripts/npc/) are left
@@ -23,6 +26,17 @@ replaced = set(re.findall(r'replaces\s*=\s*"([^"]+)"', hand))
 # kafra.lua and others build their lists as `src = "817:..."` entries of a table
 replaced |= set(re.findall(r'\{\s*src\s*=\s*"(817:[^"]+)"', hand))
 wrapped = set(re.findall(r'wrap_npc\(\s*"([^"]+)"', hand)) | set(re.findall(r'basic_skill_9\(\s*"([^"]+)"', hand))
+
+# every v.X any script sets (also through var("X", ...) and a table of names in hand-written files)
+everything = [p.read_text(errors="replace") for p in (ROOT / "scripts").rglob("*.lua")]
+written = set()
+for text in everything:
+    for line in text.split("\n"):
+        code = line.split("--")[0]
+        written |= set(re.findall(r"\bv\.(\w+)\s*=(?!=)", code))
+        written |= set(re.findall(r"\bv\.(\w+)\s*,", code))  # v.a, v.b = 1, 2
+        written |= set(re.findall(r'var\(\s*"(\w+)"', code))
+        written |= set(re.findall(r'"(\w+)"', code))  # names passed as strings (v[name])
 
 total = 0
 for f in files:
@@ -41,6 +55,9 @@ for f in files:
         key = tuple(npc)
         if "no such label in the source" in line:
             hits.setdefault(key, []).append((i + 1, "missing", line.strip()[:110]))
+        for var in re.findall(r"\bv\.(\w+)\b(?!\s*=[^=])", line.split("--")[0]):
+            if var not in written:
+                hits.setdefault(key, []).append((i + 1, "unset", f"v.{var}: " + line.strip()[:90]))
         m = re.match(r"\s*if (.*) then goto (\w+) end\s*$", line)
         # (a menu's `if c == 1 then goto A elseif ...` falling into `::A::` is how menus are translated)
         if m and "elseif" not in line and i + 1 < len(lines) and lines[i + 1].strip() == f"::{m.group(2)}::":

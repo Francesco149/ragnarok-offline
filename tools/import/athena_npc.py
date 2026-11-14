@@ -289,6 +289,23 @@ SOURCE_FIXES = {
                                    "pit 2_blank_6_b repeats 2_blank_6_a's cell; jAthena (:130) has 125,201"),
     ("jobs/swordsman.txt", 1151): ("139,40,0,{", "139,21,0,{",
                                    "pit 2_blank_9_a is 21 cells to each side like 7_a, 8_a and 8_e above it (jAthena :143), not 40"),
+    ("cities/izlude.txt", 56): (
+        "if((GetJob==Job_Swordman) || (GetJob==Job_Knight)) goto L00;",
+        "if((Class==Job_Swordman) || (Class==Job_Knight)) goto L00;",
+        "GetJob is no variable any script sets, so a Swordman or Knight never reached the lines written for "
+        "them (\"I knew you'd choose so!!\"); Class is the job everywhere else in 817"),
+    ("cities/izlude.txt", 72): (
+        "if((GetJob==Job_Swordman) || (GetJob==Job_Knight)) goto L01;",
+        "if((Class==Job_Swordman) || (Class==Job_Knight)) goto L01;",
+        "the same slip"),
+    ("cities/izlude.txt", 116): (
+        "if((GetJob==Job_Swordman) || (GetJob==Job_Knight)) goto L00;",
+        "if((Class==Job_Swordman) || (Class==Job_Knight)) goto L00;",
+        "the same slip"),
+    ("cities/izlude.txt", 132): (
+        "if((GetJob==Job_Swordman) || (GetJob==Job_Knight)) goto L01;",
+        "if((Class==Job_Swordman) || (Class==Job_Knight)) goto L01;",
+        "the same slip"),
     ("quests/headgearquest.txt", 82): (
         "LKeyDork:", "LHeyDork:",
         "both jumps name LHeyDork, as does 817's other copy of this NPC (quests/all_quest.txt:150): "
