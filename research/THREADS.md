@@ -1206,7 +1206,12 @@ Alberta two with their cells and how they are asked (the Hat Store Girl
 wants a Yellow Potion before she talks). Two of them want Turtle Island's
 drops, and iRO's notice of the island (2003-12-09) promised "new headgears
 and new quests": these may be them (#24). Neither emulator of our period
-has an NPC for any of them.
+has an NPC for any of them. The client (merged GRF, with the Turtle
+Island patch) has the hats' sprites (`idnum2itemresnametable.txt` runs to
+5055: 5041 Heart Hairpin, 5045 Magician Hat, 5047 Fashion Sunglasses, 5048
+Crescent Hairpin, 5032 Sunday Hat) but English names only up to 5019, and
+mod0631's item table lacks several (5042, 5045, 5047): building them means
+item rows from 817's table and NPCs in our own words.
 **Impact:** small rewards; whole headgear quests.
 **Look:** RODataZone's pages per town (`maps/city/<town>.html`), GameFAQs
 headgear guides of early 2004, the Turtle Island patch's own files (do
