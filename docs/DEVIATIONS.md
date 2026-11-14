@@ -407,6 +407,14 @@ eAthena 817 (2004-02-19), bugs included. The translator is
   doll, the list RODataZone gives for the international servers
   (2004-05-02). The armour is tested for, worn or carried, and kept, as an
   iRO player's guide of autumn 2003 says (THREADS.md #7).
+* **Charge Arrow and Cart Revolution** (`scripts/npc/skill_quests.lua`).
+  Deothen in Payon now wants to see a Crossbow (in the bag or in hand) and
+  gives it back; 817 and mod0631 ask for none, three player accounts do
+  (idRO 2003-10, pRO 2004-01, RODataZone 2004-04). Gershaun in Alberta
+  teaches at once anyone who brings the items, and wants a Banana Juice
+  from anyone else, every time, before he names them, as in mod0631 and a
+  pRO guide of 2004-01 (817 has no juice). His items stay 817's, 15 Iron
+  among them, which is still open (THREADS.md #7).
 * **The doomed swords** (`scripts/npc/cursed_swords.lua`). 817 has three
   people who tell of Executioner, Grimtooth and Mysteltain and of a
   blacksmith who left Prontera, and nothing comes of it. mod0631 has the
@@ -420,6 +428,7 @@ eAthena 817 (2004-02-19), bugs included. The translator is
   * the smith takes what he asks for: five Cursed Rubies and ten Blades
     Lost in Darkness for Grimtooth (mod0631 tests for one ruby and takes
     one of each), one Young Twig for Mysteltain (mod0631 takes a hundred);
+    a pRO guide of 2004-03-06 (GameFAQs 29037) gives these same lists;
   * his list shows the swords you have heard of.
 * **Alberta's doll child** (`scripts/npc/doll_child.lua`). 817's "Kid"
   wishes for a monkey doll and that is all. mod0631's takes any of nine

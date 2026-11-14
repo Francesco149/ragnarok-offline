@@ -187,6 +187,11 @@ const QUESTS: &[Quest] = &[
 /// Talk to (or step on) the quest's NPCs until the class changes. Returns
 /// the number of conversations it took, or None.
 fn play(q: &Quest, seed: u64, limit: usize) -> Result<Option<usize>, String> {
+    play_probe(q, seed, limit, "").map(|(n, _)| n)
+}
+
+/// As `play`, and then evaluates `probe` (Lua) for the player at the end.
+fn play_probe(q: &Quest, seed: u64, limit: usize, probe: &str) -> Result<(Option<usize>, String), String> {
     let root = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../..");
     let saves = std::env::temp_dir().join(format!("ro-offline-jobq-{}-{}-{seed}", q.name, std::process::id()));
     let _ = std::fs::remove_dir_all(&saves);
@@ -312,8 +317,9 @@ fn play(q: &Quest, seed: u64, limit: usize) -> Result<Option<usize>, String> {
             break;
         }
     }
+    let probed = if probe.is_empty() { String::new() } else { g.console_eval(probe, me) };
     let _ = std::fs::remove_dir_all(&saves);
-    Ok(result)
+    Ok((result, probed))
 }
 
 fn run(quests: &[Quest]) -> Vec<&'static str> {
@@ -367,8 +373,8 @@ const SKILL_QUESTS: &[Quest] = &[
     skill_quest("Fatal Blow", &["import/npc/skillquests/fatal_blow.lua"], 1, 145),
     skill_quest("Auto Berserk", &["import/npc/skillquests/auto_berserk.lua"], 1, 146),
     skill_quest("Arrow Crafting", &["import/npc/skillquests/arrow_craft.lua"], 3, 147),
-    skill_quest("Charge Arrow", &["import/npc/skillquests/arrow_repel.lua"], 3, 148),
-    skill_quest("Cart Revolution", &["import/npc/skillquests/cart_revolution.lua"], 5, 153),
+    skill_quest("Charge Arrow", &["import/npc/skillquests/arrow_repel.lua", "npc/skill_quests.lua"], 3, 148),
+    skill_quest("Cart Revolution", &["import/npc/skillquests/cart_revolution.lua", "npc/skill_quests.lua"], 5, 153),
     skill_quest("Change Cart", &["import/npc/skillquests/change_cart.lua"], 5, 154),
     skill_quest("Crazy Uproar", &["import/npc/skillquests/loud.lua"], 5, 155),
     skill_quest("Holy Light", &["import/npc/skillquests/holy_light.lua"], 4, 156),
@@ -380,4 +386,36 @@ fn every_quest_skill_can_be_learnt() {
     let _turn = TURN.lock().unwrap_or_else(|e| e.into_inner());
     let stuck = run(SKILL_QUESTS);
     assert!(stuck.is_empty(), "cannot be learnt: {stuck:?}");
+}
+
+/// scripts/npc/skill_quests.lua: Deothen wants to see a Crossbow and keeps
+/// only the rest; Gershaun takes a Banana Juice from anyone who asks without
+/// the items, and nothing more from one who has them.
+#[test]
+fn charge_arrow_crossbow_and_gershauns_juice() {
+    let _turn = TURN.lock().unwrap_or_else(|e| e.into_inner());
+    let files: &[&str] = &["import/npc/skillquests/arrow_repel.lua", "npc/skill_quests.lua"];
+    let soup: &[(u32, u32)] = &[(721, 2), (942, 3), (962, 10), (925, 10), (532, 36)];
+    let with_bow: &[(u32, u32)] = &[(721, 2), (942, 3), (962, 10), (925, 10), (532, 36), (1713, 1)];
+    let q = |gifts: &'static [(u32, u32)]| Quest { gifts: Some(gifts), ..skill_quest("Charge Arrow", files, 3, 148) };
+    let probe = "return count_item(1713) .. ' ' .. count_item(532)";
+    let (n, left) = play_probe(&q(soup), 1, 200, probe).unwrap();
+    assert_eq!(n, None, "taught without a Crossbow");
+    assert_eq!(left, "0 36");
+    let (n, left) = play_probe(&q(with_bow), 1, 200, probe).unwrap();
+    assert!(n.is_some(), "not taught with everything");
+    assert_eq!(left, "1 0", "the Crossbow comes back, the juices do not");
+
+    let files: &[&str] = &["import/npc/skillquests/cart_revolution.lua", "npc/skill_quests.lua"];
+    let q = |gifts: &'static [(u32, u32)]| Quest { gifts: Some(gifts), ..skill_quest("Cart Revolution", files, 5, 153) };
+    let probe = "return tostring(count_item(532))";
+    // no items: one juice per asking, and no skill
+    let (n, left) = play_probe(&q(&[(532, 2)]), 1, 3, probe).unwrap();
+    assert_eq!(n, None);
+    assert_ne!(left, "2", "the juice was not taken");
+    // the items in hand: taught, the juice kept
+    let items: &[(u32, u32)] = &[(533, 2), (998, 15), (938, 30), (601, 20), (962, 5), (532, 1)];
+    let (n, left) = play_probe(&q(items), 1, 200, probe).unwrap();
+    assert!(n.is_some(), "not taught with the items");
+    assert_eq!(left, "1");
 }
