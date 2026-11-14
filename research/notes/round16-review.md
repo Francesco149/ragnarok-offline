@@ -63,3 +63,30 @@ The hat item narrowed to three hats; the job item to 51 and Ragu Memo's
 marks; the drop item loses Arclouse, Rideword, Zherlthsh. Two rules: date
 817's files and dateless git files by what the disk says, and list the
 rows in progress.md as they are.
+
+## The round's second half (reviewed 2026-11-14, later)
+
+The agent went on after the merge: 33 more rows (T9-125..153, T8-001..004),
+68 PASS in its run and ours. Every cited capture is one Wayback serves.
+
+**Invention:** no quote invented, but **eight claims carry an item id the
+quote lacks, and it is wrong**: the Ragu Memo rows name the item in
+Japanese only, and the agent supplied ids from memory. Poring Hat is 5035
+(not 5033), Smokie Hat 5033 (not 5032), Zeny Knife 1238 (1227), Fortune
+Sword 1223 (1222), Moonlight Dagger 1234 (1223), Assassin Dagger 1232
+(1228), Mysteltainn 1138 (1134), and "Wizard Hat (5045)" is 2252: the
+Magic Hat 5045 is シルクハット (mod0631's JName column settles each).
+Rule for the queue: an id not in
+the quote comes from mod0631's JName column, with the line.
+
+**New:** the job marks (T9-125..136) side with mod0631 every time: Ragu
+Memo is jRO, mod0631's own server, so it is no third witness for the euRO
+text (THREADS.md #31). T9-137, the Partizan's level 18, is a fourth witness
+for the text: taken (R6). T8-001..004 are the trap and Blitz Beat formulas
+we already use (a jRO witness). T9-138..141 and the saved `gvg_box.html`
+give every castle's treasure with rates (#17). The gold is
+`at_monskill.html` read whole: 71 of 76 rows with numbers are mod0631's
+exactly with rate/10 = its percent, which answers #23's rate-scale question
+for mod0631's roll; the other five rows are built
+(`research/ragmemo_mob_magic.py`, DEVIATIONS.md). The pages are kept in
+`data:refs/web/ragmemo-2003/`.

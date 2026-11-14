@@ -4,7 +4,7 @@ For: the independent deep-research agent (Gemini in Antigravity) that wrote
 rounds 1 to 3. Kept by the Claude sessions that work on the game: at the
 end of each session the queue is updated (answered items go to "Done",
 with where the answer went) and refilled with what that session could not
-settle from the sources on disk. Last update: 2026-11-14, round 16 reviewed (`research/notes/round16-review.md`: no quote invented; three dates found nowhere, progress.md's row list garbled; the Panda Cap built as the Sasquatch's drop, six more job masks, three of #32's monsters settled); before that, later (T9's "who may wear which item" done mechanically from the client and RODataZone, 116 masks taken; narrowed to the 57 where the client alone differs); before that, round 15 reviewed (`research/notes/round15-review.md`: no quote invented; 19 rows misdated, three rAthena rows graded B, two new rules; the hat item narrowed to four hats, two items added: who may wear what, and the drops mod0631 left empty); before that, round 14 reviewed (`research/notes/round14-review.md`: twelve GameFAQs rows carried invented Wayback URLs (a new rule below); five T7 claims false, corrected there; T7's list of skills to build answered; T9's juice and T6's dye items gained pRO witnesses); before that, later the same day (T9: the makers of the 24 hats the client ships, thread 31); before that, round 13 reviewed (`research/notes/round13-review.md`: T4 answered and built from Ragu Memo; T10, T6 mostly answered by RODataZone's quests.js; T5 and T9 narrowed to thread 29's iRO/jRO splits); before that, round 12 reviewed (`research/notes/round12-review.md`: T4 points at Ragu Memo behind RODataZone's status page; T1 closed to iRO Wiki copies; Cart Revolution's Iron decided at 20); before that, round 11 reviewed (`research/notes/round11-review.md`: Charge Arrow's Crossbow, Gershaun's juice and the doomed swords' lists moved to Done and built or confirmed; T5, T6, T7, T9 narrowed; a WoE item added to T9); before that, later (thread 28 built from the client: T9's ground-skill item widened); before that, round 10 reviewed (`research/notes/round10-review.md`: T8's Skid Trap item and two T9 items moved to Done, T8 asks when euRO got iRO's Comodo skill patch, thread 28 narrowed; the boss rule built); before that, later (T9 monster skills: the FAQ pairs added, the rate question); before that, round 9 reviewed (`research/notes/round9-review.md`: two T9 items moved to Done, the monster-skill item rewritten); before that, later the same day (thread 28 added to T9); before that, round 8 reviewed (`research/notes/round8-review.md`); before that, later the same day (T7 narrowed by euRO's May-2004 text; two shop names added to T9). Before that, 2026-11-14 (round 7 reviewed: `research/notes/round7-review.md`.
+settle from the sources on disk. Last update: 2026-11-14, round 16's second half reviewed (`research/notes/round16-review.md`: eight wrong item ids; Ragu Memo's monster magic table settles mod0631's rate scale, five rows built; Ragu Memo dropped as the job lead; the Partizan's level taken); before that, round 16 reviewed (`research/notes/round16-review.md`: no quote invented; three dates found nowhere, progress.md's row list garbled; the Panda Cap built as the Sasquatch's drop, six more job masks, three of #32's monsters settled); before that, later (T9's "who may wear which item" done mechanically from the client and RODataZone, 116 masks taken; narrowed to the 57 where the client alone differs); before that, round 15 reviewed (`research/notes/round15-review.md`: no quote invented; 19 rows misdated, three rAthena rows graded B, two new rules; the hat item narrowed to four hats, two items added: who may wear what, and the drops mod0631 left empty); before that, round 14 reviewed (`research/notes/round14-review.md`: twelve GameFAQs rows carried invented Wayback URLs (a new rule below); five T7 claims false, corrected there; T7's list of skills to build answered; T9's juice and T6's dye items gained pRO witnesses); before that, later the same day (T9: the makers of the 24 hats the client ships, thread 31); before that, round 13 reviewed (`research/notes/round13-review.md`: T4 answered and built from Ragu Memo; T10, T6 mostly answered by RODataZone's quests.js; T5 and T9 narrowed to thread 29's iRO/jRO splits); before that, round 12 reviewed (`research/notes/round12-review.md`: T4 points at Ragu Memo behind RODataZone's status page; T1 closed to iRO Wiki copies; Cart Revolution's Iron decided at 20); before that, round 11 reviewed (`research/notes/round11-review.md`: Charge Arrow's Crossbow, Gershaun's juice and the doomed swords' lists moved to Done and built or confirmed; T5, T6, T7, T9 narrowed; a WoE item added to T9); before that, later (thread 28 built from the client: T9's ground-skill item widened); before that, round 10 reviewed (`research/notes/round10-review.md`: T8's Skid Trap item and two T9 items moved to Done, T8 asks when euRO got iRO's Comodo skill patch, thread 28 narrowed; the boss rule built); before that, later (T9 monster skills: the FAQ pairs added, the rate question); before that, round 9 reviewed (`research/notes/round9-review.md`: two T9 items moved to Done, the monster-skill item rewritten); before that, later the same day (thread 28 added to T9); before that, round 8 reviewed (`research/notes/round8-review.md`); before that, later the same day (T7 narrowed by euRO's May-2004 text; two shop names added to T9). Before that, 2026-11-14 (round 7 reviewed: `research/notes/round7-review.md`.
 T11 answered and moved to Done; T1, T9 and T10 updated with what it found).
 
 ## How to use it
@@ -55,6 +55,10 @@ T11 answered and moved to Done; T1, T9 and T10 updated with what it found).
      2005-08-01, a date it does not carry; its history starts 2006-01-29).
      The May-2004 English tables are the 2004-05-06 patch
      (`2004-05-06gdata_yuno_lang_g.gpf`), not the exe's 2004-05-07.
+   * **An item or monster id not in the quote comes from mod0631's JName
+     column** (`db/item_db.txt`, `db/mob_db.txt`, with the line), never from
+     memory: round 16 gave eight Ragu Memo rows a wrong id (Zeny Knife 1227
+     for 1238, "Wizard Hat 5045" for 2252).
    * **progress.md lists the rows as they are.** Round 16's list was off by
      one to two ids and described rows that do not exist.
    * **817's ground skills keep their bonuses in `pc.c`** (Volcano, Deluge,
@@ -454,14 +458,16 @@ Sets: `skill_castend_*` for those skills.
   job lines against our masks and RODataZone's "Used By"; the 116 items
   where the two agree are taken. Do not recompute that. Wanted: a third
   witness for the 51 where the client alone differs from mod0631 (#31 lists
-  them; Ragu Memo's hat and equipment pages mark each job On or Off, the best
-  lead: Novices with Nagan, Excalibur, Swordbreaker, Zeny Knife...; Spike,
+  them: Novices with Nagan, Excalibur, Swordbreaker, Zeny Knife...; Spike,
   Slash, Quadrille, Grand Cross for Swordman and Merchant; the Priest's
   other knuckles; the Miner's Helmet for all; hats for Novices), and for
-  the three where RODataZone sides with mod0631 (Panda
-  Cap, Poring Hat, Helm of the Solar God): a GameFAQs equipment guide of
-  2003-04 (dated by its version line), the iRO guide's item pages, Ragu
-  Memo's equipment tables (jRO), one row per item and source.
+  the three where RODataZone sides with mod0631 (Panda Cap, Poring Hat,
+  Helm of the Solar God). **After round 16: not Ragu Memo.** It is jRO,
+  the server mod0631 rebuilt, and it sided with mod0631 on all twelve
+  items read; do not quote its job marks again. The witness must be iRO,
+  euRO or pRO of 2003-04: a GameFAQs equipment guide (dated by its version
+  line), the iRO guide's item pages, a forum post. One row per item and
+  source.
 
 * **(new after round 15) Drops mod0631 left empty (THREADS.md #32).** The
   importer now takes 817's item and rate in 95 slots; `research/
@@ -554,9 +560,14 @@ Sets: `skill_castend_*` for those skills.
   `tier = "guess"`), so a source for *those* monsters comes first. And
   **how often**: the period emulators disagree tenfold (mod0631 rolls a
   row's rate against 1000, 817 and jAthena from 2004-02-20 against 10000,
-  same numbers; THREADS #23). A player's account of how often a monster
-  cast (how many Fire Bolts from a Marduk in a fight, how soon a Marc
-  went to Increase Agility) is worth a row, any server, dated.
+  same numbers; THREADS #23). **After round 16** Ragu Memo's
+  `at_monskill.html` settled the scale for mod0631's numbers (rate/10 = its
+  percent on 71 of 76 rows); do not quote it again. Still wanted: what one
+  roll is (per think of the AI, or per attack the monster makes), from any
+  player's account of how often a monster cast, dated; and any Ragu Memo
+  page of 2003-04 that rates the *support* skills (Heal, Increase AGI,
+  Endure, summons) as `at_monskill.html` rates attack magic (look at its
+  index on Wayback for sibling pages).
 * **Others' ground skills, seen twice** (thread 28). Round 10 settled the
   traps: they were hidden from anyone who walked away and back (FAQ 27633).
   Still wanted: did a monster's or another player's Fire Wall, Safety
