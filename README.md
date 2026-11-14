@@ -132,7 +132,7 @@ Every server-side value carries a tier ([docs/PROVENANCE.md](docs/PROVENANCE.md)
 
 | Tier | Meaning | What sits there today |
 |---|---|---|
-| `client` | Read from the client's files or the exe: confirmed | Packet lengths, map cells, the path finder and walk step times, skill SP costs, Basic Skill unlocks, names, sprites |
+| `client` | Read from the client's files or the exe: confirmed | Packet lengths and layouts (every packet the server sends, read in its handler), map cells, the path finder and walk step times, skill SP costs, Basic Skill unlocks, names, sprites |
 | `official` | Gravity or publisher material from the period | The patcher's notice and patch list (Wayback captures of euRO's patch server) |
 | `athena2003` | Athena-family emulators contemporary with the client (2003-12 to 2004-05) | Almost everything else: items, monsters, drops, EXP, formulas, warps, spawns, NPC scripts, pets, refining |
 | `period` | Community documents of 2002–2004 | Little so far |
