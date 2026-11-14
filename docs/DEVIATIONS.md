@@ -582,7 +582,7 @@ there is, marked as ours where it is ours, and listed here.
   Parcel Hat, Money Loser's Grief, Phantom of Opera), and Lutie's Vending
   Machine, the snowman at `xmas 115,297` (Raccoon Hat, Spore Hat, Wonder
   Nutshell, Rainbow Eggshell, Blush, Chef Hat, Candle, Cake Hat). Makers,
-  cells and recipes: RODataZone's iRO quest list (2004-04) and Ragu Memo's
+  cells and recipes: RODataZone's iRO quest list (2004-05) and Ragu Memo's
   jRO list (2004-02), which agree but for the Chef Hat's Feathers (300 and
   330: 330, as rAthena has it too). Dialogue and sprites: rAthena's
   (iRO's later official text, tier later), cut to the client's window. Its

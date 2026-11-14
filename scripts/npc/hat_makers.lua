@@ -7,7 +7,7 @@
 --
 -- What is whose:
 -- * makers, cells and recipes: two period lists that agree item for item,
---   RODataZone's iRO quest list (items/quests.js, Wayback 2004-04-17,
+--   RODataZone's iRO quest list (items/quests.js, Wayback 2004-05-02,
 --   HATS[27..44]) and Ragu Memo's jRO list (trade.html, Wayback 2004-02-22;
 --   both saved in research/agy-threads/r13/pages/). One count differs: the
 --   Chef Hat's Feathers, 300 in RODataZone, 330 in Ragu Memo and in rAthena:
