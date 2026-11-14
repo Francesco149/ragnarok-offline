@@ -521,7 +521,10 @@ agree): 0 red, 1 yellow, 2 violet, 3 orange, 4 green, 5 blue, 6 white,
 on that. **Still open:** was clothes dyeing available on euRO/iRO in
 Dec 2003 to Feb 2004, with which materials and price, and which of the four
 extra clothing palettes went with which dye; whether 5000z and one dye were
-the hairdresser's terms outside jRO; the NPCs' official English names.
+the hairdresser's terms outside jRO; the NPCs' official English names. (Round 10, tier D:
+rAthena's hairdresser asks 1000z and a dye; its tailor turns everyone away
+as mod0631's does, and its note v2.4 says cloth dyeing was "not
+implemented on official servers".)
 
 ### 14. Pets on euRO's closed beta
 The closed beta "includes Comodo and Q-Pet". Which monsters were tameable,
@@ -698,7 +701,22 @@ servers of Dec 2003? The client shows an ATK on arrow items.
 * *Differs, kept:* Skid Trap slides 6 to 10 cells in the guide, 1 to 5 in
   the client's text and in mod0631, which is what we do. Unlike the rows
   of R6, the period emulator sides with the client's text here, so this
-  may be a change made between December and March.
+  may be a change made between December and March. **Round 10:** it came
+  with iRO's Comodo update (Episode 3.0), a "skill balance patch" that
+  Forever-Zero's guide (GameFAQs 27633, "Future iRO update nerfs/changes",
+  begun 2003-11-23, edited 2004-01-10) copies whole: "Skid Trap's SP cost
+  has been increased from 5 to 10. The shove range of it has been increased
+  from 6 to 10 cells"; Double Strafe 15 to 12 SP; Arrow Shower 5x5 and a
+  push of 2 cells; Improve Concentration raised; Flasher and Sandman 12 SP,
+  Freezing Trap 10; Beast Bane 4 a level, on brutes and insects; Ankle
+  Snare's hold by the monster's AGI, never under 3 s, items usable while
+  snared, 12 SP; traps take 0.4 s to set, not on a monster's cell or
+  another trap, and spare monsters standing in range when set. euRO's
+  May-2004 client text has part of it (Ankle Snare "affected by enemy's
+  AGI", Flasher and Freezing Trap two Traps, Beast Bane +5 a level) and
+  still says Skid Trap slides 1 to 5. So euRO had the patch by May 2004;
+  whether it came with New Comodo (January 2004, our baseline) is open, and
+  the game keeps mod0631's values from before it.
 * *Still a draft:* the guide says Venom Splasher marks the target with a
   timer, bursts when it is under a third of its HP, and splashes a quarter
   of the damage on 3x3 cells; that Ice Wall loses durability by the damage
@@ -920,14 +938,15 @@ script names. After its first fixes it still reports:
 * **`pay_dun04 193,43`**, one of the four random arrivals from Payon Cave
   3F (`npc_warp.txt:511`), is a wall on this client's map; `192,43` is
   floor. As in Athena, the player lands on a random cell of the map
-  instead. An older or newer `pay_dun04`?
+  instead. An older or newer `pay_dun04`? (rAthena has `189,43`, round 10.)
 * **`prt_in` 280-285, 36-130**: four exits to Prontera on cells this
   client's `prt_in` has no room around, and no warp leads to them.
   Rooms of a later Prontera?
 * **`prt_are_in 31,122` and `169,122`**, **`yuno_in03 104,115`**: warp
   tiles that cannot be stepped on.
-* **Castles**: `aldeg_cas05 188,49` and `prtg_cas02 184,44` arrive on
-  blocked cells; `prtg_cas02`'s Emperium cell `157,174` is blocked (known,
+* **Castles**: `prtg_cas02 184,44` arrives on a blocked cell (rAthena has
+  the same); `aldeg_cas05 188,49`'s "165,288" was a slip for `165,228`
+  (round 10, fixed in `scripts/npc/castle_warps.lua`); `prtg_cas02`'s Emperium cell `157,174` is blocked (known,
   #17).
 * **The guild dungeons** `gld_dun01-04`: nothing leads in (#17).
 * `job_wiz` is entered through a destination the script computes, which
@@ -1008,6 +1027,18 @@ same, so either the official server never re-sent a unit, or this is how
 traps of others stayed hidden.
 **Impact:** monster-made ground skills (and any later unit of an NPC or
 pet) after the player walks away and back.
+**Round 10: the official servers did hide traps this way.** Forever-Zero's
+guide (GameFAQs 27633) on Sandman: "It is invisible only to people who were
+off screen when it was planted, or those who go off screen and come back."
+iRO's Comodo patch, as it copies it: "Invisible traps are visible to only
+the caster and those who were on the screen at the time the traps were
+installed. Traps can also be seen using a detecting skill". "Go off screen
+and come back" is the client's second showing; "off screen when planted"
+fits if the server told players beyond the screen of a new trap, so that
+the showing they got on coming near was their second. Open: which units
+the official server treated so (a Fire Wall or Safety Wall re-sent would
+vanish the same way, so it must not have re-sent those), and how far it
+announced a placement. The server here re-sends every unit.
 **Look:** the client rig: let a monster place a unit, walk out of sight and
 back, screenshot. The handler's exception list at session `+0xe4c` (perhaps
 the party) is not read yet.

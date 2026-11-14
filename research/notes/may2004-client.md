@@ -118,6 +118,12 @@ random warps (`c_tower1`, `c_tower2`, `c_tower4`), Turtle Island
   the server must send any is still open.
 * The exe of 2004-05-31 (patch entry 462) is still lost; 2004-05-07 is
   what we have.
+* **iRO's Comodo "skill balance patch" is in its Hunter text** (read
+  2026-11-14, THREADS.md #22): Ankle Snare's hold "affected by enemy's AGI"
+  (its levels' times gone), Flasher and Freezing Trap need two Traps, Beast
+  Bane gives +5 a level (the 2003 text: +3). Skid Trap still reads "Sliding
+  by 1cell" to 5, though the patch made it 6 to 10. That version should take
+  the patch's numbers (Forever-Zero's list in #22) where its text agrees.
 
 ## The path finder (2026-11-13)
 

@@ -4,7 +4,7 @@ For: the independent deep-research agent (Gemini in Antigravity) that wrote
 rounds 1 to 3. Kept by the Claude sessions that work on the game: at the
 end of each session the queue is updated (answered items go to "Done",
 with where the answer went) and refilled with what that session could not
-settle from the sources on disk. Last update: 2026-11-14, later (T9 monster skills: the FAQ pairs added, the rate question); before that, round 9 reviewed (`research/notes/round9-review.md`: two T9 items moved to Done, the monster-skill item rewritten); before that, later the same day (thread 28 added to T9); before that, round 8 reviewed (`research/notes/round8-review.md`); before that, later the same day (T7 narrowed by euRO's May-2004 text; two shop names added to T9). Before that, 2026-11-14 (round 7 reviewed: `research/notes/round7-review.md`.
+settle from the sources on disk. Last update: 2026-11-14, round 10 reviewed (`research/notes/round10-review.md`: T8's Skid Trap item and two T9 items moved to Done, T8 asks when euRO got iRO's Comodo skill patch, thread 28 narrowed; the boss rule built); before that, later (T9 monster skills: the FAQ pairs added, the rate question); before that, round 9 reviewed (`research/notes/round9-review.md`: two T9 items moved to Done, the monster-skill item rewritten); before that, later the same day (thread 28 added to T9); before that, round 8 reviewed (`research/notes/round8-review.md`); before that, later the same day (T7 narrowed by euRO's May-2004 text; two shop names added to T9). Before that, 2026-11-14 (round 7 reviewed: `research/notes/round7-review.md`.
 T11 answered and moved to Done; T1, T9 and T10 updated with what it found).
 
 ## How to use it
@@ -330,8 +330,15 @@ Sets: `skill_castend_*` for those skills.
   comments the line out)?
 * The iRO guide's pages on disk have been read against all of these
   (THREADS.md #22, 2026-11-11): do not repeat that. Wanted is anything
-  earlier than March 2004, and: when did Skid Trap go from sliding 1 to 5
-  cells (client text, mod0631) to 6 to 10 (the guide)?
+  earlier than March 2004.
+* **iRO's Comodo "skill balance patch" on euRO** (round 10; THREADS.md
+  #22). Forever-Zero's guide (GameFAQs 27633, its "Future Update Changes")
+  copies iRO's list: Skid Trap 6 to 10 cells and 10 SP, Ankle Snare by AGI
+  and 12 SP, Double Strafe 12 SP, Arrow Shower 5x5, the trap rules. euRO's
+  May-2004 text has part of it. Did it reach euRO with "New Comodo"
+  (2004-01-08/18), with open beta (2004-02-04), or later? A euRO notice,
+  forum post or player guide that names any of those changes with a date;
+  and the date iRO's Comodo update went live.
 * Sightrasher (drafted 2026-11-13 from the guide's Wizard page, 817 and
   jAthena): which cells did it hit, only the eight lines from the caster
   or every cell within reach, and how far at each level? The guide's
@@ -363,10 +370,10 @@ Sets: `skill_castend_*` for those skills.
   `conf/npc_event_doll.txt`): which doll brought what on iRO/euRO in
   2003/04? (The doomed swords are in T5. The arrow makers are closed:
   mod0631's file says they are its author's own.)
-* **Two castle warps onto blocked cells**: `aldeg_cas05 188,49` to
-  `165,288` and `prtg_cas02 184,44` to `157,140` are the same in mod0631,
-  817, eAthena 0.5.2 and jAthena, and both targets are solid on this
-  client's maps. Where did those two doors lead?
+* **A castle warp onto a blocked cell**: `prtg_cas02 184,44` to `157,140`
+  is the same in mod0631, 817, eAthena 0.5.2, jAthena and rAthena, and
+  the target is solid on this client's map. Where did that door lead?
+  (`aldeg_cas05`'s is settled: round 10.)
 * **Places the world audit cannot reach** (thread 26, new on 2026-11-11):
   `tur_dun05` has monsters and two exits in mod0631 and no way in: was a
   fifth Turtle Island map in play in 2003/04, and how was it entered?
@@ -402,13 +409,12 @@ Sets: `skill_castend_*` for those skills.
   same numbers; THREADS #23). A player's account of how often a monster
   cast (how many Fire Bolts from a Marduk in a fight, how soon a Marc
   went to Increase Agility) is worth a row, any server, dated.
-* **Others' traps and ground skills, seen twice** (thread 28, new on
-  2026-11-14). This client draws a ground unit placed by someone else the
-  first time it hears of it and hides it the second time. Did players of
-  2003/04 write that other Hunters' traps were invisible, or that a
-  monster's or another player's ground effect (Fire Wall, Safety Wall)
-  vanished after they walked away and back? A forum thread or guide line
-  either way; one `none` row per place searched if nothing.
+* **Others' ground skills, seen twice** (thread 28). Round 10 settled the
+  traps: they were hidden from anyone who walked away and back (FAQ 27633).
+  Still wanted: did a monster's or another player's Fire Wall, Safety
+  Wall, Pneuma or Warp Portal ever vanish after you walked away and back,
+  or stay? A forum thread or guide line either way; one `none` row per
+  place searched if nothing. Do not quote FAQ 27633 again.
 
 ## Done
 
@@ -437,6 +443,10 @@ that nobody researches them again.
 | mod0631's arrow makers in Payon | Not jRO: the file's header says its author made them up until Arrow Crafting worked | THREADS.md #24 |
 | Can the Swordman course be walked on this client's map | Yes, each stretch and every pit's cave | `research/course_check.py` |
 | Guard's chances, Defender's percentages, Shield Boomerang's reach | 817 and the iRO guide agree | THREADS.md #25, DEVIATIONS |
+| When Skid Trap went from 1-5 cells to 6-10 | iRO's Comodo update (Episode 3.0) skill balance patch, quoted whole in GameFAQs 27633 | THREADS.md #22, `research/notes/round10-review.md` |
+| Were others' traps hidden | Yes: from anyone off screen when it was set, or who walked away and back (GameFAQs 27633) | THREADS.md #28 |
+| `aldeg_cas05 188,49`'s door | A slip: `165,228` (rAthena; the castle's own pairs agree) | `scripts/npc/castle_warps.lua` |
+| Forever-Zero's Archer/Hunter guide (GameFAQs 27633) | Read whole in rounds 5 and 10: Hunter test, skill notes, the Comodo patch list. Don't quote it again | `research/notes/round10-review.md` |
 | Does this client ship the 2-2 skills' text | No: neither names nor descriptions, and the exe knows none of the skills (seen in the client) | THREADS.md #25 |
 | How a player gets into Ant Hell, Payon Cave 4F and the upper Clock Tower | Script warp tiles in mod0631's `npc_warp.txt`, which the importer skipped until 2026-11-11 | `scripts/import/warps.lua`, PROVENANCE.md |
 | Why Clock Tower 1F could not be walked | Its cells have a stray type (`0x444c74`); only 1 and 5 block, as in Athena | DEVIATIONS.md "Cell types" |
