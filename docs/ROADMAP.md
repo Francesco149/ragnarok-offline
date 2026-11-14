@@ -20,7 +20,8 @@ Ordered by "confirmable first". Each item says where the truth would come from.
   handlers do: chat cut to the client's 256-byte buffer, 0x0091's 16-byte
   map name, a shop buy that reported failure then success, a pet accessory
   that "put on" the next item, `%` in pet names, a freed Ice Wall cell on
-  water. Open: ground units of others shown twice (THREADS.md #28).
+  water. Others' ground units drawn hidden when sent twice: only traps are
+  sent again, and Detect shows them (THREADS.md #28).
 - **Walk/attack timing** the client animates vs ours. Done: the path
   finder is the client's (`0x4d2300`), and so are the walk's clock and
   every step's time, the first one from the sub-cell included, and the

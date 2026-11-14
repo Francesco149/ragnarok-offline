@@ -411,6 +411,17 @@ function skill_trap_cell(id)
   if not g or not TRAPS[g.unit_id] then return nil end
   return { id = c.id, map = c.map, x = c.x, y = c.y, src = g.src, skill = g.skill, sprung = g.val2 ~= 0 }
 end
+-- The traps standing in a rectangle, as cell ids (Detect shows them).
+function skill_traps_in(map, x0, y0, x1, y1)
+  local out = {}
+  for id, c in pairs(cells) do
+    local g = c.alive and c.map == map and groups[c.group]
+    if g and TRAPS[g.unit_id] and c.x >= x0 and c.x <= x1 and c.y >= y0 and c.y <= y1 then
+      out[#out + 1] = id
+    end
+  end
+  return out
+end
 function skill_trap_remove(id)
   local c = cells[id]
   if c and c.alive then del_cell(c) end

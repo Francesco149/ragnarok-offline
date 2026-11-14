@@ -707,6 +707,12 @@ pub fn skill_unit(id: u32, src: u32, x: u16, y: u16, unit_id: u8) -> Vec<u8> {
     Writer::new(0x01c9).u32(id).u32(src).u16(x).u16(y).u8(unit_id).u8(1).zeros(81).finish()
 }
 
+/// 0x01ac: a trap drawn hidden is shown again (Detect). The client acts
+/// only on units of type 0x8b-0x99 (`0x529870`).
+pub fn skill_unit_reveal(id: u32) -> Vec<u8> {
+    Writer::new(0x01ac).u32(id).finish()
+}
+
 /// 0x0120: a ground skill cell is gone.
 pub fn skill_unit_gone(id: u32) -> Vec<u8> {
     Writer::new(0x0120).u32(id).finish()

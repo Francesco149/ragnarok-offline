@@ -647,6 +647,11 @@ function skill_castend_pos2(src_id, x, y, skillid, skilllv, opt)
       skill_status_change_end(id, SC.HIDDING)
       skill_status_change_end(id, SC.CLOAKING)
     end
+    -- iRO's Comodo patch: hidden traps "can also be seen using a detecting
+    -- skill" (THREADS.md #28); the client shows them again on 0x01ac.
+    for _, id in ipairs(skill_traps_in(src.map, x - 3, y - 3, x + 3, y + 3)) do
+      _rt("su_reveal", id)
+    end
 
   elseif UNIT_SKILLS[skillid] then
     skill_unitsetting(src_id, skillid, skilllv, x, y, 0)

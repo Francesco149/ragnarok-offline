@@ -64,6 +64,9 @@ pub struct PlayerUnit {
     pub sex: u8,
     pub view: CharView,
     pub visible: HashSet<u32>,
+    /// Ground units of others the client still has though out of sight
+    /// (`SkillCell::kept_for`): told once per map visit, removed by 0x0120.
+    pub kept: HashSet<u32>,
     /// Client finished loading the map (0x007d received).
     pub loaded: bool,
     pub attack: Option<AttackIntent>,

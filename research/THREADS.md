@@ -1039,9 +1039,27 @@ the showing they got on coming near was their second. Open: which units
 the official server treated so (a Fire Wall or Safety Wall re-sent would
 vanish the same way, so it must not have re-sent those), and how far it
 announced a placement. The server here re-sends every unit.
-**Look:** the client rig: let a monster place a unit, walk out of sight and
-back, screenshot. The handler's exception list at session `+0xe4c` (perhaps
-the party) is not read yet.
+**2026-11-14, the client read whole** (docs/PROTOCOL.md, 0x01c9 and 0x01ac):
+the list is cleared by every 0x0091, same map or not; hidden means neither
+drawn nor given its effect, for **every** unit type, not only traps; a
+placer in the player's party (session `+0xe4c`, filled by 0x00fb) is
+exempt; the `isVisible` byte the server sends is never read; 0x01ac shows a
+hidden unit again only for types 0x8b-0x99. So the client was built for
+hidden traps, and an official server that re-sent a Fire Wall or a Warp
+Portal on its second showing would have hidden it too: it must have
+re-sent only traps, or nothing.
+**Built:** the server sends a trap again when it comes back into sight (so
+it is drawn hidden, as the patch notes say) and keeps any other unit of
+another's on the client while out of sight, taking it off only when it ends
+(DEVIATIONS.md); Detect sends 0x01ac for the traps within its 3 cells (test
+`others_ground_units_seen_again`).
+**Still open:** whether the official server re-sent traps at all, or told a
+whole map of a new trap so that whoever came near later got their second
+showing at once ("invisible only to people who were off screen when it was
+planted"). We do neither: a trap placed while the player is away is seen on
+arrival. In single player only monsters place traps (Skid Trap, Claymore,
+Sandman, Flasher, Freezing, Ankle Snare, Shockwave: 10 monsters), and they
+do it near their target.
 
 ## Resolved
 

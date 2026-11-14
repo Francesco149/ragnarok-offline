@@ -357,6 +357,7 @@ impl Game {
                 sex,
                 view,
                 visible: Default::default(),
+                kept: Default::default(),
                 loaded: false,
                 attack: None,
                 next_attack_at: 0,
@@ -484,17 +485,23 @@ impl Game {
             .filter(|&i| i != unit && self.world.units.get(&i).is_some_and(|o| o.shown()))
             .collect();
         let before = p.visible.clone();
+        let mut kept = p.kept.clone();
         let mut out = Vec::new();
         for id in &now_ids {
+            let Some(o) = self.world.units.get(id) else { continue };
+            if o.skill().is_some_and(|s| s.kept_for(unit)) && (before.contains(id) || kept.remove(id)) {
+                continue; // the client has it: another 0x01c9 would hide it
+            }
             if full || !before.contains(id) {
-                if let Some(o) = self.world.units.get(id) {
-                    out.push(self.appear_packet(o, false));
-                }
+                out.push(self.appear_packet(o, false));
             }
         }
         for id in before.difference(&now_ids) {
             match self.world.units.get(id) {
                 Some(o) if o.is_item() => out.push(packets::floor_item_gone(*id)),
+                Some(o) if o.skill().is_some_and(|s| s.kept_for(unit)) => {
+                    kept.insert(*id);
+                }
                 Some(o) if o.skill().is_some() => out.push(packets::skill_unit_gone(*id)),
                 _ => out.push(packets::vanish(*id, 0)),
             }
@@ -522,6 +529,7 @@ impl Game {
         }
         if let Some(p) = self.world.units.get_mut(&unit).and_then(|u| u.player_mut()) {
             p.visible = now_ids;
+            p.kept = kept;
         }
     }
 
@@ -537,18 +545,27 @@ impl Game {
             if pid == unit {
                 continue;
             }
-            let (sees, sid, loaded, close) = {
+            let (sees, kept, sid, loaded, close) = {
                 let pu = &self.world.units[&pid];
                 let p = pu.player().unwrap();
-                (p.visible.contains(&unit), p.sid, p.loaded, in_area(pu, &self.world.units[&unit]))
+                (p.visible.contains(&unit), p.kept.contains(&unit), p.sid, p.loaded, in_area(pu, &self.world.units[&unit]))
             };
             if !loaded {
                 continue;
             }
+            let keep = self.world.units[&unit].skill().is_some_and(|s| s.kept_for(pid));
             if close && !sees {
-                let pkt = self.appear_packet(&self.world.units[&unit], fresh);
-                self.send(sid, pkt);
-                self.world.units.get_mut(&pid).unwrap().player_mut().unwrap().visible.insert(unit);
+                if !(keep && kept) {
+                    let pkt = self.appear_packet(&self.world.units[&unit], fresh);
+                    self.send(sid, pkt);
+                }
+                let p = self.world.units.get_mut(&pid).unwrap().player_mut().unwrap();
+                p.kept.remove(&unit);
+                p.visible.insert(unit);
+            } else if !close && sees && keep {
+                let p = self.world.units.get_mut(&pid).unwrap().player_mut().unwrap();
+                p.visible.remove(&unit);
+                p.kept.insert(unit);
             } else if !close && sees {
                 let o = &self.world.units[&unit];
                 let pkt = if o.is_item() {
@@ -578,12 +595,13 @@ impl Game {
             .world
             .units
             .values()
-            .filter_map(|o| o.player().filter(|p| p.visible.contains(&unit)).map(|p| (o.id, p.sid)))
+            .filter_map(|o| o.player().filter(|p| p.visible.contains(&unit) || p.kept.contains(&unit)).map(|p| (o.id, p.sid)))
             .collect();
         for (oid, sid) in watchers {
             self.send(sid, pkt.clone());
             if let Some(p) = self.world.units.get_mut(&oid).and_then(|o| o.player_mut()) {
                 p.visible.remove(&unit);
+                p.kept.remove(&unit);
             }
         }
     }

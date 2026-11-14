@@ -73,6 +73,23 @@ pub struct SkillCell {
     pub src: u32,
 }
 
+impl SkillCell {
+    /// One of the Hunter's traps (0x8f-0x99 without Venom Dust's 0x92), as
+    /// the rules' `TRAPS` in skill_units.lua.
+    pub fn is_trap(&self) -> bool {
+        matches!(self.unit_id, 0x8f..=0x91 | 0x93..=0x99)
+    }
+
+    /// The client draws a second 0x01c9 for a unit placed by someone else
+    /// hidden, whatever its kind (`0x52a9a6`, `0x5a91f0`; cleared by 0x0091).
+    /// iRO hid traps so ("go off screen and come back", THREADS.md #28); for
+    /// anything else that would make a Fire Wall vanish, so the server keeps
+    /// such a unit on the client out of sight instead of sending it again.
+    pub fn kept_for(&self, viewer: u32) -> bool {
+        self.src != viewer && !self.is_trap()
+    }
+}
+
 #[derive(Default)]
 pub struct BattleState {
     /// Units with status changes (so expiry does not scan the world).
@@ -1086,6 +1103,12 @@ impl Game {
                 Value::Null
             }
             "su_new" => json!(self.su_new(&text(a, 0), int(a, 1) as u16, int(a, 2) as u16, int(a, 3) as u8, id(4), id(5))),
+            "su_reveal" => {
+                if self.world.units.get(&id(0)).and_then(|u| u.skill()).is_some_and(|s| s.is_trap()) {
+                    self.area_send(id(0), packets::skill_unit_reveal(id(0)), false);
+                }
+                Value::Null
+            }
             "su_del" => {
                 if self.world.units.get(&id(0)).is_some_and(|u| u.skill().is_some()) {
                     self.despawn(id(0), 0);

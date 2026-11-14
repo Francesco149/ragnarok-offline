@@ -494,6 +494,17 @@ eAthena 817 (2004-02-19), bugs included. The translator is
   step times"): it crosses into a cell halfway between two cells' times,
   and a walk keeps its speed to the end, since the client goes on drawing
   it at that speed. A new speed counts from the next walk.
+* **Ground units of others are told once per map visit, traps excepted.**
+  The client draws a second 0x01c9 for a unit placed by someone else
+  (not in the player's party) hidden, whatever the unit, until the next
+  0x0091 (docs/PROTOCOL.md). Athena takes every unit off the client when it
+  leaves sight and sends it again when it comes back, so a monster's Fire
+  Wall, Safety Wall or Quagmire seen a second time vanished. Here such a
+  unit stays on the client while out of sight and is taken off only when
+  it ends. The Hunter's traps are sent again as in Athena and so are drawn
+  hidden, which is what iRO's Comodo patch notes describe (THREADS.md #28);
+  Detect shows them (0x01ac). Ours; what the official server sent is not
+  known.
 * **Cell types.** Only types 1 and 5 block, as in Athena (mod0631
   `map.c:1052`, `path.c:153`). One map of this client depends on it: the
   whole floor of `c_tower1` has the type `0x444c74` (some builder's stray
@@ -633,7 +644,7 @@ always fires.
 | Shockwave Trap | Takes 20/35/50/65/80% of a player's SP | The client's skill text. Monsters have no SP here |
 | Enchant Poison | Each hit may poison (3% to 7%) | mod0631 stores that chance on the status and never rolls it |
 | Brandish Spear | The two cells either side of the knight and five in front, then rows of five, five and three, 1 to 4 areas by level; the target is pushed two cells | The drawing and the "2 cells" on the iRO guide's Knight page (2004-04-13). 817 has its own helper for the rows and pushes one cell; the per-row damage is 817's |
-| Detect | Reveals the hidden within 3 cells of the spot; the spot may be 3, 5, 7 or 9 cells away by level | The client's skill text; the reach is the iRO guide's "Detecting Range" (2004-03-27), read as how far the falcon flies |
+| Detect | Reveals the hidden, and shows hidden traps again (0x01ac), within 3 cells of the spot; the spot may be 3, 5, 7 or 9 cells away by level | The client's skill text; the reach is the iRO guide's "Detecting Range" (2004-03-27), read as how far the falcon flies; traps from iRO's Comodo patch notes ("Traps can also be seen using a detecting skill", THREADS.md #28) |
 | Spring Trap | Reaches 4 to 8 cells by level | The iRO guide's Hunter page |
 | Sightrasher | Under Sight only, which it ends: fire on the eight lines around the wizard, 1 to 5 cells by level, 120% to 300% MATK, pushed 5 cells back | The iRO guide's Wizard page (2004-03-27); damage 817 `battle.c:3178`; Sight and the push jAthena (2004-05). The lines and the reach by level are ours (THREADS.md #22) |
 | Remove Trap | Not a trap that has gone off | The iRO guide's Hunter page |

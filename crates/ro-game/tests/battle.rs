@@ -1658,3 +1658,44 @@ fn monster_element_change() {
         t.kill(m);
     }
 }
+
+/// A monster's ground unit seen again (THREADS.md #28): the client draws a
+/// second 0x01c9 for the same unit hidden. A trap is sent again (iRO hid them
+/// so) and Detect shows it; anything else stays on the client, never re-sent.
+#[test]
+fn others_ground_units_seen_again() {
+    let mut t = T::new();
+    let pupa = t.spawn(25, 20, 1008);
+    t.lua(&format!("skill_unitsetting({pupa}, SK.WZ_QUAGMIRE, 5, 20, 15, 0)"));
+    t.lua(&format!("skill_unitsetting({pupa}, SK.HT_SKIDTRAP, 1, 22, 32, 0)"));
+    let trap = t.g.world.units.values().find(|u| u.skill().is_some_and(|s| s.unit_id == 0x90)).map(|u| u.id).expect("trap");
+    let shown = t.packets(0x01c9);
+    assert_eq!(shown.len(), 26, "25 Quagmire cells and the trap");
+    let walk = |t: &mut T, x: u16| {
+        let mut w = Writer::new(0x0085);
+        w.pos3(x, 25, 0);
+        t.send(w);
+        t.run(6000);
+        assert_eq!(t.pos(t.me), (x, 25));
+    };
+    walk(&mut t, 45);
+    let all = t.cap.take();
+    let gone: Vec<u32> = all.iter().filter(|p| id_of(p) == 0x0120).map(|p| u32_at(p, 2)).collect();
+    assert_eq!(gone, vec![trap], "only the trap is taken off the client");
+    walk(&mut t, 25);
+    let back: Vec<u32> = t.packets(0x01c9).iter().map(|p| u32_at(p, 2)).collect();
+    assert_eq!(back, vec![trap], "only the trap is sent again (and drawn hidden)");
+    // Detect shows it again
+    t.lua("job_change(11); player.base_level = 70; heal(9999, 9999); set_falcon()");
+    t.learn("HT_DETECTING", 4);
+    t.cast_at("HT_DETECTING", 22, 32);
+    t.run(500);
+    let shown: Vec<u32> = t.packets(0x01ac).iter().map(|p| u32_at(p, 2)).collect();
+    assert_eq!(shown, vec![trap], "Detect reveals the trap");
+    // a unit the client keeps out of sight is still taken off when it ends
+    walk(&mut t, 45);
+    t.packets(0x0120);
+    t.run(30_000);
+    let gone = t.packets(0x0120).len();
+    assert!(gone >= 25, "the Quagmire's end reaches the client out of sight ({gone})");
+}
