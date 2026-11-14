@@ -1737,3 +1737,43 @@ fn ailment_lengths_and_effects_of_2003() {
     t.lua(&format!("skill_status_change_start({r}, SC.POISON, 1, 0, {{ tick = 20000, nodef = true }})"));
     assert_eq!(def(&mut t).0, d0 * 75 / 100, "poisoned: DEF -25%");
 }
+
+/// Leaving the game dead and coming back: alive at the save point with the
+/// restart HP and the death penalty, as mod0631 saved a dead character
+/// (pc_makesavestatus, pc_setrestartvalue). Before, the client was shown a
+/// standing character with 0 HP that could not walk.
+#[test]
+fn logging_back_in_after_dying() {
+    let mut t = T::new();
+    t.lua("job_change(1); player.base_level = 20; player.base_exp = 10000; heal(9999, 9999); save_point('testmap', 10, 12)");
+    let me = t.me;
+    t.lua(&format!("_rt('bl_damage', 0, {me}, 99999)"));
+    assert_eq!(t.hp(), 0);
+    t.g.handle(NetEvent::Disconnected { sid: 3 });
+    // back in: login, char select, map
+    let cap = t.cap.clone();
+    let take = || -> Vec<Vec<u8>> { cap.0.lock().unwrap().drain(..).map(|(_, d)| d).collect() };
+    t.g.handle(NetEvent::Connected { sid: 11, kind: ServerKind::Login });
+    let mut w = Writer::new(0x0064);
+    w.u32(20).str_fixed("battler_M", 24).str_fixed("secret", 24).u8(0);
+    t.g.handle(NetEvent::Packet { sid: 11, data: w.finish() });
+    let out = take();
+    let acc = out.iter().find(|p| id_of(p) == 0x0069).expect("login accepted");
+    let (l1, aid, l2) = (u32_at(acc, 4), u32_at(acc, 8), u32_at(acc, 12));
+    t.g.handle(NetEvent::Connected { sid: 12, kind: ServerKind::Char });
+    let mut w = Writer::new(0x0065);
+    w.u32(aid).u32(l1).u32(l2).u16(0).u8(1);
+    t.g.handle(NetEvent::Packet { sid: 12, data: w.finish() });
+    let mut w = Writer::new(0x0066);
+    w.u8(0);
+    t.g.handle(NetEvent::Packet { sid: 12, data: w.finish() });
+    t.g.handle(NetEvent::Connected { sid: 13, kind: ServerKind::Map });
+    let mut w = Writer::new(0x0072);
+    w.u32(aid).u32(t.cid).u32(l1).u32(0).u8(1);
+    t.g.handle(NetEvent::Packet { sid: 13, data: w.finish() });
+    t.g.handle(NetEvent::Packet { sid: 13, data: Writer::new(0x007d).finish() });
+    let u = &t.g.world.units[&me];
+    assert_eq!((u.state, u.x, u.y), (0, 10, 12), "alive, at the save point");
+    let c = &t.g.store.chars[&t.cid];
+    assert_eq!((c.hp, c.base_exp), (1, 9900), "restart HP and the 1% penalty");
+}

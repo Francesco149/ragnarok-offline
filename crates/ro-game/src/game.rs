@@ -743,11 +743,25 @@ impl Game {
         if let Some(a) = self.store.accounts.get_mut(&aid) {
             a.storage.compact();
         }
+        // dead when last saved: back at the save point with the restart values and the death
+        // penalty, as mod0631 pc_makesavestatus saved a dead character (pc_setrestartvalue)
+        let died_on = self.store.chars.get(&cid).filter(|c| c.hp == 0).map(|c| c.last_point.map.clone());
+        if died_on.is_some() {
+            if let Some(c) = self.store.chars.get_mut(&cid) {
+                c.last_point = c.save_point.clone();
+            }
+        }
         let p = self.valid_point(cid);
         let gm = self.store.accounts.get(&aid).map(|a| a.gm_level).unwrap_or(0);
         let sex = self.store.accounts.get(&aid).map(|a| a.sex).unwrap_or(1);
         let unit = aid; // players use the account id as their unit id (Athena)
         self.spawn_player(sid, unit, aid, cid, sex, gm, &p);
+        if let Some(map) = died_on {
+            if let Some(pl) = self.world.units.get_mut(&unit).and_then(|u| u.player_mut()) {
+                pl.died_on = Some(map);
+            }
+            self.restart_values(unit);
+        }
         if let Some(s) = self.sessions.get_mut(&sid) {
             s.state = State::Map { account_id: aid, char_id: cid, unit };
         }

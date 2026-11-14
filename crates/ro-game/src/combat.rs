@@ -1081,14 +1081,23 @@ impl Game {
     /// rules. The penalty is not taken on a `nopenalty` map.
     pub(crate) fn respawn_player(&mut self, unit: u32) {
         let Some(c) = self.char_of_unit(unit).cloned() else { return };
-        let d = self.derive(&c);
-        // where it died; after logging back in dead, where it lies
-        let died_on = self.world.units.get_mut(&unit).and_then(|u| u.player_mut()).and_then(|p| p.died_on.take()).or_else(|| self.world.units.get(&unit).map(|u| u.map.clone()));
-        let was_dead = c.hp == 0;
-        if !was_dead {
+        if c.hp != 0 {
             return; // clif_parse_Restart: only the dead go back to the save point
         }
-        if was_dead {
+        self.restart_values(unit);
+        let Point { map, x, y } = c.save_point.clone();
+        self.warp_player(unit, &map, x, y);
+        self.send_full_status(unit);
+    }
+
+    /// mod0631 pc_setrestartvalue: a dead character's HP and SP to start again
+    /// with, and the death penalty (not on a nopenalty map); alive again.
+    pub(crate) fn restart_values(&mut self, unit: u32) {
+        let Some(c) = self.char_of_unit(unit).cloned() else { return };
+        let d = self.derive(&c);
+        // where it died
+        let died_on = self.world.units.get_mut(&unit).and_then(|u| u.player_mut()).and_then(|p| p.died_on.take()).or_else(|| self.world.units.get(&unit).map(|u| u.map.clone()));
+        if c.hp == 0 {
             let (nb, nj) = self.exp_next(&c);
             let free = died_on.as_deref().is_some_and(|m| self.db.map_flag(m, "nopenalty"));
             let r = self
@@ -1116,9 +1125,6 @@ impl Game {
         if let Some(u) = self.world.units.get_mut(&unit) {
             u.state = 0;
         }
-        let Point { map, x, y } = c.save_point.clone();
-        self.warp_player(unit, &map, x, y);
-        self.send_full_status(unit);
     }
 
     // ------------------------------------------------------------ regen

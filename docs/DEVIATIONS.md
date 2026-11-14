@@ -580,6 +580,10 @@ eAthena 817 (2004-02-19), bugs included. The translator is
   bytes). Until 2026-11-11 the server took unknown types for walls, and
   Clock Tower 1F could not be entered.
 
+* **Leaving the game dead** brings the character back at its save point
+  with the restart HP and the death penalty, as mod0631 saved a dead
+  character (`pc_makesavestatus`); until 2026-11-14 it came back lying
+  where it died, drawn standing by the client and unable to move.
 * **A Fly Wing (or Dead Branch) refused by a map flag is not used up.** In
   Athena it was spent before its script ran. The client still shows its
   "Unable to Teleport in this area" message.
