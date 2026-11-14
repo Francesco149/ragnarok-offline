@@ -50,6 +50,8 @@ data.grf** — a loose `data\clientinfo.xml` is ignored (it still dialled
 62.109.138.134). `ragnarok-offline setup` therefore rebuilds data.grf the way
 euRO's patcher would have (base + .gpf patches) with our clientinfo.xml
 inside; the original is kept as `data.grf.original`. The exe is untouched.
+Setup also appends our English names for items the client has no name for
+(`data/client/item_names.tsv`: Turtle Island's hats; docs/DEVIATIONS.md).
 `1rag1` on the command line skips the "please run Ragnarok.exe" patcher check.
 
 Settings live in `HKLM\Software\Gravity Soft\Ragnarok` (`Wow6432Node` on

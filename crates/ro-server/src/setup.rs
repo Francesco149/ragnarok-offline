@@ -9,6 +9,9 @@
 //!   data.grf  ->  data.grf.original   (kept once, never overwritten)
 //!   data.grf.original + *.gpf (date order) + clientinfo.xml  ->  data.grf
 //!
+//! It also gives the item name table a line for each item the client knows
+//! but cannot name (data/client/item_names.tsv; docs/DEVIATIONS.md).
+//!
 //! The CLI also writes `Play Offline.bat` (`Ragexe.exe 1rag1`, skipping the
 //! dead patcher); the Windows launcher does the same job itself.
 
@@ -40,6 +43,56 @@ pub fn clientinfo_xml(address: &str, port: u16, name: &str) -> String {
          \t\t<port>{port}</port>\r\n\t\t<version>1</version>\r\n\t\t<registrationweb>{web}</registrationweb>\r\n\
          \t</connection>\r\n\r\n</clientinfo>\r\n"
     )
+}
+
+/// The client's item name table, and our English names for items it knows but
+/// cannot name (data/client/item_names.tsv: id, name, note).
+pub const ITEM_NAMES_TABLE: &str = "data\\idnum2itemdisplaynametable.txt";
+const ITEM_NAMES: &str = include_str!("../../../data/client/item_names.tsv");
+
+/// `(id, name as the table spells it)` for every entry of item_names.tsv.
+pub fn extra_item_names() -> Vec<(u32, String)> {
+    ITEM_NAMES
+        .lines()
+        .filter(|l| !l.starts_with('#') && !l.trim().is_empty())
+        .filter_map(|l| {
+            let mut f = l.split('\t');
+            let id = f.next()?.trim().parse().ok()?;
+            Some((id, f.next()?.trim().replace(' ', "_")))
+        })
+        .collect()
+}
+
+/// `table` (the client's idnum2itemdisplaynametable.txt) with a line for each
+/// of our names whose id it does not name yet, in its own line ending.
+pub fn with_extra_item_names(table: &[u8]) -> Vec<u8> {
+    let eol: &[u8] = if table.windows(2).any(|w| w == b"\r\n") { b"\r\n" } else { b"\n" };
+    let named = named_ids(table);
+    let mut out = table.to_vec();
+    if !out.is_empty() && !out.ends_with(b"\n") {
+        out.extend_from_slice(eol);
+    }
+    for (id, name) in extra_item_names() {
+        if !named.contains(&id) {
+            out.extend_from_slice(format!("{id}#{name}#").as_bytes());
+            out.extend_from_slice(eol);
+        }
+    }
+    out
+}
+
+/// The ids `table` has a line for (`id#name#`).
+fn named_ids(table: &[u8]) -> std::collections::HashSet<u32> {
+    table
+        .split(|&b| b == b'\n')
+        .filter_map(|l| std::str::from_utf8(l.split(|&b| b == b'#').next()?).ok()?.trim().parse().ok())
+        .collect()
+}
+
+/// Does `table` name every item of item_names.tsv?
+fn names_all(table: &[u8]) -> bool {
+    let named = named_ids(table);
+    extra_item_names().iter().all(|(id, _)| named.contains(id))
 }
 
 /// The layers a client dir provides, in patch order.
@@ -82,6 +135,7 @@ pub fn is_prepared(dir: &Path, address: &str, port: u16, name: &str) -> bool {
     }
     let Ok(g) = Grf::open(dir.join("data.grf")) else { return false };
     g.read(CLIENTINFO).is_ok_and(|xml| xml == clientinfo_xml(address, port, name).as_bytes())
+        && g.read(ITEM_NAMES_TABLE).map_or(true, |t| names_all(&t))
 }
 
 /// What [`prepare`] did.
@@ -110,6 +164,9 @@ pub fn prepare(dir: &Path, address: &str, port: u16, name: &str, progress: &mut 
         vfs.push(Grf::open(&g)?);
     }
     vfs.add_memory_file(CLIENTINFO, clientinfo_xml(address, port, name).into_bytes());
+    if let Ok(t) = vfs.read(ITEM_NAMES_TABLE) {
+        vfs.add_memory_file(ITEM_NAMES_TABLE, with_extra_item_names(&t));
+    }
     let tmp = dir.join("data.grf.tmp");
     let entries = ro_grf::write_grf_0x200_with_progress(&vfs, &tmp, progress)
         .with_context(|| format!("writing {}", tmp.display()))?;

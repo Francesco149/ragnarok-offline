@@ -42,6 +42,9 @@ enum Cmd {
         port: u16,
         #[arg(long, default_value = "Offline")]
         name: String,
+        /// Do nothing if the folder is already prepared for this server.
+        #[arg(long)]
+        if_needed: bool,
     },
     /// Interactive Lua console of a running server.
     Console,
@@ -107,7 +110,13 @@ fn dispatch(cli: Cli) -> Result<()> {
             println!("wrote {}", cli.config.display());
             Ok(())
         }
-        Cmd::Setup { client, address, port, name } => setup::run(&client, &address, port, &name),
+        Cmd::Setup { client, address, port, name, if_needed } => {
+            if if_needed && setup::is_prepared(&client, &address, port, &name) {
+                println!("{}: already prepared", client.display());
+                return Ok(());
+            }
+            setup::run(&client, &address, port, &name)
+        }
         Cmd::Console => console(&cli.config, None),
         Cmd::Eval { code } => console(&cli.config, Some(code.join(" "))),
         Cmd::Grf { cmd } => grf(cmd),

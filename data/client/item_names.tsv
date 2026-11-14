@@ -1,0 +1,20 @@
+# English names `ragnarok-offline setup` adds to the client's
+# data\idnum2itemdisplaynametable.txt, for items this client knows (sprite,
+# resource name, Gravity's English description) but cannot name: the Turtle
+# Island patch brought them without names, and euRO's later patches that may
+# have named them are not archived. An id the client already names is left
+# alone. Ours, not Gravity's: the names are iRO's as RODataZone listed them
+# (items/quests.js, Wayback 2004-05-02; research round 13, T5-001..008).
+# Tier: `period` (docs/PROVENANCE.md). Spaces become `_` in the table.
+#
+# id	name	used by
+5022	Helm of Solar God	scripts/npc/alberta_hats.lua (Hat Store Girl)
+5027	Mage Hat	scripts/npc/alberta_hats.lua (Hat Store Girl)
+5032	Sunday Hat	scripts/npc/alberta_hats.lua (Hat Store Girl)
+5041	Heart Hair Pin	scripts/npc/alberta_hats.lua (Stylish Merchant)
+5042	Hair Protector	scripts/npc/alberta_hats.lua (Stylish Merchant)
+5045	Magician Hat	scripts/npc/alberta_hats.lua (Hat Store Girl)
+5047	Fashionable Glasses	scripts/npc/alberta_hats.lua (Stylish Merchant)
+5048	First Moon Hair Pin	scripts/npc/alberta_hats.lua (Stylish Merchant)
+7063	Soft Feather	Sunday Hat's material (Owl Baron, Owl Duke)
+7086	Emblem of the Sun God	Helm of Solar God's material (castle treasure)

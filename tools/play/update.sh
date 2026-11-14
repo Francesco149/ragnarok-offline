@@ -40,10 +40,8 @@ if [ ! -f "$S/client/Ragexe.exe" ]; then
   cp -al "$src/." "$S/client/"
   rm -f "$S/client/data.grf" "$S/client/Play Offline.bat"
 fi
-xml="$("$b/ragnarok-offline" grf cat "$S/client/data.grf" 'data\clientinfo.xml' 2>/dev/null </dev/null || true)"
-if [[ "$xml" != *"<port>$LOGIN_PORT</port>"* ]]; then
-  "$b/ragnarok-offline" setup --client "$S/client" --address 127.0.0.1 --port "$LOGIN_PORT" --name Offline
-fi
+# (again when our clientinfo.xml or item names in it are out of date)
+"$b/ragnarok-offline" setup --if-needed --client "$S/client" --address 127.0.0.1 --port "$LOGIN_PORT" --name Offline
 
 # The config, once: yours to edit afterwards (rates, start items...).
 if [ ! -f "$S/ragnarok-offline.toml" ]; then
