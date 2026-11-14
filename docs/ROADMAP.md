@@ -30,7 +30,9 @@ Ordered by "confirmable first". Each item says where the truth would come from.
   client draws it doing so. Open: the attack motion's timing, and
   whether the client re-times a walk when the unit's speed changes
   mid-walk (0x00b0 SPEED; the server assumes it does not).
-- Client tables not used yet: skill names/descriptions, `itemslottable`,
+- `itemslotcounttable` read against the item table on 2026-11-14: two weapons
+  take the client's slot count (`CLIENT_SLOTS` in `tools/import/athena_import.py`).
+- Client tables not used yet: skill names/descriptions,
   `leveluseskillspamount`, `mapnametable` (for messages), `num2cardillustnametable`.
 
 ## 2. euRO content state

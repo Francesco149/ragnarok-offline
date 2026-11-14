@@ -170,6 +170,14 @@ def toml_kv(d):
     return "\n".join(parts)
 
 
+# Card slots the client draws for an item (data\itemslotcounttable.txt of the
+# played client, tier client) where mod0631's table has another count. The
+# client's table was compared whole on 2026-11-14: only these two weapons
+# differ among the items that can be had (mod0631's eight elemental armours
+# and other placeholders, which nothing gives, differ too and are left).
+CLIENT_SLOTS = {1115: 3, 1524: 1}  # Scimiter (817: 0 as well), Golden Mace
+
+
 def import_items():
     names = {}
     for line in csv_records(E052 / "db/item_db.txt"):
@@ -208,7 +216,7 @@ def import_items():
             "atk": num(cols[7]),
             "def": num(cols[8]),
             "range": num(cols[9]),
-            "slots": num(cols[10]),
+            "slots": CLIENT_SLOTS.get(iid, num(cols[10])),
             "jobs": num(cols[11]),
             "gender": num(cols[12], 2),
             "loc": num(cols[13]),
