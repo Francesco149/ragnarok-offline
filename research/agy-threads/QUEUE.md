@@ -4,7 +4,7 @@ For: the independent deep-research agent (Gemini in Antigravity) that wrote
 rounds 1 to 3. Kept by the Claude sessions that work on the game: at the
 end of each session the queue is updated (answered items go to "Done",
 with where the answer went) and refilled with what that session could not
-settle from the sources on disk. Last update: 2026-11-14, round 16's second half reviewed (`research/notes/round16-review.md`: eight wrong item ids; Ragu Memo's monster magic table settles mod0631's rate scale, five rows built; Ragu Memo dropped as the job lead; the Partizan's level taken); before that, round 16 reviewed (`research/notes/round16-review.md`: no quote invented; three dates found nowhere, progress.md's row list garbled; the Panda Cap built as the Sasquatch's drop, six more job masks, three of #32's monsters settled); before that, later (T9's "who may wear which item" done mechanically from the client and RODataZone, 116 masks taken; narrowed to the 57 where the client alone differs); before that, round 15 reviewed (`research/notes/round15-review.md`: no quote invented; 19 rows misdated, three rAthena rows graded B, two new rules; the hat item narrowed to four hats, two items added: who may wear what, and the drops mod0631 left empty); before that, round 14 reviewed (`research/notes/round14-review.md`: twelve GameFAQs rows carried invented Wayback URLs (a new rule below); five T7 claims false, corrected there; T7's list of skills to build answered; T9's juice and T6's dye items gained pRO witnesses); before that, later the same day (T9: the makers of the 24 hats the client ships, thread 31); before that, round 13 reviewed (`research/notes/round13-review.md`: T4 answered and built from Ragu Memo; T10, T6 mostly answered by RODataZone's quests.js; T5 and T9 narrowed to thread 29's iRO/jRO splits); before that, round 12 reviewed (`research/notes/round12-review.md`: T4 points at Ragu Memo behind RODataZone's status page; T1 closed to iRO Wiki copies; Cart Revolution's Iron decided at 20); before that, round 11 reviewed (`research/notes/round11-review.md`: Charge Arrow's Crossbow, Gershaun's juice and the doomed swords' lists moved to Done and built or confirmed; T5, T6, T7, T9 narrowed; a WoE item added to T9); before that, later (thread 28 built from the client: T9's ground-skill item widened); before that, round 10 reviewed (`research/notes/round10-review.md`: T8's Skid Trap item and two T9 items moved to Done, T8 asks when euRO got iRO's Comodo skill patch, thread 28 narrowed; the boss rule built); before that, later (T9 monster skills: the FAQ pairs added, the rate question); before that, round 9 reviewed (`research/notes/round9-review.md`: two T9 items moved to Done, the monster-skill item rewritten); before that, later the same day (thread 28 added to T9); before that, round 8 reviewed (`research/notes/round8-review.md`); before that, later the same day (T7 narrowed by euRO's May-2004 text; two shop names added to T9). Before that, 2026-11-14 (round 7 reviewed: `research/notes/round7-review.md`.
+settle from the sources on disk. Last update: 2026-11-14, round 17 reviewed (`research/notes/round17-review.md`: no quote invented, dates right; one wrong item id (2281 written 5043); a perma-Novice guide's weapon list is the item text again, not a witness; RODataZone's "Tower Keeper" closes the Clock Tower Manager's drops; Ragu Memo's hat pages of 2003-08 and 2003-12 show the client's job lines are release-day text); before that, round 16's second half reviewed (`research/notes/round16-review.md`: eight wrong item ids; Ragu Memo's monster magic table settles mod0631's rate scale, five rows built; Ragu Memo dropped as the job lead; the Partizan's level taken); before that, round 16 reviewed (`research/notes/round16-review.md`: no quote invented; three dates found nowhere, progress.md's row list garbled; the Panda Cap built as the Sasquatch's drop, six more job masks, three of #32's monsters settled); before that, later (T9's "who may wear which item" done mechanically from the client and RODataZone, 116 masks taken; narrowed to the 57 where the client alone differs); before that, round 15 reviewed (`research/notes/round15-review.md`: no quote invented; 19 rows misdated, three rAthena rows graded B, two new rules; the hat item narrowed to four hats, two items added: who may wear what, and the drops mod0631 left empty); before that, round 14 reviewed (`research/notes/round14-review.md`: twelve GameFAQs rows carried invented Wayback URLs (a new rule below); five T7 claims false, corrected there; T7's list of skills to build answered; T9's juice and T6's dye items gained pRO witnesses); before that, later the same day (T9: the makers of the 24 hats the client ships, thread 31); before that, round 13 reviewed (`research/notes/round13-review.md`: T4 answered and built from Ragu Memo; T10, T6 mostly answered by RODataZone's quests.js; T5 and T9 narrowed to thread 29's iRO/jRO splits); before that, round 12 reviewed (`research/notes/round12-review.md`: T4 points at Ragu Memo behind RODataZone's status page; T1 closed to iRO Wiki copies; Cart Revolution's Iron decided at 20); before that, round 11 reviewed (`research/notes/round11-review.md`: Charge Arrow's Crossbow, Gershaun's juice and the doomed swords' lists moved to Done and built or confirmed; T5, T6, T7, T9 narrowed; a WoE item added to T9); before that, later (thread 28 built from the client: T9's ground-skill item widened); before that, round 10 reviewed (`research/notes/round10-review.md`: T8's Skid Trap item and two T9 items moved to Done, T8 asks when euRO got iRO's Comodo skill patch, thread 28 narrowed; the boss rule built); before that, later (T9 monster skills: the FAQ pairs added, the rate question); before that, round 9 reviewed (`research/notes/round9-review.md`: two T9 items moved to Done, the monster-skill item rewritten); before that, later the same day (thread 28 added to T9); before that, round 8 reviewed (`research/notes/round8-review.md`); before that, later the same day (T7 narrowed by euRO's May-2004 text; two shop names added to T9). Before that, 2026-11-14 (round 7 reviewed: `research/notes/round7-review.md`.
 T11 answered and moved to Done; T1, T9 and T10 updated with what it found).
 
 ## How to use it
@@ -59,6 +59,14 @@ T11 answered and moved to Done; T1, T9 and T10 updated with what it found).
      column** (`db/item_db.txt`, `db/mob_db.txt`, with the line), never from
      memory: round 16 gave eight Ragu Memo rows a wrong id (Zeny Knife 1227
      for 1238, "Wizard Hat 5045" for 2252).
+   * **Check an id against the source's own numbers** (DEF, slots,
+     location, weight) before it goes in a claim. Round 17 wrote 5043
+     (Opera Ghost Mask, DEF 1, Mid) for a guide's "phantom opera mask DEF
+     2 for mid-lower", which is 2281.
+   * **A list copied from an item database is the item text**, not a
+     witness for who could use the item. Round 17's perma-Novice guide
+     listed weapons "in the database but cannot obtain in iRO yet", with
+     the client's own effect lines.
    * **progress.md lists the rows as they are.** Round 16's list was off by
      one to two ids and described rows that do not exist.
    * **817's ground skills keep their bonuses in `pc.c`** (Volcano, Deluge,
@@ -71,7 +79,7 @@ T11 answered and moved to Done; T1, T9 and T10 updated with what it found).
 2. Take tasks from the top; the order is by how much of the game waits on
    the answer. A round need not take them all. Say in `progress.md` which
    ones you took.
-3. Write only inside `research/agy-threads/r<N>/` for round N (round 17 is
+3. Write only inside `research/agy-threads/r<N>/` for round N (round 18 is
    next): `rows/<task id>.jsonl`, `pages/` for saved web pages, `check.txt`
    for your own checker run. No summary report: rows only, plus one line per
    task in `progress.md`: "answered" only if every bullet of the task has a
@@ -267,8 +275,8 @@ Sets: the content defaults in `[game.content]` and the rates.
 **After round 13: answered and built** from Ragu Memo's `abnormal.html`
 (2003-08-02, 2003-12-12; THREADS.md #21). Left: how long poison lasted
 (the page: 10-30 s on monsters, 5-60 s on players, "by VIT and LUK", no
-formula) and Curse ("unknown"); any later Ragu Memo capture (2004) that
-gives them; whether an international server's players measured the same
+formula) and Curse ("unknown"; still so in the capture of 2004-02-05,
+round 17); any Ragu Memo capture after 2004-02 that gives them; whether an international server's players measured the same
 (an iRO/euRO forum thread, 2004). Do not quote the 2003 captures again.
 
 When does "VIT resists stun", "LUK resists curse", "MDEF resists freeze
@@ -467,16 +475,22 @@ Sets: `skill_castend_*` for those skills.
   items read; do not quote its job marks again. The witness must be iRO,
   euRO or pRO of 2003-04: a GameFAQs equipment guide (dated by its version
   line), the iRO guide's item pages, a forum post. One row per item and
-  source.
+  source. **After round 17:** a list taken from an item database (as
+  Soujiro's perma-Novice guide says its weapon list is) repeats the
+  description and does not count: wanted is a player who wore or was
+  refused the item, or an official page. Ragu Memo's hat pages of 2003-08
+  and 2003-12 show the client's lines are release-day text (#31): an
+  account from euRO or iRO of 2004 is what can still change the game.
 
 * **(new after round 15) Drops mod0631 left empty (THREADS.md #32).** The
   importer now takes 817's item and rate in 95 slots; `research/
   mob_drop_holes.py` lists them. Wanted: a period source naming or rating
   the drops RODataZone's monster table lacks (Magnolia's Yellow Herb, Nine
   Tail's Royal Jelly and Rough Oridecon, the Zombie Prisoner's Empty Potion
-  Bottle, Mysteltainn's Elunium, the Wanderer's Yggdrasil Seed; anything of
-  the Clock Tower Manager; Arclouse, Rideword and Zherlthsh are settled,
-  round 16), and any drop rate of 2003-04 for one of the 95 to set against
+  Bottle, Mysteltainn's Elunium, the Wanderer's Yggdrasil Seed; Arclouse,
+  Rideword, Zherlthsh (round 16) and the Clock Tower Manager, RODataZone's
+  "Tower Keeper" (round 17), are settled; do not quote RODataZone's monster
+  table again for these), and any drop rate of 2003-04 for one of the 95 to set against
   817's (Ragu Memo's pages give rates as 1/N: the Panda Cap 1/5000).
 
 * **(new 2026-11-14) Item numbers: the client's text against mod0631

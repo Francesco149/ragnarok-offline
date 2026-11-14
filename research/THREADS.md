@@ -769,7 +769,8 @@ MDEF/100)` (817 the same), poison 10-30 s on monsters and 5-60 s on players
 (817 every second), DEF -25% poisoned, DEF -50% and MDEF +25% frozen or
 stone (817 has those effects, mod0631 not). **Built** from it the same day
 (DEVIATIONS.md, test `ailment_lengths_and_effects_of_2003`). Open: the
-poison's length rule, Curse's length, whether euRO's servers of January
+poison's length rule, Curse's length (Ragu Memo's page of 2004-02 still
+says "unknown": round 17, T4-021), whether euRO's servers of January
 2004 had the same as jRO's.
 **Impact:** `skill_additional_effect` and the ailment part of
 `skill_status_change_start` in `scripts/rules/`.
@@ -1436,6 +1437,21 @@ differed it shows the split rather than settling it: its Magic Hat
 (シルクハット) is the Mage's and Acolyte's trees, RODataZone's "All". A
 third witness has to be iRO or euRO. (Its Partizan level, 18, is the
 text's: taken, R6.)
+**Round 17: why the client and mod0631 part on the hats.** Ragu Memo's
+`turtle_armor.html` of 2003-08-21 (the night jRO's Turtle Island patch
+went in) marks the new hats On for every job, the Novice too (Cross
+Hairband, Poring, Deviruchi, Spore, Panda, Miner's Helmet, Opera Ghost
+Mask), and the Helm of the Solar God for Swordman, Thief and Merchant:
+the client's text line for line. Its `armor5.html` of 2003-12-12 has them
+Off for the Novice, the Miner's Helmet for the Swordman, Acolyte and
+Merchant trees, the Solar God helm for second jobs: mod0631's masks
+(saved in `research/agy-threads/r17/pages/`). The client's lines are
+release-day text, changed on the server or corrected by testing within
+four months; the game keeps the later masks. Soujiro's Perma-Novice guide
+(GameFAQs 24610, iRO, 2003-07) lists all the disputed Novice swords,
+daggers and maces, but "from the database ... cannot obtain in iRO yet",
+with the item text's own effect lines: the description again, not a
+witness.
 
 ### 32. Drops mod0631 left empty
 mod0631's `db/mob_db.txt` writes `512,0` (an Apple, rate 0) in drop slots it
@@ -1448,9 +1464,12 @@ others match by hand). Taken from 817 since 2026-11-14 (the importer).
 Jelly and Rough Oridecon, the Zombie Prisoner's Empty Potion Bottle,
 Mysteltainn's Elunium (it has Rough Elunium), the Wanderer's Yggdrasil Seed,
 nor anything of Arclouse, Rideword, Zherlthsh and the Clock Tower Manager
-(not in its table). *Round 16:* they are, as Arclouze, Ride Word and
+(not in its table: they are, below). *Round 16:* they are, as Arclouze, Ride Word and
 Zealotus, and name what 817 put in those slots (Zargon; Pearl; Yellow
-Potion, Tights, Masquerade: T9-116, T9-117, T9-119). The rates are 817's alone; were they iRO's or kRO's,
+Potion, Tights, Masquerade: T9-116, T9-117, T9-119). *Round 17:* the Clock
+Tower Manager is RODataZone's "Tower Keeper" (same level, HP and EXP); it
+names the Hinalle Leaflet and Memorize Book 817 put in its slots (T9-154,
+T9-155). The rates are 817's alone; were they iRO's or kRO's,
 and did jRO really lack these drops in December 2003 or did mod0631 just
 not know them?
 **Look:** RODataZone's monster pages per dungeon (rates?), GameFAQs monster
