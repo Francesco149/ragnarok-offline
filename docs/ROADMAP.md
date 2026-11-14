@@ -152,13 +152,28 @@ Next, in order:
 * NPC waiting rooms (0x00d7 chat bubbles over arena/PvP NPCs);
 * clothes dyeing (THREADS.md #13: the dye makers and the hairdresser are
   in, from mod0631); English shop names from 817 by cell (#11);
-* better dialogue where period sources exist (THREADS.md #2).
+* better dialogue where period sources exist (THREADS.md #2);
+* mechanical sweeps of 817's NPCs (2026-11-14): `research/npc_lint.py`
+  (missing labels, tests that decide nothing, variables nothing sets) and
+  `research/npc_item_xcheck.py` (item ids against mod0631's NPC on the same
+  cell) found NPCs that took the wrong item, gave nothing, opened gates for
+  anyone or never sold what they offered; RODataZone's iRO quest list set
+  beside every NPC (THREADS.md #29) found two more. Left: the iRO/jRO
+  splits of #29, and Alberta's two Turtle Island hat NPCs, which no period
+  emulator has and whose hats this client cannot name.
 
 ## 5. Systems
 
 Done: Kafra storage, pushcart contents, pets (taming, eggs, hatching,
 following, hunger, intimacy, feeding, accessories, renaming), item
-identification, cards. Party/guild/trade/vending only matter for
+identification, cards. Played in the client on 2026-11-14: refining to a
+break, storage and cart by dragging, a card into a weapon, taming with the
+slot machine, feeding, back to the egg, the incubator, selling, forging.
+Playing found storage lost when the game was left with its window open,
+item indices that closed up after a stack ran out (the client's windows
+then moved items about; now Athena's holes, closed up at the next login)
+and a character that logged out dead coming back unable to move (now back
+at the save point, as mod0631 had it). Party/guild/trade/vending only matter for
 multiplayer (DEVIATIONS.md).
 
 ## 6. Robustness

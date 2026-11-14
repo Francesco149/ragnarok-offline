@@ -90,11 +90,13 @@ Working with the real client:
   client has for them. Every first-job and 2-1 test has been played through
   in the real client;
 - inventory, equipment, cards, item identification, usable items, Kafra
-  storage, pushcarts, forging and ore refining;
+  storage, pushcarts, refining, forging and ore refining; all of these,
+  and pet taming, have been used in the real client's own windows;
 - pets: taming, eggs, hunger, intimacy, accessories;
 - **skills**: the Novice, the six first jobs and the six 2-1 jobs, with cast
   times, delays, SP and item costs, ground skills and traps, status changes
-  and ailments with their icons. The Assassin's, Blacksmith's, Hunter's,
+  and ailments with their icons; ailments last as jRO's players measured
+  them in 2003. The Assassin's, Blacksmith's, Hunter's,
   Wizard's, Priest's and Knight's skills have been tried in the real client;
 - battle as the period emulators have it: elements, sizes, cards, refine
   bonuses, criticals, arrows; monsters with their period AI and skills,
