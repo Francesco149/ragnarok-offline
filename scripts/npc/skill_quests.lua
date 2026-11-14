@@ -47,7 +47,8 @@ wrap_npc("817:skillquests/arrowrepel.txt:5", function(orig)
       mes "and show me a crossbow."
       next()
       mes "[Deothen]"
-      mes "- 1 ^FF0000Crossbow^000000 (I give it back)"
+      -- the client swallows a space right after a colour code
+      mes "- 1 ^FF0000Crossbow^000000, given back"
       mes "- 2 ^FF0000Emeralds^000000"
       mes "- 3 ^FF0000Yoyo tails^000000"
       mes "- 10 ^FF0000Tentacles^000000"
