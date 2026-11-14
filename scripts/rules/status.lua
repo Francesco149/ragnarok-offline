@@ -314,6 +314,11 @@ function rules.status(c)
   t = has(SC.NIBELUNGEN)
   if t then s.watk = s.watk + t.val2 end
   if has(SC.ETERNALCHAOS) then s.def = 0 end
+  -- Poison takes a quarter off DEF (817 pc.c:1302, both parts; Ragu Memo's ailment page of
+  -- 2003-08 and 2003-12: "DEF 25% down"; mod0631 has neither), a Curse slows the walk
+  -- (817 pc.c:1331, +450 ms a cell; Ragu Memo gives only ATK -25% and LUK 0)
+  if has(SC.POISON) then s.def = floor(s.def * 75 / 100); s.def2 = floor(s.def2 * 75 / 100) end
+  if has(SC.CURSE) then s.speed = s.speed + 450 end
 
   if has(SC.TWOHANDQUICKEN) then aspd = floor(aspd * 70 / 100) end
   if has(SC.ADRENALINE) then aspd = floor(aspd * 70 / 100) end

@@ -176,26 +176,41 @@ function skill_status_change_start(id, type, val1, val2, opt)
     tick = 1000 * val1
     val2 = 100 - 5 * (2 + type - SC.SPEEDPOTION0)
   elseif type == SC.STONE then
-    -- 817:5541 MDEF takes 200 ms a point off. Five seconds of turning to
-    -- stone first (val2 = 1), then the seconds counted in val3.
+    -- Ragu Memo's ailment page (jRO players' measurements, 2003-08-02 and 2003-12-12): about
+    -- 17 s, "Time = 17 - (MDef/20) [s]", whatever the skill. 817 (skill.c:5541) took the
+    -- skill's time from its cast_db (10 to 19 s for Stone Curse) less 200 ms a point of MDEF.
+    -- Five seconds of turning to stone first (val2 = 1), then the seconds counted in val3.
     tick = (opt.tick and opt.tick > 0 and opt.tick) or (val2 > 0 and val2) or 600000
-    if not opt.nodef then tick = math.max(1000, tick - battle.mdef(bl) * 200) end
+    if not opt.nodef then tick = math.max(1000, 17000 - battle.mdef(bl) * 50) end
     val3 = math.max(1, floor(tick / 1000))
     tick = 5000
     val2 = 1
     val4 = 0
-  elseif type == SC.SLEEP then tick = ailment(30000, "int")
+  elseif type == SC.SLEEP then
+    -- Ragu Memo: "about 30 s" (no formula); 817 took the skill's time (Sandman 12 to 20 s);
+    -- the fall with INT and LUK is 817's
+    opt.tick = 30000
+    tick = ailment(30000, "int")
   elseif type == SC.FREEZE then tick = ailment(3000 * val1, "mdef")
-  elseif type == SC.STAN then tick = ailment(5000, "vit")
+  elseif type == SC.STAN then
+    -- Ragu Memo: "Time = 3 * (1 - (3 + VIT + LUK/3)/100) [s]", about 3 s whatever the
+    -- skill; 817 took the skill's time (Sonic Blow 6 to 15 s) less VIT + LUK/3 percent
+    tick = opt.nodef and 3000 or math.max(1000, floor(3000 * (100 - (3 + battle.vit(bl) + floor(battle.luk(bl) / 3))) / 100))
   elseif type == SC.POISON then
     -- 817:5576 poison counts seconds in val3 and bites once a second
     tick = ailment(1000 * (10 + rnd(50)), "vit")
     val3 = math.max(1, floor(tick / 1000))
     tick = 1000
   elseif type == SC.CURSE then tick = ailment(30000, "vit")
-  elseif type == SC.SILENCE then tick = ailment(1000 * (val1 > 6 and 60 or 25 + val1 * 5), "vit")
+  elseif type == SC.SILENCE then
+    -- the skill's time as in 817; Ragu Memo: shortened by VIT alone, "Time = base * (100 - VIT)/100"
+    tick = (opt.tick and opt.tick > 0 and opt.tick) or 1000 * (val1 > 6 and 60 or 25 + val1 * 5)
+    if not opt.nodef then tick = math.max(1000, floor(tick * (100 - battle.vit(bl)) / 100)) end
   elseif type == SC.CONFUSION then tick = opt.tick or 17000 -- 817 skill.c: cards cause 10 s + 7 s of it
-  elseif type == SC.BLIND then tick = ailment(300000, "int")
+  elseif type == SC.BLIND then
+    -- Ragu Memo: "Time = 30 - BaseLv/10 - INT/15 [s]", 15 to 30 s; 817 took the skill's time
+    -- (Flasher 10 to 14 s, a monster's 10 to 19 s) less INT + LUK/3 percent
+    tick = opt.nodef and 30000 or math.max(1000, 30000 - battle.lv(bl) * 100 - floor(battle.int(bl) * 1000 / 15))
   elseif type == SC.SLOWPOISON then
     -- 817:5296 only on someone poisoned; length from its cast_db
     if not has(SC.POISON) then return false end
@@ -286,14 +301,16 @@ function skill_status_change_timer(id, type)
       if t.val3 - 1 > 0 then return again(100, nil, nil, t.val3 - 1) end
     end
   elseif type == SC.POISON then
-    -- 817:5134 every second, down to a quarter of the HP: a player loses
-    -- 3 + 1.5% of max HP, a monster 3 + 0.5%; Slow Poison holds it
+    -- Ragu Memo's ailment page (2003-08-02 and 2003-12-12): "every 3 seconds, 3% of
+    -- MaxHP at a time, down to 25% of MaxHP", players and monsters alike. 817
+    -- (skill.c:5134) bit every second, a player 3 + 1.5% of max HP, a monster
+    -- 3 + 0.5%. The seconds are still counted one at a time; Slow Poison holds it.
     if battle.sc(bl, SC.SLOWPOISON) then return again(1000) end
     if t.val3 - 1 > 0 then
       local mhp = battle.max_hp(bl)
-      if battle.hp(bl) > (mhp >> 2) then
-        local loss = sd and (3 + floor(mhp * 3 / 200)) or (3 + floor(mhp / 200))
-        _rt("bl_set", id, "hp", battle.hp(bl) - loss)
+      if (t.val3 - 1) % 3 == 0 and battle.hp(bl) > (mhp >> 2) then
+        local loss = math.max(1, floor(mhp * 3 / 100))
+        _rt("bl_set", id, "hp", math.max(mhp >> 2, battle.hp(bl) - loss))
       end
       return again(1000, nil, nil, t.val3 - 1)
     end

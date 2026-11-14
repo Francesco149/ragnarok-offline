@@ -144,8 +144,12 @@ function battle.atk2(bl) -- battle.c:221
   if sc(bl, SC.CURSE) then atk2 = atk2 - floor(atk2 * 25 / 100) end
   return stripped_atk(bl, atk2)
 end
+-- frozen or stone: DEF halved for players too, MDEF a quarter up (817 battle_get_def,
+-- battle_get_mdef; Ragu Memo: "DEF - 50%, MDEF + 25%")
+local function hard(bl) return sc(bl, SC.FREEZE) or sc(bl, SC.STONE) end
+local function player_def(bl) local d = bl.st.def; if hard(bl) then d = d >> 1 end; return d end
 function battle.def(bl)
-  if bl.kind ~= "mob" then return bl.st.def end
+  if bl.kind ~= "mob" then return player_def(bl) end
   local def = bl.db.def
   -- Signum Crucis: eAthena 817 battle.c:502 (mod0631 never starts the status).
   -- Plants keep their DEF of 10000+ (mod0631's "one damage a hit" value).
@@ -154,9 +158,19 @@ function battle.def(bl)
   -- Strip Shield: 15% off (euRO's text of May 2004, skilldesctable.txt:1316; jAthena of
   -- 2004-05-07 has x85/100). The iRO guide of March gave 10% for each of three Strips.
   if sc(bl, SC.STRIPSHIELD) and def < 10000 then def = def - floor(def * 15 / 100) end
+  -- a poisoned monster loses a quarter (players: status.lua), a frozen or stone one half
+  -- (817 battle.c battle_get_def; Ragu Memo's ailment page, 2003-08 and 2003-12)
+  if def < 10000 then
+    if sc(bl, SC.POISON) then def = floor(def * 75 / 100) end
+    if sc(bl, SC.FREEZE) or sc(bl, SC.STONE) then def = def >> 1 end
+  end
   return def
 end
-function battle.mdef(bl) return bl.kind == "mob" and bl.db.mdef or bl.st.mdef end
+function battle.mdef(bl)
+  local m = bl.kind == "mob" and bl.db.mdef or bl.st.mdef
+  if m < 10000 and hard(bl) then m = floor(m * 125 / 100) end
+  return m
+end
 function battle.def2(bl) -- battle.c:258
   if bl.kind ~= "mob" then return bl.st.def2 end
   local def2 = mob_vit(bl)

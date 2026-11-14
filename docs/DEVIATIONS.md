@@ -684,8 +684,20 @@ always fires.
   come from 817's `cast_db.txt` (`data/db/skills.toml` `time`, `time2`).
   mod0631 has fixed chances, placeholder lengths ("some length or other" in
   its comments), and no Curse at all (the status is refused).
-* **Poison takes HP** every second down to a quarter (817); in mod0631 it
-  only shows.
+* **Lengths of 2003** (2026-11-14). Where Ragu Memo's ailment page (jRO
+  players' measurements, captures of 2003-08-02 and 2003-12-12; research
+  round 13, THREADS.md #21) gives a rule, it replaces 817's per-skill
+  lengths: a stun lasts 3 s less (3 + VIT + LUK/3)% whatever the skill
+  (817: Sonic Blow 6 to 15 s), Blind 30 s - BaseLv/10 - INT/15 (817: 10 to
+  19 s), stone 17 s - MDEF/20 (817: Stone Curse's 10 to 19 s less MDEF/5),
+  sleep about 30 s (817: Sandman 12 to 20 s) less INT + LUK/3 as in 817, and
+  silence is shortened by VIT alone. Freezing (the same rule in both) and
+  Curse (unknown to the page) keep 817's.
+* **Poison takes HP** down to a quarter: 3% of max HP every 3 seconds
+  (Ragu Memo; 817 bit every second, 3 + 1.5% for a player, 3 + 0.5% for a
+  monster); in mod0631 it only shows. **Poison takes a quarter off DEF,
+  freezing and stone half of DEF and add a quarter to MDEF** (817 and Ragu
+  Memo agree; not in mod0631); **a Curse slows the walk** (817).
 * **Blessing lifts Curse and Stone from players** too (mod0631: monsters only).
 * **Storm Gust freezes on its third hit** (817) instead of 35%+3%/level a hit.
 * **Stone** takes five seconds to set, then lasts its time and costs 1% HP

@@ -776,7 +776,8 @@ fn death_and_return() {
 }
 
 /// Stone Curse (eAthena 817): five seconds of turning to stone, during which
-/// the victim still acts; then stone until the time is up.
+/// the victim still acts; then stone until the time is up: 17 s less MDEF/20
+/// (Ragu Memo, 2003-12), 16.75 s for a Poring.
 #[test]
 fn stone_sets_then_wears_off() {
     let mut t = T::new();
@@ -787,7 +788,9 @@ fn stone_sets_then_wears_off() {
     t.run(5500);
     assert_eq!(t.lua(&format!("battle.get({mob}).opt1")).trim(), "1", "stone");
     assert!(t.packets(0x0119).iter().any(|p| u16_at(p, 6) == 1), "the client is shown the stone when it sets");
-    t.run(13_000);
+    t.run(14_000);
+    assert_eq!(t.lua(&format!("battle.sc(battle.get({mob}), SC.STONE) and 1 or 0")).trim(), "1", "still stone after 19.5 s");
+    t.run(4_000);
     assert_eq!(t.lua(&format!("battle.sc(battle.get({mob}), SC.STONE) and 1 or 0")).trim(), "0", "worn off");
 }
 
@@ -1698,4 +1701,39 @@ fn others_ground_units_seen_again() {
     t.run(30_000);
     let gone = t.packets(0x0120).len();
     assert!(gone >= 25, "the Quagmire's end reaches the client out of sight ({gone})");
+}
+
+/// Ailments as Ragu Memo's page of 2003-12 has them: a stun of about 3 s
+/// whatever the skill, Blind by base level and INT, a frozen monster's DEF
+/// halved and MDEF a quarter up, a poisoned one's DEF a quarter down.
+#[test]
+fn ailment_lengths_and_effects_of_2003() {
+    let mut t = T::new();
+    let mob = t.spawn(27, 25, 1002); // Poring: VIT 1, LUK 30 (DEF 0: take a Rocker, DEF 5)
+    t.lua(&format!("skill_status_change_start({mob}, SC.STAN, 10, 0, {{ tick = 15000 }})"));
+    assert!(t.has_sc(mob, "STAN"));
+    t.run(3100);
+    assert!(!t.has_sc(mob, "STAN"), "3 s less (3 + VIT + LUK/3)%, not Sonic Blow's 15 s");
+    // Blind on the player: 30 s - BaseLv/10 - INT/15
+    let me = t.me;
+    t.lua(&format!("skill_status_change_start({me}, SC.BLIND, 1, 0, {{ tick = 10000 }})"));
+    let lv: i64 = t.lua(&format!("battle.lv(battle.get({me}))")).trim().parse().unwrap();
+    let int: i64 = t.lua(&format!("battle.int(battle.get({me}))")).trim().parse().unwrap();
+    let want = 30000 - lv * 100 - int * 1000 / 15;
+    let left: i64 = t.lua(&format!("battle.sc(battle.get({me}), SC.BLIND).left")).trim().parse().unwrap_or(-1);
+    assert!((left - want).abs() < 500, "blind for {left} ms, want {want}");
+    // DEF and MDEF of a frozen, then a poisoned Rocker
+    let r = t.spawn(28, 25, 1052);
+    let def = |t: &mut T| -> (i64, i64) {
+        let s = t.lua(&format!("battle.def(battle.get({r})) .. ' ' .. battle.mdef(battle.get({r}))"));
+        let v: Vec<i64> = s.trim().trim_matches('"').split(' ').map(|x| x.parse().unwrap()).collect();
+        (v[0], v[1])
+    };
+    let (d0, m0) = def(&mut t);
+    t.lua(&format!("skill_status_change_start({r}, SC.FREEZE, 10, 0, {{ tick = 20000, nodef = true }})"));
+    let (d1, m1) = def(&mut t);
+    assert_eq!((d1, m1), (d0 >> 1, m0 * 125 / 100), "frozen: DEF halved, MDEF +25%");
+    t.lua(&format!("skill_status_change_end({r}, SC.FREEZE)"));
+    t.lua(&format!("skill_status_change_start({r}, SC.POISON, 1, 0, {{ tick = 20000, nodef = true }})"));
+    assert_eq!(def(&mut t).0, d0 * 75 / 100, "poisoned: DEF -25%");
 }

@@ -732,6 +732,23 @@ on players; Blind `30 - BaseLevel/10 - INT/15` s (at least 15); Stun
 The nearest-dated source we have for the lengths (817's come from its
 `cast_db.txt` per skill): set them side by side, skill by skill, before
 changing any. A pRO guide of 2004-08 (GameFAQs 31808) copies the page.
+**Round 13 (2026-11-14): Ragu Memo itself, at our date.** Its
+`abnormal.html` was captured on 2003-08-02 and 2003-12-12
+(`research/agy-threads/r13/pages/`). Chances: 817's to the letter
+(`base * (100 - (3 + stat + LUK/3))`) except poison, where the December
+page has LUK/5 ("LUK/15 rumoured") and the August one LUK/3; we keep LUK/3.
+Lengths and effects, set side by side with 817 skill by skill (817's come
+from its `cast_db`, jAthena's of 2004-02-19 the same code): stun about 3 s
+less the chance's term (817 6-15 s), blind `30 - BaseLv/10 - INT/15` s
+(817 10-19 s), stone `17 - MDEF/20` s (817 10-19 s less MDEF/5), sleep
+about 30 s, silence shortened by VIT alone, freezing `base * (1 -
+MDEF/100)` (817 the same), poison 10-30 s on monsters and 5-60 s on players
+"by VIT and LUK" (no formula; 817 15-60 s by level), 3% HP every 3 s
+(817 every second), DEF -25% poisoned, DEF -50% and MDEF +25% frozen or
+stone (817 has those effects, mod0631 not). **Built** from it the same day
+(DEVIATIONS.md, test `ailment_lengths_and_effects_of_2003`). Open: the
+poison's length rule, Curse's length, whether euRO's servers of January
+2004 had the same as jRO's.
 **Impact:** `skill_additional_effect` and the ailment part of
 `skill_status_change_start` in `scripts/rules/`.
 **Look:** period player guides on stun and freeze resistance ("VIT 97
