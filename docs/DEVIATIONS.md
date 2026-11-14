@@ -440,6 +440,26 @@ eAthena 817 (2004-02-19), bugs included. The translator is
   dolls and gives a sweet back (a Yoyo Doll brings an Yggdrasil Seed); we
   take that, on 817's cell, with 817's first two pages and our
   translation of the rest.
+* **Christopher, Geffen's smith supplier** (`scripts/npc/christopher.lua`).
+  817's script ended without a word whenever the zeny was short (its jumps
+  name `NoZeny`, its line is under `NoZenys`), could never sell a Mini
+  Furnace (its weight test read two variables that are always 0), sold
+  Phracon at 200z to anyone buying Emveretarcon, and charged 100z for the
+  1000z Iron Hammer. Each is mended as jAthena's script of 2003-10-30 has
+  it (//0505, `conf/npc_town_geffen.txt`), whose overweight line we
+  translated; 817's wording otherwise.
+* **Alberta's Grampa Pharmacist** (`scripts/npc/grampa_pharmacist.lua`).
+  817's port took a White, Blue or Green Potion's herbs, bottle and fee
+  and gave nothing when asked for "as many as I can", took Green Potions
+  for the Green Potion, went on making potions with no bottles left, and
+  ended without a word in three places. mod0631 loads the same NPC
+  (`conf/npc_event_potion.txt`, 2003-12-14) with the same recipes and fees
+  and a script that works: we run its steps with 817's words, and its two
+  lines 817 lacks (no money, too heavy) translated.
+* **The Swordman Test Hall Staff** (`scripts/npc/swordman_course.lua`)
+  sends anyone who is not a Novice out of the hall with 817's "how did you
+  come inside" line; 817 tested for Novices first and ended without a word
+  for anyone else (jAthena //0854 has no such test).
 * **Peco Peco Breeder** (`scripts/npc/peco_keeper.lua`): mod0631's keeper
   by Prontera's north-west wall (`prontera 55,350`), 2500z a bird for a
   Knight; the Crusaders' keeper (`232,318`) comes with `jobs2_2`. 817 has
@@ -465,7 +485,11 @@ eAthena 817 (2004-02-19), bugs included. The translator is
   number, like its three sister branches. This is the one fix made in the
   translator (`SOURCE_FIXES`) rather than in an override: the NPC is 350
   lines long. A stray `f` in Charge Arrow's "you again?" line
-  (`skillquests/arrowrepel.txt:115`) is dropped the same way.
+  (`skillquests/arrowrepel.txt:115`) is dropped the same way, and so is
+  the misspelt label of Geffen's Welding Mask smith
+  (`quests/headgearquest.txt:82`, `LKeyDork` for `LHeyDork`, which 817's
+  other copy of the NPC spells right): short of Steel or zeny, he ended
+  without a word.
 * **Monsters and warps of the job tests.** The world's monsters and warps
   are mod0631's. 817's job files place some of their own, and those are
   taken where mod0631 has none: the Chonchons along the Swordman course and

@@ -1055,12 +1055,18 @@ Shelf, `other/books.txt`). **Left as 817 has them, open:**
   Jellopy and three Fluff whatever the solution.
 * *Scripts that end without a word* when the player is short of zeny or
   goods (a jump to a label the source lacks; `research/npc_lint.py` lists
-  them, with the tests that decide nothing): Christopher's smithy in
-  Geffen (`geffen_in 110,172`: `NoZeny`, `inputOW`), the Grampa Pharmacist
-  of Alberta (`alberta_in 16,28`), the headgear Blacksmith of Geffen
-  (`geffen_in 144,166`), the Swordman's Test Hall Staff for a non-novice,
-  Comodo's Camp Ground Boy. Nothing is taken and the window gets its close
-  button; what they should say is not in 817.
+  them, with the tests that decide nothing). **Mended on 2026-11-14**
+  (DEVIATIONS.md), each from a period script that has the missing part:
+  Christopher in Geffen (817's own line under another label; jAthena
+  //0505 of 2003-10-30 for the rest: his Mini Furnace could never be
+  bought, his Emveretarcon sold Phracon), the Grampa Pharmacist of Alberta
+  (mod0631's `npc_event_potion.txt`: 817's "as many as I can" took the
+  herbs and gave nothing for three potions), the headgear Blacksmith of
+  Geffen (a misspelt label), the Swordman's Test Hall Staff (jAthena
+  //0854). Comodo's Camp Ground Boy is left: his silent branch needs
+  `comodo_npc`, which no script sets. Also found on the way: 817's `input`
+  reads a negative number as 0, which the server now does too (its shops
+  test `!= 0` and would have paid out for -10).
 * *Swordman and Archer*, read against jAthena //0854 of 2004-03-02
   (`conf/npc/npc_job_swordman.txt`, `npc_job_archer.txt`,
   `conf/warp/npc_warp_job.txt`; the same official tests). Mended: the

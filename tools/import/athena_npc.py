@@ -289,6 +289,10 @@ SOURCE_FIXES = {
                                    "pit 2_blank_6_b repeats 2_blank_6_a's cell; jAthena (:130) has 125,201"),
     ("jobs/swordsman.txt", 1151): ("139,40,0,{", "139,21,0,{",
                                    "pit 2_blank_9_a is 21 cells to each side like 7_a, 8_a and 8_e above it (jAthena :143), not 40"),
+    ("quests/headgearquest.txt", 82): (
+        "LKeyDork:", "LHeyDork:",
+        "both jumps name LHeyDork, as does 817's other copy of this NPC (quests/all_quest.txt:150): "
+        "short of Steel or zeny, the Welding Mask smith ended without a word"),
     ("skillquests/arrowrepel.txt", 115): (
         'everything";f', 'everything";',
         "a stray f after the line made the next one an unknown command, so the script stopped "

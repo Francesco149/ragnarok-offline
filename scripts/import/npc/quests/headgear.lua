@@ -3,6 +3,7 @@
 -- the emulator authors' (often fan-translated), not Gravity's. GPL, like its source.
 -- Don't edit: override in scripts/npc/ (npc{replaces=}, wrap_npc, remove_npc) and list the
 -- change in docs/DEVIATIONS.md.
+-- source fix (quests/headgearquest.txt:82): LKeyDork: -> LHeyDork:: both jumps name LHeyDork, as does 817's other copy of this NPC (quests/all_quest.txt:150): short of Steel or zeny, the Welding Mask smith ended without a word
 
 npc {
   map = "payon_in01", x = 103, y = 111, dir = 4, sprite = 103, name = "Granny",
@@ -52,8 +53,6 @@ npc {
   end,
 }
 
--- warning (quests/headgearquest.txt:47): goto LHeyDork: no such label (Athena ends the script here)
--- warning (quests/headgearquest.txt:47): goto LHeyDork: no such label (Athena ends the script here)
 npc {
   map = "geffen_in", x = 144, y = 166, dir = 4, sprite = 63, name = "Blacksmith",
   src = "817:quests/headgearquest.txt:47",
@@ -80,8 +79,8 @@ npc {
     c = menu("Hm..Not bad.Alright.", "No thanks.Useless for me though.")
     if c == 1 then goto LNotBad elseif c == 2 then goto LNoThx end
     ::LNotBad::
-    if count_item(999) < 50 then do return end --[[ goto LHeyDork: no such label in the source (Athena ends the script) ]] end
-    if player.zeny < 2000 then do return end --[[ goto LHeyDork: no such label in the source (Athena ends the script) ]] end
+    if count_item(999) < 50 then goto LHeyDork end
+    if player.zeny < 2000 then goto LHeyDork end
     mes "[Blacksmith]"
     mes "I like you,Dude ! Alright,I do it right away !!"
     take_item(999, 50)
@@ -92,7 +91,7 @@ npc {
     mes "Bye bye Buddy ~"
     close()
     do return end
-    ::LKeyDork::
+    ::LHeyDork::
     mes "[Blacksmith]"
     mes "Hey Dork .If you don't have enough steels or money,Get LOST!!"
     mes "Have you ever heard about Quenching? It 's not easy as you think!"
