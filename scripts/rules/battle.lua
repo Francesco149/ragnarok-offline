@@ -562,11 +562,18 @@ function battle.calc_weapon_attack(src, target, skill_num, skill_lv, wflag, opt)
     and not (tsd and battle.dcard(tsd, 4143)) then -- Orc Hero Card: never hit critically
     damage = damage + atkmax
     damage2 = damage2 + atkmax_
+    -- the arrow's ATK, all of it on a critical (eAthena 817 battle.c:2269)
+    if sd and st.weapontype1 == 11 and st.ammo then damage = damage + st.ammo_atk end
     type = 0x0a
   else
     local r = random(0, 0x7fff)
     if atkmax > atkmin then damage = damage + atkmin + r % (atkmax - atkmin) else damage = damage + atkmin end
     if atkmax_ > atkmin_ then damage2 = damage2 + atkmin_ + r % (atkmax_ - atkmin_) else damage2 = damage2 + atkmin_ end
+    -- the arrow's ATK, a random part of it, after the size modifier and before any skill
+    -- multiplies the blow: "rnd( 0 , ArrowATK - 1 )", RODataZone's iRO combat page as captured
+    -- 2003-12-16 (in 2003-09 it said the full ATK); eAthena 817 battle.c:2318 adds 0 to ATK at
+    -- the same place. mod0631 has the line commented out (battle.c:913)
+    if sd and st.weapontype1 == 11 and st.ammo and st.ammo_atk > 0 then damage = damage + rnd(st.ammo_atk) end
     -- battle.c:1022 skills that multiply the attack
     local t = sc(src, SC.OVERTHRUST)
     if t then damage = damage + floor(damage * (5 * t.val1) / 100) end

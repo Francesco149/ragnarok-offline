@@ -41,7 +41,8 @@ period source). Research behind the tiers: `research/notes/mechanics-sources.md`
 | Ailments: chance, resistance by stats, length; poison's HP loss | eAthena 817 `map/skill.c` skill_additional_effect, skill_status_change_start, `db/cast_db.txt` time columns (2004-02-19). mod0631's are placeholders | athena2003 |
 | Skill packets (cast bar, skill damage, ground cells, status icons, option words) | layouts: mod0631 `map/clif.c`; lengths: the client; the real client draws them (cast bar, bolts, Fire Wall, Safety Wall, Sight, a frozen monster; 2026-11-10) | client / athena2003 |
 | Natural regen, Increase HP/SP Recovery, Moving HP Recovery, no regen at half weight or hidden | mod0631 `map/pc.c` pc_natural_heal_hp / _sp (4 s HP / 8 s SP clocks; 10 s skill clocks) | athena2003 |
-| Arrows: one a shot, element from the arrow, no ATK of their own | mod0631 `map/battle.c:1687`, `map/pc.c:854` (its arrow ATK line is commented out) | athena2003 |
+| Arrows: one a shot, element from the arrow | mod0631 `map/battle.c:1687`, `map/pc.c:854` | athena2003 |
+| Arrow ATK: 0 to ATK - 1 added after the size modifier, all of it on a critical | RODataZone's iRO combat page (capture 2003-12-16, `web.archive.org/web/20031216073814/http://www.rodatazone.com/mechanics/combat.php`); eAthena 817 `map/battle.c:2269`, `:2318` (0 to ATK). mod0631 comments the line out (`map/battle.c:913`) | period |
 | Steal, Steal Coin | mod0631 `map/pc.c` pc_steal_item, pc_steal_coin | athena2003 |
 | Arrow Crafting and forge recipes; forging success rates, anvils, Star Crumbs and elemental stones | mod0631 `db/create_arrow_db.txt`, `db/produce_db.txt` (`scripts/import/craft.lua`), `map/skill.c` skill_produce_mix (`scripts/rules/produce.lua`) | athena2003 |
 | Discount, Overcharge; healing items scaled by VIT / INT and the recovery skills; overweight icons at 50% and 90% | mod0631 `map/pc.c` pc_modifybuyvalue, pc_modifysellvalue, pc_itemheal, pc_checkweighticon | athena2003 |
