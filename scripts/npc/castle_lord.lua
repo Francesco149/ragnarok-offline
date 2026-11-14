@@ -1,0 +1,521 @@
+-- A guild castle for one: take it, hold it, give it up.
+--
+-- War of Emperium needs guilds and opponents, and this game has neither
+-- (research/THREADS.md #17: the owner chose to rework it for one player once
+-- the original was understood). What is period here, and from where:
+--
+--   * an ownerless castle holds monsters (castles.lua) and its Emperium, on
+--     eAthena 817's cell (npc/guild/ev_agit_*.txt, 2004-02-16). Breaking the
+--     Emperium takes the castle, with 817's announcement. Only a player's
+--     weapon hurts it (rules/battle.lua, 817 battle.c:1153);
+--   * the steward and what he offers: jAthena's test steward (//0795,
+--     2004-02-12, Kalen) in eAthena 0.5.2's English (npc/guild/*.txt,
+--     2004-05-18, "Translated By AppleGirl"), with the costs of jAthena's
+--     later test script (//0974, 2004-05-16, script/npc/gvg/test/): commerce
+--     investment 5,000z x (1 + t(t+1)/2) x (1 + 3n), t = a fifth of the
+--     level before today's, n = today's investments, two a day, up to 100;
+--     a Kafra contract 10,000z. The iRO guide's War of Emperium page
+--     (2004-04) lists the same services;
+--   * the castle Kafra: 817's (cells, the one town she sends you to, 200z,
+--     the cart), storing free as the iRO guide says ("free storage for guild
+--     members"; 817 charged 40z);
+--   * the master room, its daily treasure and the lever out: jAthena //0974
+--     (test/tbox.txt): at each new day 2 + (C + 5) / 10 of the castle's first
+--     box and 2 + C / 10 of its second, at most 12 of each, C the commerce
+--     level; the room's cells are jAthena's, found on this client's maps by
+--     research/castle_cells.py (payg_cas01's room is elsewhere on this
+--     client's map). What a box holds: data/db/treasure.toml (Ragu Memo's jRO
+--     table of 2004-02). kRO, 2003-07-29: only the master reaches the boxes;
+--   * the lever into the guild dungeon, for the castle's master only, and the
+--     lever out of the master room: jAthena //0974's cells and arrivals
+--     (817's have slips: aldeg_cas01's two on one cell, three missing);
+--   * giving the castle up empties it, and an empty castle "becomes filled
+--     with monsters" (the iRO guide; kRO's notice of 2004-02-10).
+--
+-- Ours (docs/DEVIATIONS.md, "Guild castles"): anyone may break an Emperium
+-- (817 wants a guild with Official Guild Approval); there is no siege
+-- schedule, so an ownerless castle can be taken whenever its Emperium
+-- stands; the castle belongs to the character, and the announcements name
+-- the character where they named the guild; nothing ever attacks a held
+-- castle, so the steward offers no defence investment and no guardians
+-- (they mattered only in a siege); treasure is laid out when the master
+-- first comes in on a new day, not at midnight; prtg_cas02's Emperium stands
+-- in this client's older inner room (193,181), the emulators' cell being rock.
+
+local C = {
+  -- map, name (817 db/castle_db.txt), Kafra's town (817), Emperium (817),
+  -- Kafra x y dir (817), steward name x y dir (0.5.2's name, jAthena //1046's cell),
+  -- master-room arrival (0.5.2), lever out: cell -> arrival (jAthena //0974),
+  -- dungeon lever: cell -> map x y (jAthena //0974), box rectangle (jAthena //0974), boxes
+  { "aldeg_cas01", "Luina Guild 1", { "Al De Baran", "aldebaran", 132, 103 }, { 216, 24 },
+    { 218, 170, 0 }, { "Arl Fredo", 218, 175, 0 }, { 119, 223 }, { 123, 223, 218, 176 },
+    { 211, 179, "gld_dun02", 32, 122 }, { 114, 218, 123, 227 }, 1324 },
+  { "aldeg_cas02", "Luina Guild 2", { "Al De Baran", "aldebaran", 132, 103 }, { 214, 24 },
+    { 84, 74, 0 }, { "ChenChenLee", 78, 74, 0 }, { 135, 231 }, { 139, 234, 78, 75 },
+    { 194, 136, "gld_dun02", 79, 30 }, { 130, 226, 139, 235 }, 1326 },
+  { "aldeg_cas03", "Luina Guild 3", { "Al De Baran", "aldebaran", 132, 103 }, { 206, 32 },
+    { 118, 76, 0 }, { "Najarf", 110, 118, 0 }, { 225, 269 }, { 229, 267, 110, 119 },
+    { 200, 177, "gld_dun02", 165, 38 }, { 220, 264, 229, 273 }, 1328 },
+  -- 0.5.2 copies cas05's Brimhemsen here, on cas01's cell; jAthena //1046 has ウィリオット at 67,116
+  { "aldeg_cas04", "Luina Guild 4", { "Al De Baran", "aldebaran", 132, 103 }, { 36, 218 },
+    { 45, 88, 0 }, { "Wiliot", 67, 116, 0 }, { 85, 12 }, { 83, 17, 67, 117 },
+    { 76, 64, "gld_dun02", 160, 148 }, { 80, 8, 89, 17 }, 1330 },
+  { "aldeg_cas05", "Luina Guild 5", { "Al De Baran", "aldebaran", 132, 103 }, { 28, 102 },
+    { 31, 190, 0 }, { "Brimhemsen", 51, 179, 0 }, { 62, 12 }, { 64, 8, 51, 179 },
+    { 22, 205, "gld_dun02", 103, 169 }, { 58, 8, 67, 17 }, 1332 },
+  { "gefg_cas01", "Britoniah Guild 1", { "Geffen", "geffen", 120, 39 }, { 198, 182 },
+    { 83, 47, 3 }, { "Gnahucher", 40, 48, 5 }, { 155, 112 }, { 152, 117, 40, 49 },
+    { 78, 84, "gld_dun04", 39, 258 }, { 150, 108, 159, 117 }, 1334 },
+  { "gefg_cas02", "Britoniah Guild 2", { "Geffen", "geffen", 120, 39 }, { 176, 178 },
+    { 23, 66, 3 }, { "Esmark", 12, 66, 0 }, { 141, 115 }, { 145, 115, 12, 67 },
+    { 167, 40, "gld_dun04", 125, 270 }, { 136, 112, 145, 121 }, 1336 },
+  { "gefg_cas03", "Britoniah Guild 3", { "Geffen", "geffen", 120, 39 }, { 245, 167 },
+    { 116, 89, 5 }, { "Jyang", 106, 23, 3 }, { 270, 290 }, { 267, 287, 106, 24 },
+    { 221, 43, "gld_dun04", 268, 251 }, { 266, 286, 275, 295 }, 1338 },
+  { "gefg_cas04", "Britoniah Guild 4", { "Geffen", "geffen", 120, 39 }, { 174, 178 },
+    { 59, 70, 3 }, { "Kelbany", 73, 46, 3 }, { 116, 118 }, { 113, 115, 73, 47 },
+    { 58, 75, "gld_dun04", 268, 108 }, { 112, 114, 121, 123 }, 1340 },
+  { "gefg_cas05", "Britoniah Guild 5", { "Geffen", "geffen", 120, 39 }, { 194, 184 },
+    { 61, 52, 5 }, { "Beeor", 70, 52, 3 }, { 144, 110 }, { 141, 107, 70, 53 },
+    { 65, 22, "gld_dun04", 230, 35 }, { 140, 106, 149, 115 }, 1342 },
+  -- this client's payg_cas01 is 300x160: the master room is at 286-295, 4-13 (jAthena: 295-304, 8-17)
+  { "payg_cas01", "Chung-Rim Guild 1", { "Payon", "payon", 82, 128 }, { 139, 139 },
+    { 128, 58, 3 }, { "Grunnday", 120, 58, 4 }, { 290, 7 }, { 287, 5, 120, 59 },
+    { 101, 25, "gld_dun01", 186, 165 }, { 286, 4, 295, 13 }, 1344 },
+  { "payg_cas02", "Chung-Rim Guild 2", { "Payon", "payon", 82, 128 }, { 39, 25 },
+    { 22, 275, 5 }, { "Cherrios", 22, 260, 7 }, { 145, 143 }, { 141, 141, 22, 261 },
+    { 278, 247, "gld_dun01", 54, 165 }, { 140, 140, 149, 149 }, 1346 },
+  -- 0.5.2 puts Garriet beside the Emperium (268,264); the lever out leads to 50,261, jAthena's cell
+  { "payg_cas03", "Chung-Rim Guild 3", { "Payon", "payon", 82, 128 }, { 269, 265 },
+    { 9, 263, 5 }, { "Garriet", 50, 261, 3 }, { 158, 168 }, { 155, 165, 50, 261 },
+    { 38, 42, "gld_dun01", 54, 39 }, { 154, 164, 163, 173 }, 1348 },
+  { "payg_cas04", "Chung-Rim Guild 4", { "Payon", "payon", 82, 128 }, { 271, 29 },
+    { 40, 235, 1 }, { "DJ", 38, 284, 3 }, { 146, 48 }, { 143, 45, 38, 285 },
+    { 52, 48, "gld_dun01", 186, 39 }, { 142, 44, 151, 53 }, 1350 },
+  { "payg_cas05", "Chung-Rim Guild 5", { "Payon", "payon", 82, 128 }, { 30, 30 },
+    { 276, 227, 1 }, { "Najarf", 277, 249, 3 }, { 156, 131 }, { 153, 129, 277, 250 },
+    { 238, 11, "gld_dun01", 223, 202 }, { 152, 128, 161, 137 }, 1352 },
+  { "prtg_cas01", "Valkyrie Realms 1", { "Prontera", "prontera", 278, 211 }, { 197, 197 },
+    { 96, 173, 0 }, { "Abrai", 112, 181, 0 }, { 11, 208 }, { 15, 209, 111, 181 },
+    { 94, 200, "gld_dun03", 28, 251 }, { 6, 204, 15, 213 }, 1354 },
+  { "prtg_cas02", "Valkyrie Realms 2", { "Prontera", "prontera", 278, 211 }, { 193, 181 },
+    { 71, 36, 4 }, { "Rhay", 94, 61, 4 }, { 202, 228 }, { 206, 228, 94, 62 },
+    { 84, 72, "gld_dun03", 164, 268 }, { 198, 224, 207, 233 }, 1356 },
+  { "prtg_cas03", "Valkyrie Realms 3", { "Prontera", "prontera", 278, 211 }, { 17, 221 },
+    { 181, 215, 4 }, { "Stick", 51, 100, 4 }, { 189, 132 }, { 193, 130, 51, 101 },
+    { 5, 70, "gld_dun03", 164, 179 }, { 184, 128, 193, 137 }, 1358 },
+  { "prtg_cas04", "Valkyrie Realms 4", { "Prontera", "prontera", 278, 211 }, { 292, 14 },
+    { 258, 247, 4 }, { "Bandred", 259, 265, 4 }, { 271, 162 }, { 274, 161, 259, 265 },
+    { 56, 283, "gld_dun03", 268, 203 }, { 266, 158, 275, 167 }, 1360 },
+  { "prtg_cas05", "Valkyrie Realms 5", { "Prontera", "prontera", 278, 211 }, { 266, 266 },
+    { 52, 41, 4 }, { "Reiner", 36, 37, 4 }, { 277, 178 }, { 280, 177, 36, 38 },
+    { 212, 95, "gld_dun03", 199, 28 }, { 272, 174, 281, 183 }, 1362 },
+}
+
+local KAFRA_FEE = 10000 -- jAthena //0795 and //0974, 0.5.2
+local TELE_FEE = 200    -- 817's castle Kafras
+local CART_FEE = 800
+
+-- The castle's state lives in server-wide variables (saved): who holds it
+-- (a character id and name), the commerce level, today's investments, the
+-- day they and the treasure were counted for, the Kafra contract.
+local function key(c, k) return "castle_" .. c[1] .. (k and ("_" .. k) or "") end
+
+-- The day, for investments and treasure (tests replace it).
+castle_today = castle_today or function() return os.date("%Y-%m-%d") end
+
+function castle_owner(map)
+  return g["castle_" .. map]
+end
+
+local function by_map(map)
+  for _, c in ipairs(C) do if c[1] == map then return c end end
+end
+
+local function owner_name(c) return g[key(c, "name$")] end
+local function is_master(c) return g[key(c)] ~= 0 and g[key(c)] == player.char_id end
+
+local function boxes_event(c) return "Agit_" .. c[1] .. "::OnBoxOpen" end
+
+-- A new day: investments start again, and the master room gets that day's treasure.
+local function new_day(c)
+  if not map_size(c[1]) then return end
+  local today = castle_today()
+  if g[key(c, "day$")] == today then return end
+  g[key(c, "day$")] = today
+  g[key(c, "te")] = 0
+  kill_monster(c[1], boxes_event(c))
+  if g[key(c)] == 0 then return end
+  local eco, r = g[key(c, "eco")], c[10]
+  local n1 = math.min(12, 2 + (eco + 5) // 10)
+  local n2 = math.min(12, 2 + eco // 10)
+  area_monster(c[1], r[1], r[2], r[3], r[4], "Treasure Chest", c[11], n1, boxes_event(c))
+  area_monster(c[1], r[1], r[2], r[3], r[4], "Treasure Chest", c[11] + 1, n2, boxes_event(c))
+end
+
+local function emperium(c)
+  if not map_size(c[1]) then return end -- a client (or a test world) without the castle
+  if mob_count(c[1], "Agit_" .. c[1] .. "::OnAgitBreak") == 0 then
+    monster(c[1], c[4][1], c[4][2], "Emperium", 1288, 1, "Agit_" .. c[1] .. "::OnAgitBreak")
+  end
+end
+
+local function clear(c)
+  for _, k in ipairs({ "", "name$", "eco", "te", "kafra", "day$" }) do
+    g[key(c, k ~= "" and k or nil)] = (k:sub(-1) == "$") and "" or 0
+  end
+  kill_monster(c[1], boxes_event(c))
+  disable_npc("castle_kafra_" .. c[1])
+end
+
+-- Called by castles.lua once a castle has its garrison back.
+function castle_unowned_setup(map)
+  local c = by_map(map)
+  if c and g[key(c)] == 0 then emperium(c) end
+end
+
+for i, c in ipairs(C) do
+  local map = c[1]
+  local stew = c[6]
+  local S = "[ " .. stew[1] .. " ]"
+
+  -- the castle itself: the Emperium's events, the treasure's
+  npc {
+    map = "-", name = "Agit_" .. map, events = { "OnInit", "OnAgitBreak", "OnBoxOpen" },
+    on_click = function(at)
+      if at == "OnInit" then
+        if g[key(c)] == 0 then emperium(c) end
+      elseif at == "OnAgitBreak" then
+        if not player.char_id then return end -- broken by no player
+        g[key(c)] = player.char_id
+        g[key(c, "name$")] = player.name
+        g[key(c, "eco")] = 0
+        g[key(c, "te")] = 0
+        g[key(c, "kafra")] = 0
+        g[key(c, "day$")] = castle_today() -- the first treasure comes with the next day, as at jAthena's midnight
+        kill_monster(map, boxes_event(c))
+        disable_npc("castle_kafra_" .. map)
+        -- 817 ev_agit_*.txt, "[guild]" there
+        announce("Guild Base [" .. c[2] .. "] has been taken by [" .. player.name .. "].", 0)
+        map_announce(map, "Emperium has been destroyed.", 17)
+      end
+    end,
+  }
+
+  -- the steward
+  npc {
+    map = map, x = stew[2], y = stew[3], dir = stew[4], sprite = 55, name = stew[1], id = "castle_steward_" .. map,
+    on_click = function()
+      if g[key(c)] == 0 then
+        mes(S)
+        mes "I am waiting for my master."
+        mes "Brave Player! follow your destiny!..."
+        close()
+        return
+      end
+      if not is_master(c) then
+        mes(S)
+        mes("I am here to follow ^ff0000" .. owner_name(c) .. "^000000 's command!")
+        mes "Where are you guardians! destroy these bastards!"
+        close()
+        return
+      end
+      new_day(c)
+      mes(S)
+      mes("Welcome Master ^ff0000" .. player.name .. "^000000 !")
+      mes "I'll do anything you tell me to do sir!."
+      next()
+      local pick = menu("Guild Base Property", "Commerce Investment", "Kafra Service Employment / Dismissal",
+        "Enter Master's Room", "Empty Guild Base")
+      if pick == 1 then
+        mes(S)
+        mes "Guild Base Commerce Investment Improvement Information."
+        next()
+        mes(S)
+        mes("^0000ffCurrent Commerce Investment is " .. g[key(c, "eco")] .. ".")
+        mes("- You have invested " .. g[key(c, "te")] .. " times today.^000000")
+        mes "That is about it."
+        close()
+      elseif pick == 2 then
+        mes(S)
+        mes "If you improve your Commerce Investments, Guild's Productive power increases to produce goods."
+        next()
+        mes(S)
+        mes "You can invest two times a day."
+        next()
+        local te, eco = g[key(c, "te")], g[key(c, "eco")]
+        if te >= 2 or eco >= 100 then
+          mes(S)
+          mes "^ff0000Guild's Investment is currently at 100%"
+          mes "you don't have to invest anymore.^000000"
+          close()
+          return
+        end
+        local t = (eco - te) // 5
+        local cost = 5000 * (1 + (1 + t) * t // 2) * (1 + 3 * te)
+        mes(S)
+        mes("Required invest amount is " .. cost .. " Zeny.")
+        mes "Would you like to invest?"
+        next()
+        if menu("Invest Commerce.", "Cancel.") ~= 1 then
+          mes(S)
+          mes "I'll follow your order Master!... you don't have to be hurry anywayz."
+          close()
+          return
+        end
+        if player.zeny < cost then
+          mes(S)
+          mes "Master, you do not have enough money to invest, investment has been cancelled."
+          close()
+          return
+        end
+        player.zeny = player.zeny - cost
+        g[key(c, "te")] = te + 1
+        g[key(c, "eco")] = eco + 1
+        mes(S)
+        mes "You invested successfully."
+        close()
+      elseif pick == 3 then
+        if g[key(c, "kafra")] == 1 then
+          mes(S)
+          mes "Would you like to dismiss the current Kafra Service?"
+          next()
+          if menu("Dismissal", "Cancel") ~= 1 then
+            mes(S)
+            mes "I think you should keep the current Kafra sir, she's trying her best sir."
+            close()
+            return
+          end
+          cutin("kafra_01", 2)
+          mes "[ Kafra Service ]"
+          mes "What have I done wrong? if so, would you please forgive me?"
+          next()
+          if menu("Dismissal", "Cancel") ~= 1 then
+            mes "[ Kafra Service ]"
+            mes "Thank you master, I'll do my best! ^^."
+            cutin("kafra_01", 255)
+            close()
+            return
+          end
+          mes "[ Kafra Service ]"
+          mes "OMG!! how could you do this to meeeeh!! T_T~"
+          next()
+          disable_npc("castle_kafra_" .. map)
+          g[key(c, "kafra")] = 0
+          cutin("kafra_01", 255)
+          mes(S)
+          mes "...."
+          mes "Kafra Service has been dismissed"
+          close()
+          return
+        end
+        mes(S)
+        mes "Would you like to employ a new Kafra Service?"
+        mes("^ff0000You need " .. KAFRA_FEE .. " Zeny to employ...")
+        next()
+        if menu("Employ Kafra.", "Cancel") ~= 1 then
+          mes(S)
+          mes "Yes Master! But you must get Kafra as soon as possible."
+          close()
+          return
+        end
+        if player.zeny < KAFRA_FEE then
+          mes(S)
+          mes "Master, you do not have enough money to employ Kafra, employment has been cancelled."
+          close()
+          return
+        end
+        player.zeny = player.zeny - KAFRA_FEE
+        g[key(c, "kafra")] = 1
+        enable_npc("castle_kafra_" .. map)
+        mes(S)
+        mes "You have been contracted with Kafra Service Company."
+        next()
+        cutin("kafra_01", 2)
+        mes "[ Kafra Service ]"
+        mes "Hello, I came here to follow your order sir!^^."
+        mes "I'll do the best I can."
+        next()
+        cutin("kafra_01", 255)
+        close()
+      elseif pick == 4 then
+        mes(S)
+        mes "Would you like to get into our treasure room?"
+        next()
+        mes(S)
+        mes "That place is only for guild master, which means you are the only one who has access to enter."
+        next()
+        if menu("Enter Master's room.", "Cancel") == 1 then
+          mes(S)
+          mes "Please follow me through the secret way."
+          mes "You must push down the secret switch in order to get out."
+          next()
+          warp(map, c[7][1], c[7][2])
+          return
+        end
+        mes(S)
+        mes "Goods are producing everyday, you must get'em whenever you can."
+        mes "Please don't forget to get all the goods in time."
+        close()
+      elseif pick == 5 then
+        mes(S)
+        mes "Master!!"
+        mes "Are you goin to give our guild up?!"
+        next()
+        mes(S)
+        mes "It is not worth to give up on our guild master!!!"
+        mes "Please reconsider master!!"
+        next()
+        if menu("Empty Guild Base", "Cancel") == 1 then
+          mes(S)
+          mes "Master, please reconsider...T_T!!"
+          mes "OMG, please!!!!!!!!"
+          next()
+          if menu("Cancel", "Empty Guild Base") == 2 then
+            mes(S)
+            mes "Master!!....."
+            next()
+            clear(c)
+            announce("Stronghold [" .. c[2] .. "], [" .. player.name .. "] has surrendered the castle", 0)
+            -- an empty castle fills with monsters (castles.lua), and its Emperium stands again
+            if content("castle_monsters") then do_event("castle_garrison::OnCastleEmptied" .. i) end
+            emperium(c)
+            return
+          end
+        end
+        mes(S)
+        mes "I knew it master^^!!"
+        mes "Please, don't freak me out like that again^^."
+        close()
+      end
+    end,
+  }
+
+  -- the Kafra, there once the master has a contract with her
+  local k = c[5]
+  npc {
+    map = map, x = k[1], y = k[2], dir = k[3], sprite = 117, name = "Kafra Service", id = "castle_kafra_" .. map,
+    events = { "OnInit" },
+    on_click = function(at)
+      if at == "OnInit" then
+        if g[key(c, "kafra")] ~= 1 then disable_npc("castle_kafra_" .. map) end
+        return
+      end
+      cutin("kafra_01", 2)
+      if not is_master(c) then
+        mes "[Kafra Service]"
+        mes("I am here to help only ^ff0000" .. owner_name(c) .. "^000000, please use a different Kafra Service. thank you.")
+        cutin("kafra_01", 255)
+        close()
+        return
+      end
+      mes "[Kafra Service]"
+      mes("Welcome, ^ff0000" .. player.name .. "^000000.")
+      mes "Kafra Service is always with you."
+      next()
+      local pick = menu("Open Storage", "Teleport Service", "Use Cart Service", "Cancel")
+      if pick == 1 then
+        if skill_level(1) < 6 then
+          mes "[Kafra Service]"
+          mes "You need Basic Skill level 6 to use the storage."
+        else
+          cutin("kafra_01", 255)
+          open_storage()
+          return
+        end
+      elseif pick == 2 then
+        local t = c[3]
+        mes "[Kafra Service]"
+        mes "Please choose a city."
+        next()
+        if menu(t[1] .. " -> " .. TELE_FEE .. " z", "Cancel") == 1 then
+          if player.zeny < TELE_FEE then
+            mes "[Kafra Service]"
+            mes "Sorry, you don't have enough Zeny to use the teleport service."
+          else
+            player.zeny = player.zeny - TELE_FEE
+            v.KF_PIT = v.KF_PIT + TELE_FEE // 10 -- 817: KF_PIT+20
+            cutin("kafra_01", 255)
+            warp(t[2], t[3], t[4])
+            return
+          end
+        end
+      elseif pick == 3 then
+        local cl = player.class
+        if cl ~= Job_Merchant and cl ~= Job_Blacksmith and cl ~= Job_Alchem then
+          mes "[Kafra Service]"
+          mes "Sorry, Cart Renting Service is only for Merchant/Blacksmith/Alchemist."
+        else
+          mes "[Kafra Service]"
+          mes("Cart Rental is " .. CART_FEE .. " Zeny and the [Pushcart] skill is necessary.")
+          mes "Would you like to rent one?"
+          next()
+          if menu("Rent Cart", "Cancel") == 1 then
+            if player.zeny < CART_FEE then
+              mes "[Kafra Service]"
+              mes("Sorry, you must have at least " .. CART_FEE .. " zeny.")
+            elseif check_option(0x0008) == 1 then
+              mes "[Kafra Service]"
+              mes "You already have a cart."
+            elseif not set_cart() then
+              mes "[Kafra Service]"
+              mes "Sorry, you need the Pushcart skill to use a cart."
+            else
+              player.zeny = player.zeny - CART_FEE
+            end
+          end
+        end
+      else
+        mes "[Kafra Service]"
+        mes "Kafra Service always trying to offer best service for you."
+        mes "Thank you for using our service."
+      end
+      cutin("kafra_01", 255)
+      close()
+    end,
+  }
+
+  -- the lever out of the master room
+  local lo = c[8]
+  npc {
+    map = map, x = lo[1], y = lo[2], dir = 0, sprite = 111, name = "Switch", id = "castle_lever_out_" .. map,
+    on_click = function()
+      mes "There is a little switch here."
+      mes "Would you like to pull the switch down?"
+      next()
+      if menu("Yes", "No") == 1 then
+        warp(map, lo[3], lo[4])
+        return
+      end
+      close()
+    end,
+  }
+
+  -- the lever into the guild dungeon
+  local ld = c[9]
+  npc {
+    map = map, x = ld[1], y = ld[2], dir = 0, sprite = 111, name = "Switch", id = "castle_lever_dun_" .. map,
+    on_click = function()
+      mes "[ Vibration of Man's Voice ]"
+      mes " ' Only brave man get to lead the guild base.. '"
+      next()
+      mes "There is a little switch here."
+      mes "Would you like to pull the switch down?"
+      next()
+      if menu("Yes", "No") ~= 1 then close() return end
+      if not is_master(c) then
+        mes "[ Vibration of Man's Voice ]"
+        mes " ' LOOOOOOOOSER...... ' "
+        close()
+        return
+      end
+      warp(ld[3], ld[4], ld[5])
+    end,
+  }
+end
+
+-- The master's treasure is laid out the first time he comes in on a new day.
+on("map_enter", function()
+  local c = by_map(player.map)
+  if c and is_master(c) then new_day(c) end
+end)

@@ -126,10 +126,11 @@ Not yet, or only in part:
   NPC dialogue is the emulator authors' fan translation, not Gravity's.
 
 Out of scope because nobody else is there: parties, guilds, trading, vending
-and PvP. What to do with War of Emperium and the guild dungeons in a
-single-player game is decided in principle (rework them for one player once
-the original is understood, THREADS.md #17) and not built. For now the guild
-castles hold what an ownerless castle held in early 2004: monsters.
+and PvP. The guild castles are reworked for one player (THREADS.md #17): an
+ownerless castle holds what one held in early 2004, monsters and its
+Emperium; break the Emperium and the castle is yours, with its steward,
+Kafra, daily treasure (jRO's table of February 2004) and the lever into the
+guild dungeon. Nothing attacks a castle you hold (yet).
 
 ## Why accuracy is slow
 

@@ -17,8 +17,8 @@
 -- left gets them again. `[game.content] castle_monsters = false` leaves the
 -- castles empty, as they were on kRO after 2004-02-10.
 --
--- Not here, on purpose: the Emperium, ownership, treasure rooms, the way
--- into the guild dungeons. Those are a design decision, not a port.
+-- The Emperium, ownership, the steward, the treasure room and the way into
+-- the guild dungeon are castle_lord.lua's: a single-player rework.
 
 if not content("castle_monsters") then return end
 
@@ -29,13 +29,24 @@ local CASTLES = {
   "prtg_cas01", "prtg_cas02", "prtg_cas03", "prtg_cas04", "prtg_cas05",
 }
 
+-- A castle the player holds (castle_lord.lua) keeps whatever is left of its
+-- garrison and gets no new one; one given up gets its garrison back at once.
+local events = { "OnInit" }
+for i in ipairs(CASTLES) do events[#events + 1] = "OnCastleEmptied" .. i end
+
 npc {
-  map = "-", name = "castle_garrison", events = { "OnInit" },
+  map = "-", name = "castle_garrison", events = events,
   on_click = function(at)
-    if at ~= "OnInit" then return end
+    local only = at:match("^OnCastleEmptied(%d+)$")
+    if at ~= "OnInit" and not only then return end
     for i, map in ipairs(CASTLES) do
-      -- "All": every monster a script put on the map (a reload must not double them)
-      if mob_count(map, "All") == 0 then do_event("mobcaller#" .. i .. "::OnAgitStart") end
+      -- "All": every monster a script put on the map (a reload must not double them);
+      -- the Emperium and the treasure boxes are castle_lord.lua's, not the garrison
+      local mine = mob_count(map, "All") - mob_count(map, "Agit_" .. map .. "::OnAgitBreak")
+        - mob_count(map, "Agit_" .. map .. "::OnBoxOpen")
+      if (only == nil or tonumber(only) == i) and castle_owner(map) == 0 and mine == 0 then
+        do_event("mobcaller#" .. i .. "::OnAgitStart")
+      end
     end
   end,
 }

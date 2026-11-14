@@ -743,6 +743,29 @@ each twice the last; trade (and defence) -2 when a castle changes hands
 ("Unconfirmed" in the guide); castle Kafra free storage, warps to every
 town; guild dungeon spawns and respawns (MVPs 8 h, Ghostring 4 h); WoE
 without EXP loss, Phen card, Anodyne or Intimidate.
+**Built (2026-11-14): a castle for one** (`scripts/npc/castle_lord.lua`, test
+`tests/castles.rs`). Break an ownerless castle's Emperium (817's cell; only a
+player's weapon, 817 `battle.c:1153`) and the castle is the character's:
+jAthena's test steward in 0.5.2's English (commerce investment at jAthena
+//0974's cost, a Kafra for 10,000z, the master room, giving the castle up),
+817's castle Kafra (storage free, as the iRO page says), jAthena //0974's
+levers and treasure counts, the boxes dropping Ragu Memo's jRO table
+(`data/db/treasure.toml`; both boxes of a castle get its whole list, since the
+page does not split it). Given up, the castle refills with its garrison.
+Every cell was checked on this client's maps (`research/castle_cells.py`):
+jAthena's master rooms fit all but `payg_cas01`'s, which is at 286-295, 4-13
+here. Not played in the client yet.
+Open, for the owner and for research:
+* **Losing a castle.** Three holders in four lost theirs by the next siege
+  (Malaysia, 2004). Nothing attacks a held castle here, so defence investment
+  and guardians are left out. A counter-siege (the garrison returning at the
+  period siege hours, the Emperium to defend) would bring them back: a
+  design decision, asked of the owner.
+* Guild flags (817 `guild_flag.txt`, 0.5.2 `*_flag.txt`) saying who holds a
+  castle; the owners' faster HP/SP recovery in their castle (the iRO page).
+* Whether jRO's two boxes a castle split Ragu Memo's list (common / own).
+* The steward's English is the emulator's fan translation (0.5.2); the iRO
+  text is not known.
 **Look:** kRO notices on WoE rules; the iRO guide's guild/WoE pages; euRO
 WoE news (Apr and Sep 2004: "treasure boxes and guild dungeons disabled");
 period guides. Round 1: research/agy-threads/HANDOFF.md.
@@ -1203,7 +1226,8 @@ script names. After its first fixes it still reports:
   room). Both fixed in `scripts/npc/castle_warps.lua` (2026-11-14, which
   also found `remove_warp` taking out the replacement warps). The audit
   still lists `157,174` from 817's text, as with the Kafras below.
-* **The guild dungeons** `gld_dun01-04`: nothing leads in (#17).
+* **The guild dungeons** `gld_dun01-04`: the castle's lever leads in, for the
+  castle's master (#17, since 2026-11-14); the audit does not know the lever's rule.
 * `job_wiz` is entered through a destination the script computes, which
   the audit cannot see: not a fault.
 * `gef_fild10 54,232` and `morocc 120,39` (2026-11-13): destinations of
