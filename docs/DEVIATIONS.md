@@ -540,7 +540,16 @@ eAthena 817 (2004-02-19), bugs included. The translator is
 * **`aldeg_cas05`'s tile at `188,49` lands on `165,228`**
   (`scripts/npc/castle_warps.lua`). mod0631 and 817 both have `165,288`, off
   the 240x240 map; every other pair in that castle lands four cells from its
-  partner tile (`165,232` here), and rAthena has `228`.
+  partner tile (`165,232` here), and rAthena has `228`. (Until 2026-11-14
+  `remove_warp` also took out the replacement, so the tile led nowhere.)
+* **`prtg_cas02`'s inner room is this client's**: the door at `184,44`
+  leads to `189,166` and back from `189,162`, and 817's guards of that room
+  stand at `193,179` (`scripts/npc/castle_warps.lua`, `castles.lua`). Every
+  emulator has `157,140`/`157,135`/`157,174`, cells of the larger room the
+  May-2004 client draws; this client's castle (the CD's patch of
+  2003-04-30) has a smaller room at x 184-203, y 162-182, and those cells
+  are rock. The cells are ours, laid out as the later map's (research round
+  18).
 * **"morroc"** in the Juno Kafras is a typo for `morocc`.
 * **Shop names** come from 817 by cell (mod0631's are Japanese). "Shop" is
   used where 817 has none within 3 cells, or only a Japanese one.

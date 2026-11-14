@@ -39,3 +39,20 @@ npc {
     end
   end,
 }
+
+-- prtg_cas02's inner room is at x 184-203, y 162-182 on this client's map
+-- (the CD's patch of 2003-04-30; castle_warps.lua). 817 puts that room's
+-- guards on 157,174, the Emperium's cell in the later map, which is rock
+-- here: they go to the far end of this client's room instead (our cell).
+wrap_npc("817:mobs/gvg.txt:339", function(orig)
+  return function(at)
+    local monster0 = monster
+    monster = function(map, x, y, ...)
+      if map == "prtg_cas02" and x == 157 and y == 174 then x, y = 193, 179 end
+      return monster0(map, x, y, ...)
+    end
+    local ok, err = pcall(orig, at)
+    monster = monster0
+    if not ok then error(err, 0) end
+  end
+end)

@@ -697,7 +697,8 @@ steward (2004-02-12) takes a flat 10,000z in a test script.
   many appear, has no period source. Still no period number for investment
   beyond the test steward's 10,000z, twice a period.
 * 817's Emperium cells fit this client's maps in 19 of 20 castles
-  (`prtg_cas02 158,174` is blocked), and every guild dungeon switch target
+  (`prtg_cas02 158,174` is rock: this client's castle has an older, smaller
+  inner room at x 184-203, y 162-182, #26), and every guild dungeon switch target
   is walkable. The round's own castle rows have wrong Emperium cells: use
   817's scripts, not those rows.
 * euRO: ownership and investment were live in the open beta by 2004-04-08;
@@ -1170,10 +1171,14 @@ script names. After its first fixes it still reports:
   Rooms of a later Prontera?
 * **`prt_are_in 31,122` and `169,122`**, **`yuno_in03 104,115`**: warp
   tiles that cannot be stepped on.
-* **Castles**: `prtg_cas02 184,44` arrives on a blocked cell (rAthena has
-  the same); `aldeg_cas05 188,49`'s "165,288" was a slip for `165,228`
-  (round 10, fixed in `scripts/npc/castle_warps.lua`); `prtg_cas02`'s Emperium cell `157,174` is blocked (known,
-  #17).
+* **Castles** (settled): `aldeg_cas05 188,49`'s "165,288" was a slip for
+  `165,228` (round 10). `prtg_cas02 184,44`'s arrival and the Emperium cell
+  `157,174` are in the inner room of a later map: this client's castle
+  comes in the CD's patch of 2003-04-30 and its inner room is at x 184-203,
+  y 162-182 (round 18, T9-216/217; the May-2004 client has the emulators'
+  room). Both fixed in `scripts/npc/castle_warps.lua` (2026-11-14, which
+  also found `remove_warp` taking out the replacement warps). The audit
+  still lists `157,174` from 817's text, as with the Kafras below.
 * **The guild dungeons** `gld_dun01-04`: nothing leads in (#17).
 * `job_wiz` is entered through a destination the script computes, which
   the audit cannot see: not a fault.
