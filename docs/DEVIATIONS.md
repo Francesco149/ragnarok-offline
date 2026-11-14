@@ -239,7 +239,9 @@ eAthena 817 (2004-02-19), bugs included. The translator is
     colour you want and 5000z) and then says "not implemented"; here she
     does it. Which palette is which colour is read from the client's files;
   * showing Louitz the solutions a second time does not make the chemist
-    forget you (mod0631 sets the quest back to its first step).
+    forget you (mod0631 sets the quest back to its first step);
+  * the Violet dye takes the 30 Red Herbs mod0631's own line names (its
+    code takes 20; Ragu Memo's jRO list and RODataZone's iRO one say 30).
 * **The Priest test** (`scripts/npc/priest_test.lua`) is jAthena's of
   2004-06-08 (`script/npc/job/npc_job_priest.txt`, //1013), four months
   after our period: a pilgrimage to the three ascetics of the Acolyte

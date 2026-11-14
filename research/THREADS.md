@@ -1180,8 +1180,10 @@ where we follow mod0631 (jRO, Dec 2003) and RODataZone has other numbers
 for iRO:**
 * the Baphomet Doll: 2 Royal Jelly (mod0631, Ragu Memo's jRO list of
   2004-02) against 5 Panacea;
-* JavaDullihan's dyes: Darkgreen also takes a Mixture (RODataZone: no),
-  Violet 20 Red Herbs (RODataZone: 30);
+* JavaDullihan's dyes: Darkgreen also takes a Mixture (RODataZone: no;
+  mod0631 and Ragu Memo's jRO list: yes). Violet's Red Herbs are 30 since
+  2026-11-14: mod0631's own line, Ragu Memo and RODataZone say 30, only
+  mod0631's code took 20;
 * Marx Hansen's juices: one fruit a bottle (RODataZone: three);
 * the training ground: Leo Von Frisch's 2 Bananas (RODataZone 1), the last
   Helper's tiers (ours 1 herb + 100z ... 10 herbs + 500z; RODataZone 3
@@ -1206,7 +1208,15 @@ Alberta two with their cells and how they are asked (the Hat Store Girl
 wants a Yellow Potion before she talks). Two of them want Turtle Island's
 drops, and iRO's notice of the island (2003-12-09) promised "new headgears
 and new quests": these may be them (#24). Neither emulator of our period
-has an NPC for any of them. The client (merged GRF, with the Turtle
+has an NPC for any of them. **They are Turtle Island's hats:** the
+island's own patch file (`2003-04-30gdata_turtle_ph_1.gpf`, which euRO
+listed as entry 400 in January 2004) ships the sprites of exactly the
+eight hats of these two NPCs (Sunday Hat, Mage Hat, Magician Hat, Hair
+Protector, Crescent and Heart Hairpins, Solar God Helm with the Sun God's
+emblem, Fashion Sunglasses) and nothing for the other NPCs above. But it
+brings no English names: on this client they are nameless ("You got 1",
+seen in the rig), and euRO's later patches that may have named them are
+not archived. Building the two NPCs is the owner's call. The client (merged GRF, with the Turtle
 Island patch) has the hats' sprites (`idnum2itemresnametable.txt` runs to
 5055: 5041 Heart Hairpin, 5045 Magician Hat, 5047 Fashion Sunglasses, 5048
 Crescent Hairpin, 5032 Sunday Hat) but English names only up to 5019, and

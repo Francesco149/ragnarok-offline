@@ -297,8 +297,10 @@ local DYES = {
     { { BLUE_HERB, 5 }, { COUNTERAGENT, 1 }, { EMPTY_BOTTLE, 1 }, { GREEN_HERB, 20 }, { YELLOW_HERB, 20 }, { MIXTURE, 1 } } },
   { 980, 5000, "Orange", "20 Red Herbs, 20 Yellow Herbs, a Counteragent, a Mixture and an Empty Bottle",
     { { RED_HERB, 20 }, { COUNTERAGENT, 1 }, { EMPTY_BOTTLE, 1 }, { MIXTURE, 1 }, { YELLOW_HERB, 20 } } },
-  { 981, 5000, "Violet", "20 Red Herbs, 10 Blue Herbs, a Counteragent, a Mixture and an Empty Bottle",
-    { { RED_HERB, 20 }, { COUNTERAGENT, 1 }, { EMPTY_BOTTLE, 1 }, { MIXTURE, 1 }, { BLUE_HERB, 10 } } },
+  -- 30 Red Herbs: mod0631's own line (npc_event_dye.txt:519), Ragu Memo's jRO list (2004-02)
+  -- and RODataZone's iRO one (2004-05); mod0631's code tests and takes 20 (:524, :536)
+  { 981, 5000, "Violet", "30 Red Herbs, 10 Blue Herbs, a Counteragent, a Mixture and an Empty Bottle",
+    { { RED_HERB, 30 }, { COUNTERAGENT, 1 }, { EMPTY_BOTTLE, 1 }, { MIXTURE, 1 }, { BLUE_HERB, 10 } } },
   { 982, 3000, "White", "30 White Herbs, a Counteragent and an Empty Bottle",
     { { WHITE_HERB, 30 }, { COUNTERAGENT, 1 }, { EMPTY_BOTTLE, 1 } } },
   { 983, 7000, "Black", "30 Red Herbs, 30 Yellow Herbs, 30 Green Herbs, 5 Blue Herbs, a Counteragent, a Mixture and an Empty Bottle",
