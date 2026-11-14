@@ -272,6 +272,14 @@ RODataZone have 30: the guide's slip. Auto Berserk agrees with all.
 Weggy's FAQ (v6.0/6.2, May 2004) on the Swordman course: "If you do fall
 off, there are some aggressive Fabres and Chonchons down there": both
 (817 has Chonchons, mod0631 Fabres).
+**Round 8 (2026-11-14), the other quest skills side by side**
+(`research/notes/round8-review.md`): Arrow Crafting, Change Cart, Crazy
+Uproar, Holy Light and Energy Coat take the same items in 817, mod0631 and
+on RODataZone. Three differ: Cart Revolution (817 asks and takes 15 Iron;
+mod0631 picks one of three sets, 23/20/15 Iron; RODataZone 2003-10 gives
+the 20-Iron set), Gershaun's Banana Juice before he talks business
+(mod0631 and RODataZone; not in 817), and a Crossbow for Charge Arrow
+(RODataZone 2004-04 only). We play 817's for all three: to decide.
 
 
 ### 8. Wizard (and other 2-1) job quests
@@ -374,6 +382,13 @@ cells and Sir Edmond's room (eAthena: eight Spores, live Chonchons, 240
 seconds). Open: a player's account of the Knight test before September
 2004 (which questions, which items, and whether it existed at all before
 then: pRO had none in February); what Sir Grey's pass condition was.
+**Round 8 (2026-11-14):** jAthena's own comment on Sir Grey says the pass
+condition was not known, so it passes everyone on the second talk. A later
+source has one: rAthena's official conversion (`npc/jobs/2-1/knight.txt`,
+"PGRO TEAM (Aegis)") scores the interview and passes a total of 0, 5 or 10,
+otherwise back a step. Grade D for when; the best approximation we have
+(owner, 2026-11-14: use later sources where the period ones cannot
+settle). Not in the game yet.
 **2026-11-13: the Blacksmith test is in** (`scripts/npc/blacksmith_test.lua`,
 DEVIATIONS), from eAthena 1.0's `npc/jobs/2-1/blacksmith.txt` (2004-11-04,
 "EREMES (Aegis), translated by yoshiki", the only complete script on

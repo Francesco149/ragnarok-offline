@@ -4,7 +4,7 @@ For: the independent deep-research agent (Gemini in Antigravity) that wrote
 rounds 1 to 3. Kept by the Claude sessions that work on the game: at the
 end of each session the queue is updated (answered items go to "Done",
 with where the answer went) and refilled with what that session could not
-settle from the sources on disk. Last update: 2026-11-14, later the same day (T7 narrowed by euRO's May-2004 text; two shop names added to T9). Before that, 2026-11-14 (round 7 reviewed: `research/notes/round7-review.md`.
+settle from the sources on disk. Last update: 2026-11-14, round 8 reviewed (`research/notes/round8-review.md`); before that, later the same day (T7 narrowed by euRO's May-2004 text; two shop names added to T9). Before that, 2026-11-14 (round 7 reviewed: `research/notes/round7-review.md`.
 T11 answered and moved to Done; T1, T9 and T10 updated with what it found).
 
 ## How to use it
@@ -40,7 +40,7 @@ T11 answered and moved to Done; T1, T9 and T10 updated with what it found).
 2. Take tasks from the top; the order is by how much of the game waits on
    the answer. A round need not take them all. Say in `progress.md` which
    ones you took.
-3. Write only inside `research/agy-threads/r<N>/` for round N (round 8 is
+3. Write only inside `research/agy-threads/r<N>/` for round N (round 9 is
    next): `rows/<task id>.jsonl`, `pages/` for saved web pages, `check.txt`
    for your own checker run. No summary report: rows only, plus one line per
    task in `progress.md`: "answered" only if every bullet of the task has a
@@ -50,6 +50,11 @@ T11 answered and moved to Done; T1, T9 and T10 updated with what it found).
    Later emulators and wikis (rAthena, Hercules, iRO Wiki, RateMyServer)
    may show *that* something existed; they are grade D for *when* and *how
    much*, and never the only source for a row graded above D.
+   **Owner, 2026-11-14:** where period sources cannot settle a question,
+   later sources are wanted as the best approximation: early knowledge can
+   be incomplete. So when a task's period search comes back empty, add the
+   later answer as grade D rows (say which source and its date) instead of
+   stopping at `none`.
 
 What is on this machine is listed in `HANDOFF-r3.md` §3. Since then:
 
@@ -339,16 +344,11 @@ Sets: `skill_castend_*` for those skills.
   Gemmed Sallet, a Repeating Crossbow and more); 817 has neither. What did iRO or euRO call them, in any capture
   or guide of 2004? One `none` row per place searched if nothing.
 
-* **0x01f1 to 0x01ff** (from T11): fifteen packet ids the May-2004 exe
-  knows and ours does not (`data:mico07/packet_lengths-Ragexe-2004-05-07.tsv`).
-  What each is, from OpenKore's or eAthena's tables of 2004 (`data:refs/`,
-  `research/notes/emulators.md` §4): one row per id, `none` where no
-  table names it.
-* **The other quest skills** (thread 7): Arrow Crafting, Charge Arrow,
-  Cart Revolution, Change Cart, Crazy Uproar, Holy Light, Energy Coat: job
-  level and items in 817 (`npc/skillquests/`), mod0631
-  (`conf/npc_event_skillget.txt`) and RODataZone's job page each, side by
-  side. The Swordman's three are done.
+* **Three quest-skill differences** (thread 7, from round 8): Cart
+  Revolution's Iron (817 15, RODataZone 20), Gershaun's Banana Juice, and
+  a Crossbow for Charge Arrow (RODataZone only). Any other account of 2004
+  (a guide, a forum post) that gives these quests' items; failing that,
+  what later sources (iRO Wiki, rAthena's official conversions) give.
 * **The first-job tests' small sums** (thread 27, new on 2026-11-11).
   The Thief guild's pay: 817 gives 200z + 15 per Orange Net Mushroom + 2
   per Orange Gooey one (`npc/jobs/thief.txt:421`), mod0631 a flat 100z
@@ -441,4 +441,7 @@ that nobody researches them again.
 | The May-2004 client's text for the drafted 2-2 skills | Agrees on endows, Dispell, Chemical Protection; differs on the Strips (round 7) | THREADS.md #25, `research/notes/round7-review.md` |
 | The May-2004 data.grf against ours | Sorted (round 7); totals as in the notes | `research/notes/may2004-client.md` |
 | What the Strips do to a monster | euRO's May-2004 text: DEF -15%, VIT -40%, INT -40%; jAthena of 2004-05-07 agrees on two; Strip Weapon still the guide's 10% | THREADS.md #25, `scripts/rules/battle.lua` |
+| 0x01f1 to 0x01ff | Named from OpenKore's later table, lengths agree with the May exe (round 8) | `research/notes/may2004-client.md` |
+| The other quest skills, side by side | Five agree everywhere; three differences (round 8) | THREADS.md #7, `research/notes/round8-review.md` |
+| Sir Grey's pass condition | No period source; rAthena's official conversion scores 0, 5 or 10 to pass (later, round 8 review) | THREADS.md #8 |
 | Shop names 817 lacked | 14 of 16 from 817's English for the same Japanese role words (2026-11-14) | THREADS.md #11 |

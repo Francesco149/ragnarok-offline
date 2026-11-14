@@ -110,6 +110,12 @@ random warps (`c_tower1`, `c_tower2`, `c_tower4`), Turtle Island
 ## Open, for later
 
 * What 0x01f1 to 0x01ff are, and whether the server must send any.
+  Round 8 named them from OpenKore's table (a later source, grade D; every
+  length agrees with this exe's): AC_NOTIFY_ERROR, ZC_UPDATE_CHARSTAT2,
+  ZC_NOTIFY_EFFECT2, ZC_REQ_EXCHANGE_ITEM2, ZC_ACK_EXCHANGE_ITEM2, the
+  adoption packets 0x01f6-0x01f9, CA_LOGIN3, CH_DELETE_CHAR2, the item
+  repair list, request and answer (0x01fc-0x01fe), ZC_HIGHJUMP. Whether
+  the server must send any is still open.
 * The exe of 2004-05-31 (patch entry 462) is still lost; 2004-05-07 is
   what we have.
 
