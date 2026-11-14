@@ -390,7 +390,7 @@ fn every_quest_skill_can_be_learnt() {
 
 /// scripts/npc/skill_quests.lua: Deothen wants to see a Crossbow and keeps
 /// only the rest; Gershaun takes a Banana Juice from anyone who asks without
-/// the items, and nothing more from one who has them.
+/// the items, and nothing more from one who has them; he wants 20 Iron.
 #[test]
 fn charge_arrow_crossbow_and_gershauns_juice() {
     let _turn = TURN.lock().unwrap_or_else(|e| e.into_inner());
@@ -413,9 +413,14 @@ fn charge_arrow_crossbow_and_gershauns_juice() {
     let (n, left) = play_probe(&q(&[(532, 2)]), 1, 3, probe).unwrap();
     assert_eq!(n, None);
     assert_ne!(left, "2", "the juice was not taken");
-    // the items in hand: taught, the juice kept
-    let items: &[(u32, u32)] = &[(533, 2), (998, 15), (938, 30), (601, 20), (962, 5), (532, 1)];
+    // 817's 15 Iron is not enough: he wants RODataZone's 20
+    let short: &[(u32, u32)] = &[(533, 2), (998, 15), (938, 30), (601, 20), (962, 5)];
+    let (n, _) = play_probe(&q(short), 1, 200, probe).unwrap();
+    assert_eq!(n, None, "taught with 15 Iron");
+    // the items in hand: taught, the juice kept, 20 Iron taken
+    let items: &[(u32, u32)] = &[(533, 2), (998, 25), (938, 30), (601, 20), (962, 5), (532, 1)];
+    let probe = "return count_item(532) .. ' ' .. count_item(998)";
     let (n, left) = play_probe(&q(items), 1, 200, probe).unwrap();
     assert!(n.is_some(), "not taught with the items");
-    assert_eq!(left, "1");
+    assert_eq!(left, "1 5");
 }

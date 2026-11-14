@@ -357,10 +357,11 @@ Sets: `skill_castend_*` for those skills.
 ### T9. Small, independent
 
 * **Cart Revolution's Iron** (thread 7): 817 15, RODataZone 20,
-  mod0631 one of 23/20/15, Battousai X (pRO, 2004-01) 30. Any other
-  account of 2004, iRO or euRO above all; failing that, later sources,
-  grade D. (Gershaun's juice and Charge Arrow's Crossbow: answered in
-  round 11, in the game.)
+  mod0631 one of 23/20/15, Battousai X (pRO, 2004-01) 30. The game asks
+  20 since 2026-11-14 (RODataZone's list is mod0631's middle set item for
+  item; the others differ only in the Iron). Only an iRO or euRO account
+  of 2004 that names another figure would change it. (Gershaun's juice
+  and Charge Arrow's Crossbow: answered in round 11, in the game.)
 * **The first-job tests' small sums** (thread 27, new on 2026-11-11).
   The Thief guild's pay: 817 gives 200z + 15 per Orange Net Mushroom + 2
   per Orange Gooey one (`npc/jobs/thief.txt:421`), mod0631 a flat 100z

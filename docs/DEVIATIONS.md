@@ -413,8 +413,13 @@ eAthena 817 (2004-02-19), bugs included. The translator is
   (idRO 2003-10, pRO 2004-01, RODataZone 2004-04). Gershaun in Alberta
   teaches at once anyone who brings the items, and wants a Banana Juice
   from anyone else, every time, before he names them, as in mod0631 and a
-  pRO guide of 2004-01 (817 has no juice). His items stay 817's, 15 Iron
-  among them, which is still open (THREADS.md #7).
+  pRO guide of 2004-01 (817 has no juice). He asks for 20 Iron, not 817's
+  15: RODataZone's iRO list of 2003-10 (20 Iron, 30 Sticky Mucus, 20 Fly
+  Wings, 5 Tentacles, 2 Grape Juices) is the middle of the three sets
+  mod0631 picks from at random; 817's and a pRO guide's lists differ from
+  it in the Iron alone (15 and 30). The rest of his words are 817's, cut
+  into pages that fit, with its low-level line mended (it named Change
+  Cart) (THREADS.md #7).
 * **The doomed swords** (`scripts/npc/cursed_swords.lua`). 817 has three
   people who tell of Executioner, Grimtooth and Mysteltain and of a
   blacksmith who left Prontera, and nothing comes of it. mod0631 has the

@@ -291,6 +291,15 @@ is mod0631's script line for line. Both are in the game
 still open, now with a fourth figure: Battousai X gives 30 Iron (817 15,
 RODataZone 20, mod0631 23/20/15 at random). The same FAQ gives Charge
 Arrow from job level 37 (817 and mod0631 35).
+**Decided (2026-11-14): 20 Iron.** RODataZone's iRO list (2003-10: 20
+Iron, 30 Sticky Mucus, 20 Fly Wing, 5 Tentacles, 2 Grape Juice) is
+mod0631's middle set item for item; 817's and Battousai X's lists differ
+from it only in the Iron. So the international servers had one fixed
+list, the middle set, and 817 and Battousai X each slipped on one
+number. `scripts/npc/skill_quests.lua` replaces 817's Gershaun (test
+`charge_arrow_crossbow_and_gershauns_juice`). An iRO or euRO account of
+2004 naming another figure would reopen it. Charge Arrow's job level 37
+is Battousai X's alone: kept at 35.
 
 
 ### 8. Wizard (and other 2-1) job quests
