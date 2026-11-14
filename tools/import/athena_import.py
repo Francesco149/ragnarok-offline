@@ -234,6 +234,135 @@ CLIENT_IRO = {
     5012: {'weight': 100},  # Ph.D Hat
 }
 
+
+# Who may equip an item, where this client's text ("Applicable Job" / "Available Job" in
+# data\idnum2itemdesctable.txt, tier client) and RODataZone's iRO item tables of February
+# 2004 ("Used By") agree against mod0631's (jRO) job mask, which 817 shares on every one.
+# Printed by `research/item_jobs_check.py desc.txt --rdz DIR` (2026-11-14): a first job
+# changes where both say so; a first job dropped takes the second jobs RODataZone does not
+# list; a 2-2 job follows its 2-1 sibling unless the text names it. So: Novices may use the
+# better one-handed swords, daggers, flails, staves and the hats for "Every Job"; Thieves no
+# axes or maces; knuckles are the Monk's, the Lance the Knight's and Crusader's, the Stunner
+# the Priest's (THREADS.md #31). Where only one of the two speaks, mod0631's mask stays.
+CLIENT_IRO_JOBS = {
+    1119: 0x654e3,  # Tsurugi: + Novice
+    1120: 0x654e3,  # Tsurugi: + Novice
+    1121: 0x654e3,  # Tsurugi: + Novice
+    1122: 0x654e3,  # Ring Pommel Saber: + Novice
+    1123: 0x654e3,  # Haedonggum: + Novice
+    1125: 0x654e3,  # Ring Pommel Saber: + Novice
+    1127: 0x654e3,  # Saber: + Novice
+    1128: 0x654e3,  # Haedonggum: + Novice
+    1131: 0x654e3,  # Ice Falchon: + Novice
+    1133: 0x654e3,  # Fire Brand: + Novice
+    1135: 0x654e3,  # Cutlas: + Novice
+    1143: 0x654e3,  # Gaia Sword: + Novice
+    1144: 0x654e3,  # Sashimi: + Novice
+    1219: 0x1f5eef,  # Gladius: + Novice
+    1220: 0x1f5eef,  # Gladius: + Novice
+    1221: 0x1f5eef,  # Gladius: + Novice
+    1222: 0x1f5eef,  # Damascus: + Novice
+    1223: 0x1f5eef,  # Fortune Sword: + Novice
+    1226: 0x1f5eef,  # Damascus: + Novice
+    1234: 0x1f5eef,  # Walgwanggum: + Novice
+    1236: 0x1f5eef,  # Sucsamad: + Novice
+    1237: 0x1f5eef,  # Grimtooth: + Novice
+    1239: 0x1f5eef,  # Poison Knife: + Novice
+    1301: 0x654a3,  # Axe; - Thief
+    1302: 0x654a3,  # Axe; - Thief
+    1303: 0x654a3,  # Axe; - Thief
+    1304: 0x654a3,  # Orcish Axe; - Thief
+    1410: 0x4080,  # Lance; - Swordman
+    1411: 0x4080,  # Lance; - Swordman
+    1412: 0x4080,  # Lance; - Swordman
+    1501: 0x4c5b3,  # Club; - Thief Assassin Rogue
+    1502: 0x4c5b3,  # Club; - Thief Assassin Rogue
+    1503: 0x4c5b3,  # Club; - Thief Assassin Rogue
+    1504: 0x4c5b3,  # Mace; - Thief Assassin Rogue
+    1505: 0x4c5b3,  # Mace; - Thief Assassin Rogue
+    1506: 0x4c5b3,  # Mace; - Thief Assassin Rogue
+    1507: 0x4c5b3,  # Smasher; - Thief Assassin Rogue
+    1508: 0x4c5b3,  # Smasher; - Thief Assassin Rogue
+    1509: 0x4c5b3,  # Smasher; - Thief Assassin Rogue
+    1510: 0x4c5b3,  # Flail: + Novice; - Thief Assassin Rogue
+    1511: 0x4c5b3,  # Flail: + Novice; - Thief Assassin Rogue
+    1512: 0x4c5b3,  # Flail: + Novice; - Thief Assassin Rogue
+    1513: 0x4c5b3,  # Morning Star: + Novice; - Thief Assassin Rogue
+    1514: 0x4c5b3,  # Morning Star: + Novice; - Thief Assassin Rogue
+    1515: 0x4c5b3,  # Morning Star: + Novice; - Thief Assassin Rogue
+    1516: 0x4c5b3,  # Sword Mace: + Novice; - Thief Assassin Rogue
+    1517: 0x4c5b3,  # Sword Mace: + Novice; - Thief Assassin Rogue
+    1518: 0x4c5b3,  # Sword Mace: + Novice; - Thief Assassin Rogue
+    1519: 0x4c5b3,  # Chain: + Novice; - Thief Assassin Rogue
+    1520: 0x4c5b3,  # Chain: + Novice; - Thief Assassin Rogue
+    1522: 0x8100,  # Stunner; - Acolyte
+    1524: 0x4c5b3,  # Golden Mace: + Novice Swordman Merchant Knight Blacksmith Crusader Alchemist
+    1525: 0x4c5b3,  # Long Mace: + Novice Swordman Merchant Knight Blacksmith Crusader Alchemist
+    1607: 0x18315,  # Staff: + Novice
+    1608: 0x18315,  # Staff: + Novice
+    1609: 0x18315,  # Staff: + Novice
+    1610: 0x18315,  # Arc Wand: + Novice
+    1612: 0x18315,  # Arc Wand: + Novice
+    1614: 0x18315,  # Wand of Occult: + Novice
+    1615: 0x18315,  # Bone Wand: + Novice
+    1801: 0x8000,  # Waghnakh; - Priest
+    1802: 0x8000,  # Waghnakh; - Priest
+    1809: 0x8000,  # Claw; - Priest
+    1810: 0x8000,  # Claw; - Priest
+    1811: 0x8000,  # Finger; - Priest
+    1812: 0x8000,  # Finger; - Priest
+    2222: 0x1fdfff,  # Turban: + Novice
+    2223: 0x1fdfff,  # Turban: + Novice
+    2224: 0x654e2,  # Goggle; - Archer Hunter Bard Dancer
+    2225: 0x654e2,  # Goggle; - Archer Hunter Bard Dancer
+    2244: 0x1fdfff,  # Big Ribbon: + Novice
+    2245: 0x1fdfff,  # Sweet Gent: + Novice
+    2247: 0x1fdfff,  # Romantic Gent: + Novice
+    2248: 0x1fdfff,  # Western Grace: + Novice
+    2250: 0x1fdfff,  # Cute Ribbon: + Novice
+    2254: 0x1fdfff,  # Angel Wing: + Novice
+    2255: 0x1fdfff,  # Evil Wing: + Novice
+    2258: 0x1fdffe,  # Spiky Band: + Mage Archer Wizard Hunter Sage Bard Dancer
+    2260: 0x1fdfff,  # Mini Glasses: + Novice
+    2263: 0x1fdfff,  # Zoro Masque: + Novice
+    2264: 0x1fdffe,  # Munak Hat; - Novice
+    2269: 0x1fdfff,  # Romantic Flower: + Novice
+    2270: 0x1fdfff,  # Romantic Leaf: + Novice
+    2271: 0x1fdfff,  # Jack a Dandy: + Novice
+    2273: 0x1fdfff,  # Doctor Band: + Novice
+    2274: 0x1fdfff,  # Ghost Bandana: + Novice
+    2281: 0x1fdfff,  # Opera Masque: + Novice
+    2284: 0x1fdfff,  # Antler: + Novice
+    2286: 0x1fdfff,  # Elven Ears: + Novice
+    2287: 0x1fdfff,  # Pirate Bandana: + Novice
+    2288: 0x1fdfff,  # Mr. Scream: + Novice
+    2291: 0x1fdfff,  # Masquerade: + Novice
+    2295: 0x1fdfff,  # Blinker: + Novice
+    2297: 0x1fdfff,  # Goblini Mask: + Novice
+    2307: 0x1e5cea,  # Mantle; - Mage Acolyte Priest Wizard Monk Sage
+    2308: 0x1e5cea,  # Mantle; - Mage Acolyte Priest Wizard Monk Sage
+    2309: 0x1e5cea,  # Coat; - Mage Acolyte Priest Wizard Monk Sage
+    2310: 0x1e5cea,  # Coat; - Mage Acolyte Priest Wizard Monk Sage
+    2321: 0x1fdffe,  # Silk Robe: + Archer Thief Hunter Assassin Rogue Bard Dancer
+    2322: 0x1fdffe,  # Silk Robe: + Archer Thief Hunter Assassin Rogue Bard Dancer
+    2325: 0x4c5b2,  # Saint's Robe: + Swordman Knight Crusader
+    2326: 0x4c5b2,  # Saint's Robe: + Swordman Knight Crusader
+    2409: 0x1e5cea,  # Highheals; - Mage Acolyte Priest Wizard Monk Sage
+    2607: 0x1fdffe,  # Clip; - Novice
+    5001: 0x1fdfff,  # Headset: + Novice
+    5003: 0x1fdfff,  # Joker Jester: + Novice
+    5004: 0x1fdfff,  # Oxygen Mask: + Novice
+    5005: 0x1fdfff,  # Gas Mask: + Novice
+    5007: 0x1fdfff,  # Grand Circlet: + Novice
+    5008: 0x1fdfff,  # Puppy Love: + Novice
+    5009: 0x1fdfff,  # Safety Helmet: + Novice
+    5012: 0x1fdfff,  # Ph.D Hat: + Novice
+    5016: 0x444a2,  # Boys Cap; - Mage Archer Acolyte Thief Priest Wizard Hunter Assassin Monk Sage Rogue Bard Dancer
+    5019: 0x1fdfff,  # Corsair: + Novice
+    5024: 0x1fdffe,  # Cake Hat; - Novice
+    5029: 0x1fdfff,  # Spore Hat: + Novice
+}
+
 # The Safety Ring's MDEF +3: 817's script (db/item_db.txt), the client's text and
 # RODataZone's iRO table all give it ("DEF + 5 , MDEF + 3"); mod0631 has DEF 5 and nothing else.
 EXTRA_EQUIP = {2615: "bonus bMdef,3;"}
@@ -278,7 +407,7 @@ def import_items():
             "def": num(cols[8]),
             "range": num(cols[9]),
             "slots": CLIENT_SLOTS.get(iid, num(cols[10])),
-            "jobs": num(cols[11]),
+            "jobs": CLIENT_IRO_JOBS.get(iid, num(cols[11])),
             "gender": num(cols[12], 2),
             "loc": num(cols[13]),
             "weapon_level": num(cols[14]),

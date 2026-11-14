@@ -1357,11 +1357,38 @@ Poring Hat and the Bongun Hat. **Left without a maker:** the Kafra Band
 (5020), Panda Cap (5030), Wings of Demon (5044) and Bell of Pussycat (5051):
 neither period list has them; rAthena's makers are later. The Kafra things
 and the named trinkets are as above.
-**Who may wear them:** the hats keep mod0631's job masks. The client's text
-says "All" for the Mine Helmet, mod0631 gives it to a dozen jobs; for the
-Cake Hat RODataZone says "All except Novice", mod0631 lets a Novice wear it.
-Nobody has set the client's "Available Job" lines against the item table
-the way `research/item_desc_check.py` did for weights.
+**Who may wear what (2026-11-14):** `research/item_jobs_check.py` sets the
+client's "Applicable Job" / "Available Job" lines (541, some wrapped onto a
+second line) against our job masks: 172 of 531 items disagree once only
+the jobs the client names are compared (it names first jobs only for most
+gear: "Archer Thief" on a bow says nothing of the Assassin). 817's masks
+are mod0631's on every one. RODataZone's "Used By" (iRO, 2004-02) sides
+with the client on 116, taken the way R6 took weights (`CLIENT_IRO_JOBS` in
+the importer, printed by the script's `--rdz`): Novices may use the better
+one-handed swords (Tsurugi, Saber, Haedonggum...), daggers (Gladius,
+Damascus, Grimtooth...), flails, morning stars, chains and staves, and wear
+the "Every Job" hats (Angel Wing, Headset, Puppy Love...) and the Spore
+Hat; a Thief has no axe or mace (an Assassin keeps the axe: RODataZone
+lists him); knuckles are the Monk's, the Lance the Knight's and Crusader's,
+the Stunner the Priest's; Golden and Long Mace open to every mace user;
+Boys Cap, Mantle, Coat, High Heels, Goggle, Silk Robe, Saint's Robe and
+Spiky Band take the client's list; the Cake Hat, Munak Hat and Clip are
+not for Novices. Played in the client (a Novice wears a Saber, a Thief is
+refused an Axe). **Left with mod0631**, the client alone against it (57):
+Novice for the rest of the swords and daggers (Nagan, Excalibur,
+Mysteltainn, Swordbreaker, Zeny Knife...); Novice, Swordman and Merchant
+for Spike, Slash, Quadrille, Grand Cross; Priest out of the other knuckles;
+the Monk out of Stunner and Iron Driver, the Alchemist out of the War Axe
+(the text predates 2-2?); Thief for Rudra's Bow, Archer for the Army Cap,
+the Thief out of the Jewel Crown, the Merchant out of the Ancient Ring, the
+Novice out of the Ancient Belt; "All" for the Magic Hat (mod0631: Mage and
+Acolyte trees), the Miner's Helmet, and ten hats now open to all but the
+Novice (Smokie Hat, Deviruchi Hat...). Where RODataZone sides with mod0631
+against the text (Panda Cap and Poring Hat "All except Novice", the Helm
+of the Solar God "All 2nd Jobs"), mod0631 stays too; so does the text's
+generic dagger line on the Assassin Dagger and Azoth. **Look:** a third
+witness for the 57 (GameFAQs equipment guides of 2003-04, the iRO guide's
+item pages, Ragu Memo's equipment tables for jRO).
 
 ### 32. Drops mod0631 left empty
 mod0631's `db/mob_db.txt` writes `512,0` (an Apple, rate 0) in drop slots it
