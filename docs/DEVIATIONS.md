@@ -921,8 +921,10 @@ always fires.
     Chemical Protections. The guide says "all magical effects".
 * **Talkie Box** speaks: mod0631 lets it lie silent and 817's attempt is
   marked "not working", so it follows jAthena //0988 (2004-05-25, five
-  months after our date): the first one to step on it, its Hunter too,
-  makes it say the text typed when it was set, and it goes 5 s later.
+  months after our date): the first one to step on it makes it say the
+  text typed when it was set, and it goes 5 s later. Its own Hunter does
+  not set it off (the iRO guide's Hunter page of 2004-03-27, and jAthena
+  //0991 of the next day).
   jAthena's change to a used trap is not sent: this client applies 0x00c3
   to characters only (docs/PROTOCOL.md).
 * **Not built yet:** the other 2-2 skills, Repair Weapon

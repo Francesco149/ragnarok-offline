@@ -1256,7 +1256,8 @@ fn sandman_reaches_the_neighbours() {
 }
 
 /// Talkie Box: the text typed with 0x0190 is said (0x0191, under the trap's
-/// own id) when the first one steps on it, and the trap goes 5 s later.
+/// own id) when the first one steps on it, its own Hunter aside, and the
+/// trap goes 5 s later.
 #[test]
 fn talkie_box_speaks() {
     let mut t = T::new();
@@ -1269,6 +1270,18 @@ fn talkie_box_speaks() {
     let cell = t.g.world.units.values().find(|u| u.skill().is_some()).map(|u| u.id).expect("its cell");
     t.run(3000);
     assert!(t.packets(0x0191).is_empty(), "silent until stepped on");
+    // its own Hunter walks over it in silence (the iRO guide; jAthena //0991)
+    let me = t.me;
+    let mut w = Writer::new(0x0085);
+    w.pos3(30, 25, 0);
+    t.send(w);
+    t.run(2000);
+    assert_eq!(t.pos(me), (30, 25), "walked across the trap");
+    assert!(t.packets(0x0191).is_empty(), "not for the caster");
+    let mut w = Writer::new(0x0085);
+    w.pos3(25, 25, 0);
+    t.send(w);
+    t.run(2000);
     let z = t.spawn(32, 25, 1015);
     t.run(4000);
     let said = t.packets(0x0191);

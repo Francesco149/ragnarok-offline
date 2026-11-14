@@ -323,7 +323,11 @@ local function onplace(c, bl, now)
     -- server from Kalen's information"): the first to step on it makes it
     -- speak to those around, and it goes five seconds later. jAthena also
     -- turns it into a used trap (0x8c) with 0x00c3, which this client only
-    -- applies to characters (0x51e760), so that is left out.
+    -- applies to characters (0x51e760), so that is left out. Its own Hunter
+    -- does not set it off: "The message is not played for the caster" (the
+    -- iRO guide's Hunter page, 2004-03-27); jAthena //0991 (2004-05-26) adds
+    -- the same test (skill.c:4378).
+    if bl.id == g.src then return end
     if g.val2 == 0 then
       _rt("clif_talkiebox", c.id, g.valstr or "")
       g.limit = now - g.tick + 5000
