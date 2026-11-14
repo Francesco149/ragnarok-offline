@@ -448,6 +448,13 @@ eAthena 817 (2004-02-19), bugs included. The translator is
   1000z Iron Hammer. Each is mended as jAthena's script of 2003-10-30 has
   it (//0505, `conf/npc_town_geffen.txt`), whose overweight line we
   translated; 817's wording otherwise.
+* **The Arrow Maker of Morroc** (`scripts/npc/arrow_maker.lua`). 817's
+  taught Arrow Crafting to any archer who spoke to him (its answers ran
+  on into "Congratulations" with no close), asked for Powder of Butterfly
+  and took Resin. mod0631, Godhand's idRO FAQ (2003-10-23) and
+  RODataZone's iRO Archer page agree on what 817's code took: 20 Resin,
+  7 Poison Spores, 41 Pointed Scales, 13 Trunks and a Red Potion, all now
+  taken; job level 30 as in mod0631 and RODataZone (817: 35).
 * **Alberta's Grampa Pharmacist** (`scripts/npc/grampa_pharmacist.lua`).
   817's port took a White, Blue or Green Potion's herbs, bottle and fee
   and gave nothing when asked for "as many as I can", took Green Potions

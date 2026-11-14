@@ -291,6 +291,11 @@ is mod0631's script line for line. Both are in the game
 still open, now with a fourth figure: Battousai X gives 30 Iron (817 15,
 RODataZone 20, mod0631 23/20/15 at random). The same FAQ gives Charge
 Arrow from job level 37 (817 and mod0631 35).
+**Arrow Crafting (2026-11-14, played):** round 8's "same items" was
+817's code; its dialogue asked for 35 Powder of Butterfly, and its three
+answers ran on into "Congratulations", so anyone learnt the skill for
+nothing. Now `scripts/npc/arrow_maker.lua`: the five items of mod0631,
+Godhand's FAQ and RODataZone, job level 30 (DEVIATIONS).
 **Decided (2026-11-14): 20 Iron.** RODataZone's iRO list (2003-10: 20
 Iron, 30 Sticky Mucus, 20 Fly Wing, 5 Tentacles, 2 Grape Juice) is
 mod0631's middle set item for item; 817's and Battousai X's lists differ

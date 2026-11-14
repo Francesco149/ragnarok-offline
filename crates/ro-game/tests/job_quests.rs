@@ -372,7 +372,7 @@ const SKILL_QUESTS: &[Quest] = &[
     skill_quest("Moving HP Recovery", &["import/npc/skillquests/moving_hp.lua"], 1, 144),
     skill_quest("Fatal Blow", &["import/npc/skillquests/fatal_blow.lua"], 1, 145),
     skill_quest("Auto Berserk", &["import/npc/skillquests/auto_berserk.lua"], 1, 146),
-    skill_quest("Arrow Crafting", &["import/npc/skillquests/arrow_craft.lua"], 3, 147),
+    skill_quest("Arrow Crafting", &["import/npc/skillquests/arrow_craft.lua", "npc/arrow_maker.lua"], 3, 147),
     skill_quest("Charge Arrow", &["import/npc/skillquests/arrow_repel.lua", "npc/skill_quests.lua"], 3, 148),
     skill_quest("Cart Revolution", &["import/npc/skillquests/cart_revolution.lua", "npc/skill_quests.lua"], 5, 153),
     skill_quest("Change Cart", &["import/npc/skillquests/change_cart.lua"], 5, 154),
@@ -423,4 +423,20 @@ fn charge_arrow_crossbow_and_gershauns_juice() {
     let (n, left) = play_probe(&q(items), 1, 200, probe).unwrap();
     assert!(n.is_some(), "not taught with the items");
     assert_eq!(left, "1 5");
+}
+
+/// scripts/npc/arrow_maker.lua: 817's Arrow Maker taught anyone who talked to
+/// him; now only the five items do it, and all five are taken.
+#[test]
+fn arrow_crafting_wants_its_items() {
+    let _turn = TURN.lock().unwrap_or_else(|e| e.into_inner());
+    let files: &[&str] = &["import/npc/skillquests/arrow_craft.lua", "npc/arrow_maker.lua"];
+    let q = |gifts: &'static [(u32, u32)]| Quest { gifts: Some(gifts), ..skill_quest("Arrow Crafting", files, 3, 147) };
+    let probe = "return count_item(907) .. ' ' .. count_item(906)";
+    let (n, _) = play_probe(&q(&[(501, 1)]), 1, 50, probe).unwrap();
+    assert_eq!(n, None, "taught without the items");
+    let items: &[(u32, u32)] = &[(907, 20), (7033, 7), (906, 45), (1019, 13), (501, 1)];
+    let (n, left) = play_probe(&q(items), 1, 50, probe).unwrap();
+    assert!(n.is_some(), "not taught with the items");
+    assert_eq!(left, "0 4", "the Resin and 41 Pointed Scales taken");
 }
