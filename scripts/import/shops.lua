@@ -3,7 +3,8 @@
 -- entries on maps the client lacks are skipped by the server at load time.
 -- Price {id} = the item's db price; {id, n} = n zeny. Shop names: eAthena 817 by cell
 -- (mod0631's are Japanese). Where 817 has none within 3 cells, the English 817 gives
--- most often to shops mod0631 names alike ("Tool Dealer" for its 道具商人); else "Shop".
+-- most often to shops mod0631 names alike ("Tool Dealer" for its 道具商人); two from
+-- rAthena's official names (tier later); else "Shop".
 shop { map = "alberta_in", x = 182, y = 97, dir = 0, sprite = 73, name = "Tool Dealer", items = { { 1750, 1 }, { 611, 40 }, { 501, 50 }, { 502, 200 }, { 503, 550 }, { 504, 1200 }, { 506, 40 }, { 645, 800 }, { 656, 1500 }, { 601, 60 }, { 602, 300 }, { 525, 500 }, { 2243, 20000 } } } -- npc_town_alberta.txt:3
 shop { map = "alberta_in", x = 165, y = 96, dir = 0, sprite = 74, name = "Item Collector", items = { { 909, 6 }, { 528, 60 } } } -- npc_town_alberta.txt:4
 shop { map = "alberta_in", x = 188, y = 21, dir = 0, sprite = 49, name = "Weapon Dealer", items = { { 1750, 1 }, { 1751, 3 }, { 1101, 100 }, { 1104, 1500 }, { 1107, 2900 }, { 1201, 50 }, { 1204, 1250 }, { 1207, 2400 }, { 1601, 50 }, { 1701, 1000 }, { 1301, 500 }, { 1351, 5400 }, { 1354, 15500 }, { 1357, 34000 }, { 1360, 55000 } } } -- npc_town_alberta.txt:5
@@ -58,7 +59,7 @@ shop { map = "payon_in02", x = 87, y = 34, dir = 0, sprite = 75, name = "Tool De
 shop { map = "payon", x = 142, y = 104, dir = 4, sprite = 124, name = "Pet Merchant", items = { { 537, 2500 }, { 643, 3000 }, { 10013, 1500 }, { 10014, 2000 } } } -- npc_town_payon.txt:9
 shop { map = "prontera", x = 73, y = 134, dir = 0, sprite = 90, name = "Milk Merchant", items = { { 519, 25 } } } -- npc_town_prontera.txt:5
 shop { map = "prontera", x = 104, y = 49, dir = 0, sprite = 102, name = "Fruit Merchant", items = { { 512, 15 }, { 513, 15 } } } -- npc_town_prontera.txt:6
-shop { map = "prontera", x = 48, y = 58, dir = 0, sprite = 91, name = "Shop", items = { { 515, 15 }, { 516, 15 }, { 535, 15 } } } -- npc_town_prontera.txt:7
+shop { map = "prontera", x = 48, y = 58, dir = 0, sprite = 91, name = "Vegetable Gardener", items = { { 515, 15 }, { 516, 15 }, { 535, 15 } } } -- npc_town_prontera.txt:7
 shop { map = "prontera", x = 64, y = 125, dir = 0, sprite = 87, name = "Butcher", items = { { 517, 55 }, { 528, 60 } } } -- npc_town_prontera.txt:8
 shop { map = "prontera", x = 58, y = 182, dir = 0, sprite = 96, name = "Flower Girl", items = { { 712, 2 }, { 744, 2000 } } } -- npc_town_prontera.txt:9
 shop { map = "prontera", x = 113, y = 42, dir = 0, sprite = 90, name = "Flower Lady", items = { { 712, 2 }, { 744, 2000 } } } -- npc_town_prontera.txt:10
@@ -79,7 +80,7 @@ shop { map = "yuno_in01", x = 25, y = 34, dir = 4, sprite = 83, name = "Tool Dea
 shop { map = "yuno", x = 163, y = 187, dir = 4, sprite = 90, name = "Girl", items = { { 717, 600 }, { 1601, 50 }, { 1604, 2500 }, { 1607, 9500 }, { 1610, 45000 }, { 2232, 7500 }, { 2321, 8000 }, { 2332, 7000 } } } -- npc_town_yuno.txt:10
 shop { map = "yuno", x = 218, y = 97, dir = 4, sprite = 84, name = "Tool Dealer", items = { { 1750, 1 }, { 611, 40 }, { 501, 50 }, { 502, 200 }, { 503, 550 }, { 504, 1200 }, { 506, 40 }, { 645, 800 }, { 656, 1500 }, { 601, 60 }, { 602, 300 } } } -- npc_town_yuno.txt:11
 shop { map = "yuno", x = 226, y = 107, dir = 4, sprite = 83, name = "Tool Dealer", items = { { 909, 6 }, { 911, 160 }, { 910, 40 }, { 912, 480 } } } -- npc_town_yuno.txt:12
-shop { map = "yuno", x = 205, y = 103, dir = 4, sprite = 125, name = "Shop", items = { { 2340, 89000 }, { 2341, 94000 }, { 2411, 78000 }, { 2222, 4500 }, { 2230, 50000 }, { 1721, 89000 } } } -- npc_town_yuno.txt:13
+shop { map = "yuno", x = 205, y = 103, dir = 4, sprite = 125, name = "Mr. King's Shop", items = { { 2340, 89000 }, { 2341, 94000 }, { 2411, 78000 }, { 2222, 4500 }, { 2230, 50000 }, { 1721, 89000 } } } -- npc_town_yuno.txt:13
 shop { map = "yuno", x = 197, y = 114, dir = 4, sprite = 124, name = "Pet Merchant", items = { { 537, 1000 }, { 643, 3000 }, { 10013, 1500 }, { 10014, 2000 } } } -- npc_town_yuno.txt:14
 shop { map = "ama_in01", x = 89, y = 28, dir = 4, sprite = 757, name = "Armor Dealer", items = { { 2211, 400 }, { 2401, 400 }, { 2403, 3500 }, { 2501, 1000 }, { 2503, 5000 }, { 2101, 500 }, { 2103, 14000 }, { 2305, 1000 }, { 2321, 8000 }, { 2332, 7000 }, { 2314, 65000 }, { 2627, 20000 } } } -- npc_town_amatsu.txt:2
 shop { map = "ama_in01", x = 102, y = 28, dir = 4, sprite = 766, name = "Weapon Dealer", items = { { 1207, 2400 }, { 1216, 19500 }, { 1107, 2900 }, { 1122, 24000 }, { 1116, 2000 }, { 1154, 22500 }, { 1407, 3450 }, { 1457, 27000 }, { 1354, 15500 }, { 1519, 23000 } } } -- npc_town_amatsu.txt:3
