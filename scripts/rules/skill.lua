@@ -615,6 +615,10 @@ function rules.skill_castend(a)
   -- mod0631's skill_db calls Shield Charge and Shield Boomerang "no damage" (nk 1): it never
   -- built them. eAthena 817's has 2 and 0, and hits with both (skill.c:1202)
   if skill == SK.CR_SHIELDCHARGE or skill == SK.CR_SHIELDBOOMERANG then nk = 0 end
+  -- mod0631's skill_db gives the monsters' element changes (161-169) nk 0, so mob.c:1949 sends
+  -- them to skill_castend_damage_id, which has no case for them, and its support-side code
+  -- (skill.c:1680) never runs. jAthena //0850 (2004-02-29) made them nk 1
+  if skill >= SK.NPC_ATTRICHANGE and skill <= SK.NPC_CHANGETELEKINESIS then nk = 1 end
   if nk == 1 then
     -- Heal and Resurrection hurt whatever is of the Undead element (friend or not: skill.c:1780)
     if (skill == SK.AL_HEAL or skill == SK.ALL_RESURRECTION) and battle.elem_type(bl) == 9 then

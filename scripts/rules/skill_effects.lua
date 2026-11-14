@@ -258,6 +258,9 @@ local DISPELLED = {
   SC.CP_HELM, SC.DECREASEAGI, SC.FROSTWEAPON, SC.LIGHTNINGLOADER, SC.SEISMICWEAPON, SC.FLAMELAUNCHER, SC.GLORIA,
 }
 
+-- mod0631's skill_db, which the monsters' rows follow, makes 168 Ghost and 169 Shadow: the names
+-- (from its skill.h) say the opposite. jAthena //0850 (2004-02-29) swapped the elements to fit the
+-- names and left its rows as they were. Kept by number, as the rows mean it.
 local ELEMENT_CHANGE = {}
 for _, n in ipairs({ "NPC_ATTRICHANGE", "NPC_CHANGEWATER", "NPC_CHANGEGROUND", "NPC_CHANGEFIRE", "NPC_CHANGEWIND",
                      "NPC_CHANGEPOISON", "NPC_CHANGEHOLY", "NPC_CHANGEDARKNESS", "NPC_CHANGETELEKINESIS" }) do
