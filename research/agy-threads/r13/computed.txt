@@ -1,0 +1,24 @@
+# Computed results for Round 13
+
+## tur_dun05 map cells and exit warps
+python3 /opt/src/ragnarok-offline/research/gat_cells.py /home/headpats/data/ragnarok-cd/play/RagnarokOnline/data.grf tur_dun05
+tur_dun05.gat: 100x100, 3333 walkable cells
+
+python3 /opt/src/ragnarok-offline/research/gat_cells.py /home/headpats/data/ragnarok-cd/play/RagnarokOnline/data.grf tur_dun05 89,69 9,45
+tur_dun05.gat 89,69: walkable (type 0)
+tur_dun05.gat 9,45: walkable (type 0)
+2 of 2 walkable
+
+## pay_dun04 blocked arrival cell
+python3 /opt/src/ragnarok-offline/research/gat_cells.py /home/headpats/data/ragnarok-cd/play/RagnarokOnline/data.grf pay_dun04 193,43 191,41 192,42
+pay_dun04.gat 193,43: blocked (type 1)
+pay_dun04.gat 191,41: walkable (type 0)
+pay_dun04.gat 192,42: walkable (type 0)
+2 of 3 walkable
+
+## prtg_cas02 blocked warp cells
+python3 /opt/src/ragnarok-offline/research/gat_cells.py /home/headpats/data/ragnarok-cd/play/RagnarokOnline/data.grf prtg_cas02 184,44 157,140 157,135
+prtg_cas02.gat 184,44: walkable (type 0)
+prtg_cas02.gat 157,140: blocked (type 1)
+prtg_cas02.gat 157,135: blocked (type 1)
+1 of 3 walkable

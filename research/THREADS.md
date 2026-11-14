@@ -1170,6 +1170,48 @@ arrival. In single player only monsters place traps (Skid Trap, Claymore,
 Sandman, Flasher, Freezing, Ankle Snare, Shockwave: 10 monsters), and they
 do it near their target.
 
+### 29. RODataZone's iRO quest list against our NPCs (jRO's numbers)
+RODataZone's `items/quests.js` (iRO, Wayback 2004-05-02, the same file to
+2004-12; research round 13, `research/notes/round13-review.md`) lists 136
+trades and rewards. Set beside our NPCs on 2026-11-14: 73 agree, 48 have no
+NPC here, 15 differ. Mended that day: Granny, the Rocker Glasses' 400z, the
+Usher's 50z, the Opera Masque's Iron (DEVIATIONS.md). **Left as they are,
+where we follow mod0631 (jRO, Dec 2003) and RODataZone has other numbers
+for iRO:**
+* the Baphomet Doll: 2 Royal Jelly (mod0631, Ragu Memo's jRO list of
+  2004-02) against 5 Panacea;
+* JavaDullihan's dyes: Darkgreen also takes a Mixture (RODataZone: no),
+  Violet 20 Red Herbs (RODataZone: 30);
+* Marx Hansen's juices: one fruit a bottle (RODataZone: three);
+* the training ground: Leo Von Frisch's 2 Bananas (RODataZone 1), the last
+  Helper's tiers (ours 1 herb + 100z ... 10 herbs + 500z; RODataZone 3
+  herbs + 100z or 5 + 150z), and every job's subsidy (RODataZone: Swordman
+  a Sword, a Red Potion, 3 Meat; Archer a Red Potion, 6 Bananas, 6
+  Pumpkins, 6 Carrots; Thief a Leather Jacket and 150z; Merchant 300z;
+  Acolyte a Club, a Red Potion, 2 Milk, 8 Apples) (thread 6);
+* the Merchant test: the Chief pays 100z for the letter (RODataZone 500z
+  and 3 Bananas for it);
+* Kafra points: none for storage (RODataZone: 1 a 10z of storage too);
+  the exchange counter's two lotteries are left out on purpose (#4);
+* Lutie: no Santa gift box for 3 Red Socks, no reward from the snowman.
+RODataZone describes iRO four months after our client; for each, a dated
+iRO or euRO account of 2003-04 would settle it (queue T10/T9).
+**Not in the game at all (48):** Alberta's Stylish Merchant (`alberta
+120/53`: Heart Hair Pin for 1200 Coral Reef, Fashionable Glasses, First
+Moon Hair Pin, Hair Protector) and Hat Store Girl (`136/79`: Sunday Hat,
+Mage Hat, Magician Hat for 1200 Solid Shell, Helm of Solar God), Payon's
+Young Man, Comodo's Traveler and Hair Ornament Girl, Lutie's vending
+machine (eight hats). Ragu Memo's `trade.html` (jRO, 2004-02) has the
+Alberta two with their cells and how they are asked (the Hat Store Girl
+wants a Yellow Potion before she talks). Two of them want Turtle Island's
+drops, and iRO's notice of the island (2003-12-09) promised "new headgears
+and new quests": these may be them (#24). Neither emulator of our period
+has an NPC for any of them.
+**Impact:** small rewards; whole headgear quests.
+**Look:** RODataZone's pages per town (`maps/city/<town>.html`), GameFAQs
+headgear guides of early 2004, the Turtle Island patch's own files (do
+they ship these NPCs' sprites or the hats' items?).
+
 ## Resolved
 
 ### R1. Basic Skill levels
