@@ -156,7 +156,7 @@ impl T {
     }
 }
 
-const MAPS: [&str; 5] = ["aldeg_cas01", "aldeg_cas02", "gld_dun02", "aldebaran", "prontera"];
+const MAPS: [&str; 6] = ["aldeg_cas01", "aldeg_cas02", "gld_dun02", "aldebaran", "prontera", "alde_gld"];
 
 fn setup(tag: &str) -> T {
     let root = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../..");
@@ -270,6 +270,61 @@ fn castle_of_one() {
     assert_eq!(t.eval(&format!("return mob_count('aldeg_cas01', '{EMP}')")), "1");
     assert!(t.eval("return mob_count('aldeg_cas01', 'All')").parse::<u32>().unwrap() > 1, "the garrison is back");
     let _ = me;
+}
+
+/// The castle's flag on its grounds says who holds it and takes the master
+/// home; the master recovers twice as fast in the castle.
+#[test]
+fn flag_and_home_regen() {
+    let mut t = setup("flag");
+    let (_, said) = t.talk("alde_gld", 257, 153, &[]);
+    assert!(said.iter().any(|l| l.contains("Kingdom of Al De Baran")), "{said:?}");
+    assert!(said.iter().any(|l| l.contains("isn't taken by any guild yet")), "{said:?}");
+
+    // someone else's castle: the flag names its master
+    t.eval("g.castle_aldeg_cas01 = 999999; g['castle_aldeg_cas01_name$'] = 'Somebody'");
+    let (menus, said) = t.talk("alde_gld", 257, 153, &[]);
+    assert!(menus.is_empty());
+    assert!(said.iter().any(|l| l.contains("Its master is ^ff0000Somebody")), "{said:?}");
+    t.eval("g.castle_aldeg_cas01 = 0; g['castle_aldeg_cas01_name$'] = ''");
+
+    // taken: the master recovers faster there
+    t.arrive("aldeg_cas01", 216, 26);
+    assert_eq!(t.eval("return tmp.regen_rate"), "0");
+    let emp = t.eval("for _, u in ipairs(nearby(5)) do if u.name == 'Emperium' then return u.id end end");
+    t.eval(&format!("battle.damage(player.id, {emp}, 10000000)"));
+    for _ in 0..3 {
+        t.g.tick();
+    }
+    assert_eq!(t.eval("return castle_owner('aldeg_cas01')"), t.eval("return player.char_id"));
+    assert_eq!(t.eval("return tmp.regen_rate"), "200");
+    let iv = |t: &mut T, rate: u32| {
+        t.eval(&format!("local r = rules.regen({{max_hp = 1000, max_sp = 100, vit = 0, int = 0, regen_rate = {rate}}}) return r.hp_interval .. ' ' .. r.sp_interval"))
+    };
+    assert_eq!(iv(&mut t, 100), "4000 8000");
+    assert_eq!(iv(&mut t, 200), "2000 4000");
+
+    // away from it, the usual pace; the flag takes the master home, beside the steward
+    t.arrive("alde_gld", 250, 150);
+    assert_eq!(t.eval("return tmp.regen_rate"), "0");
+    let (menus, _) = t.talk("alde_gld", 257, 153, &[1]);
+    assert_eq!(menus, ["Yes:No"]);
+    assert_eq!(t.at(), "aldeg_cas01 218,176");
+    send(&mut t.g, 3, Writer::new(0x007d));
+    assert_eq!(t.eval("return tmp.regen_rate"), "200");
+
+    // and the server's clock follows: two of the usual 4 s ticks in 4 s (vit 1: 1 HP a tick)
+    t.eval("kill_monster('aldeg_cas01', 'All')");
+    t.eval("player.hp = 1");
+    t.run(4100);
+    assert_eq!(t.eval("return player.hp"), "3");
+
+    // given up: no longer
+    t.talk("aldeg_cas01", 218, 175, &[7, 1, 2]);
+    t.eval("player.hp = 1");
+    t.run(4100);
+    assert_eq!(t.eval("return player.hp"), "2");
+    assert_eq!(t.eval("return tmp.regen_rate"), "0");
 }
 
 /// The boxes drop Ragu Memo's jRO table (data/db/treasure.toml), not mod0631's.

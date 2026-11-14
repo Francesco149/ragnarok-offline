@@ -773,8 +773,20 @@ Open, for the owner and for research:
   fighting monsters is ours (`world.rs` MobUnit::side). Open: euRO's other
   siege day (Malaysia had Wednesday and Saturday), and what defence gave in
   2004 (jAthena //1046's damage cut is marked "らしい?").
-* Guild flags (817 `guild_flag.txt`, 0.5.2 `*_flag.txt`) saying who holds a
-  castle; the owners' faster HP/SP recovery in their castle (the iRO page).
+* **Flags and faster recovery: built 2026-11-14.** 817's twenty flags on the
+  castle grounds (`guild_flag.txt`, sprite 722) with 0.5.2's text, which names
+  each kingdom (817's says "Albedaran" and "Geffen" for all), and 0.5.2's
+  "return to your castle?" for the master. Played in the client the same day:
+  sprite 722 is the 3D guild banner (no emblem), both pages fit, the way home
+  lands beside the steward. Luina's five stand below the bridge's parapet:
+  they answer a click on their foot, low on the screen, not on the cloth.
+  The master recovers twice as fast
+  in the castle: the iRO page gives no number, twice is rAthena's (Valaris,
+  eAthena: when it came in is not dated). Open: whether the period's flags
+  stood in the towns too (0.5.2, 2004-05, puts them there with kRO's castle
+  names, Kriemhild and the rest, which this client's `mapnametable` lacks:
+  it has only "Valkyrie Realm Guild" and the like), and how much faster the
+  official recovery was.
 * Whether jRO's two boxes a castle split Ragu Memo's list (common / own).
 * The steward's English is the emulator's fan translation (0.5.2); the iRO
   text is not known.

@@ -38,6 +38,16 @@
 --     cells and kinds, 10,000z each; the menu as jAthena notes the official
 --     one: each slot's kind, and the HP of one that stands).
 --
+--   * a flag for each castle on its grounds (817 npc/guild/guild_flag.txt,
+--     2004-02-14, "by kalen": cells, sprite 722, the castle each one reads),
+--     with eAthena 0.5.2's text for it (npc/guild/*_flag.txt, 2004-05-18,
+--     "Scripted by davidsiaw"), which names each kingdom where 817 copied
+--     "Albedaran" and "Geffen" onto all twenty; 0.5.2's offer to take the
+--     master home. 0.5.2 put its flags in the towns, with names (Kriemhild...)
+--     this client's map names do not know: not built;
+--   * the master recovers faster in the castle (the iRO guide's page; how
+--     much is rAthena's, rules/combat.lua rules.regen).
+--
 -- Ours (docs/DEVIATIONS.md, "Guild castles"): anyone may break an Emperium
 -- (817 wants a guild with Official Guild Approval); an ownerless castle can be
 -- taken whenever its Emperium stands, siege or not; the castle belongs to the
@@ -174,6 +184,29 @@ local GUARDIANS = {
 }
 local GUARDIAN_KIND = { [1285] = "Archer Guardian", [1286] = "Knight Guardian", [1287] = "Soldier Guardian" }
 local GUARDIAN_FEE = 10000 -- jAthena //0795, //0974, //1046
+
+-- The castles' flags on their grounds: 817 guild_flag.txt (x, y, dir, map: the map
+-- last, or `check` reads the cell as a warp destination).
+-- alde_gld's five stand on blocked cells beside the path, as in 817.
+local FLAGS = {
+  prtg_cas01 = { 160, 210, 4, "prt_gld" }, prtg_cas02 = { 153, 213, 3, "prt_gld" },
+  prtg_cas03 = { 150, 220, 2, "prt_gld" }, prtg_cas04 = { 169, 220, 6, "prt_gld" },
+  prtg_cas05 = { 167, 213, 5, "prt_gld" },
+  payg_cas01 = { 347, 125, 2, "pay_gld" }, payg_cas02 = { 347, 116, 2, "pay_gld" },
+  payg_cas03 = { 341, 106, 0, "pay_gld" }, payg_cas04 = { 330, 106, 0, "pay_gld" },
+  payg_cas05 = { 318, 106, 0, "pay_gld" },
+  aldeg_cas01 = { 257, 153, 7, "alde_gld" }, aldeg_cas02 = { 257, 166, 5, "alde_gld" },
+  aldeg_cas03 = { 262, 153, 7, "alde_gld" }, aldeg_cas04 = { 262, 166, 5, "alde_gld" },
+  aldeg_cas05 = { 267, 153, 7, "alde_gld" },
+  gefg_cas01 = { 330, 199, 2, "gef_fild07" }, gefg_cas02 = { 330, 204, 2, "gef_fild07" },
+  gefg_cas03 = { 330, 176, 2, "gef_fild07" }, gefg_cas04 = { 330, 171, 2, "gef_fild07" },
+  gefg_cas05 = { 330, 166, 2, "gef_fild07" },
+}
+-- 0.5.2's kingdom a castle's flag speaks for
+local KINGDOM = { aldeg = "Al De Baran", gefg = "Geffen", payg = "Payon", prtg = "Prontera" }
+
+-- A castle's master recovers HP and SP twice as fast in it (rules.regen).
+local HOME_REGEN = 200
 
 -- What defence investment gives: rAthena pre-renewal (status.cpp, status_calc_mob,
 -- tier later; the iRO guide's page says only "the castle Emperium's defense and HP
@@ -408,6 +441,7 @@ for i, c in ipairs(C) do
         end
         g[key(c)] = player.char_id
         g[key(c, "name$")] = player.name
+        tmp.regen_rate = HOME_REGEN
         g[key(c, "eco")] = 0
         g[key(c, "te")] = 0
         g[key(c, "def")] = 0
@@ -691,6 +725,7 @@ for i, c in ipairs(C) do
             mes "Master!!....."
             close()
             clear(c)
+            tmp.regen_rate = nil
             announce("Stronghold [" .. c[2] .. "], [" .. player.name .. "] has surrendered the castle", 0)
             -- an empty castle fills with monsters (castles.lua), and its Emperium stands again
             if content("castle_monsters") then do_event("castle_garrison::OnCastleEmptied" .. i) end
@@ -790,8 +825,44 @@ for i, c in ipairs(C) do
     end,
   }
 
+  local lo = c[8] -- the lever out of the master room: cell -> arrival beside the steward
+
+  -- the flag on the castle's grounds: who holds it; the master may go home from it
+  local f, land = FLAGS[map], KINGDOM[map:match("^(%a+)_")]
+  local H = "[ Kingdom of " .. land .. " ]"
+  npc {
+    map = f[4], x = f[1], y = f[2], dir = f[3], sprite = 722, name = "Flag", id = "castle_flag_" .. map,
+    on_click = function()
+      if g[key(c)] == 0 then
+        mes(H)
+        mes("1. As Law of " .. land .. ", this guild base isn't taken by any guild yet.")
+        next()
+        mes(H)
+        mes "2. In order to take this guild base, you must defeat all the guardians that protecting guild base and eliminate the emperium to take over the guild base."
+        close()
+      elseif not is_master(c) then
+        -- 0.5.2 names the guild, then its master: here the castle is the character's
+        mes(H)
+        mes("1. As Law of " .. land .. ", this guild base is ^ff0000" .. owner_name(c) .. "^000000's guild base.")
+        next()
+        mes(H)
+        mes("2. Its master is ^ff0000" .. owner_name(c) .. "^000000, and if any of you have a beef, raise your sword to honor yourself.")
+        close()
+      else
+        mes(H)
+        mes "Do you want to return to your castle?"
+        next()
+        if menu("Yes", "No") == 1 then
+          -- 0.5.2 sends each to a cell copied between regions; ours: beside the steward
+          warp(map, lo[3], lo[4])
+          return
+        end
+        close()
+      end
+    end,
+  }
+
   -- the lever out of the master room
-  local lo = c[8]
   npc {
     map = map, x = lo[1], y = lo[2], dir = 0, sprite = 111, name = "Switch", id = "castle_lever_out_" .. map,
     on_click = function()
@@ -832,5 +903,7 @@ end
 -- The master's treasure is laid out the first time he comes in on a new day.
 on("map_enter", function()
   local c = by_map(player.map)
-  if c and is_master(c) then new_day(c) end
+  local home = c and is_master(c)
+  if home then new_day(c) end
+  tmp.regen_rate = home and HOME_REGEN or nil
 end)

@@ -40,7 +40,13 @@ end
 --   spirit_hp / spirit_sp / spirit_interval: Spiritual Cadence (Monk), sitting
 -- Nothing recovers at half the weight limit or more, or while hidden
 -- (pc.c:4036). t: max_hp, max_sp, vit, int, sitting, walking, weight,
--- max_weight, hiding, skills = {["4"] = level}, sc = {["20"] = true}.
+-- max_weight, hiding, skills = {["4"] = level}, sc = {["20"] = true},
+-- regen_rate: percent a script set (tmp.regen_rate; 100 if none).
+--   A castle's master recovers faster in the castle ("guild members ...
+--   recover their HP/SP faster", the iRO guide's War of Emperium page,
+--   2004-04, no number). How much is rAthena's (tier later: pc.cpp:7128
+--   "Increased guild castle regen [Valaris]", status.cpp:15541): the natural
+--   HP and SP intervals halve; the skills' recovery is left alone.
 function rules.regen(t)
   local skills, sc = t.skills or {}, t.sc or {}
   local function skill(id) return skills[tostring(id)] or 0 end
@@ -49,6 +55,11 @@ function rules.regen(t)
     sp = 1 + floor(t.int / 6) + floor(t.max_sp / 100), sp_interval = 8000,
     hp_clock = 100, sp_clock = 100,
   }
+  local rate = t.regen_rate or 100
+  if rate ~= 100 and rate > 0 then
+    r.hp_interval = floor(r.hp_interval * 100 / rate)
+    r.sp_interval = floor(r.sp_interval * 100 / rate)
+  end
   local over50 = t.max_weight and t.max_weight > 0 and t.weight * 2 >= t.max_weight
   if over50 or t.hiding then
     r.hp_clock, r.sp_clock = 0, 0

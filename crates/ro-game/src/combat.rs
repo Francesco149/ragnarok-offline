@@ -1243,6 +1243,8 @@ impl Game {
             let Some(c) = self.char_of_unit(id).cloned() else { continue };
             let d = self.derive(&c);
             let (_, _, option) = self.opts_of(id);
+            // a script may speed natural recovery up (tmp.regen_rate, percent): a castle's master in it
+            let regen_rate = self.npcrt.temp.get(&id).and_then(|m| m.get("regen_rate")).and_then(crate::status::lua_u64).unwrap_or(100);
             let r = self
                 .scripts
                 .as_ref()
@@ -1251,7 +1253,7 @@ impl Game {
                         "regen",
                         &json!({"max_hp": d.max_hp, "max_sp": d.max_sp, "vit": c.stats[2] as i32 + d.bonus[2], "int": c.stats[3] as i32 + d.bonus[3],
                                 "sitting": sitting, "walking": walking, "weight": self.weight_of(&c), "max_weight": d.max_weight,
-                                "hiding": option & 6 != 0, "skills": c.skills.iter().map(|(k, v)| (k.to_string(), json!(v))).collect::<serde_json::Map<_, _>>(),
+                                "hiding": option & 6 != 0, "regen_rate": regen_rate, "skills": c.skills.iter().map(|(k, v)| (k.to_string(), json!(v))).collect::<serde_json::Map<_, _>>(),
                                 "sc": c.sc.keys().map(|k| (k.to_string(), json!(true))).collect::<serde_json::Map<_, _>>()}),
                     )
                     .ok()
