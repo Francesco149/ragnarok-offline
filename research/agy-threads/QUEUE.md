@@ -551,6 +551,14 @@ Sets: `skill_castend_*` for those skills.
   map has no room: which rooms of Prontera were they, and since when?
   Rows as computed results (`research/gat_cells.py` on the merged GRF,
   `grep -n` on each emulator's warp file).
+* **(new 2026-11-14) Dungeon spawns: did euRO have jRO's late-2003
+  rebalance? (THREADS.md #10).** Ragu Memo's dungeon pages agree with ours
+  on 430 of 456 counts; between its July and December 2003 captures jRO
+  thinned Geffen Dungeon and Glast Heim castle 1F and put Skeletons on
+  Payon Cave 1F (#10 lists them). Wanted: an iRO or euRO account of 2004
+  that counts or names the monsters on those floors (Skeletons on Payon
+  Cave 1F is the easiest to witness), or a kRO notice of 2003 announcing
+  the change, with its date. Do not quote Ragu Memo's pages again.
 * **The Clock Tower's random warps**: now in the game from mod0631
   (`conf/npc_warp.txt:1140-1320`, "import from EoR-162"). Any period
   player description of which warps on which floor were random.

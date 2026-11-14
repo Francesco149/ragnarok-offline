@@ -518,6 +518,28 @@ happened in 2003 (Lutie toy factory 2003-04-08).
 **Impact:** `scripts/import/spawns.lua`.
 **Look:** OpenKore portals/monster tables, RO Empire maps (2004), iRO
 Rune-Midgarts Library (monster locations).
+**2026-11-14: Ragu Memo's dungeon pages (jRO) against ours.** Eighteen
+`map_*.html` pages, one block per floor, saved at the capture nearest
+2003-12-18 (mostly 2003-12-05; `data:refs/web/ragmemo-2003/`), compared
+by `research/ragmemo_spawns.py` (names by mod0631's JName, floors paired
+by their monsters): **430 of 456 counts are ours exactly**, on 77 floors
+from Payon Cave to Glast Heim, Turtle Island and the guild dungeons. Every
+period emulator on disk (601 to 817, mod0629-0652, 0.5.2) has our numbers
+on the floors where it differs. Where it differs, its July 2003 captures
+(Payon Cave, Geffen Dungeon, the Pyramids, also saved) still have the
+emulators' counts, so **jRO rebalanced these floors between 2003-07 and
+2003-12**:
+* Geffen Dungeon 1F-3F about two thirds of ours (Familiar 20/30,
+  Poporing 15/25, Argos 25/40 and 20/30, Dustiness 20/30, Whisper 20/30);
+* Glast Heim castle 1F (Joker 5/10, Rideword 15/30, Carat 30/40, Sage
+  Worm 40/50) and the inner rooms (`gl_in01`: 8/10, 8/10, 14/20);
+* Payon Cave 1F gains 25 Skeletons (none in any emulator; rAthena has 35
+  there later), Pyramid B3F 10 Ghouls;
+* older than July: Payon Cave 4F Sohee 45/65, Sandaruman east Goblin
+  Archer 23/28.
+The game keeps the emulators' counts: whether euRO's servers of January
+2004 had jRO's rebalance is not known (queue T9). Magma Dungeon (`mag_dun`,
+behind `juno`) has no counts on the page.
 
 ### 11. Shop NPC names and stock
 Done in part: shops are named from 817 by cell. Two of 817's lines have a
