@@ -752,6 +752,17 @@ skill on other monsters (guess). Which Goblin and Kobold the FAQ means by
 left out: Lazy Attack (no such skill in the table), Detoxify (no table gives
 it to a monster), and two pairs on a "Grimtooth" monster. THREADS.md #23.
 
+**Monster magic as Ragu Memo's jRO table gives it.** Ragu Memo's page of
+monster attack magic (`at_monskill.html`, Wayback 2003-12-05) gives rate,
+cast and wait for 76 rows: 71 are mod0631's rows exactly
+(`research/ragmemo_mob_magic.py`). The other five are rows mod0631 lacks and
+the page has, now in `mob_skills_faq.toml` (tier period): Marduk's and the
+Wind Ghost's raised rate under 30% HP (the Wind Ghost's Jupitel Thunder then
+uninterruptible, as the page says of it), the Mutant Dragon's Fire Ball at
+80% when shot from range, Gajomart's Magnum Break at 40%, and the Ancient
+Mummy's Envenom Lv10 at 25%. The Elder Willow's Napalm Beat (from jAthena)
+takes the page's 1000 ms cast instead of 500.
+
 **The bosses' rule.** The same FAQ ends with what it says it took from iRO:
 "All boss monsters will use the Two-Hand Quicken, Increase Agility, Guided
 Attack, and Piercing Attack depending on the probability" and "will Teleport

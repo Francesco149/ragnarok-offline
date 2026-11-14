@@ -843,7 +843,7 @@ state = "chase"
 skill = 11
 lv = 10
 rate = 1000
-cast = 500
+cast = 1000
 delay = 10000
 cancel = true
 target = "target"
@@ -852,6 +852,7 @@ cond_val = 0
 tier = "athena2003"
 source = "jAthena //0953 (2004-04-27) db/mob_skill_db.txt"
 faq = "Napalm Beat / Elder Willow"
+note = "cast time from Ragu Memo at_monskill.html (jRO, Wayback 2003-12-05)"
 
 [[skill]]
 mob = 1033
@@ -859,7 +860,7 @@ state = "chase"
 skill = 11
 lv = 10
 rate = 100
-cast = 500
+cast = 1000
 delay = 10000
 cancel = true
 target = "target"
@@ -868,6 +869,7 @@ cond_val = 0
 tier = "athena2003"
 source = "jAthena //0953 (2004-04-27) db/mob_skill_db.txt"
 faq = "Napalm Beat / Elder Willow"
+note = "cast time from Ragu Memo at_monskill.html (jRO, Wayback 2003-12-05)"
 
 [[skill]]
 mob = 1010
@@ -3348,6 +3350,86 @@ cond_val = 0
 tier = "athena2003"
 source = "jAthena //0953 (2004-04-27) db/mob_skill_db.txt"
 faq = "Stone Fling / Choco (client action table)"
+
+[[skill]]
+mob = 1140
+state = "attack"
+skill = 19
+lv = 5
+rate = 300
+cast = 4000
+delay = 10000
+cancel = true
+target = "target"
+cond = "myhpltmaxrate"
+cond_val = 30
+tier = "period"
+source = "Ragu Memo at_monskill.html (jRO, Wayback 2003-12-05)"
+faq = "Marduk Fire Bolt Lv5 10-30%; mod0631 has the 10% row, this is the 30% one as its others"
+
+[[skill]]
+mob = 1262
+state = "chase"
+skill = 17
+lv = 7
+rate = 800
+cast = 0
+delay = 0
+cancel = true
+target = "target"
+cond = "longrangeattacked"
+cond_val = 0
+tier = "period"
+source = "Ragu Memo at_monskill.html (jRO, Wayback 2003-12-05)"
+faq = "Mutant Dragon Fire Ball Lv7 10-30-80%; the 80% row as jAthena //0953 has it"
+
+[[skill]]
+mob = 1263
+state = "chase"
+skill = 84
+lv = 3
+rate = 300
+cast = 4000
+delay = 10000
+cancel = false
+target = "target"
+cond = "myhpltmaxrate"
+cond_val = 30
+tier = "period"
+source = "Ragu Memo at_monskill.html (jRO, Wayback 2003-12-05)"
+faq = "Wind Ghost Jupitel Thunder Lv3 10-30%, uninterruptible under 30% HP; as jAthena //0953"
+
+[[skill]]
+mob = 1309
+state = "chase"
+skill = 7
+lv = 10
+rate = 400
+cast = 2000
+delay = 0
+cancel = false
+target = "target"
+cond = "always"
+cond_val = 0
+tier = "period"
+source = "Ragu Memo at_monskill.html (jRO, Wayback 2003-12-05)"
+faq = "Gajomart Magnum Break Lv10 40-100%; the 40% row as jAthena //0953 has it"
+
+[[skill]]
+mob = 1297
+state = "attack"
+skill = 52
+lv = 10
+rate = 250
+cast = 1500
+delay = 0
+cancel = false
+target = "target"
+cond = "always"
+cond_val = 0
+tier = "period"
+source = "Ragu Memo at_monskill.html (jRO, Wayback 2003-12-05)"
+faq = "Ancient Mummy Envenom Lv10 25%, cast 1500, wait 0, uninterruptible"
 
 [[skill]]
 mob = 1038

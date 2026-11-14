@@ -167,6 +167,41 @@ for faq_skill, faq_mob, skills, cands in pairs:
         rec += [f'tier = "{tier}"', f'source = "{src}"', f'faq = "{faq_skill} / {faq_mob}"']
         out.append("[[skill]]\n" + "\n".join(rec))
 
+# Ragu Memo's table of monster attack magic (jRO, http://ragmemo.s33.xrea.com/at_monskill.html,
+# Wayback 20031205093859; tier period) gives rate %, cast and wait for 76 (monster, skill) rows
+# with numbers. 71 are mod0631's rows exactly, rate/10 = the page's percent
+# (research/ragmemo_mob_magic.py). "10-30%" is the rate, then the rate once HP is under 30%; a
+# third figure is mod0631's "attackpcge 2" row, or (Mutant Dragon) jAthena's "longrangeattacked".
+# These are the rows the page has and our tables lack; where jAthena //0953 has the same row,
+# its state is used.
+RAGMEMO_SRC = "Ragu Memo at_monskill.html (jRO, Wayback 2003-12-05)"
+RAGMEMO = [
+    (1140, "attack", "MG_FIREBOLT", 5, 300, 4000, 10000, True, "myhpltmaxrate", 30,
+     "Marduk Fire Bolt Lv5 10-30%; mod0631 has the 10% row, this is the 30% one as its others"),
+    (1262, "chase", "MG_FIREBALL", 7, 800, 0, 0, True, "longrangeattacked", 0,
+     "Mutant Dragon Fire Ball Lv7 10-30-80%; the 80% row as jAthena //0953 has it"),
+    (1263, "chase", "WZ_JUPITEL", 3, 300, 4000, 10000, False, "myhpltmaxrate", 30,
+     "Wind Ghost Jupitel Thunder Lv3 10-30%, uninterruptible under 30% HP; as jAthena //0953"),
+    (1309, "chase", "SM_MAGNUM", 10, 400, 2000, 0, False, "always", 0,
+     "Gajomart Magnum Break Lv10 40-100%; the 40% row as jAthena //0953 has it"),
+    (1297, "attack", "TF_POISON", 10, 250, 1500, 0, False, "always", 0,
+     "Ancient Mummy Envenom Lv10 25%, cast 1500, wait 0, uninterruptible"),
+]
+# The page's cast time where a row taken above says otherwise.
+RAGMEMO_CAST = {(1033, sid["MG_NAPALMBEAT"]): 1000}  # Elder Willow Napalm Beat: jAthena 500
+for i, rec in enumerate(out):
+    m = rec.split("\n")
+    mob, skill = int(m[1].split(" = ")[1]), int(m[3].split(" = ")[1])
+    if (mob, skill) in RAGMEMO_CAST:
+        out[i] = rec.replace(m[6], f"cast = {RAGMEMO_CAST[mob, skill]}") + \
+            f'\nnote = "cast time from {RAGMEMO_SRC}"'
+for mob, state, name, lv, rate, cast, delay, cancel, cond, cond_val, how in RAGMEMO:
+    out.append("[[skill]]\n" + "\n".join([
+        f"mob = {mob}", f'state = "{state}"', f"skill = {sid[name]}", f"lv = {lv}", f"rate = {rate}",
+        f"cast = {cast}", f"delay = {delay}", f"cancel = {'true' if cancel else 'false'}",
+        'target = "target"', f'cond = "{cond}"', f"cond_val = {cond_val}", 'tier = "period"',
+        f'source = "{RAGMEMO_SRC}"', f'faq = "{how}"']))
+
 nboss = 0
 for mid, mname in mvps:
     nboss += 1
