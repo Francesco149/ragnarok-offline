@@ -318,6 +318,11 @@ dialect, `Job_Magician`, missing gotos). We used 659's simple guild NPC
 (job change at job level 40, no test) until 2026-11-11; see the last
 paragraph. 817's own Knight, Blacksmith and Assassin are still such
 one-line NPCs. 817's Priest and Hunter do have quests.
+**Round 20:** an iRO Wizard FAQ's quest section (FAQ 30054, added in v2.1,
+2004-07-30) matches `wizard_test.lua`: the quiz versions, failure saving and
+putting you outside Geffen Tower. It adds a skip of the combat rooms for a
+Worn Out Scroll after about five failures, iRO in July 2004: later than our
+window, not built.
 **Impact:** whether the 2-1 jobs should have their tests; see #5.
 **Look:** eathena-v0.5.2 (2004-05) `npc/jobs/*.txt`; period
 walkthroughs (#2).
@@ -872,6 +877,17 @@ critical (`:2269`). Built on RODataZone's bound, 817's critical. Same
 round: the Talkie Box stays silent for its own Hunter (the iRO guide's
 Hunter page, 2004-03-27, "The message is not played for the caster";
 jAthena //0991, 2004-05-26, "本鯖仕様": the official server's way). Built.
+**Round 20 (2026-11-14, `research/notes/round20-review.md`):** Venom
+Splasher's threshold moved in 2004: this client's text "HP at least by 1/3"
+and the iRO guide (2004-03) "less than 1/3"; euRO's May-2004 text and an iRO
+FAQ of 2004-06 "2/3", with the target poisoned, a timer over it, cancelled by
+a hit, 25% splash on 3x3. The timer's length has a source now, a late one:
+jAthena //1047 (2004-09-14) 5.5 s to 10 s, reuse 15 s to 60 s. Not built yet:
+the period skill is the 1/3 one with that timer (ours, from a later source).
+Ice Wall: 817 lets it be attacked (`battle.c:3465`), takes the damage off its
+durability (`skill.c:3725`) and decays 5 every 100 ms (`skill.c:6156`), as
+the iRO guide says; whether this client lets a player click a skill unit to
+attack is to try in the rig before building it.
 **Read against the iRO guide's skill pages** (2004-03-27 to 2004-04-13,
 `research/notes/round4-review.md`; 2026-11-11):
 * *Agrees with the draft:* Enchant Poison's chance to poison (3% to 7%)
@@ -1215,6 +1231,10 @@ script names. After its first fixes it still reports:
   instead. An older or newer `pay_dun04`? (rAthena has `189,43`, round 10;
   817, eAthena 0.5.2 and jAthena all have `193,43`, round 18, and the
   May-2004 client's map has the same wall.)
+* **Round 20:** OpenKore's iRO portal list (`portals.txt`, 2004-02-29) has
+  no portal of `tur_dun05`, none of the `prt_in` exits below, and of Payon
+  Cave 3F's arrivals in 4F only 202,206 and 40,37: three second witnesses that
+  players of the time never met these cells.
 * **`prt_in` 280-285, 36-130**: four exits to Prontera on cells this
   client's `prt_in` has no room around, and no warp leads to them.
   Rooms of a later Prontera? rAthena commented out three of them on
