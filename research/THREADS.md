@@ -782,7 +782,8 @@ Open, for the owner and for research:
   they answer a click on their foot, low on the screen, not on the cloth.
   The master recovers twice as fast
   in the castle: the iRO page gives no number, twice is rAthena's (Valaris,
-  eAthena: when it came in is not dated). Open: whether the period's flags
+  eAthena; already in rAthena's first commit, 706e785 of 2004-11-04, the
+  import of eAthena's tree: earlier than that is not dated). Open: whether the period's flags
   stood in the towns too (0.5.2, 2004-05, puts them there with kRO's castle
   names, Kriemhild and the rest, which this client's `mapnametable` lacks:
   it has only "Valkyrie Realm Guild" and the like), and how much faster the
