@@ -37,6 +37,9 @@ A server that frames by the length field (Athena, and us) would refuse it.
 
 ## Layouts confirmed from the client's receive code
 
+Every packet the server sends has been read in the client's handler
+(2026-11-14). Message numbers are 0-based lines of `msgstringtable.txt`.
+
 | Packet | What the client does | Where |
 |---|---|---|
 | 0x0069 login accept | login ids at +4/+8/+12, sex byte at +46, server records of 32 bytes from +47 (`count = (len-47) >> 5`) | `sub_5306b0` |
@@ -65,6 +68,48 @@ A server that frames by the length field (Athena, and us) would refuse it.
 | 0x010f skill list | `(len-4)/37` records: id (1..158, others skipped), inf read as u32, level, sp, range; the 24-byte name is never read | `0x521e90` |
 | 0x013e casting | src, dst (0: on the ground at x, y), x, y, skill, element u32 (picks the circle for magic), cast ms. Brandish Spear and Bowling Bash get no bar | `0x523ba0` |
 | 0x011a / 0x01de / 0x0117 skill results | as Athena's. For skills 12, 18, 21, 70, 79, 83, 85, 89 and 110, 0x011a's target is read as a packed cell to turn the caster; we send Hammer Fall a unit id there, as mod0631 does | `0x523e20`, `0x52bd40`, `0x522620` |
+| 0x0073 / 0x007f clock | 0x0073: tick u32, packed position; its last two bytes are never read. 0x007f: tick u32; the first sets the clock, later ones adjust it and feed the ping | `0x51a340`, `0x519cf0` |
+| 0x008d / 0x008e chat | 0x008d: id u32 (ignore list checked), text from +8; 0x008e: text from +4. **Both copy the text unchecked, without a NUL, into a 256-byte stack buffer**: longer text crashes the client. Ours are cut to 255 bytes and a NUL (2026-11-14). The bubble needs the unit in the client's list | `0x519bd0`, `0x5167a0` |
+| 0x0091 map move | 16-byte name the client NUL-terminates itself, then drops its last 4 characters and adds `.rsw`; x, y as i16. The same map repositions without a reload. We kept a NUL inside the 16, which would cut `mjolnir_04_1.gat` (fixed 2026-11-14) | `0x519e00` |
+| 0x0095 name | id u32, 24-byte name. **For the player's own pet the name is used as a sprintf format** (as in 0x01a2): pet names lose `%` (DEVIATIONS.md) | `0x5168a8` |
+| 0x0098 whisper result | 0 shows the whisper sent, 1 "no such character" (msg 148), 2 and 3 msgs 149, 150; above 3 as 1 | `0x51afd0` |
+| 0x009a broadcast | at most 1023 bytes, NUL added. **The client edits the text**: from a `#` to the next `:` is cut out, and a leading `blue` (any case) is removed and turns the line blue (Athena's announce flag 0x10, which we send the same way) | `0x51a770` |
+| 0x009c / 0x00a1 / 0x00c0 / 0x00c2 | direction: id, head i16, body byte. Floor item gone: id. Emotion: id, byte (oneself included). User count: i32 into msg 178 | `0x51697c`, `0x516a58`, `0x516daa`, `0x516e29` |
+| 0x00b3 / 0x018b quit | 0x00b3: only 1 acts (back to character select). 0x018b: 0 quits, 1 "You can't quit now" (msg 502) | `0x516d3b`, `0x51829f` |
+| 0x00b5 / 0x00b6 dialog | npc id u32. 0x00b6 reads the id only when no window is waiting | `0x516c93`, `0x516cca` |
+| 0x00c3 look | id u32, type byte 0..8, value **u8**; for oneself it also updates the status globals | `0x51e760` |
+| 0x0142 / 0x01d4 input boxes | npc id u32. **They open only for an NPC the client has as a unit**: an invisible NPC asking for a number or text would wait forever. None of ours does (2026-11-14) | `0x517abd`, `0x52abb0` |
+| 0x0144 / 0x0145 | Compass: the npc id is never read; type u32 (2 removes), x, y u32, mark byte, colour u32. Cut-in 0x0145: 16-byte name, position byte; we send 0x01b3, read the same way with 64 bytes | `0x524fb0`, `0x517b11` |
+| 0x019b effect | id u32, type u32 0..8 → effect. **It looks the id up only among other units**, so one aimed at the player draws nothing. Level-ups and refining show theirs anyway, through 0x00b0 and 0x0188 | `0x528c70` |
+| 0x01dc login key | second login dispatch (0x187..0x1dc, `0x52f9aa`); key from +4, length = len - 4; answers 0x01dd with MD5 of key + password (or password + key) | `0x5314e0` |
+| 0x00a5 / 0x00a6 / 0x0122 / 0x0123 lists | storage and cart lists, laid out as 0x00a3 (10 bytes) and 0x00a4 (20 bytes) | `0x520670`, `0x5208d0`, `0x522d80`, `0x522b30` |
+| 0x00f4 / 0x0124 added, 0x00f6 / 0x0125 removed | idx, amount **u32**, nameid, identified, attribute, refine, four cards: no type, so the client stores type 0. Removed: idx, amount u32 | `0x520a20`, `0x522f50`, `0x520b10`, `0x523040` |
+| 0x00f2 / 0x0121 counts | count, max (i16); the cart's weights are i32 **in tenths** | `0x517324`, `0x517780` |
+| 0x00a8 item used | idx, **amount left** (i16), result. 0: silent | `0x51db50` |
+| 0x00aa / 0x00ac equip | 0x00aa result 1 puts on the item at idx (msg 170) and takes it out of the inventory list; 0 and 2 "You can't put this item on." 0x00ac: **idx is never read**, the lowest set bit of the location picks the slot. A pet accessory put on must get no 0x00aa (mod0631 `pet.c:653`; we sent a success until 2026-11-14) | `0x51dc10`, `0x516b7a` |
+| 0x00af item gone | idx, amount | `0x516bb9` |
+| 0x00c4 / 0x00c6 / 0x00c7 shop | deal window for the npc id; buy list 11 bytes (price, discounted price, type, nameid); sell list 10 bytes (idx, price, overcharged; indices not held are skipped) | `0x516ea0`, `0x51ea00`, `0x51eb10` |
+| 0x00ca / 0x00cb deal result | 0x00ca: 0 done (msg 54), 1 no zeny (55), 2 overweight (56), 3 no room (221); **any result closes the shop**. 0x00cb: 0 done, 1 failed (57). We could send 2 and then 0 for a half-bought list (fixed 2026-11-14, as mod0631 `npc.c:370`) | `0x51eca0`, `0x51ed80` |
+| 0x0188 refine result | result i16 (0 effect 0x9a and msg 498, 1 effect 0x9b and msg 499), idx, new refine | `0x5278c0` |
+| 0x00bc stat raised | type, ok (0: silent), value byte | `0x51dff0` |
+| 0x010a / 0x010b / 0x010c MVP | item (shown by its unidentified name), EXP (printed signed), the effect over a unit | `0x521af0`, `0x51756a`, `0x5175ce` |
+| 0x010e skill update | skill, level, sp, range, upgradable; inf kept from 0x010f | `0x521dc0` |
+| 0x0110 skill failed | skill, basic type u32, result, cause: 1 SP, 2 HP, 3 no memo, 4 delay, 5 zeny, 6 weapon, 7/8 gemstones, 9 overweight, 10 "failed" (behind a flag). Cause 0 by skill (27, 50, 52 have their own text) | `0x522040` |
+| 0x0115 knock-back damage | 0x01de's fields with x, y (i16) where 0x01de has -1, -1; damage i16 | `0x522500` |
+| 0x011c / 0x011e warp | four names read with strlen (each must end in a NUL: ours do), then "cancel". /memo: 0 saved, 1 skill too low, 2 no Warp Portal | `0x5229d0`, `0x517737` |
+| 0x0120 / 0x01c9 ground units | 0x0120 removes by id. 0x01c9: id, src, x, y, type, a byte the client overwrites, Graffiti flag; with the flag the text is **strcpy'd unbounded** (ours ends in a NUL). Types below 0x2d are not drawn. **A unit whose src is not the player toggles**: the client keeps a list of such ids, which 0x0120 does not clear, and a second 0x01c9 for the same id is drawn hidden (`0x52a9a6`-`0x52aa75`; THREADS.md #28) | `0x5176e7`, `0x52a890` |
+| 0x013a / 0x013b / 0x013c arrows | attack range i16; arrow message 0..3 (3 "Arrow has been equipped."); quiver idx | `0x517a28`, `0x523990`, `0x517a4d` |
+| 0x013d / 0x0148 / 0x01b9 | recovery: type 5 HP, 7 SP, amount i16. Resurrected: id (the u16 after it is never read). Cast cut: id | `0x523a70`, `0x525300`, `0x529d80` |
+| 0x0147 item skill | as a 0x010f record (inf u32); the name is never read. Inf 4 (Teleport) is used at once | `0x525180` |
+| 0x0189 teleport refused | 0 "Unavailable area to teleport" in red, 1 the same in yellow | `0x518273` |
+| 0x018c Sense | class, level, size, HP u32, def, race (a number), mdef, element (`% 20`), then nine element bytes | `0x5182f1` |
+| 0x0192 cell type | x, y, type (i16); the map name is never read; only 1 and 5 block. A freed Ice Wall cell now gets 3 back on water (2026-11-14) | `0x5183fa` |
+| 0x0177 / 0x017b / 0x01a6 / 0x01ad pick lists | `(len-4)/2` i16 inventory indices (unknown ones skipped); 0x01ad holds **item ids**, not indices. An empty list still opens the window | `0x527000`, `0x527200`, `0x529220`, `0x5298c0` |
+| 0x0179 / 0x017d results | identify: idx, 0 done / 1 failed; card: equip idx, card idx, 0 / 1. On success the client marks the item, or fills the first free card slot and drops a card, itself | `0x527100`, `0x527320` |
+| 0x018d / 0x018f forging | list: 8-byte records, **only the item id is read** (Athena's 0x0012 and maker id are ignored); empty: "You can't create items yet." Result: 0 effect 0x9a, 1 0x9b, 2 0x131, 3+ 0x132; its message is built and never shown | `0x51833c`, `0x527bb0` |
+| 0x0194 char name | id u32, 24 bytes (no NUL needed) | `0x51842f` |
+| 0x019e / 0x01a0 taming | start (body unread), result byte (stops the slot machine on frame 7 or 3) | `0x528ed0`, `0x528fe0` |
+| 0x01a2 / 0x01a3 / 0x01a4 / 0x01aa pets | status: name[24] (**a sprintf format**), renamed, level, hunger, intimacy, accessory; level ≥ 10000 fills the item-info window instead. Feed: ok, food; the reaction uses the hunger from before, so 0x01a4 hunger goes first (as ours). Data: kind 0 spawn, 1 intimacy, 2 hunger, 3 accessory (10001-10020 have sprites), 4 performance, 5 ignores its value. Emote: below 50000 an emotion, 50000+ and 90000+ pet talk | `0x529320`, `0x529430`, `0x529030`, `0x5295b0` |
 
 ## Confirmed by running the real client against the server
 

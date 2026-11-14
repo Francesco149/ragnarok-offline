@@ -15,8 +15,12 @@ Ordered by "confirmable first". Each item says where the truth would come from.
   0x00b1, 0x00b4, 0x00b7, 0x00be, 0x010f, 0x0117, 0x011a, 0x013e, 0x0141,
   0x0196 and 0x01de. Mended: the unit packets' emblem, 0x00bd's ASPD, the
   level-up effect on every status refresh, menus longer than the client's
-  buffer. Next: the rest of what the server sends (about 80 ids), through
-  the same dispatch.
+  buffer. Then the other 80: **every packet the server sends is now read
+  in its handler**, and every byte layout matched. Mended from what the
+  handlers do: chat cut to the client's 256-byte buffer, 0x0091's 16-byte
+  map name, a shop buy that reported failure then success, a pet accessory
+  that "put on" the next item, `%` in pet names, a freed Ice Wall cell on
+  water. Open: ground units of others shown twice (THREADS.md #28).
 - **Walk/attack timing** the client animates vs ours. Done: the path
   finder is the client's (`0x4d2300`), and so are the walk's clock and
   every step's time, the first one from the sub-cell included, and the

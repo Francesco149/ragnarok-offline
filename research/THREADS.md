@@ -950,6 +950,21 @@ Shelf, `other/books.txt`). **Left as 817 has them, open:**
 **Impact:** small sums and one cell. **Look:** RODataZone's job pages
 (late 2003) for the Thief's reward and the ascetics' cells.
 
+### 28. Ground units placed by others, seen twice
+The client keeps a list of the ids of ground units (0x01c9) whose placer is
+not the player. A unit not on it is shown and added; one already on it is
+taken off and drawn **hidden**. 0x0120 does not clear the list
+(`0x52a9a6`-`0x52aa75`, docs/PROTOCOL.md). So when a monster's ground unit
+leaves view and comes back (mapsrv.rs sends 0x0120, then 0x01c9 again), the
+second showing should be invisible and the third visible. Athena does the
+same, so either the official server never re-sent a unit, or this is how
+traps of others stayed hidden.
+**Impact:** monster-made ground skills (and any later unit of an NPC or
+pet) after the player walks away and back.
+**Look:** the client rig: let a monster place a unit, walk out of sight and
+back, screenshot. The handler's exception list at session `+0xe4c` (perhaps
+the party) is not read yet.
+
 ## Resolved
 
 ### R1. Basic Skill levels

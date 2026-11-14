@@ -499,6 +499,9 @@ eAthena 817 (2004-02-19), bugs included. The translator is
 * **A Fly Wing (or Dead Branch) refused by a map flag is not used up.** In
   Athena it was spent before its script ran. The client still shows its
   "Unable to Teleport in this area" message.
+* **Pet names lose any `%`.** The client copies its own pet's name with
+  `sprintf(name)` (docs/PROTOCOL.md, 0x0095 and 0x01a2), so a `%s` would
+  read past the name. mod0631 keeps the name as typed.
 * **Runaway scripts** are stopped after 5 million Lua instructions without
   waiting for the player. 817 hung the whole server on an endless loop.
 
