@@ -617,6 +617,15 @@ emulator closest in date to this client. Where it has nothing, eAthena 817
 evidence of the official game, not the game: which numbers a later round of
 research should check is in research/THREADS.md #21–#23 and #25.
 
+**Forging follows the client's own list** (`data\metalprocessitemlist.txt`,
+2026-11-14): the Pike (70 Iron) can be forged, as in 817 and jAthena
+(mod0631 lacks it); Oridecon and Elunium can no longer be made from rough
+ores with the Mini Furnace. All three emulators let Oridecon Research do
+that; the client's list has no such recipe and the iRO guide (2004-03-27)
+says the skill only raises the success of level 3 weapons. Rough ores go
+to the NPCs, as before. The client gives the Lance two Evil Horns where
+every emulator asks one; we keep one (text, as in THREADS.md R6).
+
 **Slips of mod0631 that are not carried over** (the Lua marks each
 "mod0631 bug"):
 
