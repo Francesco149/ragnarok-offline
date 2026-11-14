@@ -32,15 +32,22 @@
 --   * giving the castle up empties it, and an empty castle "becomes filled
 --     with monsters" (the iRO guide; kRO's notice of 2004-02-10).
 --
+--   * sieges on Sunday from 18:00 to 20:00 (euRO's War of Emperium of April
+--     2004), with the steward's defence investment (jAthena //1046's cost)
+--     and the eight guardians each castle could install (jAthena //1046's
+--     cells and kinds, 10,000z each; the menu as jAthena notes the official
+--     one: each slot's kind, and the HP of one that stands).
+--
 -- Ours (docs/DEVIATIONS.md, "Guild castles"): anyone may break an Emperium
--- (817 wants a guild with Official Guild Approval); there is no siege
--- schedule, so an ownerless castle can be taken whenever its Emperium
--- stands; the castle belongs to the character, and the announcements name
--- the character where they named the guild; nothing ever attacks a held
--- castle, so the steward offers no defence investment and no guardians
--- (they mattered only in a siege); treasure is laid out when the master
--- first comes in on a new day, not at midnight; prtg_cas02's Emperium stands
--- in this client's older inner room (193,181), the emulators' cell being rock.
+-- (817 wants a guild with Official Guild Approval); an ownerless castle can be
+-- taken whenever its Emperium stands, siege or not; the castle belongs to the
+-- character, and the announcements name the character where they named the
+-- guild; in a siege the attackers are the castle's old garrison (817's list)
+-- coming back for a castle that is held, and if they break the Emperium the
+-- castle is theirs again (an ownerless castle full of monsters); what defence
+-- gives is rAthena's (later); treasure is laid out when the master first comes
+-- in on a new day, not at midnight; prtg_cas02's Emperium stands in this
+-- client's older inner room (193,181), the emulators' cell being rock.
 
 local C = {
   -- map, name (817 db/castle_db.txt), Kafra's town (817), Emperium (817),
@@ -136,6 +143,47 @@ local function owner_name(c) return g[key(c, "name$")] end
 local function is_master(c) return g[key(c)] ~= 0 and g[key(c)] == player.char_id end
 
 local function boxes_event(c) return "Agit_" .. c[1] .. "::OnBoxOpen" end
+local function emp_event(c) return "Agit_" .. c[1] .. "::OnAgitBreak" end
+local function guard_event(c, slot) return "Agit_" .. c[1] .. "::OnGuardian" .. slot end
+
+-- The eight guardians a steward can install: jAthena //1046 (2004-09-12,
+-- script/npc/gvg/*.txt, "@GDnum == 10" to 17), cell and kind; three cells
+-- that are walls on this client's maps moved one cell (aldeg_cas04 169,53,
+-- prtg_cas02 178,44, prtg_cas04 36,61: ours).
+local GUARDIANS = {
+  aldeg_cas01 = { { 17, 218, 1287 }, { 39, 205, 1285 }, { 38, 196, 1285 }, { 21, 194, 1286 }, { 218, 24, 1286 }, { 213, 24, 1286 }, { 73, 70, 1286 }, { 45, 228, 1285 } },
+  aldeg_cas02 = { { 51, 183, 1287 }, { 27, 184, 1286 }, { 88, 43, 1286 }, { 210, 7, 1285 }, { 60, 203, 1287 }, { 21, 177, 1285 }, { 117, 46, 1286 }, { 36, 183, 1285 } },
+  aldeg_cas03 = { { 110, 217, 1285 }, { 90, 112, 1286 }, { 86, 120, 1287 }, { 195, 151, 1285 }, { 116, 112, 1286 }, { 116, 76, 1287 }, { 64, 103, 1287 }, { 212, 160, 1285 } },
+  aldeg_cas04 = { { 187, 100, 1285 }, { 192, 42, 1285 }, { 55, 88, 1286 }, { 145, 209, 1287 }, { 169, 52, 1287 }, { 198, 77, 1287 }, { 148, 88, 1285 }, { 48, 72, 1286 } },
+  aldeg_cas05 = { { 51, 202, 1285 }, { 27, 221, 1286 }, { 145, 78, 1286 }, { 157, 192, 1287 }, { 157, 74, 1287 }, { 188, 79, 1285 }, { 156, 73, 1286 }, { 41, 112, 1286 } },
+  gefg_cas01 = { { 67, 179, 1287 }, { 36, 186, 1285 }, { 50, 186, 1285 }, { 62, 41, 1287 }, { 50, 67, 1286 }, { 184, 20, 1287 }, { 189, 41, 1286 }, { 200, 167, 1286 } },
+  gefg_cas02 = { { 64, 168, 1287 }, { 35, 148, 1285 }, { 20, 150, 1285 }, { 56, 41, 1287 }, { 19, 41, 1286 }, { 166, 25, 1287 }, { 166, 42, 1286 }, { 159, 188, 1286 } },
+  gefg_cas03 = { { 48, 176, 1285 }, { 113, 214, 1285 }, { 48, 207, 1287 }, { 157, 62, 1287 }, { 157, 45, 1286 }, { 243, 41, 1287 }, { 234, 25, 1286 }, { 238, 160, 1286 } },
+  gefg_cas04 = { { 53, 191, 1285 }, { 31, 178, 1285 }, { 49, 220, 1287 }, { 29, 46, 1287 }, { 57, 46, 1286 }, { 147, 65, 1287 }, { 160, 50, 1286 }, { 148, 189, 1286 } },
+  gefg_cas05 = { { 45, 149, 1285 }, { 71, 163, 1285 }, { 72, 142, 1287 }, { 66, 47, 1287 }, { 66, 17, 1286 }, { 177, 50, 1287 }, { 177, 35, 1286 }, { 193, 166, 1286 } },
+  payg_cas01 = { { 229, 92, 1285 }, { 225, 80, 1285 }, { 222, 111, 1285 }, { 99, 45, 1285 }, { 65, 31, 1285 }, { 36, 127, 1285 }, { 51, 144, 1285 }, { 138, 133, 1286 } },
+  payg_cas02 = { { 237, 54, 1285 }, { 228, 72, 1285 }, { 210, 41, 1285 }, { 57, 241, 1285 }, { 42, 241, 1285 }, { 287, 257, 1285 }, { 264, 272, 1285 }, { 27, 20, 1286 } },
+  payg_cas03 = { { 245, 37, 1285 }, { 269, 51, 1285 }, { 36, 39, 1285 }, { 41, 39, 1285 }, { 39, 65, 1285 }, { 19, 276, 1285 }, { 37, 277, 1285 }, { 268, 244, 1286 } },
+  payg_cas04 = { { 251, 212, 1285 }, { 232, 212, 1285 }, { 231, 175, 1285 }, { 32, 287, 1285 }, { 32, 232, 1285 }, { 35, 45, 1285 }, { 36, 17, 1285 }, { 270, 41, 1286 } },
+  payg_cas05 = { { 19, 279, 1285 }, { 33, 260, 1285 }, { 266, 234, 1285 }, { 266, 279, 1285 }, { 263, 37, 1285 }, { 263, 21, 1285 }, { 250, 22, 1285 }, { 36, 36, 1286 } },
+  prtg_cas01 = { { 182, 68, 1287 }, { 182, 116, 1287 }, { 153, 86, 1287 }, { 59, 28, 1285 }, { 50, 36, 1285 }, { 184, 183, 1286 }, { 196, 189, 1286 }, { 107, 179, 1286 } },
+  prtg_cas02 = { { 188, 175, 1286 }, { 198, 175, 1286 }, { 177, 44, 1286 }, { 71, 75, 1287 }, { 49, 28, 1287 }, { 64, 186, 1285 }, { 76, 196, 1285 }, { 75, 175, 1285 } },
+  prtg_cas03 = { { 191, 190, 1286 }, { 137, 190, 1286 }, { 45, 99, 1286 }, { 50, 87, 1287 }, { 41, 87, 1287 }, { 191, 42, 1285 }, { 179, 43, 1285 }, { 191, 72, 1285 } },
+  prtg_cas04 = { { 276, 14, 1286 }, { 274, 35, 1286 }, { 246, 246, 1286 }, { 38, 240, 1287 }, { 29, 240, 1287 }, { 33, 258, 1287 }, { 78, 48, 1285 }, { 35, 61, 1285 } },
+  prtg_cas05 = { { 266, 262, 1286 }, { 287, 280, 1286 }, { 245, 250, 1286 }, { 236, 63, 1287 }, { 251, 63, 1287 }, { 278, 71, 1287 }, { 32, 253, 1285 }, { 44, 248, 1285 } },
+}
+local GUARDIAN_KIND = { [1285] = "Archer Guardian", [1286] = "Knight Guardian", [1287] = "Soldier Guardian" }
+local GUARDIAN_FEE = 10000 -- jAthena //0795, //0974, //1046
+
+-- What defence investment gives: rAthena pre-renewal (status.cpp, status_calc_mob,
+-- tier later; the iRO guide's page says only "the castle Emperium's defense and HP
+-- as well as the Guardian's HP"; jAthena //1046 cuts damage by defense/100 and
+-- doubts it, "らしい?"): +1000 HP a level for the Emperium, +2000 for a guardian.
+local function defended(c, id, per_level)
+  local u = battle.get(id)
+  if u then mob_max_hp(id, u.max_hp + per_level * g[key(c, "def")]) end
+  mob_side(id, 2)
+end
 
 -- A new day: investments start again, and the master room gets that day's treasure.
 local function new_day(c)
@@ -144,6 +192,7 @@ local function new_day(c)
   if g[key(c, "day$")] == today then return end
   g[key(c, "day$")] = today
   g[key(c, "te")] = 0
+  g[key(c, "td")] = 0
   kill_monster(c[1], boxes_event(c))
   if g[key(c)] == 0 then return end
   local eco, r = g[key(c, "eco")], c[10]
@@ -153,16 +202,69 @@ local function new_day(c)
   area_monster(c[1], r[1], r[2], r[3], r[4], "Treasure Chest", c[11] + 1, n2, boxes_event(c))
 end
 
+-- An ownerless castle's Emperium: anyone may break it.
 local function emperium(c)
   if not map_size(c[1]) then return end -- a client (or a test world) without the castle
-  if mob_count(c[1], "Agit_" .. c[1] .. "::OnAgitBreak") == 0 then
-    monster(c[1], c[4][1], c[4][2], "Emperium", 1288, 1, "Agit_" .. c[1] .. "::OnAgitBreak")
+  if mob_count(c[1], emp_event(c)) == 0 then
+    monster(c[1], c[4][1], c[4][2], "Emperium", 1288, 1, emp_event(c))
+  end
+end
+
+-- A held castle's Emperium in a siege: on its master's side, stronger by the defence.
+local function emperium_defended(c)
+  if not map_size(c[1]) then return end
+  kill_monster(c[1], emp_event(c))
+  for _, id in ipairs(monster(c[1], c[4][1], c[4][2], "Emperium", 1288, 1, emp_event(c))) do
+    defended(c, id, 1000)
+  end
+end
+
+local function spawn_guardian(c, slot)
+  local gd = GUARDIANS[c[1]][slot]
+  kill_monster(c[1], guard_event(c, slot))
+  for _, id in ipairs(monster(c[1], gd[1], gd[2], "--ja--", gd[3], 1, guard_event(c, slot))) do
+    defended(c, id, 2000)
+  end
+end
+
+-- Every monster in the castle that is not its own (Emperium, guardians, treasure)
+-- joins the attack, or (side 0) goes back to being the castle's garrison.
+-- Attackers come for the Emperium along the castle's corridors (a walking-distance
+-- map, the engine's siege_field), each setting out at a random moment within
+-- `spread` ms; one that starts within 20 cells of the Emperium is put elsewhere
+-- first (817 calls part of the garrison onto the Emperium's own cell, which
+-- would break it in seconds). All of this is ours. A castle's sections are joined
+-- by warp portals, which monsters do not take: attackers spawned beyond one stay
+-- there and fight only the player who comes through.
+local function set_attackers(c, side, spread)
+  if side == 1 then siege_field(c[1], c[4][1], c[4][2]) end
+  for _, id in ipairs(mob_ids(c[1], "All")) do
+    local u = battle.get(id)
+    if u and u.side ~= 2 and u.class ~= 1288 and not (u.class >= 1324 and u.class <= 1363) then
+      mob_side(id, side)
+      if side == 1 then
+        if spread and math.max(math.abs(u.x - c[4][1]), math.abs(u.y - c[4][2])) < 20 then
+          for _ = 1, 5 do -- a random cell, away from the Emperium
+            _rt("mob_warp", id)
+            local v = battle.get(id)
+            if v and math.max(math.abs(v.x - c[4][1]), math.abs(v.y - c[4][2])) >= 20 then break end
+          end
+        end
+        mob_march(id, rand(0, spread or 300000))
+      else
+        mob_march(id, -1)
+      end
+    end
   end
 end
 
 local function clear(c)
-  for _, k in ipairs({ "", "name$", "eco", "te", "kafra", "day$" }) do
+  for _, k in ipairs({ "", "name$", "eco", "te", "def", "td", "kafra", "day$" }) do
     g[key(c, k ~= "" and k or nil)] = (k:sub(-1) == "$") and "" or 0
+  end
+  for slot = 1, 8 do
+    g[key(c, "gd" .. slot)] = 0
+    kill_monster(c[1], guard_event(c, slot))
   end
   kill_monster(c[1], boxes_event(c))
   disable_npc("castle_kafra_" .. c[1])
@@ -174,23 +276,142 @@ function castle_unowned_setup(map)
   if c and g[key(c)] == 0 then emperium(c) end
 end
 
+-- ---------------------------------------------------------------- sieges
+-- War of Emperium on euRO: "Sonntag, 11 April 18Uhr" (the open beta's news,
+-- research/notes/euro-history.md, W14); two hours, as 817's own schedule
+-- (ev_agit_event.txt 21:00-23:00) and the Malaysian record (woe-mro-2004.md).
+-- In a game of one, the attack on a held castle is the castle's old garrison
+-- coming back (ours): break its Emperium and the castle is theirs again, as an
+-- ownerless castle held monsters (kRO's notice of 2004-02-10). The server's
+-- local clock is the player's. `@siege` starts or ends one by hand.
+local SIEGES = { { wday = 1, hour = 18, len = 2 * 3600 } } -- os.date wday: 1 = Sunday
+castle_now = castle_now or os.time
+
+local function window_end(now)
+  local t = os.date("*t", now)
+  for _, w in ipairs(SIEGES) do
+    if t.wday == w.wday then
+      local from = os.time { year = t.year, month = t.month, day = t.day, hour = w.hour, min = 0, sec = 0 }
+      if now >= from and now < from + w.len then return from + w.len end
+    end
+  end
+end
+
+local function siege_castle(i, c)
+  if not map_size(c[1]) or g[key(c)] == 0 then return end
+  emperium_defended(c)
+  -- what is left of the old garrison joins the new one rather than doubling it
+  for _, id in ipairs(mob_ids(c[1], "All")) do
+    local u = battle.get(id)
+    if u and u.side == 0 and u.class ~= 1288 and not (u.class >= 1324 and u.class <= 1363) then mob_vanish(id) end
+  end
+  if content("castle_monsters") then
+    do_event("castle_garrison::OnSiege" .. i) -- the garrison, then OnSiegeMarch below
+  else
+    set_attackers(c, 1, 3600000)
+  end
+end
+
+function castle_siege_start(until_t)
+  g.siege_until = until_t
+  if g.siege_on == 1 then return end
+  g.siege_on = 1
+  announce("The War of Emperium has begun!", 0)
+  for i, c in ipairs(C) do siege_castle(i, c) end
+end
+
+function castle_siege_end()
+  if g.siege_on ~= 1 then return end
+  g.siege_on = 0
+  g.siege_until = 0
+  for _, c in ipairs(C) do
+    if map_size(c[1]) and g[key(c)] ~= 0 then
+      -- the castle held: its Emperium goes back, the attackers withdraw
+      kill_monster(c[1], emp_event(c))
+      for _, id in ipairs(mob_ids(c[1], "All")) do
+        local u = battle.get(id)
+        if u and u.side == 1 then mob_vanish(id) end
+      end
+    end
+    if map_size(c[1]) then siege_field(c[1]) end
+  end
+  announce("The War of Emperium is over.", 0)
+end
+
+npc {
+  map = "-", name = "castle_siege", events = { "OnInit", "OnTimer60000" },
+  on_click = function(at)
+    npc_timer_start()
+    local now = castle_now()
+    if g.siege_on == 1 and now >= g.siege_until then return castle_siege_end() end
+    if at == "OnInit" and g.siege_on == 1 then
+      -- the server was started again mid-siege: the attack goes on
+      for i, c in ipairs(C) do siege_castle(i, c) end
+      return
+    end
+    local till = window_end(now)
+    if till and g.siege_on ~= 1 and g.siege_done ~= till then
+      g.siege_done = till -- once a window, even if ended early by hand
+      castle_siege_start(till)
+    end
+  end,
+}
+
+command("siege", function(args)
+  if args == "end" or (args == "" and g.siege_on == 1) then
+    castle_siege_end()
+    return "siege over"
+  end
+  castle_siege_start(castle_now() + 2 * 3600)
+  return "siege on for two hours"
+end)
+
+local function lose(c)
+  local was = owner_name(c)
+  clear(c)
+  -- ours: the period announcement names the guild that took it
+  announce("Guild Base [" .. c[2] .. "] has fallen to its old garrison.", 0)
+  map_announce(c[1], "Emperium has been destroyed.", 17)
+  set_attackers(c, 0) -- they hold it now, as an ownerless castle's monsters
+  emperium(c)
+end
+
 for i, c in ipairs(C) do
   local map = c[1]
   local stew = c[6]
   local S = "[ " .. stew[1] .. " ]"
+  local events = { "OnInit", "OnAgitBreak", "OnBoxOpen", "OnSiegeMarch" }
+  for slot = 1, 8 do events[#events + 1] = "OnGuardian" .. slot end
 
-  -- the castle itself: the Emperium's events, the treasure's
+  -- the castle itself: the Emperium's events, the treasure's, the guardians'
   npc {
-    map = "-", name = "Agit_" .. map, events = { "OnInit", "OnAgitBreak", "OnBoxOpen" },
+    map = "-", name = "Agit_" .. map, events = events,
     on_click = function(at)
       if at == "OnInit" then
-        if g[key(c)] == 0 then emperium(c) end
+        if g[key(c)] == 0 then
+          emperium(c)
+        elseif map_size(map) then
+          for slot = 1, 8 do
+            if g[key(c, "gd" .. slot)] == 1 and mob_count(map, guard_event(c, slot)) == 0 then spawn_guardian(c, slot) end
+          end
+        end
+      elseif at == "OnSiegeMarch" then
+        if g[key(c)] ~= 0 and g.siege_on == 1 then set_attackers(c, 1, 3600000) end
+      elseif at:match("^OnGuardian%d$") then
+        g[key(c, "gd" .. at:sub(-1))] = 0 -- fallen: the steward may install it again
       elseif at == "OnAgitBreak" then
-        if not player.char_id then return end -- broken by no player
+        local ok, cid = pcall(function() return player.char_id end)
+        if not ok or not cid then
+          -- broken by the attackers of a siege
+          if g[key(c)] ~= 0 then lose(c) end
+          return
+        end
         g[key(c)] = player.char_id
         g[key(c, "name$")] = player.name
         g[key(c, "eco")] = 0
         g[key(c, "te")] = 0
+        g[key(c, "def")] = 0
+        g[key(c, "td")] = 0
         g[key(c, "kafra")] = 0
         g[key(c, "day$")] = castle_today() -- the first treasure comes with the next day, as at jAthena's midnight
         kill_monster(map, boxes_event(c))
@@ -198,6 +419,12 @@ for i, c in ipairs(C) do
         -- 817 ev_agit_*.txt, "[guild]" there
         announce("Guild Base [" .. c[2] .. "] has been taken by [" .. player.name .. "].", 0)
         map_announce(map, "Emperium has been destroyed.", 17)
+        if g.siege_on == 1 then
+          -- taken in a siege: a new Emperium to hold until it ends (817 OnAgitEliminate),
+          -- and what is left of the garrison attacks it
+          emperium_defended(c)
+          set_attackers(c, 1)
+        end
       end
     end,
   }
@@ -225,8 +452,8 @@ for i, c in ipairs(C) do
       mes("Welcome Master ^ff0000" .. player.name .. "^000000 !")
       mes "I'll do anything you tell me to do sir!."
       next()
-      local pick = menu("Guild Base Property", "Commerce Investment", "Kafra Service Employment / Dismissal",
-        "Enter Master's Room", "Empty Guild Base")
+      local pick = menu("Guild Base Property", "Commerce Investment", "Defence Investment", "Guardian Installation",
+        "Kafra Service Employment / Dismissal", "Enter Master's Room", "Empty Guild Base")
       if pick == 1 then
         mes(S)
         mes "Guild Base Commerce Investment Improvement Information."
@@ -234,6 +461,10 @@ for i, c in ipairs(C) do
         mes(S)
         mes("^0000ffCurrent Commerce Investment is " .. g[key(c, "eco")] .. ".")
         mes("- You have invested " .. g[key(c, "te")] .. " times today.^000000")
+        next()
+        mes(S)
+        mes("^0000ffCurrent Defence is " .. g[key(c, "def")] .. ".")
+        mes("- You have invested " .. g[key(c, "td")] .. " times today.^000000")
         mes "That is about it."
         close()
       elseif pick == 2 then
@@ -276,6 +507,91 @@ for i, c in ipairs(C) do
         mes "You invested successfully."
         close()
       elseif pick == 3 then
+        mes(S)
+        mes "If you improve investment of defence, HP of guardian/emperium increase, it helps when enemy try to attack your guild."
+        next()
+        mes(S)
+        mes "You can invest two times a day."
+        next()
+        local td, def = g[key(c, "td")], g[key(c, "def")]
+        if td >= 2 or def >= 100 then
+          mes(S)
+          mes "^ff0000Guild's Investment is currently at 100%"
+          mes "you don't have to invest anymore.^000000"
+          close()
+          return
+        end
+        -- jAthena //1046 Steward_menu3 (and //0974's test script)
+        local t = (def - td) // 5
+        local cost = 10000 * (1 + (1 + t) * t // 2) * (1 + 3 * td)
+        mes(S)
+        mes("Required invest amount is " .. cost .. " Zeny.")
+        mes "Would you like to invest?"
+        next()
+        if menu("Invest Defence.", "Cancel") ~= 1 then
+          mes(S)
+          mes "I'll follow your order Master!... you don't have to be hurry anywayz."
+          close()
+          return
+        end
+        if player.zeny < cost then
+          mes(S)
+          mes "Master, you do not have enough money to invest, investment has been cancelled."
+          close()
+          return
+        end
+        player.zeny = player.zeny - cost
+        g[key(c, "td")] = td + 1
+        g[key(c, "def")] = def + 1
+        mes(S)
+        mes "You invested successfully."
+        close()
+      elseif pick == 4 then
+        mes(S)
+        mes "Would you like to install a guardian? Guardian will protect guild base from enemies."
+        mes "Please choose guardian."
+        next()
+        -- the official menu, as jAthena //1046 notes it ("実際のMenu"): each slot's
+        -- kind, and the HP of one that stands
+        local opts = {}
+        for slot, gd in ipairs(GUARDIANS[map]) do
+          local hp
+          for _, id in ipairs(mob_ids(map, guard_event(c, slot))) do
+            local u = battle.get(id)
+            if u then hp = u.hp .. " / " .. u.max_hp end
+          end
+          opts[slot] = GUARDIAN_KIND[gd[3]] .. (hp and (" - (" .. hp .. ")") or " - Installable")
+        end
+        local slot = menu(table.unpack(opts))
+        if not slot then return end
+        if g[key(c, "gd" .. slot)] == 1 then
+          mes(S)
+          mes "Master...you installed that guardian already."
+          close()
+          return
+        end
+        mes(S)
+        mes("Would you really like to install guardian? You need " .. GUARDIAN_FEE .. " zeny to install.")
+        next()
+        if menu("Install", "Cancel") ~= 1 then
+          mes(S)
+          mes "I'll follow your order sir, but it is worth to have a guardian soon or later."
+          close()
+          return
+        end
+        if player.zeny < GUARDIAN_FEE then
+          mes(S)
+          mes "Master, you do not have enough money to invest, investment has been cancelled."
+          close()
+          return
+        end
+        player.zeny = player.zeny - GUARDIAN_FEE
+        g[key(c, "gd" .. slot)] = 1
+        spawn_guardian(c, slot)
+        mes(S)
+        mes "Guardian has been installed, guardian will protect our guild base against enemies."
+        close()
+      elseif pick == 5 then
         if g[key(c, "kafra")] == 1 then
           mes(S)
           mes "Would you like to dismiss the current Kafra Service?"
@@ -337,7 +653,7 @@ for i, c in ipairs(C) do
         mes "I'll do the best I can."
         close()
         cutin("kafra_01", 255)
-      elseif pick == 4 then
+      elseif pick == 6 then
         mes(S)
         mes "Would you like to get into our treasure room?"
         next()
@@ -356,7 +672,7 @@ for i, c in ipairs(C) do
         mes "Goods are producing everyday, you must get'em whenever you can."
         mes "Please don't forget to get all the goods in time."
         close()
-      elseif pick == 5 then
+      elseif pick == 7 then
         mes(S)
         mes "Master!!"
         mes "Are you goin to give our guild up?!"

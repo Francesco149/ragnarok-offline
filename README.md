@@ -130,7 +130,9 @@ and PvP. The guild castles are reworked for one player (THREADS.md #17): an
 ownerless castle holds what one held in early 2004, monsters and its
 Emperium; break the Emperium and the castle is yours, with its steward,
 Kafra, daily treasure (jRO's table of February 2004) and the lever into the
-guild dungeon. Nothing attacks a castle you hold (yet).
+guild dungeon. On Sunday evenings, euRO's War of Emperium hour, the old
+garrison comes back for every castle you hold: defend its Emperium, with
+guardians if you bought them, or lose it.
 
 ## Why accuracy is slow
 

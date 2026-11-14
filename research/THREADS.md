@@ -765,11 +765,14 @@ an investment, the Kafra appearing on her contract with her cut-in, the
 master room's four chests on this client's room, one broken open for its
 drop. Not tried there: the levers (the test covers them).
 Open, for the owner and for research:
-* **Losing a castle.** Three holders in four lost theirs by the next siege
-  (Malaysia, 2004). Nothing attacks a held castle here, so defence investment
-  and guardians are left out. A counter-siege (the garrison returning at the
-  period siege hours, the Emperium to defend) would bring them back: a
-  design decision, asked of the owner.
+* **Losing a castle: built the same day** (the owner agreed to a
+  counter-siege). On Sunday 18:00-20:00 (euRO's WoE hour) the castle's old
+  garrison attacks every held castle and goes for its Emperium; guardians
+  (jAthena //1046's cells) fight them; defence adds HP (rAthena's numbers,
+  later); a broken Emperium makes the castle ownerless again. Monsters
+  fighting monsters is ours (`world.rs` MobUnit::side). Open: euRO's other
+  siege day (Malaysia had Wednesday and Saturday), and what defence gave in
+  2004 (jAthena //1046's damage cut is marked "らしい?").
 * Guild flags (817 `guild_flag.txt`, 0.5.2 `*_flag.txt`) saying who holds a
   castle; the owners' faster HP/SP recovery in their castle (the iRO page).
 * Whether jRO's two boxes a castle split Ragu Memo's list (common / own).

@@ -234,7 +234,7 @@ fn castle_of_one() {
     assert_eq!(t.eval("return g.castle_aldeg_cas01_eco"), "2");
 
     // the Kafra comes with a contract
-    t.talk("aldeg_cas01", 218, 175, &[3, 1]);
+    t.talk("aldeg_cas01", 218, 175, &[5, 1]);
     assert_eq!(t.eval("return player.zeny"), "965000");
     let (menus, _) = t.talk("aldeg_cas01", 218, 170, &[4]);
     assert_eq!(menus[0], "Open Storage:Teleport Service:Use Cart Service:Cancel");
@@ -251,7 +251,7 @@ fn castle_of_one() {
     assert_eq!(t.eval(&format!("return mob_count('aldeg_cas01', '{BOX}')")), "4", "once a day");
 
     // the master room and its lever out, the lever into the guild dungeon
-    t.talk("aldeg_cas01", 218, 175, &[4, 1]);
+    t.talk("aldeg_cas01", 218, 175, &[6, 1]);
     assert_eq!(t.at(), "aldeg_cas01 119,223");
     t.talk("aldeg_cas01", 123, 223, &[1]);
     assert_eq!(t.at(), "aldeg_cas01 218,176");
@@ -264,7 +264,7 @@ fn castle_of_one() {
     t.arrive("aldeg_cas01", 100, 100);
     assert_eq!(t.eval(&format!("return mob_count('aldeg_cas01', '{BOX}')")), "4");
     assert_eq!(t.eval("return mob_count('aldeg_cas01', 'All')"), "4", "only the treasure is left");
-    t.talk("aldeg_cas01", 218, 175, &[5, 1, 2]);
+    t.talk("aldeg_cas01", 218, 175, &[7, 1, 2]);
     assert_eq!(t.eval("return castle_owner('aldeg_cas01')"), "0");
     assert_eq!(t.eval(&format!("return mob_count('aldeg_cas01', '{BOX}')")), "0");
     assert_eq!(t.eval(&format!("return mob_count('aldeg_cas01', '{EMP}')")), "1");
@@ -283,3 +283,149 @@ fn treasure_boxes_drop_the_jro_table() {
     let last = t.g.db.mob(1363).unwrap();
     assert!(last.drops.iter().any(|d| d.item == 7092 && d.rate == 40), "Prontera 5's material");
 }
+
+impl T {
+    /// Break an ownerless castle's Emperium as the player.
+    fn capture(&mut self, map: &str, x: u16, y: u16) {
+        self.eval(&format!("warp('{map}', {x}, {})", y + 2));
+        let emp = self.emperium(map);
+        self.eval(&format!("battle.damage(player.id, {emp}, 10000000)"));
+        self.ticks(3);
+    }
+
+    fn emperium(&mut self, map: &str) -> String {
+        self.eval(&format!("return mob_ids('{map}', 'Agit_{map}::OnAgitBreak')[1]"))
+    }
+
+    fn ticks(&mut self, n: u32) {
+        for _ in 0..n {
+            self.g.tick();
+        }
+    }
+
+    /// Let `ms` of game time pass.
+    fn run(&mut self, ms: u64) {
+        for _ in 0..ms / 50 {
+            self.g.skew(50);
+            self.g.tick();
+        }
+    }
+
+    /// Ids of the monsters on `map` on siege side `side`.
+    fn side(&mut self, map: &str, side: u8) -> Vec<u32> {
+        let s = self.eval(&format!(
+            "local t = {{}} for _, id in ipairs(mob_ids('{map}', 'All')) do local u = battle.get(id) \
+             if u and u.side == {side} then t[#t + 1] = id end end return table.concat(t, ',')"
+        ));
+        s.split(',').filter(|x| !x.is_empty()).map(|x| x.parse().unwrap()).collect()
+    }
+}
+
+/// A held castle under attack: its old garrison comes back at the siege hour
+/// and goes for the Emperium; guardians and defence help; a broken Emperium
+/// loses the castle, which can be taken back before the siege is over.
+#[test]
+fn counter_siege() {
+    let mut t = setup("siege");
+    t.eval("player.zeny = 1000000");
+    t.capture("aldeg_cas01", 216, 24);
+    assert_eq!(t.eval("return castle_owner('aldeg_cas01')"), t.eval("return player.char_id"));
+    t.eval("kill_monster('aldeg_cas01', 'All')");
+    assert_eq!(t.emperium("aldeg_cas01"), "nil", "a held castle has no Emperium outside a siege");
+
+    // defence 1 (10,000z), a Soldier Guardian in the first slot (10,000z)
+    t.talk("aldeg_cas01", 218, 175, &[3, 1]);
+    assert_eq!(t.eval("return player.zeny .. ' ' .. g.castle_aldeg_cas01_def"), "990000 1");
+    let (menus, _) = t.talk("aldeg_cas01", 218, 175, &[4, 1, 1]);
+    assert!(menus[1].starts_with("Soldier Guardian - Installable:Archer Guardian - Installable"), "{menus:?}");
+    let guards = t.side("aldeg_cas01", 2);
+    assert_eq!(guards.len(), 1);
+    let g = guards[0];
+    // Soldier Guardian 15,670 HP + 2,000 a defence level
+    assert_eq!(t.eval(&format!("local u = battle.get({g}) return u.max_hp .. ' ' .. u.class")), "17670 1287");
+    let (menus, _) = t.talk("aldeg_cas01", 218, 175, &[4, 1]);
+    assert!(menus[1].starts_with("Soldier Guardian - (17670 / 17670)"), "{menus:?}");
+
+    // the siege: a defended Emperium (68,430 + 1,000), the garrison as attackers
+    t.eval("castle_siege_start(castle_now() + 7200)");
+    t.ticks(3);
+    let emp = t.emperium("aldeg_cas01");
+    assert_eq!(t.eval(&format!("local u = battle.get({emp}) return u.max_hp .. ' ' .. u.side")), "69430 2");
+    let attackers = t.side("aldeg_cas01", 1);
+    assert!(attackers.len() > 20, "the garrison attacks: {}", attackers.len());
+    // none starts next to it: they come along the corridors, at random times in the first hour
+    let near = t.eval(&format!(
+        "local n = 0 for _, id in ipairs(mob_ids('aldeg_cas01', 'All')) do local u = battle.get(id) \
+         if u.side == 1 and math.max(math.abs(u.x - 216), math.abs(u.y - 24)) < 20 then n = n + 1 end end return n"
+    ));
+    assert_eq!(near, "0");
+    // the master's own blows do nothing to it
+    assert_eq!(t.eval(&format!("return battle.calc_damage(battle.get({emp}), 100, BF.WEAPON | BF.SHORT, battle.get(player.id))")), "0");
+
+    // an attacker next to the Emperium goes for it; one next to the guardian is fought
+    // (monsters think only while a player is on their map)
+    t.arrive("aldeg_cas01", 100, 100);
+    let raydric = |t: &mut T, x: u16, y: u16| -> String {
+        t.eval(&format!("local id = monster('aldeg_cas01', {x}, {y}, '--ja--', 1163, 1)[1] mob_side(id, 1) return id"))
+    };
+    let r1 = raydric(&mut t, 217, 24);
+    let gx = t.eval(&format!("local u = battle.get({g}) return u.x .. ',' .. u.y"));
+    let (gx, gy) = gx.split_once(',').map(|(a, b)| (a.parse::<u16>().unwrap(), b.parse::<u16>().unwrap())).unwrap();
+    let r2 = raydric(&mut t, gx + 1, gy);
+    // one far off, setting out now, walks toward the Emperium
+    let r3 = raydric(&mut t, 216, 120);
+    t.eval(&format!("mob_march({r3}, 0)"));
+    t.run(15000);
+    let hp = |t: &mut T, id: &str| t.eval(&format!("local u = battle.get({id}) return u and (u.max_hp - u.hp) or 'dead'"));
+    assert_ne!(hp(&mut t, &emp), "0", "the Emperium is hit");
+    assert_ne!(hp(&mut t, &r2), "0", "the guardian fights back");
+    let y3: i32 = t.eval(&format!("local u = battle.get({r3}) return u and u.y or 0")).parse().unwrap();
+    assert!(y3 < 100, "the marcher is on its way: y {y3}");
+    let _ = r1;
+
+    // the attackers break it: the castle is theirs, its guardians and Kafra gone
+    t.eval(&format!("battle.damage({r1}, {emp}, 10000000)"));
+    t.ticks(3);
+    assert_eq!(t.eval("return castle_owner('aldeg_cas01')"), "0");
+    assert!(t.side("aldeg_cas01", 2).is_empty());
+    assert!(t.side("aldeg_cas01", 1).is_empty(), "the attackers are the garrison again");
+    assert_eq!(t.eval("return g.castle_aldeg_cas01_gd1"), "0");
+
+    // taken back before the siege ends: a new Emperium to hold, the rest attack it
+    t.capture("aldeg_cas01", 216, 24);
+    assert_eq!(t.eval("return castle_owner('aldeg_cas01')"), t.eval("return player.char_id"));
+    let emp = t.emperium("aldeg_cas01");
+    assert_eq!(t.eval(&format!("return battle.get({emp}).side")), "2");
+    assert!(!t.side("aldeg_cas01", 1).is_empty());
+
+    // the siege ends with the Emperium standing: the castle held, the attackers gone
+    t.eval("castle_siege_end()");
+    t.ticks(2);
+    assert_eq!(t.eval("return castle_owner('aldeg_cas01')"), t.eval("return player.char_id"));
+    assert_eq!(t.emperium("aldeg_cas01"), "nil");
+    assert!(t.side("aldeg_cas01", 1).is_empty());
+}
+
+/// Sieges come on Sunday at 18:00 for two hours (euRO, April 2004).
+#[test]
+fn siege_on_sunday_evening() {
+    let mut t = setup("sunday");
+    let at = |t: &mut T, h: u32, m: u32| {
+        t.eval(&format!("castle_now = function() return os.time{{year=2026, month=11, day=15, hour={h}, min={m}}} end"));
+        t.eval("do_event('castle_siege::OnTimer60000')");
+        t.ticks(2);
+        t.eval("return g.siege_on")
+    };
+    assert_eq!(at(&mut t, 17, 59), "0");
+    assert_eq!(at(&mut t, 18, 0), "1");
+    assert_eq!(at(&mut t, 19, 30), "1");
+    assert_eq!(at(&mut t, 20, 0), "0");
+    assert_eq!(at(&mut t, 20, 1), "0", "once a window");
+    // a Saturday evening is quiet
+    t.eval("castle_now = function() return os.time{year=2026, month=11, day=14, hour=18, min=30} end");
+    t.eval("do_event('castle_siege::OnTimer60000')");
+    t.ticks(2);
+    assert_eq!(t.eval("return g.siege_on"), "0");
+}
+
+

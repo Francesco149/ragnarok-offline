@@ -32,11 +32,19 @@ local CASTLES = {
 -- A castle the player holds (castle_lord.lua) keeps whatever is left of its
 -- garrison and gets no new one; one given up gets its garrison back at once.
 local events = { "OnInit" }
-for i in ipairs(CASTLES) do events[#events + 1] = "OnCastleEmptied" .. i end
+for i in ipairs(CASTLES) do
+  events[#events + 1] = "OnCastleEmptied" .. i
+  events[#events + 1] = "OnSiege" .. i -- a siege: the garrison comes back to attack a held castle
+end
 
 npc {
   map = "-", name = "castle_garrison", events = events,
   on_click = function(at)
+    local siege = at:match("^OnSiege(%d+)$")
+    if siege then
+      do_event("mobcaller#" .. siege .. "::OnAgitStart")
+      return do_event("Agit_" .. CASTLES[tonumber(siege)] .. "::OnSiegeMarch") -- once they are in (events run in order)
+    end
     local only = at:match("^OnCastleEmptied(%d+)$")
     if at ~= "OnInit" and not only then return end
     for i, map in ipairs(CASTLES) do
