@@ -111,7 +111,9 @@ impl Game {
             }
             CZ_INPUT_EDITDLG => {
                 let _npc = r.u32()?;
-                let v = r.u32()? as i32;
+                // athena-817 buildin_input: a negative number reads as 0 ("Added by RoVeRT");
+                // 817's shops test `!= 0` and would pay out for one
+                let v = (r.u32()? as i32).max(0);
                 self.dialog_answer(unit, Wait::InputNumber, Value::from(v));
             }
             CZ_INPUT_EDITDLGSTR => {
