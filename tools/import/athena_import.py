@@ -178,6 +178,67 @@ def toml_kv(d):
 CLIENT_SLOTS = {1115: 3, 1524: 1}  # Scimiter (817: 0 as well), Golden Mace
 
 
+# Where this client's own item text (data\idnum2itemdesctable.txt, tier client) and
+# RODataZone's iRO item tables of February 2004 (data:refs/web/rodatazone-2004/*_items_*.js)
+# agree on a number that mod0631's (jRO) table has otherwise, theirs is taken
+# (research/rdz_items_check.py lists every difference; THREADS.md R6). Weights in tenths.
+CLIENT_IRO = {
+    501: {'weight': 100},  # Red Potion
+    502: {'weight': 130},  # Orange Potion
+    503: {'weight': 160},  # Yellow Potion
+    504: {'weight': 200},  # White Potion
+    505: {'weight': 200},  # Blue Potion
+    506: {'weight': 60},  # Green Potion
+    507: {'weight': 40},  # Red Herb
+    508: {'weight': 70},  # Yellow Herb
+    509: {'weight': 90},  # White Herb
+    510: {'weight': 90},  # Blue Herb
+    511: {'weight': 20},  # Green Herb
+    512: {'weight': 30},  # Apple
+    513: {'weight': 30},  # Banana
+    514: {'weight': 30},  # Grape
+    515: {'weight': 30},  # Carrot
+    516: {'weight': 30},  # Sweet Potato
+    517: {'weight': 200},  # Meat
+    518: {'weight': 150},  # Honey
+    519: {'weight': 50},  # Milk
+    520: {'weight': 50},  # Hinalle Leaflet
+    521: {'weight': 50},  # Aloe Leaflet
+    522: {'weight': 50},  # Mastela Fruit
+    523: {'weight': 100},  # Holy Water
+    525: {'weight': 200},  # Panacea
+    526: {'weight': 200},  # Royal Jelly
+    528: {'weight': 200},  # Monster's Feed
+    531: {'weight': 50},  # Apple Juice
+    532: {'weight': 50},  # Banana Juice
+    533: {'weight': 50},  # Grape Juice
+    534: {'weight': 50},  # Carrot Juice
+    535: {'weight': 30},  # Pumpkin
+    536: {'weight': 100},  # Ice Cream
+    1009: {'weight': 100},  # Hand of God
+    1093: {'weight': 50},  # Empty Potion Bottle
+    1168: {'atk': 190},  # Zweihander
+    1237: {'atk': 150},  # Grimtooth
+    1304: {'weapon_level': 4},  # Orcish Axe
+    1363: {'atk': 160},  # Bloody Axe
+    1364: {'atk': 185},  # Great Axe
+    1466: {'atk': 150},  # Crescent Scythe
+    1468: {'weight': 1200},  # Zephyrus
+    1524: {'atk': 130},  # Golden Mace
+    1550: {'atk': 100},  # Book
+    1551: {'atk': 139},  # Bible
+    1718: {'weight': 1100},  # Hunter Bow
+    2607: {'weight': 50},  # Clip
+    2616: {'weight': 50},  # Critical Ring
+    5008: {'def': 0},  # Puppy Love
+    5012: {'weight': 100},  # Ph.D Hat
+}
+
+# The Safety Ring's MDEF +3: 817's script (db/item_db.txt), the client's text and
+# RODataZone's iRO table all give it ("DEF + 5 , MDEF + 3"); mod0631 has DEF 5 and nothing else.
+EXTRA_EQUIP = {2615: "bonus bMdef,3;"}
+
+
 def import_items():
     names = {}
     for line in csv_records(E052 / "db/item_db.txt"):
@@ -225,8 +286,9 @@ def import_items():
             "view": num(cols[16]),
             "use_script": lua or "",
             "athena_use": use if (use and lua is None) else "",
-            "athena_equip": equip,
+            "athena_equip": EXTRA_EQUIP.get(iid, equip),
         }
+        rec.update(CLIENT_IRO.get(iid, {}))
         out.append("[[item]]")
         out.append(toml_kv(rec))
         if rec["gender"] == 0:

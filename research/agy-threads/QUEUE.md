@@ -401,11 +401,12 @@ Sets: `skill_castend_*` for those skills.
 * **(new 2026-11-14) Item numbers: the client's text against mod0631
   (THREADS.md R6, "Items").** `research/item_desc_check.py` lists 81 items
   whose description in this client states another weight, attack, defence
-  or level than mod0631's table. RODataZone's item database (Wayback has
-  `www.rodatazone.com/items/` pages from 2003-08) gave iRO's numbers: one
-  row per item of that list it covers, with the capture's date. The
-  weights of potions and herbs and the attacks of Grimtooth, Swordbreaker,
-  Mailbreaker and the books first.
+  or level than mod0631's table. Done in part on 2026-11-14 from
+  RODataZone's `items/*.js` of 2004-02 (49 taken, THREADS.md R6). Wanted
+  still: the same tables before 2004-02 (the `.php` pages of 2003-08 to
+  2003-12 bind to data files: are any of those captured?), and any iRO or
+  euRO source for the 73 item names RODataZone spells otherwise (the
+  `rdz_items_check.py` run lists them).
 
 * **(new 2026-11-14) iRO against jRO, item by item (THREADS.md #29).** For
   each of: the Baphomet Doll's trade (5 Panacea or 2 Royal Jelly), Marx

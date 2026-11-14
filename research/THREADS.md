@@ -1314,7 +1314,16 @@ materials, the text heavier: a Red Potion 10 against 7, Meat 20 against
 the Swordbreaker 40 against 70, but the books and the Golden Mace higher),
 5 defences, the Orcish Axe's and the Partizan's weapon level, the
 Partizan's required level (18 against 33: the text looks copied from a
-lighter spear). Kept as mod0631 has them, as for the skills: no other
-witness checked yet; RODataZone's item pages of 2003-04 would say which.
+lighter spear). Unlike the skills, a second witness sides with the text:
+RODataZone's item tables (`items/*.js`, iRO, captures of 2004-02-11 and
+2004-02-24, saved in `data:refs/web/rodatazone-2004/`;
+`research/rdz_items_check.py`) give the text's number for 49 of them: every
+consumable's weight (Red Potion 10, Royal Jelly 20, Meat 20...), Grimtooth's
+150, the books', the Golden Mace's and Zweihander's attacks, the Orcish
+Axe's weapon level 4, Puppy Love's DEF 0. Those are taken (`CLIENT_IRO` in
+`tools/import/athena_import.py`, 2026-11-14): mod0631's numbers there are
+jRO's. Where the text sides with mod0631 against RODataZone (axes' weights,
+diamonds' weight 10 against 1...), or no two agree, mod0631's stay. The
+Safety Ring gains 817's MDEF +3, which the text and RODataZone also give.
 The client's slot table (data, not text) was taken where it differs
 (ROADMAP §1).
