@@ -4,7 +4,7 @@ For: the independent deep-research agent (Gemini in Antigravity) that wrote
 rounds 1 to 3. Kept by the Claude sessions that work on the game: at the
 end of each session the queue is updated (answered items go to "Done",
 with where the answer went) and refilled with what that session could not
-settle from the sources on disk. Last update: 2026-11-14 (round 7 reviewed: `research/notes/round7-review.md`.
+settle from the sources on disk. Last update: 2026-11-14, later the same day (T7 narrowed by euRO's May-2004 text; two shop names added to T9). Before that, 2026-11-14 (round 7 reviewed: `research/notes/round7-review.md`.
 T11 answered and moved to Done; T1, T9 and T10 updated with what it found).
 
 ## How to use it
@@ -284,12 +284,16 @@ server):
 
 * Shield Reflect: answered by the May-2004 client's text (T11): "against
   short-distance attack ... Reflect only physical attack".
-* The endows: did a failed endow destroy the weapon, as the guide says
-  ("weapon is destroyed on failure")? Neither emulator lets one fail.
+* The endows: answered by the May-2004 client's text ("if it's failed the
+  weapon'll be broken", round 7).
 * The Strips: the guide says "DEX difference between the caster and the
   target affects on the success chance" and gives no number; 817 rolls
-  5 + 2 x level and nothing else. Any period formula. And what a Strip did
-  to a monster: the guide says a tenth of its attack or its DEF.
+  5 + 2 x level and nothing else; euRO's May text says the chance depends
+  on the level and the caster's DEX. Any period formula. What a Strip did
+  to a monster is answered for three of them by euRO's text (DEF -15%,
+  VIT -40%, INT -40%; in the game since 2026-11-14). Strip Weapon: "ATK
+  will be reduced", no number; the guide says a tenth. Any other number
+  dated before 2004-07.
 * Dispell: which effects it ended. 817 ends the ailments, Increase and
   Decrease AGI, Suffragium, Magnificat, Gloria, Apple of Idun, the endows
   and the Chemical Protections (`skill.c:2313`); the guide says "all
@@ -328,6 +332,12 @@ Sets: `skill_castend_*` for those skills.
   period screenshot, video or player's description of its animation.
 
 ### T9. Small, independent
+
+* **Two shops' English names** (thread 11, new on 2026-11-14). mod0631
+  calls them 野菜商人 (`prontera 48,58`, sells Carrots, Sweet Potatoes and
+  Pumpkins) and 王窓商会 (`yuno 205,103`, sells Full Plate, Greaves, a
+  Gemmed Sallet, a Repeating Crossbow and more); 817 has neither. What did iRO or euRO call them, in any capture
+  or guide of 2004? One `none` row per place searched if nothing.
 
 * **0x01f1 to 0x01ff** (from T11): fifteen packet ids the May-2004 exe
   knows and ours does not (`data:mico07/packet_lengths-Ragexe-2004-05-07.tsv`).
@@ -430,3 +440,5 @@ that nobody researches them again.
 | The two bytes the May-2004 unit packets gained | The base level (817 `map/clif.c:544`; round 7) | `research/notes/may2004-client.md` |
 | The May-2004 client's text for the drafted 2-2 skills | Agrees on endows, Dispell, Chemical Protection; differs on the Strips (round 7) | THREADS.md #25, `research/notes/round7-review.md` |
 | The May-2004 data.grf against ours | Sorted (round 7); totals as in the notes | `research/notes/may2004-client.md` |
+| What the Strips do to a monster | euRO's May-2004 text: DEF -15%, VIT -40%, INT -40%; jAthena of 2004-05-07 agrees on two; Strip Weapon still the guide's 10% | THREADS.md #25, `scripts/rules/battle.lua` |
+| Shop names 817 lacked | 14 of 16 from 817's English for the same Japanese role words (2026-11-14) | THREADS.md #11 |
