@@ -273,6 +273,10 @@ they appeared on iRO or euRO (a dated page before 2004-05), what they said
 and how a player started them (Ragu Memo: the Hat Store Girl wants a
 Yellow Potion first), and RODataZone's `maps/city/alberta.html` of
 2003-12 to 2004-05 if it lists them.
+Both are in the game since 2026-11-14 with our own dialogue
+(`scripts/npc/alberta_hats.lua`), so what we want most now is their *words*:
+any quote of either NPC's lines (English, Japanese, Korean), and the
+English names euRO's client gave the eight hats.
 
 The game now has mod0631's chain (`scripts/npc/turtle_island.lua`): an old
 man in Alberta's inn, then the sailor at `alberta 247,122`, 10000z. Known:

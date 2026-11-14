@@ -1278,7 +1278,12 @@ Protector, Crescent and Heart Hairpins, Solar God Helm with the Sun God's
 emblem, Fashion Sunglasses) and nothing for the other NPCs above. But it
 brings no English names: on this client they are nameless ("You got 1",
 seen in the rig), and euRO's later patches that may have named them are
-not archived. Building the two NPCs is the owner's call. The client (merged GRF, with the Turtle
+not archived. **Built 2026-11-14** at the owner's word (cut content worth
+exploring): `scripts/npc/alberta_hats.lua`, with English names added to the
+client by setup (`data/client/item_names.tsv`); DEVIATIONS.md, "Content the
+client ships". Still open: the dialogue is ours and the Helm of Solar God
+waits on castle treasure (#17); period text from either NPC would replace
+ours. The client (merged GRF, with the Turtle
 Island patch) has the hats' sprites (`idnum2itemresnametable.txt` runs to
 5055: 5041 Heart Hairpin, 5045 Magician Hat, 5047 Fashion Sunglasses, 5048
 Crescent Hairpin, 5032 Sunday Hat) but English names only up to 5019, and
@@ -1288,6 +1293,15 @@ item rows from 817's table and NPCs in our own words.
 **Look:** RODataZone's pages per town (`maps/city/<town>.html`), GameFAQs
 headgear guides of early 2004, the Turtle Island patch's own files (do
 they ship these NPCs' sprites or the hats' items?).
+
+### 30. `faq_monster_skills_run` failed once
+2026-11-14, in a full `cargo test --workspace` run in the workbench:
+`crates/ro-game/tests/battle.rs:1609`, "nothing reached the client" (a
+monster's skill cast returned true but no packet came in the 500 ms after).
+The test alone passed 13 times in a row and the next workspace run passed;
+the panic line naming the skill was not kept. **Look:** loop the workspace
+run and keep the panic line; suspects are a skill whose packet is sent later
+than 500 ms or a random miss sending nothing.
 
 ## Resolved
 

@@ -549,6 +549,40 @@ eAthena 817 (2004-02-19), bugs included. The translator is
 * **`end;` with a message showing** gets a close button, so the window
   doesn't hang.
 
+## Content the client ships but no source scripts
+
+Content the client carries (sprites, item text, maps) that no period
+emulator made playable is brought back where a player would find it worth
+exploring (owner, 2026-11-14). Each piece is built from the best evidence
+there is, marked as ours where it is ours, and listed here.
+
+* **Alberta's two hat makers** (`scripts/npc/alberta_hats.lua`). Turtle
+  Island's patch (`2003-04-30gdata_turtle_ph_1.gpf`, euRO's patch entry 400
+  of January 2004) ships the sprites of exactly eight hats, and the base
+  GRF Gravity's English descriptions of them; no period emulator has an NPC
+  that makes them. The Stylish Merchant (`alberta 120,53`: Heart Hair Pin,
+  First Moon Hair Pin, Fashionable Glasses, Hair Protector) and the Hat
+  Store Girl (`136,79`: Sunday Hat, Mage Hat, Magician Hat, Helm of Solar
+  God) take their names, cells and recipes from RODataZone's iRO quest list
+  (2004-05) and Ragu Memo's jRO one (2004-02), which agree on every recipe.
+  The girl talks only to someone carrying a Yellow Potion (Ragu Memo) and
+  keeps it (our reading); "It's really hot, isn't it" leads to her three
+  hats, "Give me something instead" to the Helm (Ragu Memo's two answers).
+  Ours: all the dialogue, and the sprites (rAthena's, a later script). With
+  `events` on, the merchant stands at `121,53`, off the Ice Cream Maker's
+  cell. The Helm's Emblem of the Sun God drops only from castle treasure
+  boxes, which this game has none of yet (THREADS.md #17), so the Helm
+  cannot be made until that is reworked. The hats' stats are mod0631's item
+  rows as they were (Fashionable Glasses sit in the upper headgear slot).
+* **English names for items the client cannot name.** The Turtle Island
+  patch brought these hats with a sprite and a description but no line in
+  `idnum2itemdisplaynametable.txt` ("You got 1"). `ragnarok-offline setup`
+  (and the Windows launcher) adds a line for each id in
+  `data/client/item_names.tsv` that the client's table lacks, with iRO's
+  names as RODataZone gave them; a client already set up is set up again.
+  Gravity's table is never in the repository: setup appends to the copy in
+  your data.grf.
+
 ## Engine behaviour relative to Athena 817
 
 * **No casting bar for a skill the client cannot name.** Athena sends the
