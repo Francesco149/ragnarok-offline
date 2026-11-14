@@ -26,7 +26,7 @@ period source). Research behind the tiers: `research/notes/mechanics-sources.md`
 | Map walkability | client `.gat` | client |
 | Pathfinding | the client's `CPathFinder` (`0x4d2300`, docs/CLIENT.md), checked under an emulator; the 32-step limit and monsters' straight random walks are Athena's path.c | client / athena2003 |
 | Walk speed 150 ms/cell, diagonal `(int)(speed × 1.414f)`, the first step and when a unit enters each cell | client default; the step times from the client's walk timing (`0x4d2cf0`, `path::client_times`, checked under an emulator; docs/CLIENT.md, "The walk clock and step times") | client |
-| Items, monsters, drops | athena-dev-2.1.1-mod0631 `db/` (archived 2003-12-18) — numbers; English names from eAthena 0.5.2 (2004-05) | athena2003 |
+| Items, monsters, drops | athena-dev-2.1.1-mod0631 `db/` (archived 2003-12-18) — numbers; English names from eAthena 0.5.2 (2004-05). The 95 drop slots mod0631 leaves as `512,0` placeholders take eAthena 817's item and rate (`research/mob_drop_holes.py`; RODataZone's iRO table of 2004-02 names about 80 of them) | athena2003 |
 | EXP tables, job HP/SP/weight/ASPD | mod0631 `db/exp.txt`, `job_db1.txt`, `job_db2.txt` | athena2003 |
 | Warps (2,038), spawns (2,001 groups), shops (80) | mod0631 `conf/map_athena.conf` npc list | athena2003 |
 | Warp tiles that are scripts (22): Ant Hell's two doors, Payon Cave 3F→4F, the random exits of the Clock Tower and of `aldeg_cas04` | mod0631 `conf/npc_warp.txt`, `npc_warp25.txt` (`script` entries with sprite 45), generated into `scripts/import/warps.lua`; a `rand(n)` with fewer branches than n falls through to the first, as the source does | athena2003 |

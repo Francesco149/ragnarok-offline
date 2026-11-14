@@ -2,7 +2,7 @@
 # display names: eAthena 0.5.2 (2004-05). GPL-2.0-or-later data.
 [meta]
 tier = "athena2003"
-source = "athena-dev-2.1.1-mod0631 (eathena.org/jathena, archived 2003-12-18) db/mob_db.txt; display names from eathena-v0.5.2 (eathena.org/eathena/archive, 2004-05-20)"
+source = "athena-dev-2.1.1-mod0631 (eathena.org/jathena, archived 2003-12-18) db/mob_db.txt; drops in its empty slots from athena-817 db/mob_db.txt; display names from eathena-v0.5.2 (eathena.org/eathena/archive, 2004-05-20)"
 note = "rate is per 10000; element = level*20+element? see docs/PROVENANCE.md; mode is the Athena bitmask"
 
 [[mob]]
@@ -371,7 +371,8 @@ speed = 200
 attack_delay = 1872
 attack_motion = 672
 damage_motion = 288
-drops = [{ item = 921, rate = 5000 }, { item = 507, rate = 800 }, { item = 510, rate = 50 }, { item = 743, rate = 5 }, { item = 2220, rate = 40 }, { item = 4022, rate = 5 }]
+drops = [{ item = 921, rate = 5000 }, { item = 507, rate = 800 }, { item = 510, rate = 50 }, { item = 743, rate = 5 }, { item = 2220, rate = 40 }, { item = 921, rate = 5 }, { item = 4022, rate = 5 }]
+# drops 921: eAthena 817, in slots mod0631 left empty
 
 [[mob]]
 id = 1015
@@ -698,7 +699,8 @@ speed = 200
 attack_delay = 1576
 attack_motion = 576
 damage_motion = 576
-drops = [{ item = 926, rate = 5500 }, { item = 1117, rate = 15 }, { item = 507, rate = 900 }, { item = 1011, rate = 35 }, { item = 4037, rate = 1 }]
+drops = [{ item = 926, rate = 5500 }, { item = 1117, rate = 15 }, { item = 507, rate = 900 }, { item = 1011, rate = 35 }, { item = 937, rate = 800 }, { item = 954, rate = 1 }, { item = 4037, rate = 1 }]
+# drops 937, 954: eAthena 817, in slots mod0631 left empty
 
 [[mob]]
 id = 1026
@@ -788,7 +790,8 @@ speed = 200
 attack_delay = 2276
 attack_motion = 576
 damage_motion = 432
-drops = [{ item = 932, rate = 5500 }, { item = 756, rate = 60 }, { item = 1214, rate = 12 }, { item = 501, rate = 700 }, { item = 934, rate = 10 }, { item = 1201, rate = 150 }, { item = 4086, rate = 1 }]
+drops = [{ item = 932, rate = 5500 }, { item = 756, rate = 60 }, { item = 1214, rate = 12 }, { item = 501, rate = 700 }, { item = 934, rate = 10 }, { item = 1201, rate = 150 }, { item = 1216, rate = 50 }, { item = 4086, rate = 1 }]
+# drops 1216: eAthena 817, in slots mod0631 left empty
 
 [[mob]]
 id = 1029
@@ -1122,9 +1125,10 @@ speed = 100
 attack_delay = 1068
 attack_motion = 768
 damage_motion = 576
-drops = [{ item = 923, rate = 5500 }, { item = 607, rate = 200 }, { item = 1466, rate = 50 }, { item = 750, rate = 50 }, { item = 919, rate = 10000 }, { item = 984, rate = 1000 }, { item = 4147, rate = 1 }]
+drops = [{ item = 923, rate = 5500 }, { item = 607, rate = 200 }, { item = 1466, rate = 50 }, { item = 750, rate = 50 }, { item = 919, rate = 10000 }, { item = 984, rate = 1000 }, { item = 985, rate = 5600 }, { item = 4147, rate = 1 }]
 mvp_exp = 13000
 mvp_drops = [{ item = 2256, rate = 1000 }, { item = 714, rate = 500 }, { item = 1413, rate = 100 }]
+# drops 985: eAthena 817, in slots mod0631 left empty
 
 [[mob]]
 id = 1040
@@ -1151,7 +1155,8 @@ speed = 300
 attack_delay = 1608
 attack_motion = 816
 damage_motion = 396
-drops = [{ item = 999, rate = 150 }, { item = 953, rate = 5500 }, { item = 911, rate = 1200 }, { item = 757, rate = 61 }, { item = 1003, rate = 120 }, { item = 715, rate = 200 }, { item = 4072, rate = 3 }]
+drops = [{ item = 999, rate = 150 }, { item = 953, rate = 5500 }, { item = 911, rate = 1200 }, { item = 757, rate = 61 }, { item = 1003, rate = 120 }, { item = 715, rate = 200 }, { item = 998, rate = 350 }, { item = 4072, rate = 3 }]
+# drops 998: eAthena 817, in slots mod0631 left empty
 
 [[mob]]
 id = 1041
@@ -1180,7 +1185,8 @@ speed = 300
 attack_delay = 1772
 attack_motion = 72
 damage_motion = 384
-drops = [{ item = 930, rate = 5500 }, { item = 756, rate = 100 }, { item = 934, rate = 100 }, { item = 2604, rate = 1 }, { item = 2611, rate = 10 }, { item = 4106, rate = 1 }]
+drops = [{ item = 930, rate = 5500 }, { item = 756, rate = 100 }, { item = 934, rate = 100 }, { item = 2604, rate = 1 }, { item = 2611, rate = 10 }, { item = 525, rate = 250 }, { item = 502, rate = 450 }, { item = 4106, rate = 1 }]
+# drops 525, 502: eAthena 817, in slots mod0631 left empty
 
 [[mob]]
 id = 1042
@@ -1268,7 +1274,8 @@ speed = 200
 attack_delay = 1872
 attack_motion = 672
 damage_motion = 288
-drops = [{ item = 995, rate = 13 }, { item = 950, rate = 5500 }, { item = 5014, rate = 1 }, { item = 2326, rate = 10 }, { item = 720, rate = 5 }, { item = 951, rate = 500 }, { item = 4093, rate = 2 }]
+drops = [{ item = 995, rate = 13 }, { item = 950, rate = 5500 }, { item = 5014, rate = 1 }, { item = 2326, rate = 10 }, { item = 720, rate = 5 }, { item = 951, rate = 500 }, { item = 748, rate = 25 }, { item = 4093, rate = 2 }]
+# drops 748: eAthena 817, in slots mod0631 left empty
 
 [[mob]]
 id = 1045
@@ -1498,7 +1505,8 @@ speed = 200
 attack_delay = 1864
 attack_motion = 864
 damage_motion = 540
-drops = [{ item = 940, rate = 5000 }, { item = 909, rate = 5500 }, { item = 2298, rate = 4 }, { item = 1402, rate = 80 }, { item = 520, rate = 10 }, { item = 752, rate = 5 }, { item = 4021, rate = 10 }]
+drops = [{ item = 940, rate = 5000 }, { item = 909, rate = 5500 }, { item = 2298, rate = 4 }, { item = 1402, rate = 80 }, { item = 520, rate = 10 }, { item = 752, rate = 5 }, { item = 703, rate = 3 }, { item = 4021, rate = 10 }]
+# drops 703: eAthena 817, in slots mod0631 left empty
 
 [[mob]]
 id = 1053
@@ -1559,7 +1567,8 @@ speed = 300
 attack_delay = 988
 attack_motion = 288
 damage_motion = 768
-drops = [{ item = 1011, rate = 40 }, { item = 928, rate = 5500 }, { item = 955, rate = 1500 }, { item = 1152, rate = 10 }, { item = 508, rate = 90 }, { item = 729, rate = 5 }, { item = 4050, rate = 1 }]
+drops = [{ item = 1011, rate = 40 }, { item = 928, rate = 5500 }, { item = 955, rate = 1500 }, { item = 1152, rate = 10 }, { item = 508, rate = 90 }, { item = 729, rate = 5 }, { item = 1116, rate = 50 }, { item = 4050, rate = 1 }]
+# drops 1116: eAthena 817, in slots mod0631 left empty
 
 [[mob]]
 id = 1055
@@ -1619,7 +1628,8 @@ speed = 200
 attack_delay = 1576
 attack_motion = 576
 damage_motion = 420
-drops = [{ item = 945, rate = 5500 }, { item = 919, rate = 5500 }, { item = 516, rate = 800 }, { item = 2213, rate = 2 }, { item = 754, rate = 2 }, { item = 4044, rate = 1 }]
+drops = [{ item = 945, rate = 5500 }, { item = 919, rate = 5500 }, { item = 516, rate = 800 }, { item = 2213, rate = 2 }, { item = 754, rate = 2 }, { item = 912, rate = 6 }, { item = 729, rate = 3 }, { item = 4044, rate = 1 }]
+# drops 912, 729: eAthena 817, in slots mod0631 left empty
 
 [[mob]]
 id = 1057
@@ -2227,7 +2237,8 @@ speed = 200
 attack_delay = 1672
 attack_motion = 672
 damage_motion = 288
-drops = [{ item = 7033, rate = 5500 }, { item = 2221, rate = 20 }, { item = 511, rate = 550 }, { item = 510, rate = 50 }, { item = 972, rate = 30 }, { item = 921, rate = 1200 }, { item = 4048, rate = 2 }]
+drops = [{ item = 7033, rate = 5500 }, { item = 2221, rate = 20 }, { item = 511, rate = 550 }, { item = 510, rate = 50 }, { item = 972, rate = 30 }, { item = 921, rate = 1200 }, { item = 912, rate = 6 }, { item = 4048, rate = 2 }]
+# drops 912: eAthena 817, in slots mod0631 left empty
 
 [[mob]]
 id = 1078
@@ -2493,7 +2504,8 @@ speed = 200
 attack_delay = 1080
 attack_motion = 648
 damage_motion = 480
-drops = [{ item = 2247, rate = 50 }, { item = 940, rate = 8000 }, { item = 721, rate = 1000 }, { item = 752, rate = 1500 }, { item = 912, rate = 5500 }, { item = 532, rate = 3000 }, { item = 4021, rate = 60 }]
+drops = [{ item = 2247, rate = 50 }, { item = 940, rate = 8000 }, { item = 721, rate = 1000 }, { item = 752, rate = 1500 }, { item = 912, rate = 5500 }, { item = 645, rate = 3000 }, { item = 532, rate = 3000 }, { item = 4021, rate = 60 }]
+# drops 645: eAthena 817, in slots mod0631 left empty
 
 [[mob]]
 id = 1089
@@ -2522,7 +2534,8 @@ speed = 200
 attack_delay = 1236
 attack_motion = 336
 damage_motion = 432
-drops = [{ item = 2244, rate = 50 }, { item = 518, rate = 2000 }, { item = 729, rate = 1000 }, { item = 746, rate = 1500 }, { item = 970, rate = 100 }, { item = 4014, rate = 5 }]
+drops = [{ item = 2244, rate = 50 }, { item = 518, rate = 2000 }, { item = 729, rate = 1000 }, { item = 746, rate = 1500 }, { item = 970, rate = 100 }, { item = 971, rate = 100 }, { item = 4014, rate = 5 }]
+# drops 971: eAthena 817, in slots mod0631 left empty
 
 [[mob]]
 id = 1090
@@ -2873,7 +2886,8 @@ speed = 100
 attack_delay = 868
 attack_motion = 480
 damage_motion = 120
-drops = [{ item = 923, rate = 500 }, { item = 984, rate = 63 }, { item = 1464, rate = 2 }, { item = 607, rate = 50 }, { item = 610, rate = 100 }, { item = 503, rate = 300 }, { item = 4129, rate = 1 }]
+drops = [{ item = 923, rate = 500 }, { item = 984, rate = 63 }, { item = 1464, rate = 2 }, { item = 607, rate = 50 }, { item = 610, rate = 100 }, { item = 503, rate = 300 }, { item = 2405, rate = 50 }, { item = 4129, rate = 1 }]
+# drops 2405: eAthena 817, in slots mod0631 left empty
 
 [[mob]]
 id = 1102
@@ -2961,7 +2975,8 @@ speed = 150
 attack_delay = 1864
 attack_motion = 864
 damage_motion = 1008
-drops = [{ item = 1026, rate = 5500 }, { item = 2502, rate = 20 }, { item = 914, rate = 3000 }, { item = 919, rate = 2500 }, { item = 516, rate = 500 }, { item = 4041, rate = 1 }]
+drops = [{ item = 1026, rate = 5500 }, { item = 2502, rate = 20 }, { item = 914, rate = 3000 }, { item = 919, rate = 2500 }, { item = 516, rate = 500 }, { item = 2402, rate = 25 }, { item = 4041, rate = 1 }]
+# drops 2402: eAthena 817, in slots mod0631 left empty
 
 [[mob]]
 id = 1105
@@ -3020,7 +3035,8 @@ speed = 200
 attack_delay = 1120
 attack_motion = 420
 damage_motion = 288
-drops = [{ item = 1253, rate = 5 }, { item = 7030, rate = 5500 }, { item = 2311, rate = 1 }, { item = 517, rate = 1200 }, { item = 920, rate = 2000 }, { item = 756, rate = 53 }, { item = 4082, rate = 1 }]
+drops = [{ item = 1253, rate = 5 }, { item = 7030, rate = 5500 }, { item = 2311, rate = 1 }, { item = 517, rate = 1200 }, { item = 920, rate = 2000 }, { item = 756, rate = 53 }, { item = 1217, rate = 140 }, { item = 4082, rate = 1 }]
+# drops 1217: eAthena 817, in slots mod0631 left empty
 
 [[mob]]
 id = 1107
@@ -3284,9 +3300,10 @@ speed = 300
 attack_delay = 872
 attack_motion = 1344
 damage_motion = 432
-drops = [{ item = 1133, rate = 150 }, { item = 2268, rate = 250 }, { item = 518, rate = 10000 }, { item = 1258, rate = 500 }, { item = 985, rate = 2300 }, { item = 984, rate = 1700 }, { item = 4123, rate = 1 }]
+drops = [{ item = 1133, rate = 150 }, { item = 2268, rate = 250 }, { item = 518, rate = 10000 }, { item = 1258, rate = 500 }, { item = 1030, rate = 250 }, { item = 985, rate = 2300 }, { item = 984, rate = 1700 }, { item = 4123, rate = 1 }]
 mvp_exp = 6179
 mvp_drops = [{ item = 1029, rate = 5000 }, { item = 1030, rate = 1000 }, { item = 994, rate = 3000 }]
+# drops 1030: eAthena 817, in slots mod0631 left empty
 
 [[mob]]
 id = 1116
@@ -3436,7 +3453,8 @@ speed = 300
 attack_delay = 1220
 attack_motion = 1080
 damage_motion = 648
-drops = [{ item = 1059, rate = 5000 }, { item = 2274, rate = 100 }, { item = 2336, rate = 50 }, { item = 604, rate = 500 }, { item = 603, rate = 10 }, { item = 714, rate = 30 }, { item = 4047, rate = 1 }]
+drops = [{ item = 1059, rate = 5000 }, { item = 2274, rate = 100 }, { item = 2336, rate = 50 }, { item = 604, rate = 500 }, { item = 603, rate = 10 }, { item = 714, rate = 30 }, { item = 2335, rate = 150 }, { item = 4047, rate = 1 }]
+# drops 2335: eAthena 817, in slots mod0631 left empty
 
 [[mob]]
 id = 1121
@@ -3984,7 +4002,8 @@ speed = 250
 attack_delay = 1560
 attack_motion = 360
 damage_motion = 360
-drops = [{ item = 7031, rate = 5500 }, { item = 910, rate = 800 }, { item = 911, rate = 100 }, { item = 912, rate = 10 }, { item = 737, rate = 20 }, { item = 4076, rate = 1 }]
+drops = [{ item = 7031, rate = 5500 }, { item = 910, rate = 800 }, { item = 911, rate = 100 }, { item = 912, rate = 10 }, { item = 737, rate = 20 }, { item = 508, rate = 250 }, { item = 4076, rate = 1 }]
+# drops 508: eAthena 817, in slots mod0631 left empty
 
 [[mob]]
 id = 1139
@@ -4186,7 +4205,8 @@ speed = 300
 attack_delay = 1480
 attack_motion = 480
 damage_motion = 480
-drops = [{ item = 1017, rate = 6500 }, { item = 1018, rate = 500 }, { item = 1251, rate = 10 }, { item = 2225, rate = 5 }, { item = 5009, rate = 1 }, { item = 10010, rate = 10 }, { item = 4046, rate = 2 }]
+drops = [{ item = 1017, rate = 6500 }, { item = 1018, rate = 500 }, { item = 1251, rate = 10 }, { item = 2225, rate = 5 }, { item = 5009, rate = 1 }, { item = 10010, rate = 10 }, { item = 2224, rate = 15 }, { item = 4046, rate = 2 }]
+# drops 2224: eAthena 817, in slots mod0631 left empty
 
 [[mob]]
 id = 1146
@@ -4341,9 +4361,10 @@ speed = 150
 attack_delay = 1276
 attack_motion = 576
 damage_motion = 288
-drops = [{ item = 5008, rate = 200 }, { item = 1022, rate = 5500 }, { item = 504, rate = 1500 }, { item = 728, rate = 500 }, { item = 985, rate = 600 }, { item = 10008, rate = 250 }, { item = 4131, rate = 1 }]
+drops = [{ item = 5008, rate = 200 }, { item = 1022, rate = 5500 }, { item = 504, rate = 1500 }, { item = 728, rate = 500 }, { item = 985, rate = 600 }, { item = 10008, rate = 250 }, { item = 638, rate = 500 }, { item = 4131, rate = 1 }]
 mvp_exp = 1250
 mvp_drops = [{ item = 1128, rate = 400 }, { item = 714, rate = 100 }, { item = 756, rate = 4000 }]
+# drops 638: eAthena 817, in slots mod0631 left empty
 
 [[mob]]
 id = 1151
@@ -4371,7 +4392,8 @@ speed = 200
 attack_delay = 1576
 attack_motion = 576
 damage_motion = 384
-drops = [{ item = 5005, rate = 2 }, { item = 1019, rate = 800 }, { item = 10005, rate = 10 }, { item = 756, rate = 65 }, { item = 757, rate = 97 }, { item = 4108, rate = 2 }]
+drops = [{ item = 5005, rate = 2 }, { item = 1019, rate = 800 }, { item = 10005, rate = 10 }, { item = 756, rate = 65 }, { item = 757, rate = 97 }, { item = 605, rate = 20 }, { item = 4108, rate = 2 }]
+# drops 605: eAthena 817, in slots mod0631 left empty
 
 [[mob]]
 id = 1152
@@ -4493,7 +4515,8 @@ speed = 200
 attack_delay = 1624
 attack_motion = 620
 damage_motion = 384
-drops = [{ item = 1035, rate = 5500 }, { item = 1037, rate = 300 }, { item = 756, rate = 140 }, { item = 509, rate = 1000 }, { item = 1510, rate = 150 }, { item = 912, rate = 1500 }, { item = 4118, rate = 1 }]
+drops = [{ item = 1035, rate = 5500 }, { item = 1037, rate = 300 }, { item = 756, rate = 140 }, { item = 509, rate = 1000 }, { item = 1510, rate = 150 }, { item = 912, rate = 1500 }, { item = 606, rate = 15 }, { item = 4118, rate = 1 }]
+# drops 606: eAthena 817, in slots mod0631 left empty
 
 [[mob]]
 id = 1156
@@ -4524,7 +4547,8 @@ speed = 150
 attack_delay = 1420
 attack_motion = 1080
 damage_motion = 528
-drops = [{ item = 1036, rate = 5500 }, { item = 1037, rate = 300 }, { item = 985, rate = 61 }, { item = 509, rate = 1000 }, { item = 602, rate = 500 }, { item = 912, rate = 1500 }, { item = 4120, rate = 1 }]
+drops = [{ item = 1036, rate = 5500 }, { item = 1037, rate = 300 }, { item = 985, rate = 61 }, { item = 509, rate = 1000 }, { item = 602, rate = 500 }, { item = 912, rate = 1500 }, { item = 606, rate = 15 }, { item = 4120, rate = 1 }]
+# drops 606: eAthena 817, in slots mod0631 left empty
 
 [[mob]]
 id = 1157
@@ -4617,9 +4641,10 @@ speed = 200
 attack_delay = 1020
 attack_motion = 1020
 damage_motion = 288
-drops = [{ item = 1015, rate = 5500 }, { item = 1223, rate = 2 }, { item = 1008, rate = 50 }, { item = 1014, rate = 5000 }, { item = 730, rate = 100 }, { item = 4121, rate = 1 }]
+drops = [{ item = 1015, rate = 5500 }, { item = 1223, rate = 2 }, { item = 1008, rate = 50 }, { item = 1014, rate = 5000 }, { item = 730, rate = 100 }, { item = 985, rate = 2900 }, { item = 984, rate = 2100 }, { item = 4121, rate = 1 }]
 mvp_exp = 2700
 mvp_drops = [{ item = 2288, rate = 1000 }, { item = 756, rate = 3000 }, { item = 985, rate = 5000 }]
+# drops 985, 984: eAthena 817, in slots mod0631 left empty
 
 [[mob]]
 id = 1160
@@ -4796,7 +4821,8 @@ speed = 250
 attack_delay = 1672
 attack_motion = 720
 damage_motion = 288
-drops = [{ item = 997, rate = 35 }, { item = 1056, rate = 5500 }, { item = 757, rate = 118 }, { item = 1003, rate = 200 }, { item = 1001, rate = 200 }, { item = 1257, rate = 1 }, { item = 4101, rate = 1 }]
+drops = [{ item = 997, rate = 35 }, { item = 1056, rate = 5500 }, { item = 757, rate = 118 }, { item = 1003, rate = 200 }, { item = 1001, rate = 200 }, { item = 1257, rate = 1 }, { item = 728, rate = 2 }, { item = 4101, rate = 1 }]
+# drops 728: eAthena 817, in slots mod0631 left empty
 
 [[mob]]
 id = 1166
@@ -4827,7 +4853,8 @@ speed = 150
 attack_delay = 1960
 attack_motion = 960
 damage_motion = 384
-drops = [{ item = 1028, rate = 5500 }, { item = 656, rate = 150 }, { item = 702, rate = 2 }, { item = 2276, rate = 1 }, { item = 605, rate = 10 }, { item = 757, rate = 70 }, { item = 4078, rate = 1 }]
+drops = [{ item = 1028, rate = 5500 }, { item = 656, rate = 150 }, { item = 702, rate = 2 }, { item = 2276, rate = 1 }, { item = 605, rate = 10 }, { item = 757, rate = 70 }, { item = 526, rate = 2 }, { item = 4078, rate = 1 }]
+# drops 526: eAthena 817, in slots mod0631 left empty
 
 [[mob]]
 id = 1167
@@ -4916,7 +4943,8 @@ speed = 400
 attack_delay = 2420
 attack_motion = 720
 damage_motion = 384
-drops = [{ item = 998, rate = 400 }, { item = 1041, rate = 5500 }, { item = 757, rate = 90 }, { item = 5009, rate = 2 }, { item = 999, rate = 100 }, { item = 1003, rate = 200 }, { item = 4092, rate = 1 }]
+drops = [{ item = 998, rate = 400 }, { item = 1041, rate = 5500 }, { item = 757, rate = 90 }, { item = 5009, rate = 2 }, { item = 999, rate = 100 }, { item = 1003, rate = 200 }, { item = 1002, rate = 800 }, { item = 4092, rate = 1 }]
+# drops 1002: eAthena 817, in slots mod0631 left empty
 
 [[mob]]
 id = 1170
@@ -5236,7 +5264,8 @@ speed = 150
 attack_delay = 840
 attack_motion = 540
 damage_motion = 480
-drops = [{ item = 1022, rate = 5500 }, { item = 919, rate = 7000 }, { item = 603, rate = 100 }, { item = 604, rate = 100 }]
+drops = [{ item = 1022, rate = 5500 }, { item = 919, rate = 7000 }, { item = 603, rate = 100 }, { item = 604, rate = 100 }, { item = 526, rate = 250 }, { item = 525, rate = 350 }, { item = 756, rate = 100 }, { item = 746, rate = 200 }]
+# drops 526, 525, 756, 746: eAthena 817, in slots mod0631 left empty
 
 [[mob]]
 id = 1181
@@ -5314,7 +5343,8 @@ speed = 200
 attack_delay = 1076
 attack_motion = 576
 damage_motion = 480
-drops = [{ item = 998, rate = 50 }, { item = 935, rate = 5500 }, { item = 909, rate = 1500 }, { item = 1205, rate = 55 }, { item = 601, rate = 100 }, { item = 742, rate = 5 }, { item = 4009, rate = 5 }]
+drops = [{ item = 998, rate = 50 }, { item = 935, rate = 5500 }, { item = 909, rate = 1500 }, { item = 1205, rate = 55 }, { item = 601, rate = 100 }, { item = 742, rate = 5 }, { item = 1002, rate = 150 }, { item = 4009, rate = 5 }]
+# drops 1002: eAthena 817, in slots mod0631 left empty
 
 [[mob]]
 id = 1184
@@ -5448,7 +5478,8 @@ speed = 200
 attack_delay = 1720
 attack_motion = 500
 damage_motion = 420
-drops = [{ item = 1094, rate = 5500 }, { item = 7014, rate = 40 }, { item = 618, rate = 60 }, { item = 2337, rate = 2 }, { item = 609, rate = 15 }, { item = 508, rate = 1000 }]
+drops = [{ item = 1094, rate = 5500 }, { item = 7014, rate = 40 }, { item = 618, rate = 60 }, { item = 2337, rate = 2 }, { item = 609, rate = 15 }, { item = 508, rate = 1000 }, { item = 502, rate = 250 }, { item = 5046, rate = 1 }]
+# drops 502, 5046: eAthena 817, in slots mod0631 left empty
 
 [[mob]]
 id = 1189
@@ -5479,7 +5510,8 @@ speed = 300
 attack_delay = 1960
 attack_motion = 620
 damage_motion = 480
-drops = [{ item = 1063, rate = 5500 }, { item = 1753, rate = 1000 }, { item = 1756, rate = 2500 }, { item = 1755, rate = 2500 }, { item = 1716, rate = 2 }, { item = 501, rate = 1400 }, { item = 509, rate = 900 }]
+drops = [{ item = 1063, rate = 5500 }, { item = 1753, rate = 1000 }, { item = 1756, rate = 2500 }, { item = 1755, rate = 2500 }, { item = 1716, rate = 2 }, { item = 501, rate = 1400 }, { item = 509, rate = 900 }, { item = 2330, rate = 5 }]
+# drops 2330: eAthena 817, in slots mod0631 left empty
 
 [[mob]]
 id = 1190
@@ -5542,7 +5574,8 @@ speed = 100
 attack_delay = 972
 attack_motion = 500
 damage_motion = 288
-drops = [{ item = 617, rate = 5 }, { item = 603, rate = 45 }, { item = 1065, rate = 1200 }, { item = 611, rate = 3000 }, { item = 714, rate = 3 }, { item = 2626, rate = 1 }, { item = 757, rate = 270 }]
+drops = [{ item = 617, rate = 5 }, { item = 603, rate = 45 }, { item = 1065, rate = 1200 }, { item = 611, rate = 3000 }, { item = 714, rate = 3 }, { item = 2626, rate = 1 }, { item = 757, rate = 270 }, { item = 2205, rate = 120 }]
+# drops 2205: eAthena 817, in slots mod0631 left empty
 
 [[mob]]
 id = 1192
@@ -5573,7 +5606,8 @@ speed = 300
 attack_delay = 1816
 attack_motion = 576
 damage_motion = 240
-drops = [{ item = 1059, rate = 6500 }, { item = 2206, rate = 10 }, { item = 2506, rate = 2 }, { item = 716, rate = 650 }, { item = 602, rate = 1300 }]
+drops = [{ item = 1059, rate = 6500 }, { item = 2206, rate = 10 }, { item = 2506, rate = 2 }, { item = 716, rate = 650 }, { item = 602, rate = 1300 }, { item = 2505, rate = 10 }, { item = 731, rate = 5 }, { item = 735, rate = 10 }]
+# drops 2505, 731, 735: eAthena 817, in slots mod0631 left empty
 
 [[mob]]
 id = 1193
@@ -5603,7 +5637,8 @@ speed = 300
 attack_delay = 1020
 attack_motion = 500
 damage_motion = 768
-drops = [{ item = 1095, rate = 5500 }, { item = 2607, rate = 20 }, { item = 7005, rate = 1500 }, { item = 611, rate = 1300 }, { item = 984, rate = 105 }, { item = 7026, rate = 16 }]
+drops = [{ item = 1095, rate = 5500 }, { item = 2607, rate = 20 }, { item = 7005, rate = 1500 }, { item = 611, rate = 1300 }, { item = 984, rate = 105 }, { item = 7026, rate = 16 }, { item = 912, rate = 1500 }]
+# drops 912: eAthena 817, in slots mod0631 left empty
 
 [[mob]]
 id = 1194
@@ -5634,7 +5669,8 @@ speed = 100
 attack_delay = 960
 attack_motion = 500
 damage_motion = 480
-drops = [{ item = 1096, rate = 3500 }, { item = 938, rate = 3000 }, { item = 943, rate = 800 }, { item = 912, rate = 450 }, { item = 716, rate = 300 }, { item = 997, rate = 20 }]
+drops = [{ item = 1096, rate = 3500 }, { item = 938, rate = 3000 }, { item = 943, rate = 800 }, { item = 912, rate = 450 }, { item = 716, rate = 300 }, { item = 997, rate = 20 }, { item = 912, rate = 2500 }]
+# drops 912: eAthena 817, in slots mod0631 left empty
 
 [[mob]]
 id = 1195
@@ -5663,7 +5699,8 @@ speed = 150
 attack_delay = 864
 attack_motion = 500
 damage_motion = 192
-drops = [{ item = 1097, rate = 5500 }, { item = 1553, rate = 4 }, { item = 1554, rate = 4 }, { item = 1555, rate = 3 }, { item = 1556, rate = 2 }, { item = 7015, rate = 300 }, { item = 1006, rate = 20 }]
+drops = [{ item = 1097, rate = 5500 }, { item = 1553, rate = 4 }, { item = 1554, rate = 4 }, { item = 1555, rate = 3 }, { item = 1556, rate = 2 }, { item = 7015, rate = 300 }, { item = 1006, rate = 20 }, { item = 722, rate = 5 }]
+# drops 722: eAthena 817, in slots mod0631 left empty
 
 [[mob]]
 id = 1196
@@ -5693,7 +5730,8 @@ speed = 350
 attack_delay = 1848
 attack_motion = 500
 damage_motion = 576
-drops = [{ item = 1098, rate = 3500 }, { item = 7016, rate = 100 }, { item = 2320, rate = 1 }, { item = 716, rate = 600 }, { item = 930, rate = 3500 }, { item = 2408, rate = 35 }]
+drops = [{ item = 1098, rate = 3500 }, { item = 7016, rate = 100 }, { item = 2320, rate = 1 }, { item = 716, rate = 600 }, { item = 930, rate = 3500 }, { item = 2408, rate = 35 }, { item = 934, rate = 1500 }, { item = 2282, rate = 1 }]
+# drops 934, 2282: eAthena 817, in slots mod0631 left empty
 
 [[mob]]
 id = 1197
@@ -5723,7 +5761,8 @@ speed = 350
 attack_delay = 1768
 attack_motion = 500
 damage_motion = 192
-drops = [{ item = 1099, rate = 3500 }, { item = 7016, rate = 105 }, { item = 2266, rate = 1 }, { item = 716, rate = 600 }, { item = 930, rate = 3500 }, { item = 2408, rate = 39 }, { item = 985, rate = 112 }]
+drops = [{ item = 1099, rate = 3500 }, { item = 7016, rate = 105 }, { item = 2266, rate = 1 }, { item = 716, rate = 600 }, { item = 930, rate = 3500 }, { item = 2408, rate = 39 }, { item = 985, rate = 112 }, { item = 1093, rate = 1 }]
+# drops 1093: eAthena 817, in slots mod0631 left empty
 
 [[mob]]
 id = 1198
@@ -5783,7 +5822,8 @@ speed = 300
 attack_delay = 1500
 attack_motion = 500
 damage_motion = 1000
-drops = [{ item = 7001, rate = 5500 }, { item = 715, rate = 800 }, { item = 1001, rate = 300 }, { item = 1061, rate = 1000 }, { item = 1057, rate = 3000 }, { item = 601, rate = 1100 }, { item = 10004, rate = 10 }]
+drops = [{ item = 7001, rate = 5500 }, { item = 715, rate = 800 }, { item = 1001, rate = 300 }, { item = 1061, rate = 1000 }, { item = 1057, rate = 3000 }, { item = 601, rate = 1100 }, { item = 10004, rate = 10 }, { item = 2502, rate = 15 }]
+# drops 2502: eAthena 817, in slots mod0631 left empty
 
 [[mob]]
 id = 1200
@@ -5814,7 +5854,8 @@ speed = 200
 attack_delay = 800
 attack_motion = 792
 damage_motion = 384
-drops = [{ item = 7017, rate = 5 }, { item = 504, rate = 800 }, { item = 2622, rate = 1 }, { item = 984, rate = 134 }]
+drops = [{ item = 7017, rate = 5 }, { item = 504, rate = 800 }, { item = 503, rate = 1200 }, { item = 2331, rate = 8 }, { item = 2622, rate = 1 }, { item = 984, rate = 134 }, { item = 2291, rate = 3 }]
+# drops 503, 2331, 2291: eAthena 817, in slots mod0631 left empty
 
 [[mob]]
 id = 1201
@@ -5906,7 +5947,8 @@ speed = 250
 attack_delay = 1152
 attack_motion = 500
 damage_motion = 240
-drops = [{ item = 7019, rate = 1 }, { item = 1117, rate = 100 }, { item = 1152, rate = 70 }, { item = 1155, rate = 40 }, { item = 1163, rate = 2 }, { item = 999, rate = 120 }, { item = 984, rate = 243 }]
+drops = [{ item = 7019, rate = 1 }, { item = 1117, rate = 100 }, { item = 1152, rate = 70 }, { item = 1155, rate = 40 }, { item = 1163, rate = 2 }, { item = 999, rate = 120 }, { item = 984, rate = 243 }, { item = 985, rate = 210 }]
+# drops 985: eAthena 817, in slots mod0631 left empty
 
 [[mob]]
 id = 1204
@@ -5936,7 +5978,8 @@ speed = 100
 attack_delay = 816
 attack_motion = 500
 damage_motion = 240
-drops = [{ item = 7022, rate = 1 }, { item = 638, rate = 50 }, { item = 1211, rate = 100 }, { item = 1214, rate = 70 }, { item = 1217, rate = 40 }, { item = 999, rate = 120 }, { item = 984, rate = 189 }]
+drops = [{ item = 7022, rate = 1 }, { item = 638, rate = 50 }, { item = 1211, rate = 100 }, { item = 1214, rate = 70 }, { item = 1217, rate = 40 }, { item = 999, rate = 120 }, { item = 984, rate = 189 }, { item = 1157, rate = 25 }]
+# drops 1157: eAthena 817, in slots mod0631 left empty
 
 [[mob]]
 id = 1205
@@ -5997,7 +6040,8 @@ speed = 200
 attack_delay = 900
 attack_motion = 500
 damage_motion = 864
-drops = [{ item = 7003, rate = 5500 }, { item = 1754, rate = 2000 }, { item = 504, rate = 650 }, { item = 10019, rate = 10 }, { item = 938, rate = 7000 }, { item = 2625, rate = 1 }, { item = 984, rate = 134 }]
+drops = [{ item = 7003, rate = 5500 }, { item = 1754, rate = 2000 }, { item = 504, rate = 650 }, { item = 10019, rate = 10 }, { item = 938, rate = 7000 }, { item = 2625, rate = 1 }, { item = 984, rate = 134 }, { item = 526, rate = 5 }]
+# drops 526: eAthena 817, in slots mod0631 left empty
 
 [[mob]]
 id = 1207
@@ -6027,7 +6071,8 @@ speed = 300
 attack_delay = 528
 attack_motion = 500
 damage_motion = 240
-drops = [{ item = 7004, rate = 5500 }, { item = 1756, rate = 1500 }, { item = 2624, rate = 1 }, { item = 1003, rate = 130 }, { item = 997, rate = 25 }, { item = 10007, rate = 10 }]
+drops = [{ item = 7004, rate = 5500 }, { item = 1756, rate = 1500 }, { item = 2624, rate = 1 }, { item = 1003, rate = 130 }, { item = 997, rate = 25 }, { item = 10007, rate = 10 }, { item = 2209, rate = 350 }, { item = 719, rate = 3 }]
+# drops 2209, 719: eAthena 817, in slots mod0631 left empty
 
 [[mob]]
 id = 1208
@@ -6058,7 +6103,8 @@ speed = 100
 attack_delay = 672
 attack_motion = 500
 damage_motion = 192
-drops = [{ item = 7005, rate = 5500 }, { item = 616, rate = 1 }, { item = 1164, rate = 1 }, { item = 2270, rate = 5 }, { item = 610, rate = 650 }, { item = 984, rate = 217 }]
+drops = [{ item = 7005, rate = 5500 }, { item = 616, rate = 1 }, { item = 1164, rate = 1 }, { item = 2270, rate = 5 }, { item = 610, rate = 650 }, { item = 984, rate = 217 }, { item = 608, rate = 3 }, { item = 732, rate = 1 }]
+# drops 608, 732: eAthena 817, in slots mod0631 left empty
 
 [[mob]]
 id = 1209
@@ -6333,7 +6379,8 @@ speed = 300
 attack_delay = 1500
 attack_motion = 500
 damage_motion = 1000
-drops = [{ item = 1064, rate = 5500 }, { item = 7023, rate = 5 }, { item = 2318, rate = 1 }, { item = 1410, rate = 25 }, { item = 1162, rate = 1 }, { item = 985, rate = 369 }, { item = 984, rate = 259 }]
+drops = [{ item = 1064, rate = 5500 }, { item = 7023, rate = 5 }, { item = 2318, rate = 1 }, { item = 1410, rate = 25 }, { item = 1162, rate = 1 }, { item = 985, rate = 369 }, { item = 984, rate = 259 }, { item = 1162, rate = 15 }]
+# drops 1162: eAthena 817, in slots mod0631 left empty
 
 [[mob]]
 id = 1220
@@ -6363,7 +6410,8 @@ speed = 200
 attack_delay = 1120
 attack_motion = 420
 damage_motion = 288
-drops = [{ item = 1253, rate = 5 }, { item = 7030, rate = 5500 }, { item = 2311, rate = 1 }, { item = 517, rate = 1200 }, { item = 920, rate = 2000 }, { item = 756, rate = 53 }, { item = 4082, rate = 1 }]
+drops = [{ item = 1253, rate = 5 }, { item = 7030, rate = 5500 }, { item = 2311, rate = 1 }, { item = 517, rate = 1200 }, { item = 920, rate = 2000 }, { item = 756, rate = 53 }, { item = 1217, rate = 140 }, { item = 4082, rate = 1 }]
+# drops 1217: eAthena 817, in slots mod0631 left empty
 
 [[mob]]
 id = 1221
@@ -6998,7 +7046,8 @@ speed = 400
 attack_delay = 1872
 attack_motion = 672
 damage_motion = 480
-drops = [{ item = 910, rate = 3200 }, { item = 938, rate = 1500 }, { item = 991, rate = 40 }, { item = 720, rate = 40 }, { item = 510, rate = 75 }, { item = 529, rate = 350 }, { item = 4001, rate = 10 }]
+drops = [{ item = 910, rate = 3200 }, { item = 938, rate = 1500 }, { item = 991, rate = 40 }, { item = 720, rate = 40 }, { item = 510, rate = 75 }, { item = 529, rate = 350 }, { item = 5035, rate = 1 }, { item = 4001, rate = 10 }]
+# drops 5035: eAthena 817, in slots mod0631 left empty
 
 [[mob]]
 id = 1243
@@ -7208,7 +7257,8 @@ speed = 400
 attack_delay = 1248
 attack_motion = 1248
 damage_motion = 432
-drops = [{ item = 1019, rate = 2000 }, { item = 912, rate = 1500 }, { item = 603, rate = 10 }, { item = 539, rate = 800 }, { item = 722, rate = 100 }, { item = 512, rate = 100 }]
+drops = [{ item = 1019, rate = 2000 }, { item = 912, rate = 1500 }, { item = 603, rate = 10 }, { item = 539, rate = 800 }, { item = 722, rate = 100 }, { item = 731, rate = 5 }, { item = 512, rate = 100 }, { item = 529, rate = 340 }]
+# drops 731, 529: eAthena 817, in slots mod0631 left empty
 
 [[mob]]
 id = 1250
@@ -7268,9 +7318,10 @@ speed = 200
 attack_delay = 468
 attack_motion = 468
 damage_motion = 288
-drops = [{ item = 1468, rate = 150 }, { item = 603, rate = 3000 }, { item = 617, rate = 4000 }, { item = 2621, rate = 200 }, { item = 2506, rate = 500 }, { item = 985, rate = 4700 }, { item = 984, rate = 3500 }]
+drops = [{ item = 1468, rate = 150 }, { item = 603, rate = 3000 }, { item = 617, rate = 4000 }, { item = 2621, rate = 200 }, { item = 2506, rate = 500 }, { item = 985, rate = 4700 }, { item = 984, rate = 3500 }, { item = 5007, rate = 1 }]
 mvp_exp = 1
 mvp_drops = [{ item = 720, rate = 4500 }, { item = 2406, rate = 500 }, { item = 995, rate = 3000 }]
+# drops 5007: eAthena 817, in slots mod0631 left empty
 
 [[mob]]
 id = 1252
@@ -7363,7 +7414,8 @@ speed = 200
 attack_delay = 1000
 attack_motion = 900
 damage_motion = 384
-drops = [{ item = 7053, rate = 3000 }, { item = 916, rate = 5000 }, { item = 645, rate = 200 }, { item = 992, rate = 90 }, { item = 2225, rate = 7 }, { item = 756, rate = 32 }]
+drops = [{ item = 7053, rate = 3000 }, { item = 916, rate = 5000 }, { item = 645, rate = 200 }, { item = 656, rate = 100 }, { item = 992, rate = 90 }, { item = 2225, rate = 7 }, { item = 756, rate = 32 }, { item = 7054, rate = 1500 }]
+# drops 656, 7054: eAthena 817, in slots mod0631 left empty
 
 [[mob]]
 id = 1255
@@ -7392,7 +7444,8 @@ speed = 200
 attack_delay = 776
 attack_motion = 576
 damage_motion = 288
-drops = [{ item = 1055, rate = 5500 }, { item = 7053, rate = 1000 }, { item = 510, rate = 230 }, { item = 717, rate = 250 }, { item = 656, rate = 250 }, { item = 985, rate = 37 }]
+drops = [{ item = 1055, rate = 5500 }, { item = 7053, rate = 1000 }, { item = 510, rate = 230 }, { item = 717, rate = 250 }, { item = 656, rate = 250 }, { item = 757, rate = 180 }, { item = 985, rate = 37 }]
+# drops 757: eAthena 817, in slots mod0631 left empty
 
 [[mob]]
 id = 1256
@@ -7449,7 +7502,8 @@ speed = 400
 attack_delay = 770
 attack_motion = 720
 damage_motion = 336
-drops = [{ item = 999, rate = 120 }, { item = 7054, rate = 5500 }, { item = 1255, rate = 2 }]
+drops = [{ item = 999, rate = 120 }, { item = 7054, rate = 5500 }, { item = 7053, rate = 3500 }, { item = 2313, rate = 5 }, { item = 2316, rate = 2 }, { item = 1255, rate = 2 }]
+# drops 7053, 2313, 2316: eAthena 817, in slots mod0631 left empty
 
 [[mob]]
 id = 1258
@@ -7508,7 +7562,8 @@ speed = 100
 attack_delay = 704
 attack_motion = 504
 damage_motion = 432
-drops = [{ item = 7048, rate = 1000 }, { item = 7054, rate = 5500 }, { item = 984, rate = 185 }, { item = 996, rate = 150 }]
+drops = [{ item = 7048, rate = 1000 }, { item = 7054, rate = 5500 }, { item = 7063, rate = 120 }, { item = 1452, rate = 1500 }, { item = 757, rate = 150 }, { item = 984, rate = 185 }, { item = 996, rate = 150 }, { item = 1417, rate = 1 }]
+# drops 7063, 1452, 757, 1417: eAthena 817, in slots mod0631 left empty
 
 [[mob]]
 id = 1260
@@ -7539,7 +7594,8 @@ speed = 200
 attack_delay = 920
 attack_motion = 720
 damage_motion = 200
-drops = [{ item = 7054, rate = 5500 }, { item = 734, rate = 1000 }, { item = 1000, rate = 80 }, { item = 747, rate = 3 }]
+drops = [{ item = 7054, rate = 5500 }, { item = 734, rate = 1000 }, { item = 2505, rate = 30 }, { item = 1000, rate = 80 }, { item = 747, rate = 3 }]
+# drops 2505: eAthena 817, in slots mod0631 left empty
 
 [[mob]]
 id = 1261
@@ -7568,7 +7624,8 @@ speed = 100
 attack_delay = 964
 attack_motion = 864
 damage_motion = 288
-drops = [{ item = 7053, rate = 6000 }, { item = 1767, rate = 3000 }, { item = 624, rate = 35 }, { item = 528, rate = 600 }, { item = 2244, rate = 2 }]
+drops = [{ item = 7053, rate = 6000 }, { item = 748, rate = 50 }, { item = 5037, rate = 120 }, { item = 1767, rate = 3000 }, { item = 624, rate = 35 }, { item = 528, rate = 600 }, { item = 2244, rate = 2 }]
+# drops 748, 5037: eAthena 817, in slots mod0631 left empty
 
 [[mob]]
 id = 1262
@@ -7599,7 +7656,8 @@ speed = 250
 attack_delay = 1280
 attack_motion = 1080
 damage_motion = 240
-drops = [{ item = 7054, rate = 5500 }, { item = 1035, rate = 500 }, { item = 1036, rate = 500 }, { item = 930, rate = 500 }, { item = 2627, rate = 30 }]
+drops = [{ item = 7054, rate = 5500 }, { item = 1035, rate = 500 }, { item = 1036, rate = 500 }, { item = 930, rate = 500 }, { item = 2627, rate = 30 }, { item = 522, rate = 150 }, { item = 505, rate = 150 }, { item = 504, rate = 250 }]
+# drops 522, 505, 504: eAthena 817, in slots mod0631 left empty
 
 [[mob]]
 id = 1263
@@ -7629,7 +7687,8 @@ speed = 150
 attack_delay = 1056
 attack_motion = 1056
 damage_motion = 336
-drops = [{ item = 912, rate = 5000 }, { item = 932, rate = 6000 }, { item = 7005, rate = 500 }, { item = 1611, rate = 8 }, { item = 996, rate = 100 }, { item = 1615, rate = 1 }]
+drops = [{ item = 912, rate = 5000 }, { item = 932, rate = 6000 }, { item = 7005, rate = 500 }, { item = 1610, rate = 25 }, { item = 1611, rate = 8 }, { item = 996, rate = 100 }, { item = 1615, rate = 1 }]
+# drops 1610: eAthena 817, in slots mod0631 left empty
 
 [[mob]]
 id = 1264
@@ -7689,7 +7748,8 @@ speed = 200
 attack_delay = 1036
 attack_motion = 936
 damage_motion = 240
-drops = [{ item = 538, rate = 1000 }, { item = 1011, rate = 90 }, { item = 979, rate = 1 }, { item = 645, rate = 280 }, { item = 2402, rate = 30 }, { item = 1001, rate = 40 }, { item = 2502, rate = 20 }]
+drops = [{ item = 538, rate = 1000 }, { item = 1011, rate = 90 }, { item = 979, rate = 1 }, { item = 645, rate = 280 }, { item = 2402, rate = 30 }, { item = 1001, rate = 40 }, { item = 2502, rate = 20 }, { item = 529, rate = 320 }]
+# drops 529: eAthena 817, in slots mod0631 left empty
 
 [[mob]]
 id = 1266
@@ -7807,7 +7867,8 @@ speed = 200
 attack_delay = 1092
 attack_motion = 792
 damage_motion = 480
-drops = [{ item = 1095, rate = 5500 }, { item = 1019, rate = 800 }, { item = 504, rate = 900 }, { item = 657, rate = 220 }, { item = 7027, rate = 30 }, { item = 985, rate = 163 }]
+drops = [{ item = 1095, rate = 5500 }, { item = 1019, rate = 800 }, { item = 504, rate = 900 }, { item = 657, rate = 220 }, { item = 7026, rate = 30 }, { item = 7027, rate = 30 }, { item = 985, rate = 163 }]
+# drops 7026: eAthena 817, in slots mod0631 left empty
 
 [[mob]]
 id = 1270
@@ -7837,7 +7898,8 @@ speed = 200
 attack_delay = 1072
 attack_motion = 672
 damage_motion = 384
-drops = [{ item = 1095, rate = 5500 }, { item = 7054, rate = 5500 }, { item = 999, rate = 500 }, { item = 7026, rate = 2000 }, { item = 7027, rate = 2000 }]
+drops = [{ item = 1095, rate = 5500 }, { item = 7054, rate = 5500 }, { item = 999, rate = 500 }, { item = 520, rate = 850 }, { item = 2109, rate = 1 }, { item = 7026, rate = 2000 }, { item = 7027, rate = 2000 }]
+# drops 520, 2109: eAthena 817, in slots mod0631 left empty
 
 [[mob]]
 id = 1271
@@ -7899,9 +7961,10 @@ speed = 100
 attack_delay = 868
 attack_motion = 768
 damage_motion = 480
-drops = [{ item = 1615, rate = 500 }, { item = 5017, rate = 500 }, { item = 1237, rate = 300 }, { item = 2334, rate = 300 }, { item = 512, rate = 100 }, { item = 985, rate = 5300 }, { item = 984, rate = 4100 }]
+drops = [{ item = 1615, rate = 500 }, { item = 5017, rate = 500 }, { item = 1237, rate = 300 }, { item = 2334, rate = 300 }, { item = 512, rate = 100 }, { item = 985, rate = 5300 }, { item = 984, rate = 4100 }, { item = 2609, rate = 140 }]
 mvp_exp = 1
 mvp_drops = [{ item = 7005, rate = 6000 }, { item = 617, rate = 2000 }]
+# drops 2609: eAthena 817, in slots mod0631 left empty
 
 [[mob]]
 id = 1273
@@ -7932,7 +7995,8 @@ speed = 200
 attack_delay = 1050
 attack_motion = 900
 damage_motion = 288
-drops = [{ item = 7053, rate = 5500 }, { item = 998, rate = 300 }, { item = 2602, rate = 1 }, { item = 756, rate = 40 }, { item = 1352, rate = 10 }, { item = 508, rate = 900 }]
+drops = [{ item = 7053, rate = 5500 }, { item = 998, rate = 300 }, { item = 2602, rate = 1 }, { item = 756, rate = 40 }, { item = 1352, rate = 10 }, { item = 508, rate = 900 }, { item = 2338, rate = 1 }, { item = 2206, rate = 1 }]
+# drops 2338, 2206: eAthena 817, in slots mod0631 left empty
 
 [[mob]]
 id = 1274
@@ -8084,7 +8148,8 @@ speed = 200
 attack_delay = 1264
 attack_motion = 864
 damage_motion = 288
-drops = [{ item = 7004, rate = 2000 }, { item = 7054, rate = 5500 }, { item = 1000, rate = 250 }, { item = 997, rate = 30 }, { item = 985, rate = 163 }]
+drops = [{ item = 7004, rate = 2000 }, { item = 7054, rate = 5500 }, { item = 1000, rate = 250 }, { item = 997, rate = 30 }, { item = 757, rate = 250 }, { item = 985, rate = 163 }]
+# drops 757: eAthena 817, in slots mod0631 left empty
 
 [[mob]]
 id = 1279
@@ -8145,7 +8210,8 @@ speed = 200
 attack_delay = 1008
 attack_motion = 1008
 damage_motion = 528
-drops = [{ item = 911, rate = 2500 }, { item = 7053, rate = 4000 }, { item = 998, rate = 300 }, { item = 999, rate = 55 }, { item = 1003, rate = 320 }, { item = 1003, rate = 320 }, { item = 757, rate = 124 }]
+drops = [{ item = 911, rate = 2500 }, { item = 7053, rate = 4000 }, { item = 998, rate = 300 }, { item = 999, rate = 55 }, { item = 1003, rate = 320 }, { item = 1003, rate = 320 }, { item = 757, rate = 124 }, { item = 744, rate = 2 }]
+# drops 744: eAthena 817, in slots mod0631 left empty
 
 [[mob]]
 id = 1281
@@ -8174,7 +8240,8 @@ speed = 200
 attack_delay = 936
 attack_motion = 936
 damage_motion = 288
-drops = [{ item = 912, rate = 1200 }, { item = 1097, rate = 1000 }, { item = 1055, rate = 3000 }, { item = 2241, rate = 5 }, { item = 505, rate = 40 }, { item = 512, rate = 100 }, { item = 5012, rate = 1 }]
+drops = [{ item = 912, rate = 1200 }, { item = 1097, rate = 1000 }, { item = 1055, rate = 3000 }, { item = 2241, rate = 5 }, { item = 505, rate = 40 }, { item = 512, rate = 100 }, { item = 5012, rate = 1 }, { item = 1550, rate = 15 }]
+# drops 1550: eAthena 817, in slots mod0631 left empty
 
 [[mob]]
 id = 1282
@@ -8235,7 +8302,8 @@ speed = 200
 attack_delay = 772
 attack_motion = 672
 damage_motion = 360
-drops = [{ item = 7054, rate = 5500 }, { item = 1048, rate = 1000 }, { item = 657, rate = 500 }, { item = 504, rate = 560 }, { item = 1364, rate = 1 }, { item = 984, rate = 160 }]
+drops = [{ item = 7054, rate = 5500 }, { item = 1048, rate = 1000 }, { item = 657, rate = 500 }, { item = 1306, rate = 1 }, { item = 504, rate = 560 }, { item = 1364, rate = 1 }, { item = 984, rate = 160 }]
+# drops 1306: eAthena 817, in slots mod0631 left empty
 
 [[mob]]
 id = 1284
