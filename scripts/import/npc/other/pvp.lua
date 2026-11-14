@@ -4,6 +4,7 @@
 -- Don't edit: override in scripts/npc/ (npc{replaces=}, wrap_npc, remove_npc) and list the
 -- change in docs/DEVIATIONS.md.
 -- Note: PvP needs other players; off by default (DEVIATIONS.md)
+-- source fix (other/pvp.txt:52): waitingroom "LV 41 ~ LV 50",0; -> waitingroom "LV 31 ~ LV 40",0;: the Usher 31~40's waiting room was titled for the next usher's levels; mod0631 (conf/npc_pvproom.txt:43) and 817's own pvp_n_room usher (pvp.txt:385) have 31~40
 if not content("pvp") then return end
 
 npc {
@@ -52,7 +53,7 @@ npc {
     close()
     do return end
     ::OnInit::
-    waiting_room("LV 41 ~ LV 50", 0)
+    waiting_room("LV 31 ~ LV 40", 0)
   end,
 }
 

@@ -230,7 +230,7 @@ function reset_skills() _rt("reset_skills") end
 function change_base(class) _rt("unimplemented", "changebase") end
 function change_sex() _rt("unimplemented", "changesex") end
 -- chat-room bubble over an NPC (arena/PvP queues): not drawn yet
-function waiting_room(title, limit, event) _rt("unimplemented", "waitingroom") end
+function waiting_room(title, limit, event) _rt("waiting_room", tostring(title), limit or 0, event or "") end
 function warp_waiting_pc(map, x, y) _rt("unimplemented", "warpwaitingpc") end
 function map_flag_nosave(map, save_map, x, y) end
 function set_map_flag(map, flag) end

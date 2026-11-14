@@ -50,6 +50,14 @@ pub struct PlayerTimer {
     pub event: String,
 }
 
+/// An NPC's chat room (Athena waitingroom): the bubble with its title.
+#[derive(Debug, Clone)]
+pub struct WaitingRoom {
+    pub id: u32,
+    pub title: String,
+    pub limit: u16,
+}
+
 #[derive(Default)]
 pub struct NpcRuntime {
     /// NPC ids switched off with disable_npc().
@@ -62,6 +70,8 @@ pub struct NpcRuntime {
     pub temp: HashMap<u32, HashMap<String, Value>>,
     /// Unimplemented builtins already reported once.
     pub reported: HashSet<String>,
+    /// Waiting rooms by NPC definition (Athena chat_createnpcchat).
+    pub rooms: HashMap<usize, WaitingRoom>,
     pub globals_dirty: bool,
 }
 
@@ -102,6 +112,10 @@ impl Game {
 
     fn def_by_id(&self, id: &str) -> Option<usize> {
         let engine = self.scripts.as_ref()?;
+        // "#N": definition N itself (OnInit, queued per definition)
+        if let Some(n) = id.strip_prefix('#').and_then(|n| n.parse::<usize>().ok()) {
+            return (n < engine.defs.npcs.len()).then_some(n);
+        }
         // Athena keeps the last NPC registered under a name
         engine.defs.npcs.iter().rposition(|n| n.id == id)
     }
@@ -142,6 +156,7 @@ impl Game {
             return;
         };
         let d = &engine.defs.npcs[def];
+        let npc = d.id.as_str();
         let label = if label.is_empty() {
             match (d.sprite, d.events.iter().any(|e| e == "OnMyMobDead")) {
                 (None, _) => "",
@@ -173,12 +188,14 @@ impl Game {
         }
     }
 
-    /// After a (re)load: every NPC's OnInit, in load order.
+    /// After a (re)load: every NPC's OnInit, in load order. Queued by
+    /// definition, not by id: 817 gives some NPCs the same name on two maps
+    /// (the PvP ushers), and by id only the last of them would run, twice.
     pub(crate) fn queue_init_events(&mut self) {
         let Some(engine) = self.scripts.clone() else { return };
-        for n in &engine.defs.npcs {
+        for (i, n) in engine.defs.npcs.iter().enumerate() {
             if n.events.iter().any(|e| e == "OnInit") {
-                self.npcrt.queue.push_back((n.id.clone(), "OnInit".into(), 0));
+                self.npcrt.queue.push_back((format!("#{i}"), "OnInit".into(), 0));
             }
         }
     }
@@ -723,6 +740,22 @@ impl Game {
                 self.open_storage(u);
                 Value::Null
             }),
+            "waiting_room" => {
+                // Athena waitingroom "title",limit[,event[,trigger]]: the bubble over
+                // the NPC. Nobody is ever seated (single player), so the event and
+                // its trigger never fire.
+                let npc = ctx.def as usize;
+                if self.scripts.as_ref().and_then(|e| e.defs.npcs.get(npc)).is_none() {
+                    return Some(Err("waiting_room outside an NPC".into()));
+                }
+                let id = self.npcrt.rooms.get(&npc).map(|r| r.id).unwrap_or_else(|| self.world.new_npc_id());
+                self.npcrt.rooms.insert(npc, WaitingRoom { id, title: text(a, 0), limit: int(a, 1).clamp(0, u16::MAX as i64) as u16 });
+                let unit = if ctx.npc != 0 { ctx.npc } else { self.unit_of_def(ctx.def as usize).unwrap_or(0) };
+                if let Some(pkt) = self.world.units.get(&unit).and_then(|u| self.room_packet(u)) {
+                    self.area_send(unit, pkt, false);
+                }
+                Ok(Value::Null)
+            }
             "unimplemented" => {
                 let name = text(a, 0);
                 if self.npcrt.reported.insert(name.clone()) {

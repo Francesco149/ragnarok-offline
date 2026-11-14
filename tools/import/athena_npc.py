@@ -231,6 +231,10 @@ MAP_TYPOS = {"morroc": "morocc"}
 # line, replaced before parsing (line numbers stay), named in the generated file and listed in
 # docs/DEVIATIONS.md. (file, line): (text in the source, replacement, reason).
 SOURCE_FIXES = {
+    ("other/pvp.txt", 52): (
+        'waitingroom "LV 41 ~ LV 50",0;', 'waitingroom "LV 31 ~ LV 40",0;',
+        "the Usher 31~40's waiting room was titled for the next usher's levels; mod0631 "
+        "(conf/npc_pvproom.txt:43) and 817's own pvp_n_room usher (pvp.txt:385) have 31~40"),
     ("jobs/merchant.txt", 103): (
         "if(@TEMP !=0) goto R10;", "if(@TEMP !=0) goto R11;",
         "the label jumped to itself for ever (one application in eight hung 817); R11 is the "

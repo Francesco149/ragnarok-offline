@@ -58,6 +58,8 @@ Every packet the server sends has been read in the client's handler
 | 0x00bd status | status points, the six stats with their costs, atk, atk2, matk max, matk min, def, def2, mdef, mdef2, hit, flee, flee2, crit, then the attack delay (the window shows (2000 - it) / 10, as for 0x00b0 SP_ASPD) and a word it stores but never reads. Athena sends karma and manner in those two (fixed 2026-11-14) | `0x51e390` |
 | 0x0119 state | id u32, opt1, opt2, option (i16), karma byte | `0x5226f0` |
 | 0x01d7 look | id u32, type byte, then a u32 (type 2: weapon in the low word, shield in the high one). Other units ignore type 8 here | `0x52af20` |
+| 0x00d7 room | owner id u32 (the room is dropped unless the owner is already a known actor, `0x4c8ba0`), room id u32, limit, users (i16), public byte, title from +17 to the end, unterminated; the client keeps 60 bytes of it (2026-11-14, NPC waiting rooms) | `0x51f320` |
+| 0x00da room refused | reason byte: 0 msg 67 "The Room is already full.", 1 msg 7 (wrong password), 2 msg 68 (kicked out), 3 nothing, 4 msg 55 (not enough zeny), 5 msg 432 (level too low), 6 msg 433 (level too high), 7 msg 434 (wrong job): this client already knows rooms with a fee and level or job limits, which Athena never sends (jump table `0x51fd98`) | `0x51fc80` |
 | 0x0080 vanish | id u32, type 0..3 (0 out of sight, 1 died: for oneself the restart window, 2 logged out with effect 7, 3 teleported with effect 0x22) | `0x51bb50` |
 | 0x0086 / 0x0087 move | 0x0086: id u32, the 6-byte move, tick u32. 0x0087: tick u32, the 6-byte move (12 bytes: no trailing byte) | `0x5166c6`, `0x516734` |
 | 0x0088 stop | id u32, x, y (i16) | `0x516ac9` |

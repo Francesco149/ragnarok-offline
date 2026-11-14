@@ -216,6 +216,26 @@ pub fn broadcast(text: &str) -> Vec<u8> {
     Writer::new(ZC_BROADCAST).str_nul(text).finish()
 }
 
+/// The client keeps at most 60 bytes of a room title (0x51f410).
+const ROOM_TITLE_MAX: usize = 60;
+
+/// 0x00d7: a chat room ("waiting room") bubble over its owner. The client
+/// drops it unless the owner is already in view (`0x4c8ba0` at 0x51f384);
+/// the title runs to the packet's end, unterminated (handler 0x51f320,
+/// Athena clif_dispchat).
+pub fn room_entry(owner: u32, room: u32, limit: u16, users: u16, public: bool, title: &str) -> Vec<u8> {
+    let enc = ro_proto::encode_text(title);
+    let n = enc.len().min(ROOM_TITLE_MAX);
+    Writer::new(ZC_ROOM_NEWENTRY).u32(owner).u32(room).u16(limit).u16(users).u8(public as u8).bytes(&enc[..n]).finish()
+}
+
+/// 0x00da: a room refused you. 0 "The Room is already full.", 1 "Incorrect
+/// password", 2 "You have been kicked out of room." (handler 0x51fc80, jump
+/// table 0x51fd98: msgstringtable lines 67, 7, 68).
+pub fn refuse_enter_room(reason: u8) -> Vec<u8> {
+    Writer::new(ZC_REFUSE_ENTER_ROOM).u8(reason).finish()
+}
+
 pub fn name_ack(id: u32, name: &str) -> Vec<u8> {
     Writer::new(ZC_ACK_REQNAME).u32(id).str_fixed(name, 24).finish()
 }

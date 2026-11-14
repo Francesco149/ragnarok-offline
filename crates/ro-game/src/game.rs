@@ -388,6 +388,7 @@ impl Game {
         // fresh scripts, fresh runtime state (variables survive: they're saved data)
         self.npcrt.disabled.clear();
         self.npcrt.timers.clear();
+        self.npcrt.rooms.clear();
         self.npcrt.queue.clear();
         self.queue_init_events();
         self.run_events();

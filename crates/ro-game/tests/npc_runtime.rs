@@ -113,6 +113,26 @@ npc { map = "testmap", x = 20, y = 20, sprite = 97, name = "Loop",
 npc { map = "testmap", x = 22, y = 22, sprite = 97, name = "Porter",
   on_click = function() mes "off you go" next() warp("testmap", 24, 24) close() g.after_close = 1 end }
 
+-- a waiting room opened at OnInit, as 817's PvP ushers do
+npc { map = "testmap", x = 28, y = 27, dir = 4, sprite = 105, name = "Usher",
+  id = "usher", events = { "OnInit" }, src = "test:usher",
+  on_click = function(at)
+    if at == "OnInit" then goto OnInit end
+    mes "[Usher]" close()
+    do return end
+    ::OnInit::
+    waiting_room("LV 31 ~ LV 40", 0)
+  end,
+}
+
+-- the same id again elsewhere, as 817's ushers of the two PvP rooms: each runs its own OnInit
+npc { map = "testmap", x = 30, y = 27, dir = 4, sprite = 105, name = "Usher Two",
+  id = "usher", events = { "OnInit" }, src = "test:usher2",
+  on_click = function(at)
+    if at == "OnInit" then waiting_room("All Levels", 0) end
+  end,
+}
+
 -- invisible touch area (Athena sprite -1): runs on_click when stepped on
 npc { map = "testmap", x = 40, y = 25, sprite = -1, name = "Trap", touch = { 1, 1 },
   on_click = function() g.trapped = g.trapped + 1 end }
@@ -217,6 +237,25 @@ fn npc_runtime() {
     let me = enter(&mut g, &cap);
     let first = cap.take(3);
     assert_eq!(g.console_eval("g.inited", me), "1", "OnInit ran once at load");
+
+    // the waiting room's bubble comes after its NPC; joining it is refused as full
+    let usher = npc_named(&g, "Usher").expect("usher placed");
+    let shown = first.iter().position(|p| id_of(p) == 0x0078 && Reader::new(p).seek(2).u32().unwrap() == usher).expect("usher shown");
+    let room = first.iter().position(|p| id_of(p) == 0x00d7 && Reader::new(p).seek(4).u32().unwrap() == usher).expect("room bubble sent");
+    assert!(room > shown, "the client drops a room whose owner it has not seen");
+    let mut r = Reader::new(&first[room]);
+    r.seek(2);
+    let len = r.u16().unwrap() as usize;
+    let (owner, room_id, limit, users, public) = (r.u32().unwrap(), r.u32().unwrap(), r.u16().unwrap(), r.u16().unwrap(), r.u8().unwrap());
+    assert_eq!((owner, limit, users, public, len), (usher, 0, 0, 1, 17 + 13));
+    assert_eq!(&first[room][17..], b"LV 31 ~ LV 40");
+    let titles: Vec<&[u8]> = first.iter().filter(|p| id_of(p) == 0x00d7).map(|p| &p[17..]).collect();
+    assert_eq!(titles.len(), 2, "one room per NPC, though both NPCs share an id");
+    assert!(titles.contains(&&b"All Levels"[..]));
+    let mut w = Writer::new(0x00d9);
+    w.u32(room_id).zeros(8);
+    send(&mut g, 3, w);
+    assert_eq!(find(&cap.take(3), 0x00da).map(|p| p[2]), Some(0), "The Room is already full.");
 
     // the menu, goto and the three variable kinds
     let tester = npc_named(&g, "Tester").expect("tester placed");

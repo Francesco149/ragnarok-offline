@@ -27,7 +27,7 @@ questions that could change an entry here are in
 | Guilds, War of Emperium | Guild castles, flags, treasure, guild dungeons (WoE from open beta, Sundays) | Castle NPCs not imported. Nobody owns a castle, so each holds the monsters 817 called into ownerless castles at WoE start (`scripts/npc/castles.lua`); every server start counts as a WoE start. No Emperium, treasure or guild-dungeon access | Needs guilds and opponents. The monsters are period behaviour (kRO until 2004-02-10, 817 `mobs/gvg.txt`); the timing is ours. `castle_monsters = false` empties the castles. The rest is open (THREADS.md #17) |
 | PvP | PvP rooms (Prontera/Izlude) | The imported PvP NPCs are off (`[content] pvp = false`) | Empty rooms. Turn it on to visit them |
 | Trading, vending to players | Trade window, merchant shops | No other players. The client's buttons do nothing | — |
-| Chat rooms | Player chat rooms; NPC "waiting rooms" (arena, PvP queues) | Not drawn; NPCs that open one log a notice | Player rooms are pointless. NPC waiting rooms are a TODO (ROADMAP) |
+| Chat rooms | Player chat rooms; NPC "waiting rooms" (arena, PvP queues) | NPC rooms are drawn: the bubble with its title over the NPC (817's PvP ushers). Nobody is ever seated, so a room with limit 0 answers "The Room is already full." like Athena, and so does any other (none in our scripts); its event never fires. Player rooms are not offered | Player rooms are pointless. A queue that leads somewhere is reworked by hand (the Wizard test's lounge) |
 | Whisper, friends | — | Whispers get "not online" | — |
 | Announcements | Server-wide broadcasts | Shown to you (`announce` and friends) | — |
 | Arena (time attack) | Not open: kRO added the Izlude arena on 2004-10-12 | 817's arena (entered from mid-Prontera, its own placement) is imported but off | `arena = true` to visit it. THREADS.md R5 |
@@ -523,6 +523,9 @@ eAthena 817 (2004-02-19), bugs included. The translator is
   her test for four; both mended as mod0631 has her. The training ground's
   Usher pays the 50z his line names (and RODataZone's iRO list), not 817's
   150z (mod0631's, jRO).
+  The PvP Usher 31~40's waiting room was titled "LV 41 ~ LV 50", the next
+  usher's levels; it reads "LV 31 ~ LV 40" as in mod0631
+  (`conf/npc_pvproom.txt:43`) and 817's own copy in the other room.
 * **Monsters and warps of the job tests.** The world's monsters and warps
   are mod0631's. 817's job files place some of their own, and those are
   taken where mod0631 has none: the Chonchons along the Swordman course and

@@ -191,6 +191,15 @@ impl Game {
                 let n = self.world.all_players().len() as u32;
                 self.send(sid, packets::user_count(n));
             }
+            CZ_REQ_ENTER_ROOM => {
+                // NPC waiting rooms only, all of them limit 0 in our scripts:
+                // Athena chat_joinchat refuses a full room with 0
+                let room = r.u32()?;
+                let known = self.npcrt.rooms.values().any(|w| w.id == room);
+                if known {
+                    self.send(sid, packets::refuse_enter_room(0));
+                }
+            }
             CZ_WHISPER => {
                 // single player: nobody else to whisper to
                 self.send(sid, ro_proto::Writer::new(ZC_ACK_WHISPER).u8(1).finish());
@@ -479,6 +488,14 @@ impl Game {
         if fresh { packets::new_entry(&look) } else { packets::stand_entry(&look) }
     }
 
+    /// The waiting-room bubble over a script NPC that opened one.
+    pub(crate) fn room_packet(&self, u: &Unit) -> Option<Vec<u8>> {
+        let UnitKind::Npc(NpcUnit { kind: NpcKind::Script { def }, hidden: false, .. }) = &u.kind else { return None };
+        let r = self.npcrt.rooms.get(def)?;
+        // Athena chat_createnpcchat: public, nobody seated
+        Some(packets::room_entry(u.id, r.id, r.limit, 0, true, &r.title))
+    }
+
     /// Recompute what a player sees; send appear/vanish for the difference.
     /// `full` resends everything currently in view (after map load).
     pub(crate) fn refresh_view(&mut self, unit: u32, full: bool) {
@@ -504,6 +521,7 @@ impl Game {
             }
             if full || !before.contains(id) {
                 out.push(self.appear_packet(o, false));
+                out.extend(self.room_packet(o));
             }
         }
         for id in before.difference(&now_ids) {
@@ -568,6 +586,9 @@ impl Game {
                 if !(keep && kept) {
                     let pkt = self.appear_packet(&self.world.units[&unit], fresh);
                     self.send(sid, pkt);
+                    if let Some(pkt) = self.room_packet(&self.world.units[&unit]) {
+                        self.send(sid, pkt);
+                    }
                 }
                 let p = self.world.units.get_mut(&pid).unwrap().player_mut().unwrap();
                 p.kept.remove(&unit);
