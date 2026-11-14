@@ -145,6 +145,10 @@ function skill_unitsetting(src_id, skillid, skilllv, x, y, flag)
   }
   next_group = next_group + 1
   groups[g.id] = g
+  if skillid == SK.HT_TALKIEBOX and src.kind == "player" then
+    -- the message typed when it was set (0x0190; jAthena //0988, 2004-05-25)
+    g.valstr = _rt("pc_talkie", src_id)
+  end
 
   for i = 0, count - 1 do
     local ux, uy, cval2, crange, alive = x, y, 0, 0, true
@@ -312,6 +316,18 @@ local function onplace(c, bl, now)
       if uid == 0x91 then hold = floor(g.val1 / ((battle.mode(bl) & 0x20) ~= 0 and 5 or 1)) end
       g.limit = now - g.tick + hold
       g.val2 = bl.id
+    end
+  elseif uid == 0x99 then -- Talkie Box
+    -- Nothing in mod0631 or 817 (817's attempt is marked "not working").
+    -- jAthena //0988 (2004-05-25, "the packets matched to the official
+    -- server from Kalen's information"): the first to step on it makes it
+    -- speak to those around, and it goes five seconds later. jAthena also
+    -- turns it into a used trap (0x8c) with 0x00c3, which this client only
+    -- applies to characters (0x51e760), so that is left out.
+    if g.val2 == 0 then
+      _rt("clif_talkiebox", c.id, g.valstr or "")
+      g.limit = now - g.tick + 5000
+      g.val2 = -1
     end
   elseif uid == 0x80 then -- Warp Portal, open
     if bl.kind == "player" and g.valstr then

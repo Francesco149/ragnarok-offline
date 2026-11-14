@@ -907,7 +907,13 @@ always fires.
     rolls). What it ends is 817's list: the ailments, Increase and Decrease
     AGI, Suffragium, Magnificat, Gloria, Apple of Idun, the endows and the
     Chemical Protections. The guide says "all magical effects".
-* **Not built yet:** the other 2-2 skills, Talkie Box's text, Repair Weapon
+* **Talkie Box** speaks: mod0631 lets it lie silent and 817's attempt is
+  marked "not working", so it follows jAthena //0988 (2004-05-25, five
+  months after our date): the first one to step on it, its Hunter too,
+  makes it say the text typed when it was set, and it goes 5 s later.
+  jAthena's change to a used trap is not sent: this client applies 0x00c3
+  to characters only (docs/PROTOCOL.md).
+* **Not built yet:** the other 2-2 skills, Repair Weapon
   (nothing breaks in this era's data), attacking an Ice Wall, monsters'
   "friend" skill targets (mod0631 has none either). Venom Splasher is 817's
   plain splash, without the delayed burst of the client's skill text.

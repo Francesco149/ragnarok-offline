@@ -1255,6 +1255,31 @@ fn sandman_reaches_the_neighbours() {
     let _ = z;
 }
 
+/// Talkie Box: the text typed with 0x0190 is said (0x0191, under the trap's
+/// own id) when the first one steps on it, and the trap goes 5 s later.
+#[test]
+fn talkie_box_speaks() {
+    let mut t = T::new();
+    t.lua("job_change(11); player.base_level = 70; player.dex = 90; heal(9999, 9999); give_item(1065, 10)");
+    t.learn("HT_TALKIEBOX", 1);
+    let mut w = Writer::new(0x0190);
+    w.u16(1).u16(t.skill_id("HT_TALKIEBOX")).u16(28).u16(25).str_fixed("Beware of the Zombie!", 80);
+    t.send(w);
+    assert!(t.packets(0x01c9).iter().any(|p| p[14] == 0x99), "a Talkie Box is set");
+    let cell = t.g.world.units.values().find(|u| u.skill().is_some()).map(|u| u.id).expect("its cell");
+    t.run(3000);
+    assert!(t.packets(0x0191).is_empty(), "silent until stepped on");
+    let z = t.spawn(32, 25, 1015);
+    t.run(4000);
+    let said = t.packets(0x0191);
+    assert_eq!(said.len(), 1, "it speaks once");
+    assert_eq!(u32_at(&said[0], 2), cell, "under the trap's id");
+    assert!(said[0][6..].starts_with(b"Beware of the Zombie!\0"), "the text typed");
+    t.kill(z);
+    t.run(6000);
+    assert!(!t.g.world.units.contains_key(&cell), "and goes 5 s later");
+}
+
 /// A monster with a long attack delay (a Zombie: 2612 ms) keeps to it, and
 /// a living player cannot "return to the save point".
 #[test]

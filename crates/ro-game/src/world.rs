@@ -98,6 +98,8 @@ pub struct PlayerUnit {
     pub skill_item: Option<(u16, u16)>,
     /// Skill waiting for a map choice (Teleport, Warp Portal): (skill, level, x, y).
     pub skill_menu: Option<(u16, u16, u16, u16)>,
+    /// Talkie Box's message from the last 0x0190 (jAthena //0988 talkie_mes).
+    pub talkie: String,
     /// Natural-recovery skill clocks (Athena inchealhptick / inchealsptick / inchealspirittick).
     pub inc_hp_acc: u64,
     pub inc_sp_acc: u64,

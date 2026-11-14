@@ -816,7 +816,12 @@ Cart's level steps. Open in both emulators and drafted from the client's
 text only: Poison React (what counts as a poisonous attack, the counter's
 strength, how long it lasts), Remove Trap and Spring Trap (whose traps,
 which kinds, Spring Trap's range by level). Not built: Venom Splasher's
-delayed burst (817 makes it a plain splash), Talkie Box, Repair Weapon. Arrows add no ATK in mod0631 (the line is
+delayed burst (817 makes it a plain splash), Repair Weapon. (Talkie Box is
+built since 2026-11-14 from jAthena //0988 of 2004-05-25, "the packets
+matched to the official server", and the exe's 0x0191 handler: the first
+to step on it makes the trap say its text; it goes 5 s later. Open: did it
+speak to its own Hunter, and did the official server turn it into a used
+trap that this client could draw?) Arrows add no ATK in mod0631 (the line is
 commented out) and its bow skills use none: did they on the official
 servers of Dec 2003? The client shows an ATK on arrow items.
 **Read against the iRO guide's skill pages** (2004-03-27 to 2004-04-13,

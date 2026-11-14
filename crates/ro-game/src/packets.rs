@@ -707,6 +707,14 @@ pub fn skill_unit(id: u32, src: u32, x: u16, y: u16, unit_id: u8) -> Vec<u8> {
     Writer::new(0x01c9).u32(id).u32(src).u16(x).u16(y).u8(unit_id).u8(1).zeros(81).finish()
 }
 
+/// 0x0191: a Talkie Box speaks. The id is the ground unit's: the client looks
+/// it up in its list of ground units (`0x4c8cc0`, the list 0x0120 removes
+/// from) and gives it message 7, which puts the text in a balloon over the
+/// trap (`0x5a99b8`: 35 characters a line). An empty text shows nothing.
+pub fn talkie_box(unit: u32, text: &str) -> Vec<u8> {
+    Writer::new(0x0191).u32(unit).str_fixed(text, 80).finish()
+}
+
 /// 0x01ac: a trap drawn hidden is shown again (Detect). The client acts
 /// only on units of type 0x8b-0x99 (`0x529870`).
 pub fn skill_unit_reveal(id: u32) -> Vec<u8> {

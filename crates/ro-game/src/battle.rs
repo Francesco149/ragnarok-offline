@@ -1109,6 +1109,13 @@ impl Game {
                 }
                 Value::Null
             }
+            "pc_talkie" => json!(self.world.units.get(&id(0)).and_then(|u| u.player()).map(|p| p.talkie.clone()).unwrap_or_default()),
+            "clif_talkiebox" => {
+                if self.world.units.get(&id(0)).and_then(|u| u.skill()).is_some() {
+                    self.area_send(id(0), packets::talkie_box(id(0), &text(a, 1)), false);
+                }
+                Value::Null
+            }
             "su_del" => {
                 if self.world.units.get(&id(0)).is_some_and(|u| u.skill().is_some()) {
                     self.despawn(id(0), 0);

@@ -257,6 +257,13 @@ impl Game {
                 let skill = r.u16()?;
                 let x = r.u16()?;
                 let y = r.u16()?;
+                if id == 0x0190 {
+                    // Talkie Box: the trap takes the text when it is set (jAthena //0988)
+                    let text = r.str_fixed(80)?;
+                    if let Some(p) = self.world.units.get_mut(&unit).and_then(|u| u.player_mut()) {
+                        p.talkie = text;
+                    }
+                }
                 self.skill_request(unit, skill, lv, 0, x, y);
             }
             0x011b => {
@@ -377,6 +384,7 @@ impl Game {
                 ghost_until: 0,
                 skill_item: None,
                 skill_menu: None,
+                talkie: String::new(),
                 inc_hp_acc: 0,
                 inc_sp_acc: 0,
                 spirit_acc: 0,
