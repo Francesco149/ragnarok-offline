@@ -150,9 +150,14 @@ impl Store {
         Ok(id)
     }
 
+    /// Saves the character and its account with it: the Kafra storage lives
+    /// in the account, and an item moved between the two must not be lost
+    /// (or doubled) by saving one side only, as when the game is left with
+    /// the storage window open.
     pub fn save_char(&self, id: u32) -> Result<()> {
         if let Some(c) = self.chars.get(&id) {
             write_atomic(&self.dir.join(format!("chars/{id}.json")), &serde_json::to_vec_pretty(c)?)?;
+            self.save_account(c.account_id)?;
         }
         Ok(())
     }
