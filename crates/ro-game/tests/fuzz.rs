@@ -116,7 +116,10 @@ struct F {
 impl F {
     fn new() -> F {
         let root = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../..");
-        let base = std::env::temp_dir().join(format!("ro-offline-fuzz-{}", std::process::id()));
+        // one directory per F: the tests in this file run in parallel
+        static N: std::sync::atomic::AtomicU32 = std::sync::atomic::AtomicU32::new(0);
+        let n = N.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
+        let base = std::env::temp_dir().join(format!("ro-offline-fuzz-{}-{n}", std::process::id()));
         let _ = std::fs::remove_dir_all(&base);
         // the repo's rules and commands with our own two NPCs: no imported world to load
         let scripts = base.join("scripts");
@@ -351,4 +354,46 @@ fn no_packet_panics_the_server() {
         f.enter(false);
     }
     assert!(f.g.console_eval("1 + 1", f.aid) == "2");
+}
+
+/// A purchase goes through whole or not at all, with one 0x00ca: the client
+/// shows that result's message and closes the shop (0x51eca0), so a
+/// refusal followed by "deal completed" must not happen (mod0631 npc.c:370
+/// checks weight and room before paying).
+#[test]
+fn shop_buy_is_whole_or_refused() {
+    let mut f = F::new();
+    f.stage();
+    let seller = f.g.world.units.iter().find(|(_, u)| u.name == "Seller").map(|(id, _)| *id).expect("shop");
+    let buy = |f: &mut F, list: &[(u16, u16)]| -> Vec<Vec<u8>> {
+        let sid = f.map_sid;
+        let mut w = Writer::new(0x0090);
+        w.u32(seller).u8(1);
+        f.send(sid, w.finish());
+        let mut w = Writer::new(0x00c5);
+        w.u32(seller).u8(0);
+        f.send(sid, w.finish());
+        f.cap.take();
+        let mut w = Writer::new(0x00c8);
+        for &(n, id) in list {
+            w.u16(n).u16(id);
+        }
+        f.send(sid, w.finish());
+        f.cap.take()
+    };
+    let results = |out: &[Vec<u8>]| -> Vec<u8> { out.iter().filter(|p| p[..2] == [0xca, 0x00]).map(|p| p[2]).collect() };
+    f.g.console_eval("player.zeny = 100000000", f.aid);
+
+    // one Knife and far too many Red Potions: too heavy, nothing bought
+    let before = f.g.console_eval("count_item(1201) .. ' ' .. count_item(501) .. ' ' .. player.zeny", f.aid);
+    let out = buy(&mut f, &[(1, 1201), (20000, 501)]);
+    assert_eq!(results(&out), vec![2], "over the weight limit");
+    assert!(find(&out, 0x00a0).is_none(), "nothing added");
+    let after = f.g.console_eval("count_item(1201) .. ' ' .. count_item(501) .. ' ' .. player.zeny", f.aid);
+    assert_eq!(before, after);
+
+    // a buy that fits: one result, success
+    let out = buy(&mut f, &[(2, 501)]);
+    assert_eq!(results(&out), vec![0]);
+    assert!(find(&out, 0x00a0).is_some());
 }

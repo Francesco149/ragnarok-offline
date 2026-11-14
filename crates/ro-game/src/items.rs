@@ -217,8 +217,12 @@ impl Game {
         let Some(d) = self.db.item(it.nameid).cloned() else { return };
         if d.kind == 8 {
             // pet accessory: goes on the pet (mod0631 pet_equipitem)
-            let ok = self.pet_equip(unit, i);
-            self.send(sid, packets::equip_ack(idx, 0, ok));
+            // Only a refusal gets an 0x00aa, as in mod0631 (pet.c:653): a
+            // success ack makes the client "put on" whatever item now sits
+            // at idx after the accessory left (0x51dc10 → 0x589800).
+            if !self.pet_equip(unit, i) {
+                self.send(sid, packets::equip_ack(idx, 0, false));
+            }
             return;
         }
         let Some(c) = self.char_of_unit(unit) else { return };
@@ -521,6 +525,16 @@ impl Game {
             self.send(sid, packets::shop_buy_result(1));
             return;
         }
+        // Check everything before buying anything, as mod0631's npc_buylist
+        // does (npc.c:370): a stack that would overflow or too much weight is
+        // 2 ("over the weight limit", msgstringtable 56), too few free slots
+        // is 3 ("Over the maximum capacity", 221). The client shows one
+        // result and closes the shop (0x51eca0), so a partial buy that then
+        // reported success is avoided.
+        if let Some(code) = self.shop_buy_refusal(unit, list) {
+            self.send(sid, packets::shop_buy_result(code));
+            return;
+        }
         for &(id, n) in list {
             let equip = self.db.item(id).is_some_and(|d| d.is_equip() && d.kind != 10);
             let ok = if equip {
@@ -529,7 +543,7 @@ impl Game {
                 self.add_item(unit, InvItem::new(id, n))
             };
             if !ok {
-                self.send(sid, packets::shop_buy_result(2));
+                // Not expected after the checks above; pay for nothing more.
                 break;
             }
             let price = stock.iter().find(|(s, _)| *s == id).map(|(_, p)| self.trade_price(unit, *p, true)).unwrap_or(0);
@@ -540,6 +554,35 @@ impl Game {
         let z = self.char_of_unit(unit).map(|c| c.zeny).unwrap_or(0);
         self.send(sid, packets::long_par(crate::status::SP_ZENY, z));
         self.send(sid, packets::shop_buy_result(0));
+    }
+
+    /// Why a purchase cannot go through whole, as an 0x00ca code, or None.
+    fn shop_buy_refusal(&self, unit: u32, list: &[(u32, u32)]) -> Option<u8> {
+        let c = self.char_of_unit(unit)?;
+        let (max_weight, weight) = (self.derive(c).max_weight, self.weight_of(c));
+        let (mut w, mut new) = (0u64, 0usize);
+        for &(id, n) in list {
+            let d = self.db.item(id)?;
+            w += d.weight as u64 * n as u64;
+            if d.is_equip() && d.kind != 10 {
+                new += n as usize;
+                continue;
+            }
+            let held = c.inventory.iter().find(|i| i.nameid == id && i.equip == 0 && i.cards == [0; 4]);
+            match held {
+                Some(i) if i.amount as u64 + n as u64 > MAX_STACK as u64 => return Some(2),
+                Some(_) => {}
+                None if n > MAX_STACK => return Some(2),
+                None => new += 1,
+            }
+        }
+        if weight as u64 + w > max_weight as u64 {
+            return Some(2);
+        }
+        if c.inventory.len() + new > MAX_INVENTORY {
+            return Some(3);
+        }
+        None
     }
 
     pub(crate) fn shop_sell(&mut self, unit: u32, list: &[(u16, u32)]) {
