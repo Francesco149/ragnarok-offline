@@ -837,6 +837,14 @@ speak to its own Hunter, and did the official server turn it into a used
 trap that this client could draw?) Arrows add no ATK in mod0631 (the line is
 commented out) and its bow skills use none: did they on the official
 servers of Dec 2003? The client shows an ATK on arrow items.
+**Round 19 (2026-11-14): arrows add ATK, built.** RODataZone's iRO combat
+page as captured 2003-12-16 (two days before our client) adds "rnd( 0 ,
+ArrowATK - 1 )" after the size modifier; its capture of 2003-09-10 said
+the full ATK; 817 adds 0 to ATK (`battle.c:2318`) and all of it on a
+critical (`:2269`). Built on RODataZone's bound, 817's critical. Same
+round: the Talkie Box stays silent for its own Hunter (the iRO guide's
+Hunter page, 2004-03-27, "The message is not played for the caster";
+jAthena //0991, 2004-05-26, "本鯖仕様": the official server's way). Built.
 **Read against the iRO guide's skill pages** (2004-03-27 to 2004-04-13,
 `research/notes/round4-review.md`; 2026-11-11):
 * *Agrees with the draft:* Enchant Poison's chance to poison (3% to 7%)
