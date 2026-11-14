@@ -4,7 +4,7 @@ For: the independent deep-research agent (Gemini in Antigravity) that wrote
 rounds 1 to 3. Kept by the Claude sessions that work on the game: at the
 end of each session the queue is updated (answered items go to "Done",
 with where the answer went) and refilled with what that session could not
-settle from the sources on disk. Last update: 2026-11-14, later (thread 28 built from the client: T9's ground-skill item widened); before that, round 10 reviewed (`research/notes/round10-review.md`: T8's Skid Trap item and two T9 items moved to Done, T8 asks when euRO got iRO's Comodo skill patch, thread 28 narrowed; the boss rule built); before that, later (T9 monster skills: the FAQ pairs added, the rate question); before that, round 9 reviewed (`research/notes/round9-review.md`: two T9 items moved to Done, the monster-skill item rewritten); before that, later the same day (thread 28 added to T9); before that, round 8 reviewed (`research/notes/round8-review.md`); before that, later the same day (T7 narrowed by euRO's May-2004 text; two shop names added to T9). Before that, 2026-11-14 (round 7 reviewed: `research/notes/round7-review.md`.
+settle from the sources on disk. Last update: 2026-11-14, round 11 reviewed (`research/notes/round11-review.md`: Charge Arrow's Crossbow, Gershaun's juice and the doomed swords' lists moved to Done and built or confirmed; T5, T6, T7, T9 narrowed; a WoE item added to T9); before that, later (thread 28 built from the client: T9's ground-skill item widened); before that, round 10 reviewed (`research/notes/round10-review.md`: T8's Skid Trap item and two T9 items moved to Done, T8 asks when euRO got iRO's Comodo skill patch, thread 28 narrowed; the boss rule built); before that, later (T9 monster skills: the FAQ pairs added, the rate question); before that, round 9 reviewed (`research/notes/round9-review.md`: two T9 items moved to Done, the monster-skill item rewritten); before that, later the same day (thread 28 added to T9); before that, round 8 reviewed (`research/notes/round8-review.md`); before that, later the same day (T7 narrowed by euRO's May-2004 text; two shop names added to T9). Before that, 2026-11-14 (round 7 reviewed: `research/notes/round7-review.md`.
 T11 answered and moved to Done; T1, T9 and T10 updated with what it found).
 
 ## How to use it
@@ -252,11 +252,10 @@ has the island's files between 2004-01-09 and 2004-01-15.
   (NPC, place, items)? Are they in 817 (`npc/quests/`) or mod0631?
 * mod0631's logbook errands (five Bananas; a Red Gemstone): described
   anywhere for an official server?
-* The smith of the doomed swords (`pay_fild08 218,283`, in the game from
-  mod0631's `conf/npc_event_ma_sword.txt`): his three lists as an official
-  server took them. mod0631 names five Cursed Rubies and ten Blades Lost in
-  Darkness for Grimtooth and tests for one ruby; names one Young Twig for
-  Mysteltain and takes a hundred. We take what he names.
+* (Round 11: the doomed swords' lists are answered, pRO 2004-03; Boy's
+  Cap and Antler were on pRO before its Turtle Island. Do not quote
+  GameFAQs 29037 again.) Still wanted: the hat quests that came *with* the
+  island on iRO or euRO, if any.
 
 Round 6 quoted mod0631's `npc_turtle.txt` and 817's `headgearquest.txt`,
 both already in the game, and a later client's quest log: nothing from an
@@ -274,6 +273,9 @@ anything that is **not** mod0631's `npc_event_dye.txt`:
   which of the four extra clothing palettes this client ships per job.
 * The official English names of the five NPCs (817: Louitz, Aure Dupon,
   Morgenshtein, Dairenne, "JavaDullihan"; the two dyers in `prt_in`).
+  Round 11 has Louitz, Aure Dupon and "Molgensten"/"Old Molgy" from an iRO
+  guide of 2004-08 (GameFAQs 31925): wanted are the dye makers in Morroc
+  and Prontera, and a period page (iRO guide, RODataZone) for any of them.
 
 Start at: kRO notices of 2003; RODataZone and iRO guide pages on dyes;
 Athena 659's dyer
@@ -315,7 +317,10 @@ Still to build, for each of which two rows are wanted (817: "implemented",
 the guide's line or table), and one row per disagreement with both quotes
 in it: Grand Cross; Potion Pitcher, Acid Terror, Demonstration; Volcano,
 Deluge, Violent Gale, Land Protector, Magic Rod, Spell Breaker. Not
-wanted: a merged answer.
+wanted: a merged answer. Round 11's Calx Zinra guides (GameFAQs 29854,
+30168) copy the iRO guide's text with numbers from a private server: do
+not quote them. Wanted for Land Protector: its duration, which the iRO
+guide (2 to 5 minutes) and 817 (2 to 4) give differently.
 Sets: `skill_castend_*` for those skills.
 
 ### T8. Things only drafted from the client's text (thread 22)
@@ -351,11 +356,11 @@ Sets: `skill_castend_*` for those skills.
 
 ### T9. Small, independent
 
-* **Three quest-skill differences** (thread 7, from round 8): Cart
-  Revolution's Iron (817 15, RODataZone 20), Gershaun's Banana Juice, and
-  a Crossbow for Charge Arrow (RODataZone only). Any other account of 2004
-  (a guide, a forum post) that gives these quests' items; failing that,
-  what later sources (iRO Wiki, rAthena's official conversions) give.
+* **Cart Revolution's Iron** (thread 7): 817 15, RODataZone 20,
+  mod0631 one of 23/20/15, Battousai X (pRO, 2004-01) 30. Any other
+  account of 2004, iRO or euRO above all; failing that, later sources,
+  grade D. (Gershaun's juice and Charge Arrow's Crossbow: answered in
+  round 11, in the game.)
 * **The first-job tests' small sums** (thread 27, new on 2026-11-11).
   The Thief guild's pay: 817 gives 200z + 15 per Orange Net Mushroom + 2
   per Orange Gooey one (`npc/jobs/thief.txt:421`), mod0631 a flat 100z
@@ -374,6 +379,14 @@ Sets: `skill_castend_*` for those skills.
   is the same in mod0631, 817, eAthena 0.5.2, jAthena and rAthena, and
   the target is solid on this client's map. Where did that door lead?
   (`aldeg_cas05`'s is settled: round 10.)
+* **WoE numbers for the castle rework** (thread 17, from round 11). Arctic
+  Breeze's guide (GameFAQs 28786; read whole, do not quote it again) gives
+  the castle-to-material table and guild-dungeon respawns from a Taiwanese
+  fan site. Wanted, from iRO, euRO or kRO in 2004: what an investment cost
+  (the first one, in zeny); how many treasure boxes a day for a given
+  trade level; whether trade and defence fell on capture (the guide says
+  "unconfirmed"); the material's rate in a box (the guide 1/250, 817
+  1/1000).
 * **Places the world audit cannot reach** (thread 26, new on 2026-11-11):
   `tur_dun05` has monsters and two exits in mod0631 and no way in: was a
   fifth Turtle Island map in play in 2003/04, and how was it entered?
@@ -467,6 +480,9 @@ that nobody researches them again.
 | The Thief test in the client | Interview, mushroom farm, weighing and job change work on the real maps | ROADMAP §4 |
 | Providence, the endows, Dispell, the Strips, Chemical Protection: the numbers | Drafted from mod0631, 817 and the iRO guide; what is still open is in T7 | DEVIATIONS.md, `scripts/rules/skill_effects.lua` |
 | Swordman course monsters | Both: "aggressive Fabres and Chonchons" in the pits (Weggy, iRO, May 2004; round 7) | THREADS.md #7 |
+| Charge Arrow's Crossbow, Gershaun's Banana Juice | Shown and given back; juice unless you have the items (idRO 2003-10, pRO 2004-01; round 11) | `scripts/npc/skill_quests.lua`, THREADS.md #7 |
+| The doomed-sword smith's lists | What mod0631's smith asks for (pRO guide, 2004-03-06; round 11) | `scripts/npc/cursed_swords.lua`, THREADS.md #24 |
+| Which treasure box belongs to which castle | 817's boxes in pairs, region order: matches a 2004 table, all twenty (round 11) | THREADS.md #17, `research/notes/round11-review.md` |
 | The Padded Armour for Moving HP Recovery | Asked for, and kept (vgmaster88, iRO, autumn 2003; round 7) | THREADS.md #7 |
 | The two bytes the May-2004 unit packets gained | The base level (817 `map/clif.c:544`; round 7) | `research/notes/may2004-client.md` |
 | The May-2004 client's text for the drafted 2-2 skills | Agrees on endows, Dispell, Chemical Protection; differs on the Strips (round 7) | THREADS.md #25, `research/notes/round7-review.md` |

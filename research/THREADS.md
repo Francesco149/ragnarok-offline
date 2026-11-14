@@ -280,6 +280,17 @@ mod0631 picks one of three sets, 23/20/15 Iron; RODataZone 2003-10 gives
 the 20-Iron set), Gershaun's Banana Juice before he talks business
 (mod0631 and RODataZone; not in 817), and a Crossbow for Charge Arrow
 (RODataZone 2004-04 only). We play 817's for all three: to decide.
+**Round 11 (2026-11-14) settles two of them**
+(`research/notes/round11-review.md`): Godhand's Arrow Crafting FAQ
+(GameFAQs 26381, idRO, v1.3 of 2003-10-23) and Battousai X's quest-skill
+FAQ (27646, pRO, v1.3 of 2004-01-22) list a Crossbow for Charge Arrow and
+say it is given back; Battousai X says Gershaun wants a Banana Juice
+"but if you already have all the items, you won't need the juice", which
+is mod0631's script line for line. Both are in the game
+(`scripts/npc/skill_quests.lua`, DEVIATIONS). Cart Revolution's Iron is
+still open, now with a fourth figure: Battousai X gives 30 Iron (817 15,
+RODataZone 20, mod0631 23/20/15 at random). The same FAQ gives Charge
+Arrow from job level 37 (817 and mod0631 35).
 
 
 ### 8. Wizard (and other 2-1) job quests
@@ -521,7 +532,11 @@ agree): 0 red, 1 yellow, 2 violet, 3 orange, 4 green, 5 blue, 6 white,
 on that. **Still open:** was clothes dyeing available on euRO/iRO in
 Dec 2003 to Feb 2004, with which materials and price, and which of the four
 extra clothing palettes went with which dye; whether 5000z and one dye were
-the hairdresser's terms outside jRO; the NPCs' official English names. (Round 10, tier D:
+the hairdresser's terms outside jRO; the NPCs' official English names.
+(Round 11: ArislanX's Alchemist guide, iRO 2004-08-20, has "Louitz",
+"Aure Dupon" and "Molgensten"/"Old Molgy" on our cells; blood3d, pRO:
+Counteragent 3000z, Mixture 4000z, Black Dye 7000z, Blue Dye 3500z,
+possibly as of 2004-08.) (Round 10, tier D:
 rAthena's hairdresser asks 1000z and a dye; its tailor turns everyone away
 as mod0631's does, and its note v2.4 says cloth dyeing was "not
 implemented on official servers".)
@@ -634,6 +649,17 @@ steward (2004-02-12) takes a flat 10,000z in a test script.
   not on Wayback. Still nothing first-hand on numbers of players, where the
   fighting was, or treasure; euRO's own news of 2004 is listed and unread.
 **Impact:** castle treasure, guild dungeons, guild-only drops.
+**Round 11** (`research/notes/round11-review.md`): Arctic Breeze's WoE
+guide (GameFAQs 28786, iRO, 2004-02-18; its treasure and dungeon sections
+are twRO/kRO data via fan sites) names the god-item material of each
+castle. 817's forty treasure boxes, read in pairs in region order (Al De
+Baran 1-5, Geffen, Payon, Prontera), drop exactly those materials from the
+second box of each pair, all twenty: the box-to-castle pairing is period.
+Rate: 1/250 in the guide, 10/10000 in 817. Also: two investments a day,
+each twice the last; trade (and defence) -2 when a castle changes hands
+("Unconfirmed" in the guide); castle Kafra free storage, warps to every
+town; guild dungeon spawns and respawns (MVPs 8 h, Ghostring 4 h); WoE
+without EXP loss, Phen card, Anodyne or Intimidate.
 **Look:** kRO notices on WoE rules; the iRO guide's guild/WoE pages; euRO
 WoE news (Apr and Sep 2004: "treasure boxes and guild dungeons disabled");
 period guides. Round 1: research/agy-threads/HANDOFF.md.
@@ -833,8 +859,8 @@ Mysteltain, Executioner and Grimtooth) and the doll child of Alberta
 (`npc_event_doll.txt`, `alberta 117,134`; 817's "Kid" one cell north).
 **Both are in the game** (2026-11-11: `scripts/npc/cursed_swords.lua`,
 `doll_child.lua`, DEVIATIONS). mod0631's smith asks for one list and takes
-another for two of the three swords; we take what he asks for, which is
-unconfirmed for any official server.
+another for two of the three swords; we take what he asks for, which a
+pRO guide of March 2004 confirms (round 11, below).
 **Not ported, on purpose:** the two arrow makers in Payon
 (`npc_event_arrow.txt`, `payon 98,57` and `100,121`). The file's own
 header says they are its author's ("huge") relief for archers "until the
@@ -847,6 +873,12 @@ ones: refine fees differ tenfold); three item quests.
 headgear quests the notice speaks of; whether the doomed-sword smith's
 lists (five Cursed Rubies, ten Blades Lost in Darkness, one Young Twig) are
 what an official server took.
+**Round 11:** they are, on pRO: blood3d's mixing-quest FAQ (GameFAQs
+29037, v1.01 of 2004-03-06) gives all three lists, item for item what our
+smith takes (it names Grimtooth's ten "Bloody Edge", probably a slip for
+Blade Lost in Darkness). The same guide has Alberta's Boy's Cap and Antler
+quests (817's Grampa and Cherokee, same items) on 2004-02-28 and pRO's
+Turtle Island on 2004-03-31, so on pRO those hats were not the island's.
 
 ### 25. What this client can show of the 2-2 jobs
 The exe's packet table (`data/client/packet_lengths.tsv`, 2003-12-18) has
