@@ -39,8 +39,10 @@ Ordered by "confirmable first". Each item says where the truth would come from.
   THREADS.md R6), `itemslottable` (agrees), `metalprocessitemlist` (forging:
   the Pike in, ore purifying out), `monsterskillinfo.xml` (Atbash-encoded:
   two monster skills, THREADS.md #23).
-- Client tables not used yet: skill names/descriptions,
-  `leveluseskillspamount`, `mapnametable` (for messages), `num2cardillustnametable`.
+- Client tables in use besides those: `leveluseskillspamount` (skill SP,
+  THREADS.md R3), `skillnametable` (no cast shout for skills it lacks),
+  `skilldesctable` (per-level numbers, R6). Not used yet: `mapnametable`
+  (a reader exists in `ro-data`, nothing calls it), `num2cardillustnametable`.
 
 ## 2. euRO content state
 
