@@ -765,7 +765,8 @@ here. Played in the client the same day on `payg_cas01`: the Emperium drawn
 and broken by click-attacks (the announcements shown), the steward's menus,
 an investment, the Kafra appearing on her contract with her cut-in, the
 master room's four chests on this client's room, one broken open for its
-drop. Not tried there: the levers (the test covers them).
+drop. The dungeon lever was tried on 2026-11-15 on `aldeg_cas01`
+(211,179): "LOOOOOOOOSER" for a stranger, `gld_dun02` 32,122 for the master.
 Open, for the owner and for research:
 * **Losing a castle: built the same day** (the owner agreed to a
   counter-siege). On Sunday 18:00-20:00 (euRO's WoE hour) the castle's old
