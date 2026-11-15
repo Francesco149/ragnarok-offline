@@ -23,8 +23,12 @@ use crate::world::{AttackIntent, DEFAULT_SPEED, MobState, MobUnit, Unit, UnitKin
 /// mob.c MIN_MOBTHINKTIME.
 const MOB_THINK_MS: u64 = 100;
 const DEFAULT_RESPAWN_MS: u32 = 5000;
-/// map.h LOOTITEM_SIZE.
-const LOOT_SIZE: usize = 20;
+/// How many items a looter keeps: 10. mod0631's map.h LOOTITEM_SIZE is 20;
+/// RODataZone's iRO monster AI page (last modified 2004-01-04, capture
+/// 2004-02-11) says "a maximum of 10 items", and jAthena //0764 (2004-02-01)
+/// set it to 10 in the commit that made EXP "like the real server". The full
+/// bag still lets its oldest item go, as in both emulators.
+const LOOT_SIZE: usize = 10;
 
 // Athena monster mode bits
 const MD_CANMOVE: u32 = 0x01;

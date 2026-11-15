@@ -835,6 +835,10 @@ always fires.
 * **A blind monster sees only the cells next to it** when it looks for a
   target or for loot (ours; neither emulator has it): Ragu Memo's page of
   2003 and RODataZone's Monster AI page (iRO, 2004-02) both say so.
+* **A looter keeps ten items**, not mod0631's 20 (`LOOTITEM_SIZE`): the
+  same RODataZone page says "a maximum of 10 items", and jAthena set 10 on
+  2004-02-01 (//0764, research round 22). A full bag still lets its oldest
+  item go, as both emulators do.
 * **Lengths of 2003** (2026-11-14). Where Ragu Memo's ailment page (jRO
   players' measurements, captures of 2003-08-02 and 2003-12-12; research
   round 13, THREADS.md #21) gives a rule, it replaces 817's per-skill

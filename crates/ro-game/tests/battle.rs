@@ -596,6 +596,21 @@ fn monster_ai() {
     assert!(skills > 0, "the Scorpion used a skill in a minute of fighting");
 }
 
+/// A looter keeps ten items (RODataZone's iRO page, jAthena 2004-02): the
+/// eleventh and twelfth push the oldest out.
+#[test]
+fn looter_keeps_ten() {
+    let mut t = T::new();
+    let p = t.spawn(30, 30, 1002);
+    for k in 0..12 {
+        t.lua(&format!("_rt('drop_item', 'testmap', 31, 30, {}, 1)", 501 + k));
+        t.run(3000);
+    }
+    let loot: Vec<u32> = t.g.world.units[&p].mob().unwrap().loot.iter().map(|i| i.nameid).collect();
+    assert_eq!(loot.len(), 10, "{loot:?}");
+    assert!(!loot.contains(&501) && loot.contains(&512), "the oldest went: {loot:?}");
+}
+
 /// Five seconds of peace after entering a map (mod0631 ghost_time), ended
 /// by the first thing the player does.
 #[test]
