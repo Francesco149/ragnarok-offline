@@ -389,7 +389,8 @@ impl Game {
             let (x, y) = drop_at(self);
             self.drop_floor_item(&u.map, x, y, it.clone(), true);
         }
-        // MVP (817 `mob.c:1849`, jAthena //0764): the biggest damage dealer still
+        // MVP (817 `mob.c:1849`, jAthena //0814 of 2004-02-17: "on the real server the
+        // MVP EXP is now always given"): the biggest damage dealer still
         // standing gets the MVP EXP, +10% per attacker beyond the first, and one
         // reward item if one rolls. mod0631 (`mob.c:1703`) gave the EXP only when
         // no item came.

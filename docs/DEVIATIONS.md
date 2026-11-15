@@ -840,9 +840,11 @@ always fires.
   2004-02-01 (//0764, research round 22). A full bag still lets its oldest
   item go, as both emulators do.
 * **EXP is shared by the monster's max HP, and the MVP EXP comes with
-  the reward item** (2026-11-15), as jAthena //0764 of 2004-02-01 has it
-  ("monster EXP handled like the real server", the same commit as the
-  looter's ten items) and 817 after it (`map/mob.c:1730`, `:1849`). Each
+  the reward item** (2026-11-15): the share as jAthena //0764 of
+  2004-02-01 has it ("monster EXP handled like the real server", the same
+  commit as the looter's ten items), the MVP EXP as jAthena //0814 of
+  2004-02-17 ("on the real server the MVP EXP is now always given"; a
+  version between had gone back), and 817 both (`map/mob.c:1730`, `:1852`). Each
   player gets the part of the max HP he took off, so a monster that
   something else (a guardian, a trap's owner gone) brought low gives the
   one who finishes it little, never less than 1 EXP; one that healed

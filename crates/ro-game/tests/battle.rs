@@ -951,7 +951,7 @@ fn storm_gust_spares_the_frozen() {
 /// EXP is shared by the part of the monster's max HP each player took off
 /// (jAthena //0764 of 2004-02-01, 817), not by the damage the players dealt
 /// (mod0631): a kill after something else did most of the work gives little.
-/// The MVP EXP comes with the reward item, not instead of it.
+/// The MVP EXP comes with the reward item, not instead of it (jAthena //0814).
 #[test]
 fn exp_share_by_max_hp() {
     let mut t = T::new();
