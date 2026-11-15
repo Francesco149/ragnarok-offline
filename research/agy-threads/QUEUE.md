@@ -509,6 +509,17 @@ Sets: `skill_castend_*` for those skills.
 
 ### T9. Small, independent
 
+* **(new 2026-11-15) Auto Counter and stacked ground skills, from a
+  player of 2004.** Built from 817 and jAthena //0751 (2004-01-28): the
+  counter has twice the critical rate and HIT +20 (not a sure critical),
+  ignores DEF, answers plain blows only, and holds the Knight still; a
+  trap cannot be laid within a cell of another, nor a Safety Wall or
+  Pneuma on one. Wanted: an iRO/euRO/kRO account of 2003-12 to 2004-06
+  (a Knight or Hunter guide, a forum post, a kRO notice) that says
+  whether a counter was always critical, whether the Knight could move
+  in the stance, and how close traps could be set. Do not quote 817's or
+  jAthena's code back.
+
 * **(narrowed after round 16) The three hats nobody makes yet (THREADS.md
   #31).** Eighteen of the 24 are built from RODataZone and Ragu Memo, four
   drop (#32; the Panda Cap from the Sasquatch since round 16). Left: the
