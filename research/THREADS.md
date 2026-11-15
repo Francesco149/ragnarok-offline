@@ -826,8 +826,14 @@ placeholder lengths, no Curse, poison without HP loss. eAthena 817
 per skill level in `cast_db.txt`, poison takes HP down to a quarter, Storm
 Gust freezes on the third hit. We follow 817 (DEVIATIONS.md). Neither says
 where its numbers came from. 817 sends opt1 = 6 for the five seconds of
-turning to stone; we keep it server-side and send nothing until the stone
-sets: does the Dec-2003 client draw opt1 6 (look for it in the exe)?
+turning to stone. **Settled 2026-11-15 from the exe:** 0x0119 hands opt1
+to the unit (message 0x2b, `0x4f6c40`, stored at `+0x218`), and its switch
+on opt1 - 1 (`0x4f7588`, table `0x4f7990`) has six cases: 1 stone (tint
+0x40, motion stopped; leaving it plays `_stone_explosion.wav`), 2 frozen
+(blue tint, `_frozen_explosion.wav` on leaving), 3 stunned (`_stun.wav`),
+4 asleep, 5 nothing, 6 a half-grey tint (0x80) with the motion going on.
+So the client draws 6, and the server now sends it (`drawn_opts`); played:
+a Poring turns grey, hops on, and goes dark when the stone sets.
 **The iRO guide's skill pages** (2004-03-27 to 2004-04-13) side with 817
 wherever they speak: Frost Diver's chance and time fall with the target's
 magic defence, Freezing Trap's chance likewise; Stone Curse's time

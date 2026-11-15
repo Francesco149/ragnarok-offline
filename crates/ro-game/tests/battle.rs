@@ -830,15 +830,16 @@ fn death_and_return() {
 }
 
 /// Stone Curse (eAthena 817): five seconds of turning to stone, during which
-/// the victim still acts; then stone until the time is up: 17 s less MDEF/20
-/// (Ragu Memo, 2003-12), 16.75 s for a Poring.
+/// the victim still walks, drawn as opt1 6 (this client tints it half grey);
+/// then stone until the time is up: 17 s less MDEF/20 (Ragu Memo, 2003-12),
+/// 16.75 s for a Poring.
 #[test]
 fn stone_sets_then_wears_off() {
     let mut t = T::new();
     let mob = t.spawn(27, 25, 1002);
     t.lua(&format!("skill_status_change_start({mob}, SC.STONE, 1, 0, {{ tick = 12000 }})"));
     assert_eq!(t.lua(&format!("battle.get({mob}).opt1")).trim(), "6", "still turning (817's opt1 6)");
-    assert!(t.packets(0x0119).is_empty(), "nothing drawn yet");
+    assert!(t.packets(0x0119).iter().any(|p| u16_at(p, 6) == 6), "the client is shown the turning (opt1 6)");
     t.run(5500);
     assert_eq!(t.lua(&format!("battle.get({mob}).opt1")).trim(), "1", "stone");
     assert!(t.packets(0x0119).iter().any(|p| u16_at(p, 6) == 1), "the client is shown the stone when it sets");

@@ -261,9 +261,19 @@ impl Game {
         (opt1, opt2, option)
     }
 
+    /// The option words as sent to the clients: `opts_of`, with opt1 6 while
+    /// turning to stone (eAthena 817). This client draws 6 as a half-grey unit
+    /// that still moves (0x4f7642: tint 0x80, motion not stopped; 1, stone,
+    /// is 0x40 and stops it), so the five seconds show (THREADS.md #21).
+    pub(crate) fn drawn_opts(&self, unit: u32) -> (u16, u16, u16) {
+        let (opt1, opt2, option) = self.opts_of(unit);
+        let opt1 = if opt1 == 0 && self.turning_stone(unit) { 6 } else { opt1 };
+        (opt1, opt2, option)
+    }
+
     /// Turning to stone (eAthena 817 skill.c:5705, its opt1 6): the five
     /// seconds before Stone Curse sets. Walking goes on; attacks and skills
-    /// do not. (Not sent: whether this client knows opt1 6 is THREADS.md #21.)
+    /// do not.
     pub(crate) fn turning_stone(&self, unit: u32) -> bool {
         self.sc_map(unit).is_some_and(|sc| sc.get(&SC_STONE).is_some_and(|s| s.val2 != 0))
     }
@@ -292,7 +302,7 @@ impl Game {
     /// Store a status change (replacing one of the same type) and tell the
     /// clients: icon, option words, and the player's recomputed status.
     pub(crate) fn sc_set(&mut self, unit: u32, kind: u16, sc: StatusChange) {
-        let before = self.opts_of(unit);
+        let before = self.drawn_opts(unit);
         let is_player = self.world.units.get(&unit).is_some_and(|u| u.is_player());
         let Some(m) = self.sc_map_mut(unit) else { return };
         let fresh = m.insert(kind, sc).is_none();
@@ -307,18 +317,18 @@ impl Game {
 
     /// Only the values and the end time change (timers re-arming themselves).
     pub(crate) fn sc_touch(&mut self, unit: u32, kind: u16, f: impl FnOnce(&mut StatusChange)) {
-        let before = self.opts_of(unit);
+        let before = self.drawn_opts(unit);
         if let Some(s) = self.sc_map_mut(unit).and_then(|m| m.get_mut(&kind)) {
             f(s);
         }
         // a value can change what is drawn (stone setting: 817 skill.c:5113)
-        if self.opts_of(unit) != before {
+        if self.drawn_opts(unit) != before {
             self.after_sc_change(unit, before);
         }
     }
 
     pub(crate) fn sc_end(&mut self, unit: u32, kind: u16) -> bool {
-        let before = self.opts_of(unit);
+        let before = self.drawn_opts(unit);
         let is_player = self.world.units.get(&unit).is_some_and(|u| u.is_player());
         let had = self.sc_map_mut(unit).and_then(|m| m.remove(&kind)).is_some();
         if had {
@@ -333,12 +343,13 @@ impl Game {
     }
 
     fn after_sc_change(&mut self, unit: u32, before: (u16, u16, u16)) {
-        let now = self.opts_of(unit);
+        let now = self.drawn_opts(unit);
         if now != before {
             let karma = self.char_of_unit(unit).map(|c| c.karma as u8).unwrap_or(0);
             self.area_send(unit, packets::state_change(unit, now.0, now.1, now.2, karma), true);
-            if now.0 != 0 || now.2 & 6 != 0 {
+            if (now.0 != 0 && now.0 != 6) || now.2 & 6 != 0 {
                 // stone, frozen, stunned, asleep, hidden: stop walking and attacking
+                // (turning to stone, 6, walks on)
                 self.stop_walking(unit);
                 self.stop_attack(unit);
             }
@@ -767,8 +778,7 @@ impl Game {
     /// map_session_data / mob_data).
     pub(crate) fn bl_json(&self, id: u32) -> Value {
         let Some(u) = self.world.units.get(&id) else { return Value::Null };
-        let (opt1, opt2, option) = self.opts_of(id);
-        let opt1 = if self.turning_stone(id) { 6 } else { opt1 };
+        let (opt1, opt2, option) = self.drawn_opts(id);
         let now = self.now();
         let mut o = json!({
             "id": id, "map": u.map, "x": u.x, "y": u.y, "dir": u.dir, "dead": u.state == 1, "sit": u.state == 2,

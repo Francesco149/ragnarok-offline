@@ -427,7 +427,7 @@ impl Game {
         self.refresh_status(unit);
         self.send_walls(unit);
         // status changes come along: icons and the option words
-        let (opt1, opt2, opt) = self.opts_of(unit);
+        let (opt1, opt2, opt) = self.drawn_opts(unit);
         if opt1 != 0 || opt2 != 0 {
             self.send(sid, packets::state_change(unit, opt1, opt2, opt, 0));
         }
@@ -468,7 +468,7 @@ impl Game {
             None => u.look(None),
         };
         if u.is_fighter() {
-            (l.opt1, l.opt2, l.option) = self.opts_of(u.id);
+            (l.opt1, l.opt2, l.option) = self.drawn_opts(u.id);
         }
         l
     }

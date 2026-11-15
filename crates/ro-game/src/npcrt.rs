@@ -406,7 +406,7 @@ impl Game {
         // bits 1, 2, 4 (sight, hide, cloak) belong to status changes
         c.option = option & !7;
         let karma = c.karma as u8;
-        let (opt1, opt2, opt) = self.opts_of(unit);
+        let (opt1, opt2, opt) = self.drawn_opts(unit);
         self.area_send(unit, packets::state_change(unit, opt1, opt2, opt, karma), true);
         if option & CART_BITS != 0 && !had_cart {
             self.send_cart(unit);
