@@ -1382,6 +1382,12 @@ script names. After its first fixes it still reports:
   817 Kafras that `scripts/npc/kafra.lua` replaces with mod0631's cells.
   The audit reads destinations per file, so a replaced NPC's still count:
   not a fault in the game.
+* **2026-11-15:** the cell check now reads every script file, NPC or not.
+  Until then a file the audit could not tie to an NPC went unchecked, which
+  hid `@go payon` on 162,233, outside this client's 200x200 Payon (fixed:
+  mod0631's `89,122`), and still lists `force_map1 20,20`, the first of
+  817's arena monsters (`import/npc/other/arena.lua:128`; the arena is off,
+  R5). The line is given now (`file:line`).
 * Scripts that warp with a variable for the map (`warp(MAP, ...)`) hide
   their rooms from the audit; write the map name out (the Priest test's
   demons showed as "out of sight" until 2026-11-13 for that reason).

@@ -199,6 +199,7 @@ pub fn audit(game: &mut Game) -> Audit {
 
     // Destinations per script file, keyed the way `source` names files.
     let mut dests: HashMap<String, Vec<(usize, String, i32, i32)>> = HashMap::new();
+    let mut cells = Vec::new();
     let mut texts = Vec::new();
     for f in &files {
         let Ok(text) = std::fs::read_to_string(f) else { continue };
@@ -208,8 +209,11 @@ pub fn audit(game: &mut Game) -> Audit {
             .chain(touch.iter().map(|t| &t.5))
             .find(|k| f.to_string_lossy().ends_with(k.as_str()) || k.ends_with(&*f.to_string_lossy()))
             .cloned();
+        let found: Vec<_> = destinations(&text).into_iter().filter(|d| game.res.maps.contains(&d.1)).collect();
+        // every file's cells are checked, NPC or not (@commands, rules)
+        cells.push((f.to_string_lossy().into_owned(), found.clone()));
         if let Some(k) = key {
-            dests.insert(k, destinations(&text).into_iter().filter(|d| game.res.maps.contains(&d.1)).collect());
+            dests.insert(k, found);
         }
         texts.push((f.clone(), text));
     }
@@ -247,14 +251,15 @@ pub fn audit(game: &mut Game) -> Audit {
             .collect()
     };
     let mut seen_bad = BTreeSet::new();
-    for (file, ds) in &dests {
-        for (_, m, x, y) in ds {
+    for (file, ds) in &cells {
+        let file = file.rsplit_once("/scripts/").map_or(file.as_str(), |(_, f)| f);
+        for (ln, m, x, y) in ds {
             if (*x, *y) == (0, 0) {
                 continue; // a random cell
             }
             if let Some(g) = r.grid(game, m) {
                 if !g.walkable(*x, *y) && seen_bad.insert((m.clone(), *x, *y)) {
-                    a.bad_destinations.push(format!("{m} {x},{y} is not walkable ({file})"));
+                    a.bad_destinations.push(format!("{m} {x},{y} is not walkable ({file}:{ln})"));
                 }
             }
         }
