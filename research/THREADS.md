@@ -1748,6 +1748,60 @@ names the Hinalle Leaflet and Memorize Book 817 put in its slots (T9-154,
 T9-155). The rates are 817's alone; were they iRO's or kRO's,
 and did jRO really lack these drops in December 2003 or did mod0631 just
 not know them?
+**2026-11-15, round 24: Ragu Memo's item pages, whole.** Round 24 quoted
+ten drop rates from four of Ragu Memo's item pages. All 34 of its item
+pages are now saved at the capture nearest 2003-12-18 (armor1-8,
+weapon1-14, item0-7, itemc, card; `data:refs/web/ragmemo-2003/`), and
+`research/ragmemo_drops.py` sets every "monster(1/N)" against ours, with
+817's rate beside it. Of 922 pairs, 890 match by name (88 monster and 40
+item spellings left unmatched or aliased by hand); **785 agree with ours**.
+The page writes 1/N, and mod0631's small rates sit one below 10000/N
+(1/5000 is 1, 1/1666 is 5), so the two come from the same kind of table.
+What it settled:
+* **jRO had the hole drops.** 27 of the 817-filled slots are on the pages
+  and agree with 817 (Nine Tail's Royal Jelly and Rough Oridecon, the
+  Bongun Hat, the Poring Hat, the Pole Axe...). So mod0631 just didn't
+  know them. 10 differ from 817's rate: two only by the page's rounding
+  (Guisarme 1/6, the Skeleton Worker's Iron Ore 1/12), one is a
+  duplicate (below), and for the other seven the page's rate is taken
+  (Thief Clothes from Ghostring 1/200, not 817's 150; the Manteau from
+  Wraith 1/3333; the Hinalle Leaflet 1/16...). 817 lists three items twice (the Spore's
+  Mushroom Spore, the Arclouse's Zargon, the Abysmal Knight's Broadsword),
+  and the page has that Broadsword once, at mod0631's rate. The importer
+  no longer fills a hole with an item the row already drops (92 of 95).
+* **Eight monsters' rows are 817's.** On Osiris, Baphomet, Doppelganger,
+  Orc Hero, Moonlight Flower, Phreeoni, the Myst Case and Dark Lord, the
+  page sides with 817 against mod0631 on 2 to 5 items each, and never the
+  other way: Osiris drops the Assassin Dagger, Jamadhar, Sphinx Hat and a
+  Crown at 1/50 (mod0631: Crown as an MVP prize); Doppelganger's swords
+  and helms are at 817's rates (Sharp Headgear 1/28, mod0631 70); the
+  Fortune Sword from Phreeoni is 1/20 (mod0631 2). So mod0631's rows for
+  these are an older set. Their whole drop and MVP rows are 817's now, and
+  the page's figure where it differs from 817 too: Baphomet's Clip 1/16,
+  the Orc Hero's Orcish Sword 1/10 (mod0631 100, 817 10), Moonlight
+  Flower's Kodachi 1/15. The Emperium leaves Osiris's and Moonlight
+  Flower's MVP prizes with it (817 has none there; Baphomet still drops
+  one at 5%).
+* Three rates where the page and 817 agree against mod0631 (Iron Ore from
+  the Pupa and the Chonchon, the Obeaune's Aquamarine): taken.
+* **Not taken: 35 rates where the page alone differs** and mod0631 and
+  817 agree (Iron Ore from the Thief Bug 1/40 against 350, the Drake's
+  Corsair 1/28 against 300, the Dragon Fly's Chonchon Card 1/1666 against
+  40, the Whisper's Silver Robe 1/900 against 1...). Also 44 where 817
+  has nothing to compare (Iron Ore from Andre, Piere and Deniro, 1/28 to
+  1/22 against 450-550; Alice's Cosmetics 1/33 against rate 1; the Pirate
+  Skeleton's Bandana 1/625 against 5...), and 11 drops the page has and
+  neither emulator does (Poporing's Club 1/277, the Marionette's Chain,
+  the Orc Lord Card 1/5000...). The run lists them all. Ragu Memo can be
+  wrong as easily as an emulator. One source against two stays as it is;
+  the 44 are one against one, kept with mod0631 for now.
+Also from the same site: `at_monster.html` (2003-12-13, monsters by
+element) agrees with ours on 234 of 241 matched (`research/
+ragmemo_elements.py`). The seven are #33's kind: Martin Earth 1 (ours 2),
+Pirate Skeleton Undead 2 (ours 1), Thief Bug Shadow 1 Insect (ours
+Neutral 3 Formless), and levels for Golden Thief Bug, Anolian, Geographer
+and Side Winder. Mod0631 and 817 agree with each other on all seven:
+kept.
 **Look:** RODataZone's monster pages per dungeon (rates?), GameFAQs monster
 guides of early 2004, Ragu Memo's monster pages (jRO).
 
@@ -1810,6 +1864,19 @@ agent's pass (re-read each diff before building):
   jRO's, not iRO's: kept.
 * **Armour refines 0.7 DEF a level per piece** (//0676, //0741); ours 2/3
   of the sum (DEVIATIONS.md, RODataZone).
+*Round 24 (2026-11-15):* Psycho Battousai's "Komodo Patch" section
+(GameFAQs 21546) is a **preview** of kRO's Comodo notes in the future
+tense, not play. Auto Counter "no longer causes critical hits, but will
+just ignore DEF ... can hit or miss ... 2x the damage of what critical
+blow would do ... +20 HIT ... can't move until it's done". Bowling Bash
+and Brandish Spear: "1 second casting time ... equipment's DEF ... reduced
+to 2/3 ... not canceled when hit". The Auto Counter wording differs from
+ours (twice the critical rate); it is one half-understood translation
+against 817 and jAthena: not built. Before Comodo, pRO's Mad Monarch
+(2003-10-02): "countered by a critical hit", and this client's text:
+"Strike back enemy with Critical Attack". Hammer Fall: "14% chance to stun
+enemies in a 3x3 tile area" at level 1 (the only KoW, 2003-07-13, who
+plays cRO and kRO); ours 5x5 with both emulators, kept.
 **Look:** the kRO patch notice //0785 cites (2004-01/02), and when euRO
 took it; period accounts of MVP summons.
 
@@ -1832,6 +1899,9 @@ grep 本鯖 / 仕様):
   player of the real server" (a 2-2 skill: thread 25). //0558 (11-21): bow
   skills spend no arrow "as I remember the spec" (ours spend none either,
   as mod0631; thread 22).
+*Round 24:* admira's Priest guide (GameFAQs 26968, idRO, undated section
+of a guide last updated 2004-10) says "dying and lost 1% exp", without
+saying 1% of what. No player line on plants in six guides searched.
 **Look:** a player's account of 2003-04 of what dying cost (iRO, euRO,
 jRO: "1% of the EXP to the next level"), and of a refined weapon on a
 plant.
