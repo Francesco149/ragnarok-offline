@@ -109,7 +109,8 @@ Working with the real client:
   and the 93 skills an iRO player's list of April 2004 gives monsters that
   the December 2003 emulator lacks (Endure, Increase Agility, Piercing
   Attack...), with its rule that every boss hastens itself, strikes true
-  and teleports away from an attacker it cannot reach; EXP, drops, MVP
+  and teleports away from an attacker it cannot reach; EXP, drops (checked
+  against a Japanese fan site's whole item tables of December 2003), MVP
   rewards;
 - a drop-in Windows launcher that runs the CD's own patcher against a local
   patch server, and an all-in-one installer built from your own disc.
