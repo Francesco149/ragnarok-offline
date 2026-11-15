@@ -1212,17 +1212,33 @@ impl Game {
         self.area_send(unit, packets::vanish(unit, 1), true);
         // the pet minds (pc.c:2832)
         self.pet_owner_died(unit);
-        // (the EXP penalty is taken on the way back to the save point: respawn_player)
-        let here = here_map(&self.world, unit);
-        if let Some(p) = self.world.units.get_mut(&unit).and_then(|u| u.player_mut()) {
-            p.died_on = Some(here);
-        }
+        self.death_penalty(unit);
         self.send_full_status(unit);
     }
 
+    /// The EXP dying costs, taken at once (rules.death_penalty: jAthena
+    /// //0513's 1% of the EXP the level needs; not on a nopenalty map).
+    fn death_penalty(&mut self, unit: u32) {
+        let Some(c) = self.char_of_unit(unit).cloned() else { return };
+        let (nb, nj) = self.exp_next(&c);
+        let here = here_map(&self.world, unit);
+        let free = self.db.map_flag(&here, "nopenalty");
+        let r = self
+            .scripts
+            .as_ref()
+            .and_then(|e| e.rule("death_penalty", &json!({"class": c.class, "next_base": nb, "next_job": nj, "nopenalty": free})).ok().flatten())
+            .unwrap_or(Value::Null);
+        let get = |k: &str| r.get(k).and_then(crate::status::lua_u64).unwrap_or(0);
+        let (base, job) = (get("base"), get("job"));
+        if let Some(cm) = self.char_of_unit_mut(unit) {
+            cm.base_exp = cm.base_exp.saturating_sub(base);
+            cm.job_exp = cm.job_exp.saturating_sub(job);
+        }
+    }
+
     /// "Return to save point" after death (pc.c:208 pc_setrestartvalue):
-    /// the HP and SP to come back with, and the death penalty, both from the
-    /// rules. The penalty is not taken on a `nopenalty` map.
+    /// the HP and SP to come back with, from the rules. The EXP was taken
+    /// at death (player_dies).
     pub(crate) fn respawn_player(&mut self, unit: u32) {
         let Some(c) = self.char_of_unit(unit).cloned() else { return };
         if c.hp != 0 {
@@ -1234,36 +1250,26 @@ impl Game {
         self.send_full_status(unit);
     }
 
-    /// mod0631 pc_setrestartvalue: a dead character's HP and SP to start again
-    /// with, and the death penalty (not on a nopenalty map); alive again.
+    /// mod0631 pc_setrestartvalue: a dead character's HP and SP to start
+    /// again with; alive again.
     pub(crate) fn restart_values(&mut self, unit: u32) {
         let Some(c) = self.char_of_unit(unit).cloned() else { return };
         let d = self.derive(&c);
-        // where it died
-        let died_on = self.world.units.get_mut(&unit).and_then(|u| u.player_mut()).and_then(|p| p.died_on.take()).or_else(|| self.world.units.get(&unit).map(|u| u.map.clone()));
         if c.hp == 0 {
-            let (nb, nj) = self.exp_next(&c);
-            let free = died_on.as_deref().is_some_and(|m| self.db.map_flag(m, "nopenalty"));
             let r = self
                 .scripts
                 .as_ref()
                 .and_then(|e| {
-                    e.rule(
-                        "respawn",
-                        &json!({"class": c.class, "max_hp": d.max_hp, "max_sp": d.max_sp, "sp": c.sp, "base_exp": c.base_exp, "job_exp": c.job_exp,
-                                "next_base": nb, "next_job": nj, "nopenalty": free, "osiris": self.has_card(unit, 4144)}),
-                    )
-                    .ok()
-                    .flatten()
+                    e.rule("respawn", &json!({"class": c.class, "max_hp": d.max_hp, "max_sp": d.max_sp, "sp": c.sp, "osiris": self.has_card(unit, 4144)}))
+                        .ok()
+                        .flatten()
                 })
                 .unwrap_or(Value::Null);
             let get = |k: &str, def: u64| r.get(k).and_then(crate::status::lua_u64).unwrap_or(def);
-            let (hp, sp, base, job) = (get("hp", 1), get("sp", c.sp as u64), get("base", 0), get("job", 0));
+            let (hp, sp) = (get("hp", 1), get("sp", c.sp as u64));
             if let Some(cm) = self.char_of_unit_mut(unit) {
                 cm.hp = (hp as u32).clamp(1, d.max_hp);
                 cm.sp = (sp as u32).min(d.max_sp);
-                cm.base_exp = cm.base_exp.saturating_sub(base);
-                cm.job_exp = cm.job_exp.saturating_sub(job);
             }
         }
         if let Some(u) = self.world.units.get_mut(&unit) {

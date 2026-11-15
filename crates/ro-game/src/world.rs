@@ -106,8 +106,6 @@ pub struct PlayerUnit {
     pub spirit_acc: u64,
     /// Overweight icon shown: 0 none, 1 half the limit, 2 nine tenths.
     pub weight_icon: u8,
-    /// The map the character died on (the death penalty asks its flags at respawn).
-    pub died_on: Option<String>,
 }
 
 #[derive(Debug, Clone, Copy)]

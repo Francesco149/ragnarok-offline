@@ -1805,6 +1805,29 @@ agent's pass (re-read each diff before building):
 **Look:** the kRO patch notice //0785 cites (2004-01/02), and when euRO
 took it; period accounts of MVP summons.
 
+### 35. jAthena's "real server" remarks before our date (2003-10-30 to 11-30)
+jAthena's history starts at //0505 (2003-10-30); thread 34's sweep began
+at 2003-12-01. The 83 commits before it are older than this client, so
+what they say of the official server is the nearest emulator evidence we
+have. Read on 2026-11-15 (`git log --since=2003-10-01 --until=2003-12-01`,
+grep 本鯖 / 仕様):
+* **Death penalty: built** (DEVIATIONS.md). //0513 (`4d69da8`, 2003-11-02)
+  takes "the usual, 1% of the EXP needed" in `pc_damage`, at death; //0532
+  (`61f0409`, 2003-11-09) moves it to the restart and makes 1% of the EXP
+  *held* the default, saying the real server took it at death and he did
+  not like that. mod0631 and 817 keep //0532's amount.
+* **Plants and mushrooms**: //0535 (`22f6577`, 2003-11-11) "on the real
+  server they are not fixed at 1 either: damage raised by refining comes
+  out as it is", yet keeps every hit at 1 for DEF 10000 (mod0631's plants,
+  as ours). Not built: one remark, and the code that carries it disagrees.
+* //0538 (2003-11-13): Back Stab aimed at a target, not a cell, "from a
+  player of the real server" (a 2-2 skill: thread 25). //0558 (11-21): bow
+  skills spend no arrow "as I remember the spec" (ours spend none either,
+  as mod0631; thread 22).
+**Look:** a player's account of 2003-04 of what dying cost (iRO, euRO,
+jRO: "1% of the EXP to the next level"), and of a refined weapon on a
+plant.
+
 ## Resolved
 
 ### R1. Basic Skill levels

@@ -906,17 +906,22 @@ fn skill_num(t: &mut T, name: &str, lv: u16) -> u16 {
     t.lua(&format!("skill_get_num(SK.{name}, {lv})")).trim().parse().unwrap()
 }
 
-/// Dying: no recovery while dead, and on returning to the save point 1% of
-/// the EXP held is gone and the character has 1 HP (pc_setrestartvalue).
+/// Dying: 1% of the EXP the levels need is gone at once (jAthena //0513),
+/// no recovery while dead, and back at the save point with 1 HP
+/// (pc_setrestartvalue) and nothing more taken.
 #[test]
 fn death_and_return() {
     let mut t = T::new();
-    t.lua("job_change(1); player.base_level = 20; player.base_exp = 10000; player.job_exp = 5000; heal(9999, 9999)");
+    let (nb, nj) = (t.g.db.exp.base[39], t.g.db.exp.job_first[29]);
+    let (b0, j0) = (nb / 2, nj / 2);
+    t.lua(&format!("job_change(1); player.base_level = 40; player.job_level = 30; player.base_exp = {b0}; player.job_exp = {j0}; heal(9999, 9999)"));
     let me = t.me;
     t.lua(&format!("_rt('bl_damage', 0, {me}, 99999)"));
     assert_eq!(t.hp(), 0);
     assert_eq!(t.g.world.units[&me].state, 1, "dead");
-    assert_eq!(t.g.store.chars[&t.cid].base_exp, 10000, "nothing lost yet");
+    let (b1, j1) = (b0 - nb / 100, j0 - nj / 100);
+    let c = &t.g.store.chars[&t.cid];
+    assert_eq!((c.base_exp, c.job_exp), (b1, j1), "taken at death");
     t.run(60_000);
     assert_eq!(t.hp(), 0, "the dead do not recover");
     let mut w = Writer::new(0x00b2);
@@ -924,7 +929,7 @@ fn death_and_return() {
     t.send(w);
     t.send(Writer::new(0x007d));
     let c = &t.g.store.chars[&t.cid];
-    assert_eq!((c.hp, c.base_exp, c.job_exp), (1, 9900, 4950));
+    assert_eq!((c.hp, c.base_exp, c.job_exp), (1, b1, j1));
     // a minute of death is not paid out in one go afterwards
     t.run(600);
     assert!(t.hp() <= 1 + 20, "regen burst after respawn: {} HP", t.hp());
@@ -2190,16 +2195,22 @@ fn ailment_lengths_and_effects_of_2003() {
 }
 
 /// Leaving the game dead and coming back: alive at the save point with the
-/// restart HP and the death penalty, as mod0631 saved a dead character
-/// (pc_makesavestatus, pc_setrestartvalue). Before, the client was shown a
-/// standing character with 0 HP that could not walk.
+/// restart HP, as mod0631 saved a dead character (pc_makesavestatus,
+/// pc_setrestartvalue). Before, the client was shown a standing character
+/// with 0 HP that could not walk. The death penalty is taken at death, 1% of
+/// the EXP the level needs (jAthena //0513), and not again at the restart.
 #[test]
 fn logging_back_in_after_dying() {
     let mut t = T::new();
-    t.lua("job_change(1); player.base_level = 20; player.base_exp = 10000; heal(9999, 9999); save_point('testmap', 10, 12)");
+    let need = t.g.db.exp.base[39];
+    let held = need / 2;
+    t.lua(&format!("job_change(1); player.base_level = 40; player.base_exp = {held}; heal(9999, 9999); save_point('testmap', 10, 12)"));
     let me = t.me;
     t.lua(&format!("_rt('bl_damage', 0, {me}, 99999)"));
     assert_eq!(t.hp(), 0);
+    let after = held - need / 100;
+    assert_ne!(after, held - held / 100, "the level's EXP, not the EXP held");
+    assert_eq!(t.g.store.chars[&t.cid].base_exp, after, "1% of the level's EXP, at death");
     t.g.handle(NetEvent::Disconnected { sid: 3 });
     // back in: login, char select, map
     let cap = t.cap.clone();
@@ -2226,7 +2237,7 @@ fn logging_back_in_after_dying() {
     let u = &t.g.world.units[&me];
     assert_eq!((u.state, u.x, u.y), (0, 10, 12), "alive, at the save point");
     let c = &t.g.store.chars[&t.cid];
-    assert_eq!((c.hp, c.base_exp), (1, 9900), "restart HP and the 1% penalty");
+    assert_eq!((c.hp, c.base_exp), (1, after), "restart HP, no second penalty");
 }
 
 /// A blind monster only notices someone next to it (Ragu Memo 2003,

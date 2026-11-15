@@ -679,7 +679,7 @@ there is, marked as ours where it is ours, and listed here.
   Clock Tower 1F could not be entered.
 
 * **Leaving the game dead** brings the character back at its save point
-  with the restart HP and the death penalty, as mod0631 saved a dead
+  with the restart HP (the EXP went at death), as mod0631 saved a dead
   character (`pc_makesavestatus`); until 2026-11-14 it came back lying
   where it died, drawn standing by the client and unable to move.
 * **A Fly Wing (or Dead Branch) refused by a map flag is not used up.** In
@@ -721,6 +721,20 @@ that; the client's list has no such recipe and the iRO guide (2004-03-27)
 says the skill only raises the success of level 3 weapons. Rough ores go
 to the NPCs, as before. The client gives the Lance two Evil Horns where
 every emulator asks one; we keep one (text, as in THREADS.md R6).
+
+**Dying costs 1% of the EXP the level needs, taken at death** (2026-11-15),
+not 1% of the EXP held, taken at the restart, as mod0631 and 817 do (817 at
+death). jAthena built the penalty in //0513 (2003-11-02) in `pc_damage`, the
+moment of death, with the setting "100 = the usual, 1% of the EXP needed";
+a week later //0532 added `death_penalty_type` and made "the EXP held, at the
+restart" the default, its author writing that the restart was his choice
+("本鯖の仕様がかなり気にいらなかったので変更しました": he did not like the
+real server's way, so a Resurrection would cost nothing). mod0631 carries
+that default. For one player nobody comes to resurrect, so the timing shows
+only in the EXP bar; the amount is about twice mod0631's on average, and is
+no longer nothing just after a level. A player's account of 2003-04 would
+confirm it (research/THREADS.md #35). `scripts/rules/combat.lua`
+`rules.death_penalty`.
 
 **Slips of mod0631 that are not carried over** (the Lua marks each
 "mod0631 bug"):

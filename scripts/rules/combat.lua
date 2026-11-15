@@ -6,25 +6,34 @@
 local floor = math.floor
 
 -- pc.c:208 pc_setrestartvalue, with mod0631's battle_athena.conf
--- (death_penalty_type 0, death_penalty_base / _job 100, restart_hp_rate 0,
--- restart_sp_rate 0): what a dead character comes back with at the save
--- point, and what dying cost.
---   HP: 1; a Novice half its max HP; with an Osiris Card all HP and SP.
---   EXP: 1% of the base and job EXP *held* (type 0; not of the EXP the next
---   level needs), nothing for Novices, at the top level, or on a map
---   flagged nopenalty.
--- t: class, max_hp, max_sp, sp, base_exp, job_exp, next_base, next_job,
---    nopenalty, osiris. Returns {hp, sp, base, job} (base/job = EXP lost).
+-- (restart_hp_rate 0, restart_sp_rate 0): what a dead character comes back
+-- with at the save point. HP: 1; a Novice half its max HP; with an Osiris
+-- Card all HP and SP.
+-- t: class, max_hp, max_sp, sp, osiris. Returns {hp, sp}.
 function rules.respawn(t)
-  local r = { hp = 1, sp = t.sp, base = 0, job = 0 }
+  local r = { hp = 1, sp = t.sp }
   if t.osiris then
     r.hp, r.sp = t.max_hp, t.max_sp
   elseif t.class == 0 then
     r.hp = floor(t.max_hp / 2)
   end
+  return r
+end
+
+-- What dying costs, taken at the moment of death: 1% of the base and job EXP
+-- the current levels need, nothing for Novices, at the top level, or on a
+-- map flagged nopenalty. jAthena //0513 (2003-11-02, pc_damage) as it first
+-- built the penalty: "100 = the usual, 1% of the EXP needed". A week later
+-- //0532 made 1% of the EXP *held*, at the restart, the default (so a
+-- Resurrection costs nothing), its author writing that he "did not like the
+-- real server's way"; mod0631 and 817 keep that default's amount
+-- (docs/DEVIATIONS.md).
+-- t: class, next_base, next_job, nopenalty. Returns {base, job} (EXP lost).
+function rules.death_penalty(t)
+  local r = { base = 0, job = 0 }
   if t.class ~= 0 and not t.nopenalty then
-    if t.next_base > 0 then r.base = floor(t.base_exp * 100 / 10000) end
-    if t.next_job > 0 then r.job = floor(t.job_exp * 100 / 10000) end
+    r.base = floor(t.next_base * 100 / 10000)
+    r.job = floor(t.next_job * 100 / 10000)
   end
   return r
 end
