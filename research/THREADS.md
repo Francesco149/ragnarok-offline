@@ -1763,13 +1763,12 @@ Storm Gust sparing the frozen (//0738), the Baphomet Card's splash
 (//0797; the client's text), the Deleters' skills and Dracula's Familiars
 (//0743), Comodo's cart (a slip of ours). The rest, from a read-only
 agent's pass (re-read each diff before building):
-* **Summons, //0743 (2004-01-26) and 817:** slave summons cast in 3 s,
-  10 s apart, only once every slave is gone (`slavele 0`; ours mod0631's
-  instant, an hour apart, up to 2); second summon rows for Osiris,
-  Mistress, Drake, Eddga; Turtle General and Archangeling summon in steps;
-  Gajomart, Lava Golem, Dracula and Lord of Death summon slaves (196), not
-  free monsters (209); Ghostring calls Giant Whispers. Changes every MVP
-  fight: weigh against Eddga as played (THREADS #23).
+* **Summons, //0743 (2004-01-26) and 817:** built 2026-11-15
+  (DEVIATIONS.md): 3 s casts, 10 s apart once every slave is gone, the
+  second rows and the steps. Still to see in the client: an MVP fight
+  with Leib Olmai coming back every 10 s may be much harder than euRO's
+  was; a period account of an MVP's summons (how many, how often) would
+  settle it.
 * **Bowling Bash and Brandish Spear 0.7 s cast, no delay; Lex Divina lifts
   a silence; Skid Trap slides level+5** (//0785, 2004-02-08, "from kRO's
   patch notice", 817 the same): the skill balance patch of #22. Kept with

@@ -1943,7 +1943,8 @@ fn faq_monster_skills_run() {
         .mob_skills
         .values()
         .flatten()
-        .filter(|r| r.source.is_some())
+        // rows with their own source, less mob_skills.toml's summons from jAthena //0743
+        .filter(|r| r.source.as_ref().is_some_and(|s| !s.starts_with("jAthena //0743")))
         .map(|r| (r.mob, r.skill, r.lv, r.target.clone()))
         .collect();
     rows.sort();
@@ -2040,6 +2041,61 @@ fn boss_in_an_ice_wall_box_teleports() {
     let m = t.spawn(25, 25, 1038);
     t.lua(&format!("skill_attack(BF.MAGIC, {me}, {me}, {m}, SK.MG_FIREBOLT, 1, 0)"));
     assert_ne!(t.pos(m), (25, 25), "Osiris teleports out of the box");
+}
+
+/// Slave summons as jAthena //0743 (2004-01-26) and 817 have them: a 3 s cast, and again 10 s
+/// later once every slave is gone. Eddga calls five Bigfoot once an hour, Leib Olmai between.
+#[test]
+fn mvp_summons_as_jathena_0743() {
+    let mut t = T::new();
+    let me = t.me;
+    t.lua("job_change(7); player.base_level = 99; player.vit = 99; heal(30000, 30000)");
+    let eddga = t.spawn(27, 25, 1115);
+    t.lua(&format!("_rt('bl_damage', {me}, {eddga}, 1)"));
+    let slaves = |t: &T, kind: u32| -> Vec<u32> {
+        t.g.world.units.values().filter(|u| u.mob().is_some_and(|m| m.master == Some(eddga) && m.mob_id == kind)).map(|u| u.id).collect()
+    };
+    // when its summon row `i` was last done with (the delay counts from the cast's end, mob.c:1945)
+    let used = |t: &T, i: usize| t.g.world.units[&eddga].mob().unwrap().skill_used[i];
+    let leib = t.g.db.mob_skills[&1115].iter().position(|r| r.skill == 196 && r.val == 1306).unwrap();
+    // run in 100 ms steps, healing, until `kind` has five slaves; the summon's cast was seen
+    // under way, 3 s long, and none came before its end. Gives the cast's start.
+    let wait = |t: &mut T, kind: u32| -> u64 {
+        let (mut ms, mut cast) = (0, None);
+        while slaves(t, kind).len() < 5 {
+            assert!(ms < 15000 && t.hp() > 0, "no five of {kind} after {ms} ms (hp {})", t.hp());
+            if let Some(c) = t.g.world.units[&eddga].mob().unwrap().cast.as_ref().filter(|c| c.skill == 196) {
+                if cast.is_none() {
+                    assert!((2800..=3000).contains(&(c.end_at - t.g.now())), "a 3 s cast");
+                    cast = Some(c.end_at);
+                }
+            }
+            t.lua("heal(30000, 30000)");
+            t.run(100);
+            ms += 100;
+        }
+        let end = cast.expect("the summon was cast");
+        assert!(t.g.now() >= end);
+        end - 3000
+    };
+    wait(&mut t, 1060);
+    assert!(slaves(&t, 1306).is_empty());
+    slaves(&t, 1060).into_iter().for_each(|s| t.kill(s));
+    // the Bigfoot row waits an hour: Leib Olmai
+    wait(&mut t, 1306);
+    let done = used(&t, leib);
+    assert!(slaves(&t, 1060).is_empty());
+    slaves(&t, 1306).into_iter().for_each(|s| t.kill(s));
+    // again once they are gone, 10 s after the last
+    let again = wait(&mut t, 1306);
+    assert!(again >= done + 10000, "Leib Olmai again {} ms after", again - done);
+    t.check();
+    // the Turtle General calls in steps: Permeters with none left, Soldiers with two or fewer...
+    let rows: Vec<(i32, i32)> = t.g.db.mob_skills[&1312].iter().filter(|r| r.skill == 196).map(|r| (r.cond_val, r.val)).collect();
+    assert_eq!(rows, [(0, 1314), (2, 1316), (4, 1318), (8, 1319)]);
+    // the Fur Seal no longer has the Fake Angel's summons and stone curse (mod0631's misfiled rows)
+    assert!(t.g.db.mob_skills[&1317].iter().all(|r| r.skill != 196 && r.skill != 180));
+    assert_eq!(t.g.db.mob_skills[&1371].iter().filter(|r| r.skill == 196).count(), 2);
 }
 
 /// A monster's element change takes the element its row means: mod0631's skill_db makes 168 Ghost

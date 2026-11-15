@@ -845,6 +845,19 @@ always fires.
   way round (`MOB_SKILL_MOVE` in `tools/import/athena_import.py`).
   Likewise mod0631's row "monster summon @ Dracula" (Familiars), filed
   under Lord of Death's id, belongs to Dracula, as 817 has it.
+* **Slave summons as jAthena //0743 (2026-11-15)**: jAthena's commit of
+  2004-01-26 "to make slave summons and the like resemble the real
+  server" (817's rows are the same): a summon is cast for 3 s, and comes
+  again 10 s later once every slave is gone, where mod0631's came at once,
+  an hour apart, while two or fewer were left. Osiris, Mistress, Drake and
+  Eddga gain a second summon (Eddga: five Bigfoot once an hour, five Leib
+  Olmai between), the Turtle General and the Archangeling call in steps
+  as their slaves thin, Gajomart, Lava Golem, Lord of Death and Dracula
+  call slaves rather than free monsters, and Ghostring calls Giant
+  Whispers. mod0631's last three Fake Angel rows, filed under the Fur Seal,
+  go back to the Fake Angel (the Fur Seal summoned and cursed to stone).
+  Each row says its source; `summon_patch_0743` in
+  `tools/import/athena_import.py` reads the commit from jAthena's git.
 * **The Baphomet Card splashes** (2026-11-15): a weapon blow that lands
   also strikes every other enemy within a cell of the target, each with a
   weapon attack of its own that may miss, as this client's item text says
