@@ -542,6 +542,20 @@ fn ice_wall_breaks_under_area_skills() {
     assert!(wall(&mut t).is_empty(), "broken");
     t.run(800); // it goes within 0.7 s
     assert_eq!(t.lua("return _rt('cell', player.map, 30, 25)").trim(), "0", "free again");
+    // a monster's splash wears it too (817's monster skills go through the same skill_area_sub)
+    t.run(2000);
+    t.lua("heal(0, 9999)");
+    t.skill_pos(87, 10, 30, 25);
+    t.run(1000);
+    let before = wall(&mut t);
+    assert_eq!(before.len(), 5);
+    t.lua("warp('testmap', 28, 25)");
+    let m = t.spawn(27, 25, 1087); // Orc Hero: a blow worth measuring
+    let me = t.me;
+    t.lua(&format!("player.vit = 99; heal(9999, 0); skill_castend_damage_id({m}, {me}, SK.NPC_SPLASHATTACK, 10)"));
+    let after = wall(&mut t);
+    let worn = after.len() < before.len() || after.iter().zip(&before).any(|(a, b)| a.1 < b.1 - 20);
+    assert!(worn, "the splash reached the wall: {before:?} -> {after:?}");
     t.check();
 }
 

@@ -929,8 +929,10 @@ Sandman's sleep). Durability 200 + 200 a level, the guide's 400 to 2200 (817:
 716`, adds 0x20 to Water and lands outside its table). One level-10
 Thunderstorm breaks a level-10 wall (4,270 a cell from a Hunter of INT 91).
 Open: did official area skills hurt the wall, and did monsters' splash?
-817's monster splash goes through the same `skill_area_sub`; ours does not
-hit walls yet.
+817's monster splash goes through the same `skill_area_sub`, and so does
+ours: a monster's NPC_SPLASHATTACK and the area skills monsters cast reach
+the wall by the same Lua (test `ice_wall_breaks_under_area_skills`, 2026-11-15:
+an Orc Hero's splash breaks a level-10 wall in one blow).
 **Played in the client (2026-11-15):** Venom Splasher 10 on a poisoned
 Pupa at 30% HP: "Venom Splasher !!" and 0x011a at the cast, nothing drawn
 over the target while the mark runs (no status icon for SC 107 in this
