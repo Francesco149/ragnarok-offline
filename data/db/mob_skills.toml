@@ -13525,7 +13525,7 @@ cond = "always"
 cond_val = 0
 
 [[skill]]
-mob = 1384
+mob = 1385
 state = "attack"
 skill = 18
 lv = 7
@@ -13590,7 +13590,7 @@ cond = "always"
 cond_val = 0
 
 [[skill]]
-mob = 1385
+mob = 1384
 state = "attack"
 skill = 83
 lv = 4
@@ -13603,7 +13603,7 @@ cond = "skillused"
 cond_val = 18
 
 [[skill]]
-mob = 1385
+mob = 1384
 state = "attack"
 skill = 83
 lv = 4

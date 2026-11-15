@@ -622,6 +622,12 @@ def import_jobs():
 E817 = REFS / "athena-817-src/athena"
 
 
+# mod0631 gives Fire Wall to the Sky Deleter (1384) and Meteor Storm to the Earth Deleter (1385);
+# jAthena //0743 (2004-01-26: "the Deleter's sky and ground skills were the wrong way round") and
+# 817 (db/mob_skill_db.txt:1772-1778) swap them. (mob, skill) -> mob.
+MOB_SKILL_MOVE = {(1384, 18): 1385, (1385, 83): 1384}
+
+
 def import_mob_skills():
     """mod0631 db/mob_skill_db.txt: which skill a monster uses, when and how often."""
     rows = []
@@ -629,6 +635,7 @@ def import_mob_skills():
         cols = [c.strip() for c in line.split(",")]
         if len(cols) < 12 or not cols[0].isdigit() or not cols[3].isdigit():
             continue
+        cols[0] = str(MOB_SKILL_MOVE.get((int(cols[0]), int(cols[3])), cols[0]))
         yes = lambda v: "true" if v in ("yes", "1") else "false"
         rec = [f"mob = {cols[0]}", f"state = {q(cols[2])}", f"skill = {cols[3]}", f"lv = {num(cols[4])}",
                f"rate = {num(cols[5])}", f"cast = {num(cols[6])}", f"delay = {num(cols[7])}",

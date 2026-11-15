@@ -839,6 +839,10 @@ always fires.
   same RODataZone page says "a maximum of 10 items", and jAthena set 10 on
   2004-02-01 (//0764, research round 22). A full bag still lets its oldest
   item go, as both emulators do.
+* **The Deleters' Fire Wall and Meteor Storm change places** (2026-11-15):
+  the Sky Deleter casts Meteor Storm, the Earth Deleter Fire Wall, as
+  jAthena //0743 (2004-01-26) and 817 have them; mod0631 had them the wrong
+  way round (`MOB_SKILL_MOVE` in `tools/import/athena_import.py`).
 * **The Baphomet Card splashes** (2026-11-15): a weapon blow that lands
   also strikes every other enemy within a cell of the target, each with a
   weapon attack of its own that may miss, as this client's item text says
