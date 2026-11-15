@@ -592,6 +592,9 @@ function battle.calc_weapon_attack(src, target, skill_num, skill_lv, wflag, opt)
   end
 
   if opt and opt.sure_crit then cri = 1000 end
+  -- Auto Counter's blow: twice the critical rate (817 battle.c:2249 with its default
+  -- player_auto_counter_type 1, jAthena //0751 of 2004-01-28 "as the real server")
+  if skill_num == SK.KN_AUTOCOUNTER then cri = cri * 2 end
   if da == 0 and rnd(1000) < cri and (skill_num == 0 or skill_num == SK.KN_AUTOCOUNTER) and (sd or battle_config.enemy_critical)
     and not (tsd and battle.dcard(tsd, 4143)) then -- Orc Hero Card: never hit critically
     damage = damage + atkmax
@@ -662,12 +665,13 @@ function battle.calc_weapon_attack(src, target, skill_num, skill_lv, wflag, opt)
     damage = battle.addmastery(sd, target, damage)
   end
 
+  -- Auto Counter's blow: HIT +20 (eAthena 817 battle.c:2458, type 1)
+  if skill_num == SK.KN_AUTOCOUNTER then hitrate = hitrate + 20 end
   -- battle.c:1224 hit or miss; players always have 5%, monsters between 5% and 95%
   if hitrate < 100000 then
     if sd then hitrate = math.max(5, hitrate) else hitrate = math.max(5, math.min(95, hitrate)) end
   end
-  -- (Auto Counter's blow always lands: eAthena 817 battle.c:2458)
-  if skill_num == SK.NPC_GUIDEDATTACK or skill_num == SK.RG_BACKSTAP or skill_num == SK.KN_AUTOCOUNTER or hitrate >= 100000
+  if skill_num == SK.NPC_GUIDEDATTACK or skill_num == SK.RG_BACKSTAP or hitrate >= 100000
     or sc(target, SC.SLEEP) or sc(target, SC.STAN) or sc(target, SC.FREEZE) then
     hitrate = 100
   end
@@ -990,8 +994,10 @@ function rules.weapon_attack(a)
     if sc(src, SC.TWOHANDQUICKEN) then adelay = floor(adelay * 70 / 100) end
   end
   -- Auto Counter (not in mod0631; eAthena 817 battle.c:1698, 3403): a blow
-  -- from the front does nothing and is answered with a certain critical;
-  -- from behind it lands as a critical itself.
+  -- from the front does nothing and is answered, ignoring DEF, with twice
+  -- the critical rate and HIT +20 (817's default type 1; jAthena //0751,
+  -- //0814: the real server counters plain blows, not skills); from behind
+  -- the blow lands as a critical itself.
   local counter, opt
   local ac = sc(target, SC.AUTOCOUNTER)
   if ac then
@@ -1005,7 +1011,7 @@ function rules.weapon_attack(a)
       skill_status_change_end(target.id, SC.AUTOCOUNTER)
       if counter then
         _rt("bl_set", target.id, "dir", battle.calc_dir(target, src.x, src.y))
-        local cd = battle.calc_weapon_attack(target, src, SK.KN_AUTOCOUNTER, ac.val1, 0, { sure_crit = true })
+        local cd = battle.calc_weapon_attack(target, src, SK.KN_AUTOCOUNTER, ac.val1, 0)
         _rt("clif_damage", target.id, src.id, cd.amotion, cd.dmotion, cd.damage, cd.div, cd.type, math.max(0, cd.damage2))
         battle.damage(target.id, src.id, cd.damage + math.max(0, cd.damage2))
       end

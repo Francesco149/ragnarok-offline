@@ -871,8 +871,9 @@ always fires.
   Pneuma fails on or against another Safety Wall or Pneuma, a trap, a
   Talkie Box or a Warp Portal fails within a cell of a trap (Venom Dust
   counts), a Fire Pillar within a cell of one not yet set off; the SP
-  and the gemstone are kept. jAthena //0764 (2004-02-01) added this as
-  `player_skill_reiteration: no` ("with yes, Safety Wall, Pneuma and
+  and the gemstone are kept. jAthena //0751 (2004-01-28) forbade it
+  ("some ground skills may no longer be stacked") and //0764 (2004-02-01)
+  made it the setting `player_skill_reiteration: no` ("with yes, Safety Wall, Pneuma and
   traps can be laid on top of each other"), and 817 has it
   (`skill.c:862`); mod0631 checks nothing. 817 also refuses them on
   anyone's feet, so a Safety Wall under oneself fails there; jAthena
@@ -903,6 +904,17 @@ always fires.
 * **Brandish Spear, Auto Counter, Venom Splasher, Signum Crucis, Slow
   Poison, Find Stone, Ruwach's damage, element-resisting cards against
   magic**: not in mod0631 at all.
+* **Auto Counter** (2026-11-15) as 817 with its default
+  `player_auto_counter_type: 1` and jAthena //0751 (2004-01-28, "matched to
+  the real server"): a plain blow from the front is turned aside and
+  answered ignoring DEF, with HIT +20 and twice the critical rate; skills
+  are not countered (//0814, 2004-02-17: "on the real server skills seem
+  not to be countered"). While the stance lasts the Knight cannot walk,
+  attack or use another skill (817 `pc.c:3215`, `clif.c:5019`,
+  `skill.c:3851`; monsters `mob.c:220`, `344`, `2304`). Until today ours
+  was a sure critical that left the Knight free. (817's config comment
+  calls type 1 "100% critical"; its code and jAthena's manual say the
+  opposite.)
 
 **Ours, where neither emulator has anything** (tier guess unless noted):
 

@@ -43,6 +43,7 @@ pub const SC_RUWACH: u16 = 76;
 pub const SC_ANKLE: u16 = 94;
 pub const SC_TRICKDEAD: u16 = 29;
 pub const SC_ENDURE: u16 = 1;
+pub const SC_AUTOCOUNTER: u16 = 77;
 
 /// How often `rules.battle_tick` runs (Athena skill_unit_timer: 100 ms).
 const BATTLE_TICK_MS: u64 = 100;
@@ -415,7 +416,8 @@ impl Game {
         let (opt1, _, option) = self.opts_of(unit);
         // (playing dead: ours. clif_parse_WalkToXY does not check it, so in
         // mod0631 one could walk about while "dead")
-        if opt1 > 0 || self.has_sc(unit, SC_ANKLE) || self.has_sc(unit, SC_TRICKDEAD) {
+        // (Auto Counter's stance holds one still: 817 clif.c:5019, mob.c:220)
+        if opt1 > 0 || self.has_sc(unit, SC_ANKLE) || self.has_sc(unit, SC_TRICKDEAD) || self.has_sc(unit, SC_AUTOCOUNTER) {
             return false;
         }
         match &u.kind {

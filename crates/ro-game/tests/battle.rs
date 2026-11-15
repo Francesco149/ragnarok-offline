@@ -743,24 +743,52 @@ fn bow_roll_above_100_dex() {
     assert_eq!(r, 90 * x / 100, "above 100 the most is ATK x DEX / 100 (DEX {x})");
 }
 
-/// Auto Counter (eAthena 817): a blow from the front is turned aside and
-/// answered with a critical; the status ends with it.
+/// Auto Counter (eAthena 817, jAthena //0751): a blow from the front is
+/// turned aside and answered at twice the critical rate; the status ends
+/// with it. While it is up the Knight cannot walk, attack or use another
+/// skill.
 #[test]
 fn auto_counter() {
     let mut t = T::new();
-    t.lua("job_change(7); player.base_level = 60; player.str = 60; heal(9999, 9999)");
+    t.lua("job_change(7); player.base_level = 60; player.str = 60; player.luk = 99; player.dex = 60; heal(9999, 9999)");
     t.learn("KN_AUTOCOUNTER", 5);
-    let z = t.spawn(26, 25, 1015);
+    t.learn("SM_BASH", 10);
+    let z = t.spawn(26, 25, 1008); // a Pupa: it never strikes on its own
     let (me, hp, zhp) = (t.me, t.hp(), t.mob_hp(z).unwrap());
     // face east, toward the Zombie
-    t.lua(&format!("_rt('bl_set', {me}, 'dir', 6); skill_status_change_start({me}, SC.AUTOCOUNTER, 5, 0)"));
+    let stance = |t: &mut T| {
+        t.lua(&format!("_rt('bl_set', {me}, 'dir', 6); skill_status_change_start({me}, SC.AUTOCOUNTER, 5, 0, {{ tick = 60000 }})"));
+    };
+    stance(&mut t);
     assert!(t.sc(77));
+    // held: no walking, no attack, no other skill
+    let mut w = Writer::new(0x0085);
+    w.pos3(20, 25, 0);
+    t.send(w);
+    t.run(600);
+    assert_eq!(t.pos(me), (25, 25), "no walking in the stance");
+    let mut w = Writer::new(0x0089);
+    w.u32(z).u8(7);
+    t.send(w);
+    t.packets(0);
+    t.cast("SM_BASH", z);
+    t.run(600);
+    assert_eq!(t.mob_hp(z), Some(zhp), "no attack and no Bash in the stance");
+    assert!(!t.packets(0x0110).is_empty(), "the Bash was refused");
     t.lua(&format!("rules.weapon_attack{{src={z}, target={me}}}"));
     assert_eq!(t.hp(), hp, "the blow was turned aside");
     assert!(!t.sc(77), "the stance ends");
-    assert!(t.mob_hp(z).unwrap_or(0) < zhp, "and the Zombie was hit back");
-    let crit = t.packets(0x008a).iter().any(|p| u32_at(p, 2) == me && p[26] == 0x0a);
-    assert!(crit, "with a critical");
+    assert!(t.mob_hp(z).unwrap_or(0) < zhp, "and the Pupa was hit back");
+    // LUK 99: a plain blow is critical about 30% of the time, a counter about 60%
+    t.packets(0);
+    let (mut crits, n) = (0, 200);
+    for _ in 0..n {
+        t.lua(&format!("heal(9999, 9999); _rt('bl_set', {z}, 'hp', 2000)"));
+        stance(&mut t);
+        t.lua(&format!("rules.weapon_attack{{src={z}, target={me}}}"));
+        crits += t.packets(0x008a).iter().filter(|p| u32_at(p, 2) == me && p[26] == 0x0a).count();
+    }
+    assert!((n * 45 / 100..=n * 75 / 100).contains(&crits), "{crits} critical counters of {n}");
 }
 
 /// Merchant prices, potions scaled by VIT, the overweight icons.

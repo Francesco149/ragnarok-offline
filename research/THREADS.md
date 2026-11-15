@@ -1780,11 +1780,12 @@ agent's pass (re-read each diff before building):
   (Zombie Dragon, Dark Illusion...), as mod0631 does. //0815's reason is an
   event monster with MVP EXP that could be poisoned, not these.
 * **Ground skills may not be stacked**: built 2026-11-15 (DEVIATIONS.md).
-  The commit is //0764 (2004-02-01), not //0797; //0825 split off the
-  "not on anyone's feet" rule 817 also has, and left it off.
-* **Auto Counter** (//0751, //0814, 817): a counter crits at twice the
-  rate with HIT +20 (817's default type 1), the holder cannot walk or
-  attack; ours is a sure critical and leaves the holder free.
+  The commits are //0751 (2004-01-28) and //0764 (the setting), not //0797;
+  //0825 split off the "not on anyone's feet" rule 817 also has, and left
+  it off.
+* **Auto Counter**: built 2026-11-15 as 817's default type and jAthena
+  //0751, //0814 (DEVIATIONS.md): twice the critical rate, HIT +20, the
+  holder held.
 * **Sanctuary pushes 2 cells** "tested on kRO's A server" (//0868,
   2004-03-06); ours 3 with mod0631 and 817. **Hammer Fall reaches 4,
   Resurrection is Holy** (//0880, which says Hammer Fall's real reach is

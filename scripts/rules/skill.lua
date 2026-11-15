@@ -436,6 +436,11 @@ function rules.skill_use(a)
     if not hidden_ok(sd, skill) or sd.opt1 > 0 then return nil end
   end
   if skill == SK.HT_BLITZBEAT and not sd.st.falcon then return nil end
+  -- in Auto Counter's stance, no other skill (817 skill.c:3851)
+  if sc(sd, SC.AUTOCOUNTER) and skill ~= SK.KN_AUTOCOUNTER then
+    _rt("clif_skill_fail", sd.id, skill, 0, 0)
+    return nil
+  end
 
   -- range
   local tx, ty = a.x, a.y
@@ -604,7 +609,7 @@ function rules.skill_castend(a)
     bl = trap and skill_trap_cell(a.target) or get(a.target)
     if not bl or bl.map ~= src.map then return false end
   end
-  -- another cell in the way (skill_units.lua; jAthena //0764 skill.c skill_castend_pos)
+  -- another cell in the way (skill_units.lua; jAthena //0751 skill_castend_pos)
   if place and skill_reiteration_blocked(src, a.x, a.y, skill) then
     if sd then _rt("clif_skill_fail", sd.id, skill, 0, 0) end
     return false

@@ -206,8 +206,8 @@ function skill_unitsetting(src_id, skillid, skilllv, x, y, flag)
   return g
 end
 
--- Ground skills may not be stacked: jAthena //0764 (2004-02-01) added
--- `player_skill_reiteration: no` and `monster_skill_reiteration: no` ("with
+-- Ground skills may not be stacked: jAthena //0751 (2004-01-28) forbade it, //0764
+-- (2004-02-01) made it `player_skill_reiteration: no` and `monster_skill_reiteration: no` ("with
 -- yes, Safety Wall, Pneuma and traps can be laid on top of each other";
 -- skill_check_unit_range, skill_castend_pos, mobskill_castend_pos); eAthena 817
 -- the same (skill.c:862, 3761; mob.c:2370). mod0631 checks nothing. jAthena

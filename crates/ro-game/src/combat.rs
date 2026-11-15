@@ -42,6 +42,7 @@ const SC_INCREASEAGI: u16 = 12;
 const SC_DECREASEAGI: u16 = 13;
 const SC_QUAGMIRE: u16 = 8;
 const SC_SILENCE: u16 = 70;
+use crate::battle::SC_AUTOCOUNTER;
 
 impl Game {
     /// Instantiate the monster spawns of a map (first time a player enters).
@@ -162,9 +163,10 @@ impl Game {
         if me.map != tmap || me.state == 1 {
             return;
         }
-        // pc_attack_timer: not while stunned, frozen, asleep, stone, hidden or cloaked
+        // pc_attack_timer: not while stunned, frozen, asleep, stone, hidden or cloaked,
+        // nor in Auto Counter's stance (817 pc.c:3215)
         let (_, _, option) = self.opts_of(unit);
-        if self.cannot_act(unit) || option & 6 != 0 {
+        if self.cannot_act(unit) || option & 6 != 0 || self.has_sc(unit, SC_AUTOCOUNTER) {
             return;
         }
         let me = self.world.units.get_mut(&unit).unwrap();
@@ -234,7 +236,7 @@ impl Game {
         let Some(intent) = self.world.units.get(&id).and_then(|u| u.player()).and_then(|p| p.attack) else { return };
         let target_ok = self.world.units.get(&intent.target).is_some_and(|t| t.mob().is_some() && t.state != 1 && t.map == self.world.units[&id].map);
         let (_, _, option) = self.opts_of(id);
-        if !target_ok || self.cannot_act(id) || option & 6 != 0 || self.world.units[&id].state == 1 {
+        if !target_ok || self.cannot_act(id) || option & 6 != 0 || self.has_sc(id, SC_AUTOCOUNTER) || self.world.units[&id].state == 1 {
             self.world.units.get_mut(&id).unwrap().player_mut().unwrap().attack = None;
             return;
         }
@@ -1051,8 +1053,8 @@ impl Game {
             lose(self);
             return;
         };
-        // turning to stone: no blow (817 mob.c:341)
-        if self.turning_stone(id) {
+        // turning to stone, or in Auto Counter's stance: no blow (817 mob.c:341, 344)
+        if self.turning_stone(id) || self.has_sc(id, SC_AUTOCOUNTER) {
             return;
         }
         let (x, y) = (self.world.units[&id].x as i32, self.world.units[&id].y as i32);
@@ -1145,6 +1147,10 @@ impl Game {
             // silenced, stunned, hidden: no skills (mob.c:2011)
             let (_, _, option) = self.opts_of(id);
             if self.cannot_act(id) || option & 6 != 0 || self.has_sc(id, SC_SILENCE) {
+                return false;
+            }
+            // in Auto Counter's stance, no other skill (817 mob.c:2304)
+            if self.has_sc(id, SC_AUTOCOUNTER) && ms.skill != 61 {
                 return false;
             }
             // range of the skill itself; a weapon-range skill (below 0) reaches as the monster does
