@@ -8,13 +8,15 @@ All builds, analysis and client tests run in a rootless podman container:
 tools/wb build          # image: Rust (+ windows-gnu, musl), Wine, Xvfb, msitools, rizin, capstone
 tools/wb exec <cmd>     # run in it (starts it if needed)
 tools/wb sh             # shell
-tools/wb down           # kill it now
+tools/wb down           # kill it now (--all: every WB_NAME)
 tools/wb status
 ```
 
 Hard cap 2 GiB RAM, no swap, 4096 pids (`WB_MEM` to raise for a specific
 job). PID 1 is `sleep 6h` and the container is `--rm`, so it tears itself down
-with everything inside even if forgotten; `exec` recycles it after 4 h. Mounts:
+with everything inside even if forgotten; `exec` recycles it after 4 h.
+`WB_NAME=ro-rig` gives a second workbench with its own cap (the client rig
+beside a build); recycling or `down` touches only its own name. Mounts:
 repo → `/work`, `~/data/ragnarok-cd` → `/data` (disc image, unpacked client,
 play copy, Wine prefix, saves, reference emulators — never in git), cargo
 registry → volume `ro-wb-cargo`.
