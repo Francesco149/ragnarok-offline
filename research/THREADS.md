@@ -1049,6 +1049,23 @@ also comes with the skill's result. The goblins' elemental attacks
 over the goblin each time one lands; so does every monster with such an
 attack. Left as it is: whether Aegis sent these as skill damage (named or
 not) or as plain attacks (0x008a) is the same open question.
+**The exe (2026-11-15):** every skill packet (0x0114, 0x0115, 0x0117,
+0x011a, 0x013e, 0x01de) sends the game mode message 0x63, which shouts the
+name over the caster (`0x50f6e1`), but only when the packet's level is 0
+or more (`0x50f6f2`): a level of -1 shows no shout. So if a period source
+says monsters' elemental attacks drew nothing over them, sending them with
+level -1 would be the client-side way it was done. Seen again on Eddga
+(2026-11-15): its slaves' and its own NPC attacks shout each time.
+**Eddga played in the client (2026-11-15, rig, `@monster 1115`):** five
+Bigfoot at once and again once all had died, five Leib Olmai under 5% HP
+(no packet draws a summon: the slaves just appear), the April-2004 boss
+rows (Increase AGI with its 3 s bar, Piercing Attack), Two-Hand Quicken
+under 20%, Spear Stab; the MVP effect, "You are the MVP!!" with the Tiger
+Skin, and the drops. The five Leib Olmai cast Magnum Break (2 s bar) about
+every other blow: their row is rate 400 with no delay, read /1000 as
+mod0631 does; at jAthena's /10000 it would be one blow in 25 (the rate
+question above, queue T9). A level-99 Assassin dies in seconds to the lot,
+which may say the same.
 **Round 9 (2026-11-14): a whole layer is missing.** unknown13's Monster
 Skill FAQ (GameFAQs 29608, April 2004; a pRO player writing up "the data
 on iRO") lists every monster skill. `research/mob_skills_faq.py` compares

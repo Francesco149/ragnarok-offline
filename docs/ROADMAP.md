@@ -117,6 +117,10 @@ Next:
   drafted), and a job change to less SP crashed the debug server at the next
   recovery tick. Frost Nova drew nothing on its target until the exe showed
   which packet draws it (2026-11-14, THREADS.md #22).
+  Monsters: Eddga fought in the client on 2026-11-15 (slaves, its HP
+  steps, the boss rows, the MVP reward; THREADS.md #23). Not yet seen in
+  the client: a boss teleporting away from an attacker it cannot reach
+  (tested on the server only).
 
 ## 4. NPC content
 
