@@ -401,9 +401,17 @@ fn counter_siege() {
     let (menus, _) = t.talk("aldeg_cas01", 218, 175, &[4, 1]);
     assert!(menus[1].starts_with("Soldier Guardian - (17670 / 17670)"), "{menus:?}");
 
+    // an MVP of the old garrison with a summoned slave (no event: seen in the client,
+    // Garm's Sasquatches stayed by the Emperium out of the siege, 2026-11-15)
+    let garm = t.eval("return monster('aldeg_cas01', 100, 100, '--ja--', 1252, 1)[1]");
+    let slave = t.eval(&format!("return _rt('mob_spawn', 'aldeg_cas01', 101, 100, 1243, {garm})"));
+    assert_ne!(slave, "nil");
+
     // the siege: a defended Emperium (68,430 + 1,000), the garrison as attackers
     t.eval("castle_siege_start(castle_now() + 7200)");
     t.ticks(3);
+    let gone = |t: &mut T, id: &str| t.eval(&format!("return battle.get({id}) == nil")) == "true";
+    assert!(gone(&mut t, &garm) && gone(&mut t, &slave), "the old garrison goes, slaves and all");
     let emp = t.emperium("aldeg_cas01");
     assert_eq!(t.eval(&format!("local u = battle.get({emp}) return u.max_hp .. ' ' .. u.side")), "69430 2");
     let attackers = t.side("aldeg_cas01", 1);
@@ -430,6 +438,9 @@ fn counter_siege() {
     // one far off, setting out now, walks toward the Emperium
     let r3 = raydric(&mut t, 216, 120);
     t.eval(&format!("mob_march({r3}, 0)"));
+    // a slave summoned by an attacker attacks too
+    let s3 = t.eval(&format!("return _rt('mob_spawn', 'aldeg_cas01', 217, 120, 1243, {r3})"));
+    assert_eq!(t.eval(&format!("return battle.get({s3}).side")), "1");
     t.run(15000);
     let hp = |t: &mut T, id: &str| t.eval(&format!("local u = battle.get({id}) return u and (u.max_hp - u.hp) or 'dead'"));
     assert_ne!(hp(&mut t, &emp), "0", "the Emperium is hit");

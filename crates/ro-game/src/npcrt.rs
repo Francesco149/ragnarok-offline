@@ -333,9 +333,10 @@ impl Game {
         mi.units
             .iter()
             .filter(|id| {
+                // "*" (ours): every monster, a script's or not (summoned slaves have no event)
                 self.world.units.get(id).and_then(|u| u.mob()).is_some_and(|m| match &m.event {
-                    Some(e) => event == "All" || e == event,
-                    None => false,
+                    Some(e) => event == "All" || event == "*" || e == event,
+                    None => event == "*",
                 })
             })
             .copied()

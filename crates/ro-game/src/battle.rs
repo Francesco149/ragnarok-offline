@@ -1305,8 +1305,11 @@ impl Game {
                 let master = id(4);
                 let r = self.spawn_mob(&text(a, 0), int(a, 1) as u16, int(a, 2) as u16, int(a, 3) as u32, None);
                 if let (Some(nid), true) = (r, master != 0) {
+                    // a slave fights on its master's siege side (ours: sides are ours)
+                    let side = self.world.units.get(&master).and_then(|u| u.mob()).map_or(0, |mm| mm.side);
                     if let Some(m) = self.world.units.get_mut(&nid).and_then(|u| u.mob_mut()) {
                         m.master = Some(master);
+                        m.side = side;
                     }
                 }
                 json!(r)
