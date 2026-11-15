@@ -1,6 +1,7 @@
 """RODataZone's iRO monster table (monsters.js, capture 2004-02-11) against data/db/mobs.toml:
 HP, base and job EXP, matched by English name. Run from the repo root on the host.
-Output of 2026-11-15: 191 the same, 6 differ, 59 names not matched (THREADS.md #33)."""
+Output of 2026-11-15: 191 the same, 6 differ, 59 names not matched; those were paired by hand
+(THREADS.md #33)."""
 import re,tomllib,sys
 t=open('/home/headpats/data/ragnarok-cd/refs/web/rodatazone-2004/20040211150750_monsters_monsters.js',encoding='latin-1').read()
 rows=[]

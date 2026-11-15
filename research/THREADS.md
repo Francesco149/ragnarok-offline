@@ -1741,13 +1741,16 @@ with 817 the same on each): 191 of the 197 names it matches agree, Poring
 (ours 688), Bathory job EXP 1304 (1034: a transposition on one side),
 Mummy EXP 789/493 (488/314), Owl Duke HP 37805 (26623), Sandman EXP 786/479
 (810/492), Sea Otter HP 14199 (9999, which looks like a placeholder). Kept
-as the emulators have them. 59 names are spelt otherwise and not matched.
+as the emulators have them. 59 names are spelt otherwise; matched by
+level and HP or EXP by hand (Abyssal Knight, Arclouze, Hatii, Tower
+Keeper, the Goblins and Kobolds by weapon...), two more differ: Seal (our
+Fur Seal) HP 12942 (9114) and Pierre (Piere) HP 732 (733). Whisper
+(Coffin) matches nothing.
 Also seen while reading 817's `mob_damage` (`map/mob.c:1856`): it tries
 the MVP reward slots in random order (`i = rand() % 3`), mod0631 in order;
 ours keeps mod0631's. (The EXP share and the MVP EXP of the same function
 were taken from jAthena //0764 and 817 on 2026-11-15, DEVIATIONS.md.)
-**Look:** an iRO or euRO monster guide of early 2004 for the six; match the
-59 names by id (RODataZone's names against the 0.5.2 English names).
+**Look:** an iRO or euRO monster guide of early 2004 for the eight.
 
 ## Resolved
 
