@@ -867,6 +867,17 @@ always fires.
   players' own damage, so a kill alone always paid in full, and gave an
   MVP's EXP only when no reward item came. The MVP is the biggest damage
   dealer still alive.
+* **Ground skills may not be stacked** (2026-11-15): a Safety Wall or a
+  Pneuma fails on or against another Safety Wall or Pneuma, a trap, a
+  Talkie Box or a Warp Portal fails within a cell of a trap (Venom Dust
+  counts), a Fire Pillar within a cell of one not yet set off; the SP
+  and the gemstone are kept. jAthena //0764 (2004-02-01) added this as
+  `player_skill_reiteration: no` ("with yes, Safety Wall, Pneuma and
+  traps can be laid on top of each other"), and 817 has it
+  (`skill.c:862`); mod0631 checks nothing. 817 also refuses them on
+  anyone's feet, so a Safety Wall under oneself fails there; jAthena
+  //0825 (2004-02-20) made that a separate `nofootset`, off, and so is
+  ours (`skill_reiteration_blocked` in `scripts/rules/skill_units.lua`).
 * **Lengths of 2003** (2026-11-14). Where Ragu Memo's ailment page (jRO
   players' measurements, captures of 2003-08-02 and 2003-12-12; research
   round 13, THREADS.md #21) gives a rule, it replaces 817's per-skill

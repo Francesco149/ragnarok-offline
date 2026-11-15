@@ -505,6 +505,47 @@ fn ground_skills() {
     let _ = (me, z);
 }
 
+/// Ground skills may not be stacked (jAthena //0764, eAthena 817): a second
+/// Safety Wall on the same cell fails and keeps its gemstone, a Pneuma
+/// touching it fails, a trap next to a trap fails; a cell further off is
+/// fine, and so is a Safety Wall under oneself.
+#[test]
+fn ground_skills_do_not_stack() {
+    let mut t = T::new();
+    t.lua("job_change(2); player.base_level = 60; player.int = 60; player.dex = 99; heal(9999, 9999); give_item(717, 5)");
+    let gems = |t: &T| t.g.store.chars[&t.cid].inventory.iter().find(|i| i.nameid == 717).map(|i| i.amount).unwrap_or(0);
+    let cells = |t: &T, uid: u8| t.packets(0x01c9).iter().filter(|p| p[14] == uid).count();
+    t.learn("MG_SAFETYWALL", 5);
+    t.cast_at("MG_SAFETYWALL", 25, 25);
+    t.run(3000);
+    assert_eq!(cells(&t, 0x7e), 1, "a Safety Wall under us");
+    assert_eq!(gems(&t), 4);
+    t.cast_at("MG_SAFETYWALL", 25, 25);
+    t.run(3000);
+    assert_eq!(cells(&t, 0x7e), 0, "not a second one on it");
+    assert_eq!(gems(&t), 4, "and the gemstone is kept");
+    t.lua("job_change(4); heal(9999, 9999)");
+    t.learn("AL_PNEUMA", 1);
+    t.cast_at("AL_PNEUMA", 26, 25);
+    t.run(2000);
+    assert_eq!(cells(&t, 0x85), 0, "no Pneuma touching it");
+    t.cast_at("AL_PNEUMA", 27, 26);
+    t.run(2000);
+    assert_eq!(cells(&t, 0x85), 1, "two cells off is fine");
+    // traps want a free cell between them
+    t.lua("job_change(11); heal(9999, 9999); give_item(1065, 10)");
+    t.learn("HT_LANDMINE", 5);
+    t.cast_at("HT_LANDMINE", 25, 28);
+    t.run(2000);
+    assert_eq!(cells(&t, 0x93), 1, "a Land Mine");
+    t.cast_at("HT_LANDMINE", 26, 28);
+    t.run(2000);
+    assert_eq!(cells(&t, 0x93), 0, "not right beside it");
+    t.cast_at("HT_LANDMINE", 23, 28);
+    t.run(2000);
+    assert_eq!(cells(&t, 0x93), 1, "with a cell between");
+}
+
 /// Ice Wall can be broken by area skills (eAthena 817): Thunderstorm on a
 /// level 1 wall wears it away well before its 8 s are up, and the cells
 /// become walkable again. Signum Crucis does nothing to it.

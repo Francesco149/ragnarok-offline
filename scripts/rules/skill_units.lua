@@ -206,6 +206,48 @@ function skill_unitsetting(src_id, skillid, skilllv, x, y, flag)
   return g
 end
 
+-- Ground skills may not be stacked: jAthena //0764 (2004-02-01) added
+-- `player_skill_reiteration: no` and `monster_skill_reiteration: no` ("with
+-- yes, Safety Wall, Pneuma and traps can be laid on top of each other";
+-- skill_check_unit_range, skill_castend_pos, mobskill_castend_pos); eAthena 817
+-- the same (skill.c:862, 3761; mob.c:2370). mod0631 checks nothing. jAthena
+-- //0825 (2004-02-20) split off `nofootset`, refusing them on anyone's feet,
+-- and left it off; 817 counts people too, so a Safety Wall under oneself
+-- fails there. We follow jAthena: other cells only.
+-- How far around the cell the new one reaches, by caster.
+local REITERATION_RANGE = {
+  [SK.MG_SAFETYWALL] = 0, [SK.WZ_FIREPILLAR] = 0, [SK.HT_TALKIEBOX] = 0, [SK.AL_PNEUMA] = 1,
+}
+for s = SK.HT_SKIDTRAP, SK.HT_CLAYMORETRAP do REITERATION_RANGE[s] = 0 end
+local function is_trap_unit(uid) return uid >= 0x8f and uid <= 0x99 end
+-- Which cells stand in the way of each skill (skill_check_unit_range_sub).
+local function blocks(skillid, uid)
+  if skillid == SK.MG_SAFETYWALL or skillid == SK.AL_PNEUMA then return uid == 0x7e or uid == 0x85 end
+  if skillid == SK.AL_WARP or (skillid >= SK.HT_SKIDTRAP and skillid <= SK.HT_CLAYMORETRAP)
+      or skillid == SK.HT_TALKIEBOX then
+    return is_trap_unit(uid) -- Venom Dust (0x92) among them; another portal does not
+  end
+  if skillid == SK.WZ_FIREPILLAR then return uid == 0x87 end -- a pillar not yet set off
+  return false
+end
+
+-- Whether `skillid` may not be laid at x,y: true when another cell is in the way.
+function skill_reiteration_blocked(src, x, y, skillid)
+  local range = REITERATION_RANGE[skillid]
+  -- a monster's Warp Portal reaches a cell around, a player's only its own
+  if skillid == SK.AL_WARP then range = src.kind == "player" and 0 or 1 end
+  if not range then return false end
+  for _, c in pairs(cells) do
+    local g = groups[c.group]
+    if c.alive and g and c.map == src.map and blocks(skillid, g.unit_id) then
+      local r = c.range ~= 0 and c.range or g.range
+      -- the two squares overlap (817 tests each one's corners inside the other)
+      if math.abs(c.x - x) <= r + range and math.abs(c.y - y) <= r + range then return true end
+    end
+  end
+  return false
+end
+
 -- Who a cell acts for: its group's caster (battle_check_target with a skill unit).
 local function owner_of(g) return get(g.src) end
 

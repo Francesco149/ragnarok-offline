@@ -604,6 +604,11 @@ function rules.skill_castend(a)
     bl = trap and skill_trap_cell(a.target) or get(a.target)
     if not bl or bl.map ~= src.map then return false end
   end
+  -- another cell in the way (skill_units.lua; jAthena //0764 skill.c skill_castend_pos)
+  if place and skill_reiteration_blocked(src, a.x, a.y, skill) then
+    if sd then _rt("clif_skill_fail", sd.id, skill, 0, 0) end
+    return false
+  end
   local tx, ty = a.x, a.y
   if bl then tx, ty = bl.x, bl.y end
   local range = sd and skill_range(sd, skill, lv) + battle_config.pc_skill_add_range or skill_get_range(skill)

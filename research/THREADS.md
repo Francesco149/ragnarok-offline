@@ -1779,9 +1779,9 @@ agent's pass (re-read each diff before building):
   outright, and Steal take from, the monsters with boss mode and no MVP EXP
   (Zombie Dragon, Dark Illusion...), as mod0631 does. //0815's reason is an
   event monster with MVP EXP that could be poisoned, not these.
-* **Ground skills may not be stacked** on the same cell (traps, Safety Wall,
-  Fire Pillar) or within a cell (Pneuma, Warp Portal), //0797 and 817; ours
-  and mod0631 check nothing.
+* **Ground skills may not be stacked**: built 2026-11-15 (DEVIATIONS.md).
+  The commit is //0764 (2004-02-01), not //0797; //0825 split off the
+  "not on anyone's feet" rule 817 also has, and left it off.
 * **Auto Counter** (//0751, //0814, 817): a counter crits at twice the
   rate with HIT +20 (817's default type 1), the holder cannot walk or
   attack; ours is a sure critical and leaves the holder free.
