@@ -748,7 +748,11 @@ Sets: `skill_castend_*` for those skills.
 * **jAthena's "real server" changes (thread 34, new 2026-11-15).** For
   each point of thread 34 not built, a period player source (iRO, euRO,
   kRO, jRO, 2003-12 to 2004-05) saying what the official server did:
-  MVP slave summons (how many, how often, a cast bar?), Bowling Bash's
+  MVP slave summons (how many, how often, a cast bar? **built 2026-11-15
+  as //0743 has them**: a 3 s cast, again 10 s after the last slave
+  falls, Eddga's five Leib Olmai between hourly Bigfoot; so the question
+  is now whether a player of 2004 saw an MVP call again and again like
+  that, or once), Bowling Bash's
   cast time, Lex Divina on the silenced, stacked traps, Auto Counter's
   critical, Sanctuary's push, Hammer Fall's reach. Also the kRO patch
   notice jAthena //0785 (2004-02-08) took them from: its date and text.
