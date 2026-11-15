@@ -106,6 +106,8 @@ struct T {
     me: u32,
     /// What the NPC of the last `talk` said, line by line.
     said: Vec<String>,
+    /// What `talk` types into a number box.
+    number: u32,
     /// Dropped last, after the game.
     _slot: Slot,
 }
@@ -165,6 +167,11 @@ impl T {
                         w.u32(npc);
                         send(&mut self.g, 3, w);
                     }
+                    0x0142 => {
+                        let mut w = Writer::new(0x0143);
+                        w.u32(npc).u32(self.number);
+                        send(&mut self.g, 3, w);
+                    }
                     _ => continue,
                 }
                 acted = true;
@@ -217,7 +224,7 @@ fn setup(tag: &str) -> T {
         g.ensure_map(m);
     }
     g.notices.clear();
-    T { g, cap, me, said: Vec::new(), _slot: slot }
+    T { g, cap, me, said: Vec::new(), number: 1, _slot: slot }
 }
 
 #[test]
@@ -249,6 +256,37 @@ fn kafra_points() {
     assert!(menus[1].starts_with("1100p = Red Potion 7 ea"), "{menus:?}");
     assert_eq!(t.eval("return count_item(501)"), "7");
     assert_eq!(t.eval("return v.KF_PIT"), "0");
+}
+
+/// The free tickets the client describes (7059-7061; ours, DEVIATIONS.md): a
+/// Kafra takes one instead of the fee, a free trip earns no special reserve,
+/// and the head office's second window sells them for special reserve.
+#[test]
+fn kafra_free_tickets() {
+    let mut t = setup("kafra_free_tickets");
+    t.eval("player.zeny = 0; give_skill(1, 9, 0); v.KF_PIT = 100");
+    // the window: 30p a storage ticket, three of them
+    t.number = 3;
+    let menus = t.talk("aldeba_in", 88, 161, &[1]);
+    assert!(menus[0].starts_with("30p = Free Ticket for Kafra Storage:500p"), "{menus:?}");
+    assert_eq!(t.eval("return count_item(7059)"), "3");
+    assert_eq!(t.eval("return v.KF_PIT"), "10");
+    // too few points: nothing
+    t.number = 1;
+    t.talk("aldeba_in", 88, 161, &[3]);
+    assert_eq!(t.eval("return count_item(7060)"), "0");
+    // storage with no zeny: the ticket pays (Izlude: Save, Use Storage, ...)
+    t.talk("izlude", 124, 115, &[2]);
+    assert_eq!(t.eval("return count_item(7059)"), "2");
+    // a trip on a ticket: no zeny taken, no reserve earned
+    t.eval("give_item(7060, 1); player.zeny = 5000");
+    t.talk("prontera", 146, 89, &[3, 1]);
+    assert_eq!(t.eval("return player.map"), "izlude");
+    assert_eq!(t.eval("return player.zeny .. ' ' .. v.KF_PIT .. ' ' .. count_item(7060)"), "5000 10 0");
+    // a cart on a ticket, for a Merchant with Pushcart; the ticket kept if no cart is given
+    t.eval("job_change(5); give_skill(39, 5, 0); give_item(7061, 1)");
+    t.talk("izlude", 124, 115, &[4, 1]);
+    assert_eq!(t.eval("return player.zeny .. ' ' .. count_item(7061) .. ' ' .. check_option(8)"), "5000 0 1");
 }
 
 #[test]

@@ -18,6 +18,12 @@
 --     (817 asked for Novice job level 6);
 --   * no "Use Kafra Pass" entry: kRO removed the Kafra voucher menu on
 --     2003-05-20, and 817's was "Under development";
+--   * free tickets (ours, docs/DEVIATIONS.md "Content the client ships"): the
+--     client describes three, for storage, transport and a cart (7059-7061,
+--     names 817's), and no period script takes or gives them. A Kafra takes
+--     one in place of the fee (as rAthena's Kafras since 2006-10-11, tier
+--     later); a free trip earns no special reserve. They are had for
+--     special reserve at a second window of the head office (end of file);
 --   * "Cancel" and "Other Information Check" work (817 pointed them at
 --     missing labels); the location tip marks this town's Kafras;
 --   * the special reserve (Kafra points): a tenth of every teleport fare, as
@@ -34,6 +40,15 @@
 
 local STORAGE_FEE = 30 -- 817 kafra.txt, where mod0631 has no Kafra at that place
 local CART_FEE = 800 -- 817 kafra.txt and mod0631 (every Kafra that rents one)
+local STORAGE_TICKET, WARP_TICKET, CART_TICKET = 7059, 7060, 7061
+
+-- Pay a service with its free ticket if one is carried (ours, see above);
+-- returns true if a ticket was taken.
+local function ticket(id)
+  if count_item(id) < 1 then return false end
+  take_item(id, 1)
+  return true
+end
 
 local function bye(cut)
   cutin(cut, 255)
@@ -74,12 +89,12 @@ local function kafra(k)
         return bye(cut)
       end
       local fee = k.storage or STORAGE_FEE
-      if player.zeny < fee then
+      if count_item(STORAGE_TICKET) < 1 and player.zeny < fee then
         mes "[Kafra]"
         mes("Dear, you don't have enough money. The storage fee is " .. fee .. " Zeny.")
         return bye(cut)
       end
-      player.zeny = player.zeny - fee
+      if not ticket(STORAGE_TICKET) then player.zeny = player.zeny - fee end
       open_storage()
       return bye(cut)
 
@@ -93,13 +108,15 @@ local function kafra(k)
       local i = menu(list)
       local t = k.tele[i]
       if not t then return bye(cut) end
-      if player.zeny < t[2] then
+      if count_item(WARP_TICKET) < 1 and player.zeny < t[2] then
         mes "[Kafra]"
         mes "Dear, you don't have enough money. Please check again."
         return bye(cut)
       end
-      player.zeny = player.zeny - t[2]
-      v.KF_PIT = v.KF_PIT + t[2] // 10 -- mod0631's variable and rule
+      if not ticket(WARP_TICKET) then
+        player.zeny = player.zeny - t[2]
+        v.KF_PIT = v.KF_PIT + t[2] // 10 -- mod0631's variable and rule
+      end
       cutin(cut, 255)
       warp(t[3], t[4], t[5])
       return
@@ -115,7 +132,7 @@ local function kafra(k)
       mes("The cart fee is " .. CART_FEE .. " Zeny. Do you want to rent a cart?")
       next()
       if menu("Rent a Cart.", "Cancel.") ~= 1 then return bye(cut) end
-      if player.zeny < CART_FEE then
+      if count_item(CART_TICKET) < 1 and player.zeny < CART_FEE then
         mes "[Kafra]"
         mes("Dear, you don't have enough money. You need " .. CART_FEE .. " Zeny.")
         return bye(cut)
@@ -130,7 +147,7 @@ local function kafra(k)
         mes "I am sorry. You need the Pushcart skill to use a cart."
         return bye(cut)
       end
-      player.zeny = player.zeny - CART_FEE
+      if not ticket(CART_TICKET) then player.zeny = player.zeny - CART_FEE end
       mes "[Kafra]"
       mes "There you go."
       return bye(cut)
@@ -333,5 +350,58 @@ npc {
         return close()
       end
     end
+  end,
+}
+
+-- The second window (ours): the free tickets for special reserve. 817's counter
+-- above says "each window requires a different special reserve", and the client
+-- describes the three tickets (7059-7061) that nothing in a period script gives
+-- (docs/DEVIATIONS.md, "Content the client ships"). Its cell mirrors the
+-- counter's across the hall. Prices: the counter gives 1 to 1.8z of goods a
+-- point (100p = 7 Sweet Potatoes, 105z; 2800p = 100 Red Potions, 5000z), so a
+-- ticket costs its fee over 1.5, rounded: storage 30-80z, a cart 800z, a trip
+-- 600z to 2,100z (any trip, so priced near the middle).
+local TICKET_PRIZES = {
+  { 30, STORAGE_TICKET, "Free Ticket for Kafra Storage" },
+  { 500, CART_TICKET, "Free Ticket for the Cart Service" },
+  { 800, WARP_TICKET, "Free Ticket for Kafra Transportation" },
+}
+
+npc {
+  map = "aldeba_in", x = 88, y = 161, dir = 2, sprite = 114, name = "Kafra",
+  on_click = function()
+    mes "[Kafra]"
+    mes("Welcome, " .. player.name .. ".")
+    mes "This window exchanges special reserve for Kafra Service tickets."
+    mes "Each one pays for a service once, wherever a Kafra offers it."
+    next()
+    mes "[Kafra]"
+    mes("Your special reserve is ^FF0000" .. v.KF_PIT .. "^000000.")
+    mes "Which ticket would you like?"
+    next()
+    local list = {}
+    for i, t in ipairs(TICKET_PRIZES) do list[i] = t[1] .. "p = " .. t[3] end
+    list[#list + 1] = "Cancel"
+    local t = TICKET_PRIZES[menu(list)]
+    if not t then return close() end
+    mes "[Kafra]"
+    mes "How many would you like? (1 to 10)"
+    next()
+    local n = input_number()
+    if n < 1 or n > 10 then
+      mes "[Kafra]"
+      mes "Please come again~"
+      return close()
+    end
+    mes "[Kafra]"
+    if v.KF_PIT < t[1] * n then
+      mes "Dear~ I hope you will save more special reserve for next time~"
+    else
+      v.KF_PIT = v.KF_PIT - t[1] * n
+      give_item(t[2], n)
+      mes "Here you are, dear~"
+      mes "Please come again~~"
+    end
+    close()
   end,
 }

@@ -628,6 +628,19 @@ there is, marked as ours where it is ours, and listed here.
   again.
   Gravity's table is never in the repository: setup appends to the copy in
   your data.grf.
+* **Kafra free tickets** (`scripts/npc/kafra.lua`). The client describes
+  three tickets, "to use Kafra Storage for free at a time", "Kafra
+  transportation", "to rent a cart for free" (7059-7061), and no period
+  script takes or gives them; it names none of them (817's English names
+  are added as above). Ours: a Kafra takes one in place of the fee, and a
+  free trip earns no special reserve (rAthena's Kafras have done the same
+  since 2006-10-11, tier later); a second window in the Al De Baran head
+  office (`aldeba_in 88,161`, the counter's cell mirrored across the hall;
+  817's counter says "each window requires a different special reserve")
+  sells them for special reserve: 30p storage, 500p a cart, 800p a trip,
+  each about its fee at the counter's rate. Left out: the Kafra payroll
+  (7056, "Payment statement for the Kafra employees"), which only a quest
+  of the 2010s uses (rAthena's War of Emperium training missions).
 
 ## Engine behaviour relative to Athena 817
 

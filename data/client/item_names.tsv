@@ -5,7 +5,8 @@
 # have named them are not archived. An id the client already names is left
 # alone. Ours, not Gravity's: the names are iRO's as RODataZone listed them
 # (items/quests.js, Wayback 2004-05-02; research round 13, T5-001..008; its
-# item and monster tables of 2004-02 for the drops), the Pole Axe eAthena 0.5.2's.
+# item and monster tables of 2004-02 for the drops), the Pole Axe eAthena 0.5.2's,
+# the Kafra tickets eAthena 817's (db/item_db.txt, 2004-02-09).
 # Tier: `period` (docs/PROVENANCE.md). Spaces become `_` in the table.
 #
 # id	name	used by
@@ -48,3 +49,6 @@
 7068	Burnt Tree	Spore Hat's material (Skeleton General, Heater)
 7065	Sea-Otter Fur	Raccoon Hat's material (See Otter)
 7064	Wing of Dragonfly	Wonder Nutshell's material (Dragon Tail, Turtle Island)
+7059	Free Ticket for Kafra Storage	scripts/npc/kafra.lua (head office, second window)
+7060	Free Ticket for Kafra Transportation	scripts/npc/kafra.lua (head office, second window)
+7061	Free Ticket for the Cart Service	scripts/npc/kafra.lua (head office, second window)

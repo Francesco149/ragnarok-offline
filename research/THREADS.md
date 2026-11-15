@@ -1605,6 +1605,10 @@ script that gives them. Groups worth building, after research
   vending machine): read it for each before inventing one.
 * **Kafra things**: the payroll (7056) and the free tickets for storage,
   teleport and cart (7059-7061), with descriptions: a Kafra part-time job?
+  **Built 2026-11-15** (DEVIATIONS.md): Kafras take the tickets, a second
+  head-office window sells them for special reserve. Open: how kRO, jRO or
+  iRO handed them out in 2003-04 (an event, a quest, the head office?), and
+  whether the payroll had a use before the 2010s.
 * **Named, described, never given**: Mini Glasses, Army Cap, Eye of
   Dullahan, Critical Ring, Rogue's Treasure, Machoman's Glasses, Lord
   Kaho's Horn, Gladius [3], Invite/Admission for Duel, Coupon, Yarn,
