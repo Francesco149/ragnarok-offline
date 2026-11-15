@@ -77,6 +77,9 @@ local function run_script(s, script, left)
       elseif k == "bHit" then s.hit = s.hit + v
       elseif k == "bFlee" then s.flee = s.flee + v
       elseif k == "bFlee2" then s.flee2 = s.flee2 + v
+      -- 817 pc.c:1831: the widest splash worn, plus every bSplashAddRange (none in our items)
+      elseif k == "bSplashRange" then s.splash_range = math.max(s.splash_range, v)
+      elseif k == "bSplashAddRange" then s.splash_add = s.splash_add + v
       elseif k == "bCritical" then s.critical = s.critical + v
       elseif k == "bAtkEle" then if left then s.atk_ele_ = v else s.atk_ele = v end
       elseif k == "bDefEle" then s.def_ele = v
@@ -124,7 +127,7 @@ function rules.status(c)
     addeff = zeros(8), reseff = zeros(8),
     watk_ = 0, watk_2 = 0, atk_ele_ = 0, star_ = 0, overrefine_ = 0,
     wcards = {}, dcards = {}, card_skills = {},
-    weapontype1 = 0, weapontype2 = 0, shield = false, ammo = false,
+    weapontype1 = 0, weapontype2 = 0, shield = false, ammo = false, splash_range = 0, splash_add = 0,
     skills = {},
   }
   for k, v in pairs(c.skills or {}) do s.skills[tonumber(k)] = v end

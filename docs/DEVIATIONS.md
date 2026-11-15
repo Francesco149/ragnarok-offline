@@ -839,6 +839,15 @@ always fires.
   same RODataZone page says "a maximum of 10 items", and jAthena set 10 on
   2004-02-01 (//0764, research round 22). A full bag still lets its oldest
   item go, as both emulators do.
+* **The Baphomet Card splashes** (2026-11-15): a weapon blow that lands
+  also strikes every other enemy within a cell of the target, each with a
+  weapon attack of its own that may miss, as this client's item text says
+  ("Do splashed damages around 9 cells every time") and 817 and jAthena
+  //0797 (2004-02-13) build it (`bonus bSplashRange,1`; 817 `battle.c:3396`,
+  `skill.c:1563`). mod0631 gave the card only its HIT -10. The splash goes
+  out as skill damage of skill 0 at level -1, as 817 sends it; at level -1
+  this client shouts no skill name (`tools/import/athena_import.py`
+  `EXTRA_EQUIP`, `scripts/rules/battle.lua` `rules.weapon_attack`).
 * **EXP is shared by the monster's max HP, and the MVP EXP comes with
   the reward item** (2026-11-15): the share as jAthena //0764 of
   2004-02-01 has it ("monster EXP handled like the real server", the same

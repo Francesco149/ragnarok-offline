@@ -13359,7 +13359,7 @@ buy = 20
 weight = 10
 gender = 2
 loc = 2
-athena_equip = "bonus bHit,-10;"
+athena_equip = "bonus bHit,-10; bonus bSplashRange,1;"
 
 [[item]]
 id = 4148

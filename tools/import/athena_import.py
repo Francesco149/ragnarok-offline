@@ -417,7 +417,9 @@ CLIENT_IRO_JOBS = {
 
 # The Safety Ring's MDEF +3: 817's script (db/item_db.txt), the client's text and
 # RODataZone's iRO table all give it ("DEF + 5 , MDEF + 3"); mod0631 has DEF 5 and nothing else.
-EXTRA_EQUIP = {2615: "bonus bMdef,3;"}
+# The Baphomet Card's splash: the client's own text ("Do splashed damages around 9 cells every
+# time"), 817 and jAthena //0797 (2004-02-13) `bonus bSplashRange,1`; mod0631 has only the HIT -10.
+EXTRA_EQUIP = {2615: "bonus bMdef,3;", 4147: "bonus bHit,-10; bonus bSplashRange,1;"}
 
 
 def import_items():

@@ -928,6 +928,33 @@ fn exp_levels_up() {
     assert_eq!(t.g.store.chars[&t.cid].base_exp, before + 2);
 }
 
+/// The Baphomet Card splashes a weapon blow on the cells around the target
+/// (the client's text, 817's `bSplashRange`): the plant beside it is hit,
+/// the one two cells off is not.
+#[test]
+fn baphomet_card_splashes() {
+    let mut t = T::new();
+    t.lua("player.base_level = 99; player.dex = 99; give_item(1201, 1); give_item(4147, 1)");
+    let (card, knife) = (t.inv(4147), t.inv(1201));
+    let mut w = Writer::new(0x017c);
+    w.u16(card).u16(knife);
+    t.send(w);
+    let knife = t.inv(1201);
+    let mut w = Writer::new(0x00a9);
+    w.u16(knife).u16(0);
+    t.send(w);
+    assert_eq!(t.st("splash_range"), 1);
+    let (a, b, c) = (t.spawn(26, 25, 1080), t.spawn(27, 25, 1080), t.spawn(28, 25, 1080));
+    let full = t.mob_hp(c);
+    let mut w = Writer::new(0x0089);
+    w.u32(a).u8(7);
+    t.send(w);
+    t.run(3000);
+    assert!(t.mob_hp(a) < full, "the target");
+    assert!(t.mob_hp(b) < full, "the one beside it, by the splash");
+    assert_eq!(t.mob_hp(c), full, "two cells off");
+}
+
 /// Storm Gust freezes on its third hit and passes over the frozen (817,
 /// jAthena //0738): a frozen monster takes nothing from it.
 #[test]

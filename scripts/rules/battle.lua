@@ -1023,6 +1023,16 @@ function rules.weapon_attack(a)
     battle.after(200, function() _rt("clif_damage", s, t, am, dm, 0, 1, 0, 0) end)
   end
   local total = wd.damage + math.max(0, wd.damage2)
+  -- a splash (the Baphomet Card): a blow that lands strikes every other enemy within reach of
+  -- the target too, each with a weapon attack of its own that may miss (817 battle.c:3396,
+  -- skill.c:1563 skill_castend_damage_id case 0; not in mod0631). It goes first, as in 817
+  local reach = src.kind == "player" and (src.st.splash_range or 0) + (src.st.splash_add or 0) or 0
+  if reach > 0 and total > 0 then
+    for _, o in ipairs(skill_area(src, target.map, target.x, target.y, reach, BCT.ENEMY, true)) do
+      -- level -1 as 817 passes it: this client shouts no skill name for it (exe 0x50f6f2)
+      if o.id ~= target.id then skill_attack(BF.WEAPON, src.id, src.id, o.id, 0, 0, 0x0500, { lv = -1 }) end
+    end
+  end
   battle.damage(src.id, target.id, total)
   battle.reflect(src, target, total, wd.flag)
   if total > 0 then skill_additional_effect(src.id, target.id, 0, 0) end
