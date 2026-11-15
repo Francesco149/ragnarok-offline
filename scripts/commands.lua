@@ -57,11 +57,12 @@ command("warp", function(args)
   warp(a[1], tonumber(a[2]) or 0, tonumber(a[3]) or 0)
 end)
 
--- Town list as the era's @go (Athena atcommand.c, 2003).
+-- Town list as the era's @go (mod0631 atcommand.c:568; Payon is the old, smaller map
+-- this client has, where later lists' 162,233 lies outside it).
 local towns = {
   prontera = { "prontera", 156, 191 }, morocc = { "morocc", 156, 93 }, geffen = { "geffen", 119, 59 },
-  payon = { "payon", 162, 233 }, alberta = { "alberta", 192, 147 }, izlude = { "izlude", 128, 114 },
-  aldebaran = { "aldebaran", 140, 131 }, xmas = { "xmas", 147, 134 }, comodo = { "comodo", 188, 161 },
+  payon = { "payon", 89, 122 }, alberta = { "alberta", 192, 147 }, izlude = { "izlude", 128, 114 },
+  aldebaran = { "aldebaran", 140, 131 }, xmas = { "xmas", 147, 134 }, comodo = { "comodo", 209, 143 },
   yuno = { "yuno", 157, 51 },
 }
 command("go", function(args)
