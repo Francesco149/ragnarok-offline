@@ -549,6 +549,12 @@ function battle.calc_weapon_attack(src, target, skill_num, skill_lv, wflag, opt)
       atkmax_ = st.watk_
     end
     if sc(src, SC.WEAPONPERFECTION) then atkmax = st.watk end
+    if st.weapontype1 == 11 and dex > 100 then
+      -- above 100 DEX a bow's most rises with it too: "rnd( ATK * DEX / 100 ,( ATK +
+      -- AtkBonusCards )* DEX / 100 )" (RODataZone's iRO combat page, capture 2003-12-16).
+      -- Neither mod0631 nor 817 has it; here on the most after the size cut
+      atkmax = floor(atkmax * dex / 100)
+    end
   else
     -- battle.c:939 monsters: no size modifier
     damage2 = 0

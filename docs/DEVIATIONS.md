@@ -114,6 +114,9 @@ eAthena 817 (2004-02-19), bugs included. The translator is
   to 2800p) of 817's list. The two "Lottery Chance" entries are left out:
   817 names no prize. That the official counter gave these goods at these
   prices rests on 817 alone (THREADS.md #4).
+  A second window across the hall (ours) sells the Kafra free tickets the
+  client describes, which every Kafra takes in place of a fee (below,
+  "Content the client ships").
 * **Thief quest skills** (`scripts/npc/thief_skills.lua`). 817 had four
   separate NPCs in Morroc, of which only Stone Fling's ("Sono-san") loaded,
   and none for Sand Attack. mod0631 has one NPC for all four in the Thief
@@ -730,8 +733,10 @@ every emulator asks one; we keep one (text, as in THREADS.md R6).
   Here it is ATK x DEX / 100, as RODataZone's iRO combat page has it
   (capture 2003-12-16; 817 mends the line to the same while DEX is at most
   the ATK, `battle.c:2167`). A DEX 60 archer with a 50 ATK bow rolls from
-  30, not 50; with DEX 30, from 15, not 30. The page's better roll above
-  100 DEX is not built.
+  30, not 50; with DEX 30, from 15, not 30. Above 100 DEX (bonuses
+  included) the page's best roll rises too, to (ATK + cards) x DEX / 100,
+  which neither emulator has: built since 2026-11-15, on the most after
+  the size cut.
 * **Faith, Invulnerable Siegfried, Providence** added to the *attack* bonus
   against an element or race (`addele`, `addrace`) where a resistance was
   meant. Here they resist (`subele`, `subrace`).

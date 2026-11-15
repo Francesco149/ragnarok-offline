@@ -660,6 +660,33 @@ fn bows_and_arrows() {
     assert!(left < 20 && left >= 15, "{left} arrows left");
 }
 
+/// Above 100 DEX a bow's best roll rises with DEX (RODataZone's iRO combat
+/// page, 2003-12): a critical, which takes the most, takes ATK x DEX / 100.
+#[test]
+fn bow_roll_above_100_dex() {
+    let mut t = T::new();
+    t.lua("job_change(3); player.base_level = 99; player.str = 1; player.luk = 1; heal(9999, 9999)");
+    t.wear(1713); // Arbalest, ATK 90, +2 DEX
+    let mob = t.spawn(29, 25, 1002);
+    let me = t.me;
+    // the roll's part of a critical: its damage less the bow's base, DEX + (DEX/10)^2 + STR/5 + LUK/5
+    let roll = |t: &mut T| -> (i64, i64) {
+        let r = t.lua(&format!(
+            "local d = battle.calc_weapon_attack(battle.get({me}), battle.get({mob}), 0, 0, 0, {{ sure_crit = true }}) \
+             local st = battle.get({me}).st return d.damage .. ' ' .. st.dex .. ' ' .. st.str .. ' ' .. st.luk"
+        ));
+        let v: Vec<i64> = r.split_whitespace().map(|x| x.parse::<f64>().unwrap() as i64).collect();
+        let (d, x, s, l) = (v[0], v[1], v[2], v[3]);
+        (d - x - (x / 10) * (x / 10) - s / 5 - l / 5, x)
+    };
+    t.lua("player.dex = 98");
+    assert_eq!(roll(&mut t), (90, 100), "at 100 DEX the most is the ATK");
+    t.lua(&format!("player.dex = 99; skill_status_change_start({me}, SC.BLESSING, 10, 0); skill_status_change_start({me}, SC.CONCENTRATE, 10, 0)"));
+    let (r, x) = roll(&mut t);
+    assert!(x > 110, "DEX {x}");
+    assert_eq!(r, 90 * x / 100, "above 100 the most is ATK x DEX / 100 (DEX {x})");
+}
+
 /// Auto Counter (eAthena 817): a blow from the front is turned aside and
 /// answered with a critical; the status ends with it.
 #[test]
