@@ -1366,6 +1366,10 @@ script names. After its first fixes it still reports:
 * Scripts that warp with a variable for the map (`warp(MAP, ...)`) hide
   their rooms from the audit; write the map name out (the Priest test's
   demons showed as "out of sight" until 2026-11-13 for that reason).
+  **2026-11-15:** this is why it lists the castles' "Switch" levers in the
+  master rooms (16; `castle_lord.lua` warps with `map`) and the Hunter
+  test's switch and exit (`MAP`). `pvp_n_8-*` are 817's PvP rooms, behind
+  the `pvp` switch (off). None is a fault in the game.
 **Impact:** small; each is a place a player cannot stand or reach.
 **Look:** 817's and jAthena's warp files for the same cells; the `.gat`
 of each map in `data.grf.original` against the merged one.
