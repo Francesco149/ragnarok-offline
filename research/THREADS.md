@@ -770,7 +770,19 @@ Open, for the owner and for research:
   garrison attacks every held castle and goes for its Emperium; guardians
   (jAthena //1046's cells) fight them; defence adds HP (rAthena's numbers,
   later); a broken Emperium makes the castle ownerless again. Monsters
-  fighting monsters is ours (`world.rs` MobUnit::side). Open: euRO's other
+  fighting monsters is ours (`world.rs` MobUnit::side). **Played in the
+  client 2026-11-15 on `prtg_cas01`:** no attacker ever came. A castle's
+  sections are joined by portals and monsters do not take them; only 2% to
+  17% of each castle's walkable cells reach its Emperium on foot
+  (`prtg_cas01`: 514 of 9,672, its Emperium room alone), and the attackers
+  that start within 20 cells are moved away. Now (ours) the march counts each
+  same-map portal as a step to where it leads, and an attacker on a portal's
+  cells goes through. Played again: with all 58 sent at once (by hand) they
+  were at the Emperium in 15 s and broke it in 30; in a real siege they set
+  out over the first hour. Also seen: Garm's summoned Sasquatches were left by
+  the Emperium out of the siege (fixed: the siege takes every monster on the
+  map). Open: whether a held castle with guardians and defence can stand an
+  hour of its old garrison alone (balance for the owner). Open: euRO's other
   siege day (Malaysia had Wednesday and Saturday), and what defence gave in
   2004 (jAthena //1046's damage cut is marked "らしい?").
 * **Flags and faster recovery: built 2026-11-14.** 817's twenty flags on the

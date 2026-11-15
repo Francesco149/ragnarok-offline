@@ -935,10 +935,32 @@ impl Game {
         true
     }
 
+    /// The portals on `map` that lead elsewhere on the same map: (x0, y0, x1, y1) of
+    /// the touch area and the cell they lead to.
+    fn same_map_portals(&self, map: &str) -> Vec<(i32, i32, i32, i32, i32, i32)> {
+        let Some(mi) = self.world.maps.get(map) else { return vec![] };
+        mi.units
+            .iter()
+            .filter_map(|id| self.world.units.get(id))
+            .filter_map(|u| match &u.kind {
+                UnitKind::Npc(crate::world::NpcUnit { kind: crate::world::NpcKind::Warp { to }, touch: Some((xs, ys)), .. }) if to.0 == map => {
+                    let (x, y, xs, ys) = (u.x as i32, u.y as i32, *xs as i32, *ys as i32);
+                    Some((x - xs, y - ys, x + xs, y + ys, to.1 as i32, to.2 as i32))
+                }
+                _ => None,
+            })
+            .collect()
+    }
+
     /// Castle sieges (ours): every walkable cell's walking distance to (gx, gy), 8 ways.
+    /// A castle's sections are joined by portals, as a player goes from the gate to
+    /// the Emperium: a portal's cells are one step from where it leads. Without them
+    /// only 2% to 17% of a castle's cells reached its Emperium (seen in the client on
+    /// `prtg_cas01`, 2026-11-15: no attacker ever came).
     pub(crate) fn siege_field(&mut self, map: &str, gx: i32, gy: i32) {
         let Some(g) = self.grid(map) else { return };
         let (w, h) = (g.width as i32, g.height as i32);
+        let portals = self.same_map_portals(map);
         let mut d = vec![u16::MAX; (w * h) as usize];
         let mut q = std::collections::VecDeque::new();
         if gx >= 0 && gy >= 0 && gx < w && gy < h {
@@ -958,15 +980,34 @@ impl Game {
                     q.push_back((nx, ny));
                 }
             }
+            // the portals that lead here: each of their walkable cells, one step on
+            for &(x0, y0, x1, y1, _, _) in portals.iter().filter(|p| (p.4, p.5) == (x, y)) {
+                for py in y0.max(0)..=y1.min(h - 1) {
+                    for px in x0.max(0)..=x1.min(w - 1) {
+                        let i = (py * w + px) as usize;
+                        if d[i] == u16::MAX && g.walkable(px, py) {
+                            d[i] = here + 1;
+                            q.push_back((px, py));
+                        }
+                    }
+                }
+            }
         }
         self.siege_fields.insert(map.to_string(), std::sync::Arc::new(d));
     }
 
     /// Walk up to ten cells down the map's siege field (a path the server accepts).
+    /// On a portal's cells that lead on, go through it, as a player would.
     fn siege_step(&mut self, id: u32, map: &str, x: i32, y: i32) {
         let (Some(f), Some(g)) = (self.siege_fields.get(map).cloned(), self.grid(map)) else { return };
         let w = g.width as i32;
         let at = |x: i32, y: i32| f.get((y * w + x) as usize).copied().unwrap_or(u16::MAX);
+        let portals = self.same_map_portals(map);
+        let portal_at = |x: i32, y: i32| portals.iter().find(|p| x >= p.0 && x <= p.2 && y >= p.1 && y <= p.3).copied();
+        if let Some((.., tx, ty)) = portal_at(x, y).filter(|p| at(p.4, p.5) < at(x, y)) {
+            self.mob_teleport(id, tx as u16, ty as u16);
+            return;
+        }
         let (mut cx, mut cy) = (x, y);
         for _ in 0..10 {
             let here = at(cx, cy);
@@ -981,6 +1022,9 @@ impl Game {
             match next {
                 Some((nx, ny)) if at(nx, ny) < here => (cx, cy) = (nx, ny),
                 _ => break,
+            }
+            if portal_at(cx, cy).is_some() {
+                break; // the portal takes it next time
             }
         }
         if (cx, cy) != (x, y) {

@@ -407,6 +407,10 @@ fn counter_siege() {
     let slave = t.eval(&format!("return _rt('mob_spawn', 'aldeg_cas01', 101, 100, 1243, {garm})"));
     assert_ne!(slave, "nil");
 
+    // the castle's halves joined only by portals, as on the real maps: a wall across
+    // row 100; the Emperium (216,24) lies south of it, the portal 206,188 leads to 216,50
+    t.eval("for x = 0, 299 do _rt('set_cell', 'aldeg_cas01', x, 100, false) end");
+
     // the siege: a defended Emperium (68,430 + 1,000), the garrison as attackers
     t.eval("castle_siege_start(castle_now() + 7200)");
     t.ticks(3);
@@ -435,7 +439,7 @@ fn counter_siege() {
     let gx = t.eval(&format!("local u = battle.get({g}) return u.x .. ',' .. u.y"));
     let (gx, gy) = gx.split_once(',').map(|(a, b)| (a.parse::<u16>().unwrap(), b.parse::<u16>().unwrap())).unwrap();
     let r2 = raydric(&mut t, gx + 1, gy);
-    // one far off, setting out now, walks toward the Emperium
+    // one far off, setting out now, walks toward the Emperium, through the portal
     let r3 = raydric(&mut t, 216, 120);
     t.eval(&format!("mob_march({r3}, 0)"));
     // a slave summoned by an attacker attacks too
