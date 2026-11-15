@@ -768,7 +768,7 @@ Open, for the owner and for research:
 * **Losing a castle: built the same day** (the owner agreed to a
   counter-siege). On Sunday 18:00-20:00 (euRO's WoE hour) the castle's old
   garrison attacks every held castle and goes for its Emperium; guardians
-  (jAthena //1046's cells) fight them; defence adds HP (rAthena's numbers,
+  (jAthena //1046's cells) fight them; defence adds HP (eAthena's of 2004-06,
   later); a broken Emperium makes the castle ownerless again. Monsters
   fighting monsters is ours (`world.rs` MobUnit::side). **Played in the
   client 2026-11-15 on `prtg_cas01`:** no attacker ever came. A castle's
@@ -794,8 +794,10 @@ Open, for the owner and for research:
   they answer a click on their foot, low on the screen, not on the cloth.
   The master recovers twice as fast
   in the castle: the iRO page gives no number, twice is rAthena's (Valaris,
-  eAthena; already in rAthena's first commit, 706e785 of 2004-11-04, the
-  import of eAthena's tree: earlier than that is not dated). Open: whether the period's flags
+  eAthena; eAthena's own changelog, carried in rAthena's first commit
+  706e785, dates it 2004-06-05, and the same day "Guardians and emp will now
+  get +2000 hp for every defense investment": round 21, T9-249; the Emperium's
+  defence is +2000 a level since). Open: whether the period's flags
   stood in the towns too (0.5.2, 2004-05, puts them there with kRO's castle
   names, Kriemhild and the rest, which this client's `mapnametable` lacks:
   it has only "Valkyrie Realm Guild" and the like), and how much faster the
@@ -1542,6 +1544,10 @@ Knight's HP changed), once in a full workspace run of 2026-11-14 after a
 data-only change (job masks, a drop); alone it passed 46 times in a row.
 Suspect for both: something in the full parallel run (a spawned monster
 off its cell, so the blow comes from behind and lands as a critical).
+**2026-11-15:** the battle tests looped 25 times in the workbench (alone,
+while a build ran beside them): no failure of either. The loop did catch a
+new flaky test (`thief_skills`, Poison React's miss, fixed). Still to try:
+loop the whole workspace run.
 
 ### 31. Items the client knows that nothing gives (cut content leads)
 `research/unobtainable_items.py` (2026-11-14) lists 107 items with a
