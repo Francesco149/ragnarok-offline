@@ -1806,8 +1806,12 @@ element) agrees with ours on 234 of 241 matched (`research/
 ragmemo_elements.py`). The seven are #33's kind: Martin Earth 1 (ours 2),
 Pirate Skeleton Undead 2 (ours 1), Thief Bug Shadow 1 Insect (ours
 Neutral 3 Formless), and levels for Golden Thief Bug, Anolian, Geographer
-and Side Winder. Mod0631 and 817 agree with each other on all seven:
-kept.
+and Side Winder. Mod0631 and 817 agree with each other on all seven.
+RODataZone's iRO table (2004-02) sides with ours on six (Martin Earth 2,
+Pirate Skeleton Undead 1, the four levels): kept. On the Thief Bug it
+sides with Ragu Memo, "Insect ... Dark1", so **the Thief Bug is Insect,
+Dark 1 now** (importer; rAthena, later, has Insect, Neutral 3: the race
+was athena's slip, and the element may have changed after 2004).
 **Look:** RODataZone's monster pages per dungeon (rates?), GameFAQs monster
 guides of early 2004, Ragu Memo's monster pages (jRO).
 

@@ -563,6 +563,11 @@ def import_mobs():
         (1011, 1002): 150,   # Iron Ore, Chonchon: 1/66, as 817 (mod0631 250)
         (1044, 720): 10,     # Aquamarine, Obeaune: 1/900, as 817 (mod0631 5)
     }
+    # The Thief Bug (Larva, 1051): Insect, Dark 1 in Ragu Memo's jRO element table of 2003-12-13
+    # (at_monster.html) and in RODataZone's iRO monster table of 2004-02; every athena of the
+    # period has Formless, Neutral 3 (race 0, element 60). rAthena's pre-renewal table (later)
+    # has Insect, Neutral 3. The two period tables are taken (research/ragmemo_elements.py).
+    rows[1051][0][22], rows[1051][0][23] = "4", "27"
     ragmemo = {}
     for (mid, item), rate in page_rates.items():
         c = rows[mid][0]
