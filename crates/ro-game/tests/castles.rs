@@ -184,7 +184,13 @@ fn setup(tag: &str) -> T {
     // the castles' scripts ran before their maps existed: run their OnInit again
     g.reload_scripts().expect("reload");
     g.notices.clear();
-    T { g, cap, me }
+    let mut t = T { g, cap, me };
+    // the castles read the wall clock, which may fall in Sunday's siege: pin it to a Wednesday
+    // noon and end the siege the real one started
+    t.eval("castle_now = function() return os.time{year=2026, month=11, day=11, hour=12} end");
+    t.eval("castle_siege_end(); g.siege_done = 0");
+    t.cap.take(3);
+    t
 }
 
 const EMP: &str = "Agit_aldeg_cas01::OnAgitBreak";
