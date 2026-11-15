@@ -988,22 +988,38 @@ fn thief_skills() {
     assert!(t.sc(7), "a plain blow does not set it off");
     assert_eq!(t.mob_hp(m), Some(hp));
     // a poisonous blow that misses does not ("hit by a Poisonous attack";
-    // found in the client 2026-11-15, where a Poison Spore's miss set it off)
+    // found in the client 2026-11-15, where a Poison Spore's miss set it off).
+    // At AGI 255 the Pupa still hits one blow in twenty: cast again after one.
     let agi = t.lua("return player.agi");
     t.lua("player.agi = 255");
+    let poison = format!("skill_attack(BF.WEAPON, {m}, {m}, {me}, SK.TF_POISON, 1, 0)");
     let mut missed = 0;
-    for _ in 0..40 {
-        let before = t.lua("return player.hp");
-        t.lua(&format!("skill_attack(BF.WEAPON, {m}, {m}, {me}, SK.TF_POISON, 1, 0)"));
-        if t.lua("return player.hp") != before {
+    for _ in 0..5 {
+        if !t.sc(7) {
+            t.lua("heal(0, 9999)");
+            t.cast("AS_POISONREACT", me);
+            t.run(500);
+            assert!(t.sc(7), "up again");
+        }
+        let (before, mhp) = (t.lua("return player.hp"), t.mob_hp(m));
+        t.lua(&poison);
+        if t.lua("return player.hp") == before {
+            missed += 1;
+            assert!(t.sc(7), "a miss does not set it off");
+            assert_eq!(t.mob_hp(m), mhp, "nor is it answered");
             break;
         }
-        missed += 1;
-        assert!(t.sc(7), "a miss does not set it off");
-        assert_eq!(t.mob_hp(m), Some(hp), "nor is it answered");
     }
-    assert!(missed > 0, "some blows missed");
+    assert!(missed > 0, "a blow missed");
+    // a poisonous blow that lands does, once (the Pupa may still miss now and then)
     t.lua(&format!("player.agi = {agi}"));
+    let hp = t.mob_hp(m).unwrap();
+    for _ in 0..40 {
+        if !t.sc(7) {
+            break;
+        }
+        t.lua(&poison);
+    }
     assert!(!t.sc(7), "a poisonous one does, once");
     assert!(t.mob_hp(m).is_none_or(|h| h < hp), "and is answered");
     t.kill(m);
