@@ -1776,7 +1776,13 @@ What it settled:
   Crown at 1/50 (mod0631: Crown as an MVP prize); Doppelganger's swords
   and helms are at 817's rates (Sharp Headgear 1/28, mod0631 70); the
   Fortune Sword from Phreeoni is 1/20 (mod0631 2). So mod0631's rows for
-  these are an older set. Their whole drop and MVP rows are 817's now, and
+  these are an older set. RODataZone's iRO monster table (2004-02) names
+  817's items for all seven bosses too (Osiris: "Assassin Dagger, Jamadhar
+  (1), Crown, Sphinx Hat ..."; Doppelganger: "Zweihander, Broadsword (2),
+  Lance, Spiky Band, Full Plate (1) ..."), so jRO in December and iRO in
+  February had the same rows. (Its MVP prizes differ a little from 817's:
+  Osiris's Old Blue Box, Doppelganger's Cursed Ruby.) Their whole drop and
+  MVP rows are 817's now, and
   the page's figure where it differs from 817 too: Baphomet's Clip 1/16,
   the Orc Hero's Orcish Sword 1/10 (mod0631 100, 817 10), Moonlight
   Flower's Kodachi 1/15. The Emperium leaves Osiris's and Moonlight

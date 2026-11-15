@@ -540,8 +540,9 @@ def import_mobs():
     # Ragu Memo's item pages (jRO, captures of 2003-12; research/ragmemo_drops.py, THREADS.md
     # #32, round 24) agree with mod0631 on almost every drop. But on eight monsters they side with
     # 817's whole row, item after item, where mod0631 has another set (Osiris's Assassin Dagger,
-    # Jamadhar and Sphinx Hat; Doppelganger's five swords and helms at 817's rates...). Those
-    # take 817's drops and MVP prizes. Then single rates where the page differs from what we
+    # Jamadhar and Sphinx Hat; Doppelganger's five swords and helms at 817's rates...), and
+    # RODataZone's iRO monster table of 2004-02 names 817's items for the seven bosses too
+    # (data:refs/web/rodatazone-2004/*_monsters_monsters.js). Those take 817's drops and MVP prizes. Then single rates where the page differs from what we
     # hold: 817's hole slots, slots where 817 and the page agree against mod0631, and three of
     # the eight where the page also differs from 817.
     swapped = (1038, 1039, 1046, 1087, 1150, 1159, 1249, 1272)
