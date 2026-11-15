@@ -1726,6 +1726,22 @@ not know them?
 **Look:** RODataZone's monster pages per dungeon (rates?), GameFAQs monster
 guides of early 2004, Ragu Memo's monster pages (jRO).
 
+### 33. Monster numbers against RODataZone's iRO table
+`research/rdz_mob_numbers.py` (2026-11-15) sets the HP and EXP of
+RODataZone's monster table (iRO, capture 2004-02-11) beside ours (mod0631,
+with 817 the same on each): 191 of the 197 names it matches agree, Poring
+2/1 EXP included. Six differ, iRO against both emulators: Andre HP 588
+(ours 688), Bathory job EXP 1304 (1034: a transposition on one side),
+Mummy EXP 789/493 (488/314), Owl Duke HP 37805 (26623), Sandman EXP 786/479
+(810/492), Sea Otter HP 14199 (9999, which looks like a placeholder). Kept
+as the emulators have them. 59 names are spelt otherwise and not matched.
+Also seen while reading 817's `mob_damage` (`map/mob.c:1856`): it tries
+the MVP reward slots in random order (`i = rand() % 3`), mod0631 in order;
+ours keeps mod0631's. (The EXP share and the MVP EXP of the same function
+were taken from jAthena //0764 and 817 on 2026-11-15, DEVIATIONS.md.)
+**Look:** an iRO or euRO monster guide of early 2004 for the six; match the
+59 names by id (RODataZone's names against the 0.5.2 English names).
+
 ## Resolved
 
 ### R1. Basic Skill levels

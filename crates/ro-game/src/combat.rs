@@ -343,8 +343,13 @@ impl Game {
             let killer = m.damage_log.keys().copied().find(|p| self.world.units.contains_key(p)).unwrap_or(0);
             self.queue_event(&ev, killer);
         }
-        // EXP (mob.c:1604): each attacker on the map gets its share of the
-        // damage, +10% of the total per attacker beyond the first, at most double
+        // EXP, as jAthena //0764 (2004-02-01, "like the real server") and 817
+        // (`map/mob.c:1730`) share it: each attacker on the map gets the part of the
+        // monster's max HP he took off, +10% per attacker beyond the first, at most
+        // double, and 1 EXP at least. mod0631 (`mob.c:1631`) shared the damage the
+        // players had dealt, so a kill alone gave the whole EXP however much of the
+        // monster something else had taken off. The damage log keeps no overkill
+        // (`damage_mob`), but a monster that healed can give more than its EXP.
         let here: Vec<(u32, u32)> = m
             .damage_log
             .iter()
@@ -352,16 +357,13 @@ impl Game {
             .map(|(p, d)| (*p, *d))
             .collect();
         let count = m.damage_log.keys().filter(|p| self.world.units.contains_key(p)).count() as u64;
-        let sum: u64 = match here.iter().map(|(_, d)| *d as u64).sum() {
-            0 => mdb.hp.max(1) as u64,
-            s => s,
-        };
+        let max_hp = m.max_hp.max(1) as u64;
         // mob.c:2323: every monster is worth 1 EXP at least; the rate comes before the share
         let base_all = (mdb.base_exp as u64 * self.cfg.base_exp_rate as u64 / 100).max(1);
         let job_all = (mdb.job_exp as u64 * self.cfg.job_exp_rate as u64 / 100).max(1);
         for &(pid, dmg) in &here {
-            let per = (dmg as u64 * 256 * (9 + count) / 10 / sum).clamp(1, 512);
-            self.gain_exp(pid, base_all * per / 256, job_all * per / 256);
+            let per = (dmg as u64 * 256 * (9 + count.min(6)) / 10 / max_hp).clamp(1, 512);
+            self.gain_exp(pid, (base_all * per / 256).max(1), (job_all * per / 256).max(1));
         }
         // drops (Athena: rate/10000, scaled by drop_rate)
         let drop_at = |g: &Game| {
@@ -387,11 +389,19 @@ impl Game {
             let (x, y) = drop_at(self);
             self.drop_floor_item(&u.map, x, y, it.clone(), true);
         }
-        // MVP (mob.c:1703): the biggest damage dealer gets one reward item, or the MVP EXP
+        // MVP (817 `mob.c:1849`, jAthena //0764): the biggest damage dealer still
+        // standing gets the MVP EXP, +10% per attacker beyond the first, and one
+        // reward item if one rolls. mod0631 (`mob.c:1703`) gave the EXP only when
+        // no item came.
         if mdb.mvp_exp > 0 {
-            if let Some(&(mvp, _)) = here.iter().max_by_key(|(_, d)| *d) {
+            let standing = |g: &Game, p: u32| g.char_of_unit(p).is_some_and(|c| c.hp > 0);
+            if let Some(&(mvp, _)) = here.iter().filter(|(p, _)| standing(self, *p)).max_by_key(|(_, d)| *d) {
                 self.area_send(mvp, packets::mvp_effect(mvp), true);
-                let mut got = false;
+                let mexp = mdb.mvp_exp as u64 * (9 + count) / 10;
+                if let Some(sid) = self.sid_of(mvp) {
+                    self.send(sid, packets::mvp_exp(mexp.min(u32::MAX as u64) as u32));
+                }
+                self.gain_exp(mvp, mexp * self.cfg.base_exp_rate as u64 / 100, 0);
                 for d in &mdb.mvp_drops {
                     if d.item == 0 || d.rate < rand::random::<u32>() % 10000 || self.db.item(d.item).is_none() {
                         continue;
@@ -405,14 +415,7 @@ impl Game {
                             self.drop_floor_item(&map, x, y, InvItem::new(d.item, 1), true);
                         }
                     }
-                    got = true;
                     break;
-                }
-                if !got {
-                    if let Some(sid) = self.sid_of(mvp) {
-                        self.send(sid, packets::mvp_exp(mdb.mvp_exp));
-                    }
-                    self.gain_exp(mvp, mdb.mvp_exp as u64 * self.cfg.base_exp_rate as u64 / 100, 0);
                 }
             }
         }

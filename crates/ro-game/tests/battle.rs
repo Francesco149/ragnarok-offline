@@ -928,6 +928,38 @@ fn exp_levels_up() {
     assert_eq!(t.g.store.chars[&t.cid].base_exp, before + 2);
 }
 
+/// EXP is shared by the part of the monster's max HP each player took off
+/// (jAthena //0764 of 2004-02-01, 817), not by the damage the players dealt
+/// (mod0631): a kill after something else did most of the work gives little.
+/// The MVP EXP comes with the reward item, not instead of it.
+#[test]
+fn exp_share_by_max_hp() {
+    let mut t = T::new();
+    t.lua("job_change(1); player.base_level = 90; player.base_exp = 0; player.job_level = 40; player.job_exp = 0");
+    t.send(Writer::new(0x007d));
+    let me = t.me;
+    let exp = |t: &T| (t.g.store.chars[&t.cid].base_exp, t.g.store.chars[&t.cid].job_exp);
+    // a Wolf (405 HP, 45/32 EXP) alone: all of it
+    let wolf = t.spawn(26, 25, 1013);
+    t.lua(&format!("_rt('bl_damage', {me}, {wolf}, 9999)"));
+    assert_eq!(exp(&t), (45, 32));
+    // half of it taken off by something else: 200/405 of the EXP
+    let wolf = t.spawn(26, 25, 1013);
+    t.lua(&format!("_rt('bl_damage', 0, {wolf}, 205); _rt('bl_damage', {me}, {wolf}, 9999)"));
+    assert_eq!(exp(&t), (45 + 45 * (200 * 256 / 405) / 256, 32 + 32 * (200 * 256 / 405) / 256));
+    // the last point only: 1 EXP each, not nothing
+    let wolf = t.spawn(26, 25, 1013);
+    t.lua(&format!("_rt('bl_damage', 0, {wolf}, 404); _rt('bl_damage', {me}, {wolf}, 9999)"));
+    assert_eq!(exp(&t), (45 + 22 + 1, 32 + 15 + 1));
+    // Eddga alone: its EXP and the MVP EXP (6179), whatever item it gives
+    let (b0, j0) = exp(&t);
+    t.packets(0x010b);
+    let eddga = t.spawn(26, 25, 1115);
+    t.lua(&format!("_rt('bl_damage', {me}, {eddga}, 999999)"));
+    assert_eq!(exp(&t), (b0 + 25025 + 6179, j0 + 12870));
+    assert_eq!(t.packets(0x010b).len(), 1, "the MVP EXP shown");
+}
+
 impl T {
     /// Is this status change on the unit (monster or player)?
     fn has_sc(&mut self, id: u32, sc: &str) -> bool {
