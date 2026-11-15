@@ -718,6 +718,13 @@ Sets: `skill_castend_*` for those skills.
   14199), RODataZone's against both emulators' (688; 1034; 488/314; 26623;
   810/492; 9999), and Fur Seal (HP 12942, ours 9114) and Piere (732, ours
   733): another iRO or euRO table of 2003-04 for these eight.
+* **jAthena's "real server" changes (thread 34, new 2026-11-15).** For
+  each point of thread 34 not built, a period player source (iRO, euRO,
+  kRO, jRO, 2003-12 to 2004-05) saying what the official server did:
+  MVP slave summons (how many, how often, a cast bar?), Bowling Bash's
+  cast time, Lex Divina on the silenced, stacked traps, Auto Counter's
+  critical, Sanctuary's push, Hammer Fall's reach. Also the kRO patch
+  notice jAthena //0785 (2004-02-08) took them from: its date and text.
 * **Storm Gust's freeze length (thread 21, new 2026-11-15).** jAthena
   //0730 (2004-01-21) says 10 s at every level on the real server; 817 and
   the game give 10 to 19 s by level, less MDEF. Wanted: a player's

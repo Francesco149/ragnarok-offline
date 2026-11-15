@@ -1752,6 +1752,49 @@ ours keeps mod0631's. (The EXP share and the MVP EXP of the same function
 were taken from jAthena //0764 and 817 on 2026-11-15, DEVIATIONS.md.)
 **Look:** an iRO or euRO monster guide of early 2004 for the eight.
 
+### 34. jAthena's "real server" commits of 2004-01 to 2004-03
+jAthena's commit messages of the period often say a change matches "the
+real server" (本鯖). A sweep on 2026-11-15 (`git log --since=2003-12-01
+--until=2004-03-31`, 202 commits) set each such commit against mod0631,
+817 and ours. Built that day: the EXP share and MVP EXP (//0764, //0814),
+Storm Gust sparing the frozen (//0738), the Baphomet Card's splash
+(//0797; the client's text), the Deleters' skills and Dracula's Familiars
+(//0743), Comodo's cart (a slip of ours). The rest, from a read-only
+agent's pass (re-read each diff before building):
+* **Summons, //0743 (2004-01-26) and 817:** slave summons cast in 3 s,
+  10 s apart, only once every slave is gone (`slavele 0`; ours mod0631's
+  instant, an hour apart, up to 2); second summon rows for Osiris,
+  Mistress, Drake, Eddga; Turtle General and Archangeling summon in steps;
+  Gajomart, Lava Golem, Dracula and Lord of Death summon slaves (196), not
+  free monsters (209); Ghostring calls Giant Whispers. Changes every MVP
+  fight: weigh against Eddga as played (THREADS #23).
+* **Bowling Bash and Brandish Spear 0.7 s cast, no delay; Lex Divina lifts
+  a silence; Skid Trap slides level+5** (//0785, 2004-02-08, "from kRO's
+  patch notice", 817 the same): the skill balance patch of #22. Kept with
+  mod0631's values, as #22 keeps Skid Trap. The same commit replaced the
+  map-change "ghost" with 5 s of invincibility that walking ends (817 too).
+* **Boss by mode 0x20 alone** (//0815, 817): ours lets Turn Undead kill
+  outright, and Steal take from, the monsters with boss mode and no MVP EXP
+  (Zombie Dragon, Dark Illusion...), as mod0631 does. //0815's reason is an
+  event monster with MVP EXP that could be poisoned, not these.
+* **Ground skills may not be stacked** on the same cell (traps, Safety Wall,
+  Fire Pillar) or within a cell (Pneuma, Warp Portal), //0797 and 817; ours
+  and mod0631 check nothing.
+* **Auto Counter** (//0751, //0814, 817): a counter crits at twice the
+  rate with HIT +20 (817's default type 1), the holder cannot walk or
+  attack; ours is a sure critical and leaves the holder free.
+* **Sanctuary pushes 2 cells** "tested on kRO's A server" (//0868,
+  2004-03-06); ours 3 with mod0631 and 817. **Hammer Fall reaches 4,
+  Resurrection is Holy** (//0880, which says Hammer Fall's real reach is
+  unknown); ours 5 and Neutral with both emulators.
+* **Kafra storage and cart fees at jRO's prices** (//0732, 2004-01-22):
+  Geffen field 130, Mjolnir 100, Comodo cart 1000...; ours mod0631's.
+  jRO's, not iRO's: kept.
+* **Armour refines 0.7 DEF a level per piece** (//0676, //0741); ours 2/3
+  of the sum (DEVIATIONS.md, RODataZone).
+**Look:** the kRO patch notice //0785 cites (2004-01/02), and when euRO
+took it; period accounts of MVP summons.
+
 ## Resolved
 
 ### R1. Basic Skill levels
