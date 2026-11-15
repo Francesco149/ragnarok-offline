@@ -1802,7 +1802,7 @@ What it settled:
   wrong as easily as an emulator. One source against two stays as it is;
   the 44 are one against one, kept with mod0631 for now.
 Also from the same site: `at_monster.html` (2003-12-13, monsters by
-element) agrees with ours on 234 of 241 matched (`research/
+element) agrees with ours on 247 of 254 matched names (`research/
 ragmemo_elements.py`). The seven are #33's kind: Martin Earth 1 (ours 2),
 Pirate Skeleton Undead 2 (ours 1), Thief Bug Shadow 1 Insect (ours
 Neutral 3 Formless), and levels for Golden Thief Bug, Anolian, Geographer
