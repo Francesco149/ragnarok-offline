@@ -1829,6 +1829,28 @@ fn boss_teleports_when_attacked_from_out_of_reach() {
     }
 }
 
+/// The same rule when the way is shut by Ice Wall rather than the map: a boss walled into a
+/// 3x3 box and shot from outside it teleports, as Eddga did in the client (2026-11-15).
+#[test]
+fn boss_in_an_ice_wall_box_teleports() {
+    let mut t = T::new();
+    let me = t.me;
+    t.lua("job_change(9); player.base_level = 99; player.int = 99; player.dex = 99");
+    t.learn("WZ_ICEWALL", 10);
+    // a wall 2 cells off on each side, cast from 6 cells off: the line runs across the caster's
+    for (dx, dy) in [(-1i32, 0i32), (1, 0), (0, 1), (0, -1)] {
+        t.lua(&format!("heal(9999, 9999); warp('testmap', {}, {})", 25 + 6 * dx, 25 + 6 * dy));
+        t.skill_pos(87, 10, (25 + 2 * dx) as u16, (25 + 2 * dy) as u16);
+        t.run(1500);
+    }
+    let walls = t.lua("return #icewall_targets(player.map, 22, 22, 28, 28)");
+    assert_eq!(walls.trim(), "16", "a closed box");
+    t.lua("warp('testmap', 18, 25)");
+    let m = t.spawn(25, 25, 1038);
+    t.lua(&format!("skill_attack(BF.MAGIC, {me}, {me}, {m}, SK.MG_FIREBOLT, 1, 0)"));
+    assert_ne!(t.pos(m), (25, 25), "Osiris teleports out of the box");
+}
+
 /// A monster's element change takes the element its row means: mod0631's skill_db makes 168 Ghost
 /// and 169 Shadow (its names say the opposite), and it routes them as support skills only since
 /// jAthena //0850; before that they did nothing.

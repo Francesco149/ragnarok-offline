@@ -1112,7 +1112,14 @@ for them are the reverse of their names. Still open:
   (rAthena's "rudeattacked"). Open: whether "beyond their attacking range"
   meant only that (a hunter could then shoot a boss that can walk up to
   him), and what chance the four skills had. A period account of a boss
-  teleporting away from an archer would settle the first.
+  teleporting away from an archer would settle the first. **Seen in the
+  client (2026-11-15):** Eddga walled into a 3x3 box of Ice Walls on
+  `prt_fild08` and hit by a Fire Bolt from 7 cells: the hit (0x01de), then
+  its Teleport (0x011a skill 26: the client draws the ring on it) and its
+  vanishing (0x0080 type 3), before the bolts had finished falling; test
+  `boss_in_an_ice_wall_box_teleports`. Ours goes at once, inside the hit;
+  rAthena's AI reaches it at its next think (100 ms on): not to be told
+  apart on screen.
 * **47 rows are guesses** (the commonest row of that skill on other
   monsters, as no table has the pair: tables after 2004 were reworked).
   The Status Recovery rows target "friend", which this AI skips, as
