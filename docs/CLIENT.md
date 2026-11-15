@@ -136,3 +136,39 @@ where a float or double square root or the product's rounding change the
 result (`tests/client_paths.rs`). The server walks on these times: a unit
 enters the next cell at the first ms past the midpoint of two cells' times,
 as the client draws it.
+
+## The attack motion
+
+Read from the exe on 2026-11-15 (handler of 0x008a `0x5198a0`, the
+attacker's message 0xb `0x4fad10`, the actor's message switch `0x4f3f70`).
+
+* **0x008a** fills {damage, damage2, kind, target, tick, div, src delay,
+  dst delay} and sends it to the attacker as message 0xb. A src delay of 0
+  becomes 1440; so does a dst delay of 0, unless a check on the kind byte
+  (`0x5a5ea0`) passes. A damage of -30000 drops the packet.
+* **The hits.** `div` counts only for the kinds 8 and 9 (multi-hit), kept
+  to 1..36; the damage is divided by it and each hit is queued on the
+  target as message 0x1b, each `[0x6076bc]` = 200 ms after the last
+  (100 ms when there is a damage2, the left hand, which is queued after
+  them).
+* **The swing's speed** (vtable `+0x8c` = `0x4face0`):
+  `min(src delay, 432) / 432` times the action's own frame delay from the
+  `.act` (`0x4ef4c0`; a delay of 0 or less counts as 1), 24 ms a unit. A
+  src delay above 432 never slows the swing: it plays at the sprite's own
+  speed and the actor stands until the next 0x008a.
+* **When the number shows**: the hit is queued for `now + round(hit frame
+  × frame delay × 24 ms)`, the hit frame being the action's frame with
+  the `atk` event, or the last frame but one (`0x4f2180`). Some monsters
+  add a flight time: Archer Skeleton (1016) and job 1420 192 ms, Archer
+  Guardian 912 ms, Knight and Soldier Guardians 408 ms.
+* **The flinch** of the target runs at `dst delay / 288` (`[0x5e4a3c]`).
+* **Deaths wait for the hits.** A monster told it died (0x0080 type 1,
+  message 0x1c, `0x4f4e58`) while hits are still queued on it (`+0x20c`)
+  only sets a flag (`+0x210`) and falls after the last one. A player falls
+  at once.
+
+So the server can apply damage when the blow is dealt, as mod0631 does
+(`battle_weapon_attack` → `battle_damage`, no delay), and send the death
+right after: the client holds the fall until the number has shown.
+mod0631 does not stop the attacker walking after a blow (no
+`canmove_tick` in `pc_attack_timer`), nor does this server.

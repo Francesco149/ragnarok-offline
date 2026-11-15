@@ -27,9 +27,12 @@ Ordered by "confirmable first". Each item says where the truth would come from.
   every step's time, the first one from the sub-cell included, and the
   hurried walk for a move that arrives too late (docs/CLIENT.md; the
   times checked under an emulator). The server crosses cells when the
-  client draws it doing so. Open: the attack motion's timing, and
-  whether the client re-times a walk when the unit's speed changes
-  mid-walk (0x00b0 SPEED; the server assumes it does not).
+  client draws it doing so. The attack motion is read too (2026-11-15,
+  docs/CLIENT.md): the swing's speed, when the number shows, and a
+  monster's death held until its queued hits have shown, so the server's
+  immediate damage (mod0631's) draws right. Open: whether the client
+  re-times a walk when the unit's speed changes mid-walk (0x00b0 SPEED;
+  the server assumes it does not).
 - Read against our data on 2026-11-14: `itemslotcounttable` (two weapons take
   the client's slot count), `idnum2itemdesctable` and `itemparamtable` (with
   RODataZone's iRO tables of 2004-02: 49 weights and attacks taken,
