@@ -67,7 +67,9 @@ Next:
   2026-11-15 Venom Splasher's delayed burst is in (the timer from jAthena,
   tier later), and area skills wear an Ice Wall down as in 817 (this
   client cannot click one). Sandman's sleep on those nearby is in. Poison React,
-  Remove Trap and Spring Trap are drafts to try in the client.
+  Remove Trap and Spring Trap are drafts, all tried in the client (Poison
+  React and Venom Splasher's burst on 2026-11-15: a missed poison blow set
+  Poison React off, fixed).
 * **The 2-2 jobs' skills** (behind `jobs2_2`): Crusader, Monk, Sage, Rogue,
   Alchemist, Bard, Dancer. Their damage formulas and status changes came
   over with the battle port; what each does at cast end did not. mod0631
