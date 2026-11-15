@@ -843,6 +843,8 @@ always fires.
   the Sky Deleter casts Meteor Storm, the Earth Deleter Fire Wall, as
   jAthena //0743 (2004-01-26) and 817 have them; mod0631 had them the wrong
   way round (`MOB_SKILL_MOVE` in `tools/import/athena_import.py`).
+  Likewise mod0631's row "monster summon @ Dracula" (Familiars), filed
+  under Lord of Death's id, belongs to Dracula, as 817 has it.
 * **The Baphomet Card splashes** (2026-11-15): a weapon blow that lands
   also strikes every other enemy within a cell of the target, each with a
   weapon attack of its own that may miss, as this client's item text says

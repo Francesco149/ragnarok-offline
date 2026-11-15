@@ -13894,7 +13894,7 @@ cond = "friendhpltmaxrate"
 cond_val = 60
 
 [[skill]]
-mob = 1373
+mob = 1389
 state = "attack"
 skill = 209
 lv = 6
