@@ -1124,12 +1124,17 @@ last modified 2004-01-04 by the site's directory listing, captured
 2004-02-11 (saved with its combat, stats, sub-stats and experience pages in
 `data:refs/web/rodatazone-2004/`): iRO's monster "protocols" as players saw
 them. Built from it: a blind monster's sight of one cell (with Ragu Memo).
-To set beside our AI, not yet done: "Detect" for insects, *Dark property*
-monsters and MVPs (ours, as mod0631: insects, demons and bosses), random
-walks of "roughly 9 tiles every 5 seconds or so", target changes (a
-monster switches to the latest attacker one cell away after its current
-attack; "Super Active" ones to a closer target), Loot keeps at most 10
-items, Cast Sensor reacts when the cast begins. Its monster table
+**Set beside our AI (2026-11-15):** random walks agree (ours, mod0631's
+`mob_randomwalk`: up to 12 cells, then 3-6 s); Cast Sensor reacts when the
+cast begins in both (`rules/skill.lua`, mod0631 `skill.c:3308`). The page
+differs, and is kept as a witness only (it says itself it "is not 100%
+correct"): a looter keeps at most 10 items, mod0631 20 (`LOOTITEM_SIZE`,
+`map.h:14`); Detect for *Dark property* monsters, mod0631 for the Demon
+race (`mob.c:801`); an immobile monster sees only as far as it attacks,
+mod0631 locks on within 9 cells like any other (`mob.c:796`); an Active
+monster switches to the latest attacker one cell away after its blow,
+mod0631 a quarter of the time to whoever hit it (`mob.c:1100`). A second
+iRO or jRO witness for any of these would decide it. Its monster table
 (`monsters/monsters.js`, captured 2004-02-11, saved there too) agrees with
 `data/db/mobs.toml` on level, HP, EXP, ATK, DEF and stats for 204 monsters
 but for about 40 numbers, most of them DEX and AGI; the larger ones (the
@@ -1564,7 +1569,8 @@ off its cell, so the blow comes from behind and lands as a critical).
 **2026-11-15:** the battle tests looped 25 times in the workbench (alone,
 while a build ran beside them): no failure of either. The loop did catch a
 new flaky test (`thief_skills`, Poison React's miss, fixed). Still to try:
-loop the whole workspace run.
+loop the whole workspace run. **2026-11-15, later:** four whole workspace
+runs in a row in the workbench, all passed.
 
 ### 31. Items the client knows that nothing gives (cut content leads)
 `research/unobtainable_items.py` (2026-11-14) lists 107 items with a
