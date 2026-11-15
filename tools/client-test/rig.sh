@@ -32,8 +32,15 @@ case "$cmd" in
     sleep 6; echo "client up" ;;
   client-stop) wineserver -k 2>/dev/null || true ;;
   login) # from a fresh client to standing on the map: rig.sh login ID PASS
+    # The login box can take keys late ("Passwords must be at least 4"): check the
+    # server saw the login, else dismiss the message (OK at 589,457) and type again.
+    n0=$(wc -l < /data/server.log 2>/dev/null || echo 0)
     "$0" click 413 437; "$0" click 589 593; sleep 2
-    "$0" click 535 525; "$0" type "$1"; "$0" click 535 557; "$0" type "$2"; "$0" key Return; sleep 3
+    for try in 1 2 3; do
+      "$0" click 535 525; "$0" type "$1"; "$0" click 535 557; "$0" type "$2"; "$0" key Return; sleep 3
+      tail -n +"$((n0 + 1))" /data/server.log | grep -q "login: $1 ok" && break
+      echo "login: not seen by the server (try $try), typing again"; "$0" click 589 457; sleep 1
+    done
     "$0" click 413 437; "$0" click 589 593; sleep 3
     "$0" click 731 565; sleep 14; "$0" click 649 428; sleep 1 ;;
   shot) mkdir -p /data/shots; import -window root "/data/shots/${1:-shot}.png"; echo "/data/shots/${1:-shot}.png" ;;
