@@ -260,6 +260,9 @@ function skill_attack(attack_type, src_id, dsrc, bl_id, skillid, skilllv, wflag,
   if not src or not bl or src.dead or bl.dead then return 0 end
   local dsrc_bl = type(dsrc) == "table" and dsrc or (dsrc == src_id and src or get(dsrc))
   if not dsrc_bl then return 0 end
+  -- Storm Gust passes over the frozen (817 skill.c:715; jAthena //0738, 2004-01-24, "the real
+  -- server's way", with the third hit's freeze). mod0631 hits them
+  if skillid == SK.WZ_STORMGUST and battle.sc(bl, SC.FREEZE) then return 0 end
   local dmg = battle.calc_attack(attack_type, src, bl, skillid, skilllv, wflag or 0)
   if bl.wall then
     -- an Ice Wall cell: the blow comes off its durability; nothing else happens to it

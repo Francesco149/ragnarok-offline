@@ -865,7 +865,9 @@ always fires.
   freezing and stone half of DEF and add a quarter to MDEF** (817 and Ragu
   Memo agree; not in mod0631); **a Curse slows the walk** (817).
 * **Blessing lifts Curse and Stone from players** too (mod0631: monsters only).
-* **Storm Gust freezes on its third hit** (817) instead of 35%+3%/level a hit.
+* **Storm Gust freezes on its third hit** (817) instead of 35%+3%/level a hit,
+  **and passes over the frozen** (817 `skill.c:715`; jAthena //0738 of
+  2004-01-24 calls both "the real server's way"); mod0631 hits them.
 * **Stone** takes five seconds to set, then lasts its time and costs 1% HP
   every fifth second (817); in mod0631 it is instant and never wears off.
 * **Stun, poison, blind and silence are not renewed** while they last, and

@@ -883,6 +883,13 @@ stone (817 has those effects, mod0631 not). **Built** from it the same day
 poison's length rule, Curse's length (Ragu Memo's page of 2004-02 still
 says "unknown": round 17, T4-021), whether euRO's servers of January
 2004 had the same as jRO's.
+**Storm Gust's freeze length (2026-11-15):** jAthena //0730 (`9b692e2`,
+2004-01-21) made it 10 s at every level "as the real server"; 817's
+cast_db (2004-02-19) and ours give 10 to 19 s by level, less MDEF.
+RODataZone's status page (2004-02-10) has "BaseDuration*(1-MDEF/100)" and
+no per-skill base; the iRO guide's Wizard page (2004-03-27) gives none.
+Kept 817's. jAthena //0738 (2004-01-24) also has Storm Gust pass over the
+frozen, as 817 does: built (DEVIATIONS.md).
 **Impact:** `skill_additional_effect` and the ailment part of
 `skill_status_change_start` in `scripts/rules/`.
 **Look:** period player guides on stun and freeze resistance ("VIT 97

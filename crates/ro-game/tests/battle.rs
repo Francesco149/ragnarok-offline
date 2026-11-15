@@ -928,6 +928,26 @@ fn exp_levels_up() {
     assert_eq!(t.g.store.chars[&t.cid].base_exp, before + 2);
 }
 
+/// Storm Gust freezes on its third hit and passes over the frozen (817,
+/// jAthena //0738): a frozen monster takes nothing from it.
+#[test]
+fn storm_gust_spares_the_frozen() {
+    let mut t = T::new();
+    t.lua("job_change(9); player.base_level = 99; player.int = 30; heal(9999, 9999)");
+    let me = t.me;
+    let wolf = t.spawn(26, 25, 1013);
+    let hit = |t: &mut T| t.lua(&format!("return skill_attack(BF.MAGIC, {me}, {me}, {wolf}, SK.WZ_STORMGUST, 1, 0)")).trim().parse::<i64>().unwrap();
+    assert!(hit(&mut t) > 0, "a first hit lands");
+    hit(&mut t);
+    if !t.has_sc(wolf, "FREEZE") {
+        hit(&mut t);
+    }
+    assert!(t.has_sc(wolf, "FREEZE"), "frozen by the third hit");
+    let hp = t.mob_hp(wolf);
+    assert_eq!(hit(&mut t), 0);
+    assert_eq!(t.mob_hp(wolf), hp, "the frozen take nothing");
+}
+
 /// EXP is shared by the part of the monster's max HP each player took off
 /// (jAthena //0764 of 2004-02-01, 817), not by the damage the players dealt
 /// (mod0631): a kill after something else did most of the work gives little.
