@@ -128,6 +128,10 @@ Every unit's walk is timed on the client's copy of the server clock.
   and this one do, never triggers it.
 * Between two cells' times the position is interpolated in a straight line
   (`0x4d2ec0`), so the unit crosses into the next cell halfway.
+* **A speed change mid-walk** (0x00b0 type 0, `0x51ce91`) only stores the
+  new speed (`[0x671514]`); the player's actor reads it when the next move
+  starts (`0x53efc4`, `0x53f041`). A walk under way keeps the times it was
+  given, and so does the server's (`world.rs`: times fixed at the start).
 
 `path::client_times` is a port of these times, checked under the same
 emulator (`research/client_paths/`, the emulator's x87 set to 24 bits) on
