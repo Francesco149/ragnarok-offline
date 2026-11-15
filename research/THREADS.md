@@ -1580,8 +1580,9 @@ seen in the rig), and euRO's later patches that may have named them are
 not archived. **Built 2026-11-14** at the owner's word (cut content worth
 exploring): `scripts/npc/alberta_hats.lua`, with English names added to the
 client by setup (`data/client/item_names.tsv`); DEVIATIONS.md, "Content the
-client ships". Still open: the dialogue is ours and the Helm of Solar God
-waits on castle treasure (#17); period text from either NPC would replace
+client ships". Still open: the dialogue is ours. The Helm of Solar God's
+Emblem of the Sun God (7086) comes from `payg_cas04`'s boxes since the castles
+were built (#17, 40 in 10,000, Ragu Memo's table); period text from either NPC would replace
 ours. The client (merged GRF, with the Turtle
 Island patch) has the hats' sprites (`idnum2itemresnametable.txt` runs to
 5055: 5041 Heart Hairpin, 5045 Magician Hat, 5047 Fashion Sunglasses, 5048
