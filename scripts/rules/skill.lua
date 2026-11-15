@@ -234,7 +234,7 @@ end
 -- Poison React, a draft. Neither mod0631 nor eAthena 817 has more than the
 -- status; the client's skill text: "Enable to Counter for one time when the
 -- Selected player hit by a Poisonous attack". Ours (guess): a weapon blow of
--- the Poison element is answered once with (100 + 30 x level)% (battle.lua)
+-- the Poison element that lands is answered once with (100 + 30 x level)% (battle.lua)
 -- if the attacker is within the weapon's reach plus one cell, as Auto
 -- Counter measures it; then the status ends. THREADS.md #22.
 function skill_poison_react(src_id, bl_id, ele)
@@ -286,7 +286,8 @@ function skill_attack(attack_type, src_id, dsrc, bl_id, skillid, skilllv, wflag,
   battle.damage(src_id, bl_id, total)
   if attack_type == BF.WEAPON then battle.reflect(src, bl, total, dmg.flag or 0) end
   if total > 0 then skill_additional_effect(src_id, bl_id, skillid, skilllv, attack_type) end
-  if attack_type == BF.WEAPON and skillid ~= SK.AS_POISONREACT then
+  -- Poison React answers a blow that lands ("hit by a Poisonous attack"), not a miss
+  if attack_type == BF.WEAPON and total > 0 and skillid ~= SK.AS_POISONREACT then
     local pl = skill_get_pl(skillid)
     skill_poison_react(src_id, bl_id, pl > 0 and pl or battle.attack_element(src))
   end

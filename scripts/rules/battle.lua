@@ -1020,6 +1020,6 @@ function rules.weapon_attack(a)
   battle.damage(src.id, target.id, total)
   battle.reflect(src, target, total, wd.flag)
   if total > 0 then skill_additional_effect(src.id, target.id, 0, 0) end
-  skill_poison_react(src.id, target.id, battle.attack_element(src))
+  if total > 0 then skill_poison_react(src.id, target.id, battle.attack_element(src)) end
   return { adelay = adelay }
 end

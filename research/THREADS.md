@@ -931,6 +931,23 @@ Thunderstorm breaks a level-10 wall (4,270 a cell from a Hunter of INT 91).
 Open: did official area skills hurt the wall, and did monsters' splash?
 817's monster splash goes through the same `skill_area_sub`; ours does not
 hit walls yet.
+**Played in the client (2026-11-15):** Venom Splasher 10 on a poisoned
+Pupa at 30% HP: "Venom Splasher !!" and 0x011a at the cast, nothing drawn
+over the target while the mark runs (no status icon for SC 107 in this
+client), the burst 10 s later as 0x01de from the caster (the client shouts
+the skill name again), 1,173 in 6 hits on the target, 293 on the Pupa next
+to it, nothing two cells off, the neighbour poisoned. Poison React: icon
+and "Poison Reaction initiated."; a Poison Spore's NPC_POISONATTACK that
+**missed** set it off and used it up (fixed: only a blow that lands), and
+the answer showed "Miss" because it is of the Poison element (every period
+skill_db: mod0631, 817, 0.5.2 row 139), 0% on a Poison monster. Of the 24
+monsters with a Poison-element skill in our tables (TF_POISON,
+NPC_POISONATTACK), 15 are of the Poison element themselves and take
+nothing from the answer; the rest are Scorpion (Fire), Rybio and Phendark
+(Neutral), Pest (Dark), Wraith Dead and Ancient Mummy (Undead), Caterpillar
+(Wind), Gig (Water), Osiris (Undead 4). Open: was the official answer of
+the Poison element too, and did a monster's plain blow ever count as
+poisonous (ours: neutral, as Athena)?
 **Read against the iRO guide's skill pages** (2004-03-27 to 2004-04-13,
 `research/notes/round4-review.md`; 2026-11-11):
 * *Agrees with the draft:* Enchant Poison's chance to poison (3% to 7%)

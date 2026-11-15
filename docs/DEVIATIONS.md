@@ -870,10 +870,15 @@ always fires.
   Rush...) reach the caster only: there is no party.
 * **Poison React, Remove Trap, Spring Trap** are drafts from the client's
   skill text alone (tier `guess`; no emulator of the period has them).
-  Poison React answers one weapon blow of the Poison element with
-  (100 + 30 x level)% and ends; Remove Trap takes up any Hunter trap and
-  gives one Trap back; Spring Trap needs the falcon and destroys the trap.
-  Not tried in the real client yet (does it let you click a trap?).
+  Poison React answers one weapon blow of the Poison element that lands
+  (not a miss) with (100 + 30 x level)% and ends; Remove Trap takes up any
+  Hunter trap and gives one Trap back; Spring Trap needs the falcon and
+  destroys the trap. All three tried in the real client (Remove Trap and
+  Spring Trap 2026-11-13, aimed at a trap from the skill window; Poison
+  React 2026-11-15). The answer is of the Poison element, as every period
+  skill_db has it (mod0631, 817, 0.5.2: row 139), so it misses a Poison
+  monster, and a monster's plain blow is neutral: only Poison skills set
+  it off.
 * **The Crusader's shield skills** (behind `jobs2_2`; the first of the 2-2
   jobs' skills to be drafted, because this client can show them:
   THREADS.md #25). mod0631 has Auto Guard and Defender behind `#if 0` and

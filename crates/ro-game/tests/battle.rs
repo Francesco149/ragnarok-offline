@@ -973,7 +973,23 @@ fn thief_skills() {
     t.lua(&format!("rules.weapon_attack{{src={m}, target={me}}}"));
     assert!(t.sc(7), "a plain blow does not set it off");
     assert_eq!(t.mob_hp(m), Some(hp));
-    t.lua(&format!("skill_attack(BF.WEAPON, {m}, {m}, {me}, SK.TF_POISON, 1, 0)"));
+    // a poisonous blow that misses does not ("hit by a Poisonous attack";
+    // found in the client 2026-11-15, where a Poison Spore's miss set it off)
+    let agi = t.lua("return player.agi");
+    t.lua("player.agi = 255");
+    let mut missed = 0;
+    for _ in 0..40 {
+        let before = t.lua("return player.hp");
+        t.lua(&format!("skill_attack(BF.WEAPON, {m}, {m}, {me}, SK.TF_POISON, 1, 0)"));
+        if t.lua("return player.hp") != before {
+            break;
+        }
+        missed += 1;
+        assert!(t.sc(7), "a miss does not set it off");
+        assert_eq!(t.mob_hp(m), Some(hp), "nor is it answered");
+    }
+    assert!(missed > 0, "some blows missed");
+    t.lua(&format!("player.agi = {agi}"));
     assert!(!t.sc(7), "a poisonous one does, once");
     assert!(t.mob_hp(m).is_none_or(|h| h < hp), "and is answered");
     t.kill(m);
