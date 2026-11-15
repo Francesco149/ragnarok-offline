@@ -233,6 +233,9 @@ function skill_status_change_start(id, type, val1, val2, opt)
   elseif type == SC.AUTOCOUNTER then tick = opt.tick or skill_get_time(SK.KN_AUTOCOUNTER, val1) -- 817 cast_db: 0.4 s a level
   -- 30 s at every level: the iRO guide's Assassin page (2004-03-27). 817's cast_db says 30 minutes.
   elseif type == SC.POISONREACT then tick = opt.tick or 30000
+  -- Venom Splasher's mark: 5.5 s to 10 s by level (jAthena //1046 skill_cast_db, 2004-09-12;
+  -- no period source gives the time). val2 = the Assassin
+  elseif type == SC.SPLASHER then tick = opt.tick or (5000 + 500 * val1)
   elseif type == SC.RIDING or type == SC.FALCON or type == SC.WEIGHT50 or type == SC.WEIGHT90 then tick = 600000
   else
     return false -- UnknownStatusChange
@@ -330,6 +333,11 @@ function skill_status_change_timer(id, type)
       _rt("sc_touch", id, type, nil, nil, t.val3 - 1, 1000, n)
       return
     end
+  elseif type == SC.SPLASHER then
+    -- not hit while it ran: it bursts (skill_effects.lua)
+    skill_status_change_end(id, type)
+    venom_splasher_burst(id, t.val2, t.val1)
+    return
   elseif type == SC.AETERNA or type == SC.TRICKDEAD or type == SC.RIDING
     or type == SC.FALCON or type == SC.WEIGHT50 or type == SC.WEIGHT90 then
     return again(600000) -- no time limit

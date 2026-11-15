@@ -372,6 +372,10 @@ function battle.damage(src_id, target_id, damage)
   if t.sc[tostring(SC.FREEZE)] then sc_end(target_id, SC.FREEZE) end
   if t.sc[tostring(SC.STONE)] then sc_end(target_id, SC.STONE) end
   if t.sc[tostring(SC.SLEEP)] then sc_end(target_id, SC.SLEEP) end
+  -- Venom Splasher's mark is undone by a hit (anjingbalap's iRO FAQ v2.2, 2004-06-02: "If the
+  -- target is hit before the timer finishes, then the skill is cancelled"; jAthena //1046
+  -- battle.c:4382 by a weapon blow only)
+  if t.sc[tostring(SC.SPLASHER)] then sc_end(target_id, SC.SPLASHER) end
   return _rt("bl_damage", src_id or 0, target_id, damage)
 end
 function battle.heal(target_id, hp, sp)

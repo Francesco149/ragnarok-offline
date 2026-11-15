@@ -904,6 +904,19 @@ Ice Wall: 817 lets it be attacked (`battle.c:3465`), takes the damage off its
 durability (`skill.c:3725`) and decays 5 every 100 ms (`skill.c:6156`), as
 the iRO guide says; whether this client lets a player click a skill unit to
 attack is to try in the rig before building it.
+**Venom Splasher built (2026-11-15)** on this client's 1/3 rule with
+jAthena //1046's mark (2004-09-12, the first jAthena to have it: `git log
+-S SC_SPLASHER`): only on a poisoned target, a mark of 5.5 s to 10 s, then
+the blow on it and on the 3x3 (`skill.c:3417`, `6901`, `1735`), poisoning
+at Envenom's chance (`:484`); a quarter on the neighbours and the hit that
+undoes it from anjingbalap's FAQ (jAthena: full damage, undone by a weapon
+blow only, `battle.c:4382`). Round 20's T8-034 called the second column of
+jAthena's `skill_cast_db` a reuse delay: it is the poison's length
+(`skill.c:484` reads it as `skill_get_time2`). jAthena also adds 20% per
+level of Poison React to the damage (`battle.c:3296`): not taken, the iRO
+guide's 220% to 400% has none. Open: how long the official mark ran, and
+whether the client of 2003 drew anything over the target (the FAQ's
+"timer appears above the target" is iRO of mid-2004).
 **Read against the iRO guide's skill pages** (2004-03-27 to 2004-04-13,
 `research/notes/round4-review.md`; 2026-11-11):
 * *Agrees with the draft:* Enchant Poison's chance to poison (3% to 7%)

@@ -118,6 +118,10 @@ function skill_additional_effect(src_id, bl_id, skillid, skilllv, attack_type)
     end
   elseif skillid == SK.TF_POISON then
     if not undead and rnd(100) < floor((2 * skilllv + 10) * sc_def_vit / 100) then start(SC.POISON, skilllv, time2()) end
+  elseif skillid == SK.AS_SPLASHER then
+    -- the burst poisons (the client's text, "Make the enemy contagious by Poison"): Envenom's
+    -- chance, 15 s to 60 s (jAthena //1046 skill.c:484 and its skill_cast_db time2)
+    if not undead and rnd(100) < floor((2 * skilllv + 10) * sc_def_vit / 100) then start(SC.POISON, skilllv, 10000 + 5000 * skilllv) end
   elseif skillid == SK.AS_SONICBLOW then
     if rnd(100) < floor((2 * skilllv + 10) * sc_def_vit / 100) then start(SC.STAN, skilllv, time2()) end
   elseif skillid == SK.MG_FROSTDIVER or skillid == SK.WZ_FROSTNOVA or skillid == SK.HT_FREEZINGTRAP then
@@ -259,6 +263,10 @@ function skill_attack(attack_type, src_id, dsrc, bl_id, skillid, skilllv, wflag,
   local dmg = battle.calc_attack(attack_type, src, bl, skillid, skilllv, wflag or 0)
   local lv = opt.lv or skilllv
   local ptype = opt.type or -1
+  if opt.splash then
+    dmg.damage = floor(dmg.damage * opt.splash / 100)
+    if dmg.damage2 > 0 then dmg.damage2 = floor(dmg.damage2 * opt.splash / 100) end
+  end
   if dmg.damage <= 0 or dmg.damage < dmg.div then dmg.blewcount = 0 end
   if dmg.blewcount ~= 0 then
     -- 0x10000: thrown back from the way it faces, not away from the source
@@ -501,6 +509,10 @@ function skill_check_condition(sd, skill, lv, a)
     if not water() then return fail() end
   elseif skill == SK.WZ_SIGHTRASHER then
     if not sc(sd, SC.SIGHT) then return fail() end -- 817 skill.c:3990 (ST_SIGHT)
+  elseif skill == SK.AS_SPLASHER then
+    -- only on a poisoned enemy (the client's skill text; jAthena //1046 skill.c:5918)
+    -- whose HP is down to a third: venom_splasher_ready (skill_effects.lua)
+    if not venom_splasher_ready(a.target and get(a.target)) then return fail() end
   elseif skill == SK.MC_MAMMONITE then
     zeny = lv * 100
     if sd.char.zeny < zeny then return fail(5) end

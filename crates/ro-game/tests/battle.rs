@@ -1144,6 +1144,64 @@ fn sightrasher() {
     assert!(!t.has_sc(me, "SIGHT"), "Sight is spent");
 }
 
+/// Venom Splasher (THREADS.md #22): only on a poisoned enemy down to a third
+/// of its HP; it marks the target, and when the mark runs out (10 s at level
+/// 10) the target bursts and the enemies next to it take a quarter. A hit
+/// before then undoes the mark.
+#[test]
+fn venom_splasher() {
+    let mut t = T::new();
+    t.lua("job_change(12); player.base_level = 70; player.str = 80; player.dex = 80; heal(9999, 9999)");
+    t.learn("AS_SPLASHER", 10);
+    let a = t.spawn(27, 25, 1008); // Pupas: they neither move nor fight back
+    let b = t.spawn(28, 25, 1008); // next to it
+    let c = t.spawn(30, 25, 1008); // two cells off
+    let (hp_b, hp_c) = (t.mob_hp(b).unwrap(), t.mob_hp(c).unwrap());
+    let fails = |t: &mut T| t.packets(0x0110).len();
+    t.cap.take();
+    t.cast("AS_SPLASHER", a);
+    t.run(1500);
+    assert!(fails(&mut t) > 0 && !t.has_sc(a, "SPLASHER"), "not on a healthy, unpoisoned target");
+    t.lua(&format!("skill_status_change_start({a}, SC.POISON, 1, 0, {{tick = 60000, nodef = true}})"));
+    t.lua(&format!("_rt('bl_set', {a}, 'hp', battle.max_hp(battle.get({a})) // 2)"));
+    t.lua("heal(0, 9999)");
+    t.cast("AS_SPLASHER", a);
+    t.run(1500);
+    assert!(fails(&mut t) > 0 && !t.has_sc(a, "SPLASHER"), "not above a third of its HP");
+    t.lua(&format!("_rt('bl_set', {a}, 'hp', battle.max_hp(battle.get({a})) * 3 // 10)"));
+    let hp_a = t.mob_hp(a).unwrap();
+    t.lua("heal(0, 9999)");
+    t.cast("AS_SPLASHER", a);
+    t.run(500);
+    assert!(t.has_sc(a, "SPLASHER"), "poisoned and down to 30%: marked");
+    t.run(8000);
+    assert!(t.has_sc(a, "SPLASHER"), "still counting at 8.5 s");
+    assert_eq!(t.mob_hp(b), Some(hp_b), "nothing yet");
+    t.run(2500);
+    assert!(t.mob_hp(a).is_none_or(|h| h < hp_a), "the target bursts");
+    let lost_b = hp_b - t.mob_hp(b).unwrap_or(0);
+    assert!(lost_b > 0, "its neighbour is hit");
+    assert_eq!(t.mob_hp(c), Some(hp_c), "two cells off is not");
+    // a blow before the time is up undoes the mark
+    t.kill(a);
+    t.kill(b);
+    t.run(3000);
+    let d = t.spawn(27, 25, 1008);
+    let e = t.spawn(28, 25, 1008);
+    let hp_e = t.mob_hp(e).unwrap();
+    t.lua(&format!("skill_status_change_start({d}, SC.POISON, 1, 0, {{tick = 60000, nodef = true}})"));
+    t.lua(&format!("_rt('bl_set', {d}, 'hp', battle.max_hp(battle.get({d})) * 3 // 10)"));
+    t.lua("heal(0, 9999)");
+    t.cast("AS_SPLASHER", d);
+    t.run(500);
+    assert!(t.has_sc(d, "SPLASHER"));
+    let me = t.me;
+    t.lua(&format!("battle.damage({me}, {d}, 1)"));
+    assert!(!t.has_sc(d, "SPLASHER"), "a hit undoes it");
+    t.run(11_000);
+    assert_eq!(t.mob_hp(e), Some(hp_e), "and nothing bursts");
+}
+
 /// The client asks for a skill from one cell beyond its range (Remove Trap,
 /// range 2, from 3 cells) and the server lets it through (jAthena //1082);
 /// two cells beyond is still too far.

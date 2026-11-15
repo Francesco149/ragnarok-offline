@@ -854,6 +854,7 @@ always fires.
 | Spring Trap | Reaches 4 to 8 cells by level | The iRO guide's Hunter page |
 | Sightrasher | Under Sight only, which it ends: fire on the eight lines around the wizard, 1 to 5 cells by level, 120% to 300% MATK, pushed 5 cells back | The iRO guide's Wizard page (2004-03-27); damage 817 `battle.c:3178`; Sight and the push jAthena (2004-05). The lines and the reach by level are ours (THREADS.md #22) |
 | Remove Trap | Not a trap that has gone off | The iRO guide's Hunter page |
+| Venom Splasher | Only on a poisoned enemy under a third of its HP. Marks it; when the mark runs out (5.5 s to 10 s by level) the target takes the blow, the enemies on the 3x3 around it a quarter, and it may poison them. A hit before then undoes the mark | The client's skill text ("HP at least by 1/3") and the iRO guide's Assassin page (2004-03-27, "less than 1/3"); the mark, its time and the poison jAthena //1046 (2004-09-12, tier later); the quarter and the hit that undoes it anjingbalap's iRO FAQ v2.2 (2004-06-02). euRO's May-2004 text and jAthena have 2/3, a later change. The damage is 817's (THREADS.md #22) |
 | Poison React | Lasts 30 s at every level | The iRO guide's Assassin page. 817's `cast_db.txt` says 30 minutes |
 | Change Cart | Cart look by base level (41, 66, 81, 91) | The client's skill text for the five carts; the levels are later emulators' (tier later) |
 | Provoke | Refused on the undead | The client's skill text: "Not appliable for the Undead" |
@@ -936,8 +937,7 @@ always fires.
   to characters only (docs/PROTOCOL.md).
 * **Not built yet:** the other 2-2 skills, Repair Weapon
   (nothing breaks in this era's data), attacking an Ice Wall, monsters'
-  "friend" skill targets (mod0631 has none either). Venom Splasher is 817's
-  plain splash, without the delayed burst of the client's skill text.
+  "friend" skill targets (mod0631 has none either).
 * **One cast at a time for monsters.** In mod0631 a counter skill could
   start over a cast in progress.
 * **Unidentified equipment cannot be worn**, and **nobody walks while

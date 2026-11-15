@@ -283,6 +283,30 @@ function skill_check_cloaking(bl_id)
 end
 
 -- skill.c:1113
+-- Venom Splasher takes a poisoned target whose HP is down to a third: the iRO
+-- guide's Assassin page (2004-03-27) "when the target has less than 1/3 of the
+-- maximum HP left". euRO's May-2004 text and jAthena //1046 have 2/3, a later
+-- change (THREADS.md #22).
+function venom_splasher_ready(bl)
+  if not bl or bl.dead or not sc(bl, SC.POISON) then return false end
+  return battle.hp(bl) * 3 < battle.max_hp(bl)
+end
+
+-- The mark ran out: the target takes the blow and the enemies on the 3x3 around
+-- it a quarter of theirs (jAthena //1046 skill.c:6901 and 1735; the quarter is
+-- anjingbalap's iRO FAQ v2.2, 2004-06-02: "surrounding 3x3 area takes 25%
+-- splash damage"; jAthena gives them the full blow). The caster must still be
+-- on the map.
+function venom_splasher_burst(bl_id, src_id, skilllv)
+  local src, bl = get(src_id), get(bl_id)
+  if not src or src.dead or not bl or bl.dead or src.map ~= bl.map then return end
+  local x, y, map = bl.x, bl.y, bl.map
+  skill_attack(BF.WEAPON, src_id, src_id, bl_id, SK.AS_SPLASHER, skilllv, 0, { type = 5 })
+  for _, t in ipairs(skill_area(src, map, x, y, 1, BCT.ENEMY)) do
+    if t.id ~= bl_id then skill_attack(BF.WEAPON, src_id, src_id, t.id, SK.AS_SPLASHER, skilllv, 0, { type = 5, splash = 25 }) end
+  end
+end
+
 function skill_castend_nodamage_id(src_id, bl_id, skillid, skilllv, opt)
   opt = opt or {}
   local src, bl = get(src_id), get(bl_id)
@@ -541,13 +565,18 @@ function skill_castend_nodamage_id(src_id, bl_id, skillid, skilllv, opt)
     if not hit[bl_id] then skill_castend_damage_id(src_id, bl_id, skillid, skilllv, { wflag = 1 }) end
 
   elseif skillid == SK.AS_SPLASHER then
-    -- Not in mod0631. eAthena 817 skill.c:1326 makes it a plain splash: the
-    -- target and the enemies within 2 cells (its damage: battle.lua). The
-    -- delayed burst of the client's skill text is in neither.
-    skill_attack(BF.WEAPON, src_id, src_id, bl_id, skillid, skilllv, 0)
-    for _, t in ipairs(skill_area(src, bl.map, bl.x, bl.y, 2, BCT.ENEMY)) do
-      if t.id ~= bl_id then skill_attack(BF.WEAPON, src_id, src_id, t.id, skillid, skilllv, 0, { type = 5 }) end
+    -- Not in mod0631; eAthena 817 (skill.c:1326) makes it a plain splash. This
+    -- client's text: "Make the enemy contagious by Poison and Exploded to Take
+    -- Damages around. But Only applicable for the Situation when the Poisoned
+    -- Enemy have HP at least by 1/3". So: the target is marked (SC.SPLASHER) and
+    -- bursts when the mark runs out (status_change.lua), as jAthena //1046
+    -- (2004-09-12, skill.c:3417) builds it. THREADS.md #22.
+    if not venom_splasher_ready(bl) then
+      if sd then _rt("clif_skill_fail", src_id, skillid, 0, 0) end
+      return
     end
+    nodamage(src_id, bl_id, skillid, skilllv)
+    skill_status_change_start(bl_id, SC.SPLASHER, skilllv, src_id)
 
   elseif skillid == SK.RG_INTIMIDATE then
     if sd then
