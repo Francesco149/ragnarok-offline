@@ -88,7 +88,8 @@ Working with the real client:
   makers, quests, shops; the Turtle Island chain, and six hat makers no
   period emulator has, for 26 hats the client ships (Alberta's two,
   Payon's Young Man, Comodo's two, Lutie's snowman vending machine; cut
-  content, recipes from period quest lists); the job test of every 2-1
+  content, recipes from period quest lists) and the Kafra free tickets the
+  client describes; the job test of every 2-1
   job (Knight, Priest, Wizard, Blacksmith, Hunter, Assassin), on the maps this
   client has for them. Every first-job and 2-1 test has been played through
   in the real client;
