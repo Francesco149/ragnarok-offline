@@ -253,13 +253,15 @@ CLIENT_IRO = {
 # wherever they did not change the monster again (Poporing 15, Whisper 20, Rideword 15 and 8,
 # Sage Worm 14; Skeletons on Payon Cave 1F). Total per map and monster; a new pair is added as
 # one group anywhere on the map. data:refs/web/ragmemo-2003/ragmemo_map_*.html.
+# Not taken: the 25 Skeletons jRO put on Payon Cave 1F (pay_dun00, 1076). Phelan's Battle Priest
+# guide (GameFAQs 27955, by 2004-01-13, an English server: iRO or pRO) lists that floor as
+# "Familiars, Zombies ... spores", and a Battle Priest's guide would name 25 undead (round 24).
 SPAWNS_2003_12 = {
     ("gef_dun00", 1005): 20, ("gef_dun00", 1031): 15,
     ("gef_dun01", 1100): 25, ("gef_dun01", 1114): 20,
     ("gef_dun02", 1100): 20, ("gef_dun02", 1179): 20,
     ("gl_cas01", 1131): 5, ("gl_cas01", 1195): 15, ("gl_cas01", 1267): 30, ("gl_cas01", 1281): 40,
     ("gl_in01", 1143): 8, ("gl_in01", 1195): 8, ("gl_in01", 1281): 14,
-    ("pay_dun00", 1076): 25,
 }
 
 
@@ -286,7 +288,7 @@ def spawns_2003_12(spawns):
     for (mp, mob), n in SPAWNS_2003_12.items():
         if (mp, mob) not in done:
             out.append(f'spawn {{ map = "{mp}", x = 0, y = 0, xs = 0, ys = 0, mob = {mob}, count = {n}, '
-                       f'delay = 0, delay2 = 0 }} -- Ragu Memo map_payond.html 2003-12-05 (not in mod0631)')
+                       f'delay = 0, delay2 = 0 }} -- Ragu Memo 2003-12 (not in mod0631)')
     return out
 
 

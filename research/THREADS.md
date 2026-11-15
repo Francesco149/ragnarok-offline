@@ -555,6 +555,14 @@ them, rAthena siding with them: Sohee 65, Goblin Archer 28, no Ghouls on
 Pyramid B3F, no Andre Eggs on Ant Hell 2F. Now 444 of 456 agree. An iRO or
 euRO account of 2004 would still settle euRO's side (queue T9). Magma Dungeon (`mag_dun`,
 behind `juno`) has no counts on the page.
+**Round 24 (2026-11-15): Payon Cave 1F's Skeletons taken out again.**
+Phelan's Battle Priest guide (GameFAQs 27955, by 2004-01-13, an English
+server: a `Loki` screenshot, which iRO and pRO both had) lists the floor
+as "Familiars, Zombies (agro) ... spores". A Battle Priest's guide would
+name 25 undead. Psycho Battousai's pre-Comodo list has the same three.
+So on at least one English server the floor had no Skeletons in January
+2004, and the game follows it. The other floors keep December's jRO
+counts: no English account counts them.
 
 ### 11. Shop NPC names and stock
 Done in part: shops are named from 817 by cell. Two of 817's lines have a

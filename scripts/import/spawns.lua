@@ -2008,4 +2008,3 @@ spawn { map = "xmas_fild01", x = 0, y = 0, xs = 0, ys = 0, mob = 1242, count = 2
 spawn { map = "xmas_fild01", x = 0, y = 0, xs = 0, ys = 0, mob = 1243, count = 20, delay = 0, delay2 = 0 } -- npc_monster.txt:2301
 spawn { map = "xmas_fild01", x = 0, y = 0, xs = 0, ys = 0, mob = 1252, count = 1, delay = 3600000, delay2 = 7200000 } -- npc_monster.txt:2302
 spawn { map = "mag_dun02", x = 0, y = 0, xs = 0, ys = 0, mob = 1379, count = 3, delay = 0, delay2 = 0 } -- npc_monster30.txt:44
-spawn { map = "pay_dun00", x = 0, y = 0, xs = 0, ys = 0, mob = 1076, count = 25, delay = 0, delay2 = 0 } -- Ragu Memo map_payond.html 2003-12-05 (not in mod0631)
