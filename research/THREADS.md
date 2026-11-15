@@ -403,6 +403,8 @@ on `in_hunter`, `payon_in02` and `job_hunte`, down to the monster names.
 The Wizard guide (faq 30054; its Wizard section is of 2004-07-30) adds:
 a failure leaves you saved outside the tower, and after five or six
 failures the examiner lets you skip the fight for a Worn Out Scroll.
+No period script has that skip (817, eAthena 0.5.2, jAthena's first
+`npc_job_wizard.txt` `a99aa5a`, eAthena 1.0): not built (round 23).
 Edge's Knight guide (faq 29457, pRO, from 2004-02-08): "Pay a small fee
 and magically you become a Knight": no test there.
 **2026-11-11: the Knight test is in** (`scripts/npc/knight_test.lua`,
