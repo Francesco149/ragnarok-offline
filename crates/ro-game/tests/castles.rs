@@ -411,13 +411,13 @@ fn counter_siege() {
     // row 100; the Emperium (216,24) lies south of it, the portal 206,188 leads to 216,50
     t.eval("for x = 0, 299 do _rt('set_cell', 'aldeg_cas01', x, 100, false) end");
 
-    // the siege: a defended Emperium (68,430 + 1,000), the garrison as attackers
+    // the siege: a defended Emperium (68,430 + 2,000), the garrison as attackers
     t.eval("castle_siege_start(castle_now() + 7200)");
     t.ticks(3);
     let gone = |t: &mut T, id: &str| t.eval(&format!("return battle.get({id}) == nil")) == "true";
     assert!(gone(&mut t, &garm) && gone(&mut t, &slave), "the old garrison goes, slaves and all");
     let emp = t.emperium("aldeg_cas01");
-    assert_eq!(t.eval(&format!("local u = battle.get({emp}) return u.max_hp .. ' ' .. u.side")), "69430 2");
+    assert_eq!(t.eval(&format!("local u = battle.get({emp}) return u.max_hp .. ' ' .. u.side")), "70430 2");
     let attackers = t.side("aldeg_cas01", 1);
     assert!(attackers.len() > 20, "the garrison attacks: {}", attackers.len());
     // none starts next to it: they come along the corridors, at random times in the first hour

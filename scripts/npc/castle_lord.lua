@@ -45,8 +45,8 @@
 --     "Albedaran" and "Geffen" onto all twenty; 0.5.2's offer to take the
 --     master home. 0.5.2 put its flags in the towns, with names (Kriemhild...)
 --     this client's map names do not know: not built;
---   * the master recovers faster in the castle (the iRO guide's page; how
---     much is rAthena's, rules/combat.lua rules.regen).
+--   * the master recovers faster in the castle (the iRO guide's page; twice,
+--     eAthena's changelog of 2004-06-05, rules/combat.lua rules.regen).
 --
 -- Ours (docs/DEVIATIONS.md, "Guild castles"): anyone may break an Emperium
 -- (817 wants a guild with Official Guild Approval); an ownerless castle can be
@@ -55,7 +55,7 @@
 -- guild; in a siege the attackers are the castle's old garrison (817's list)
 -- coming back for a castle that is held, and if they break the Emperium the
 -- castle is theirs again (an ownerless castle full of monsters); what defence
--- gives is rAthena's (later); treasure is laid out when the master first comes
+-- gives is eAthena's of 2004-06 (later); treasure is laid out when the master first comes
 -- in on a new day, not at midnight; prtg_cas02's Emperium stands in this
 -- client's older inner room (193,181), the emulators' cell being rock.
 
@@ -208,10 +208,13 @@ local KINGDOM = { aldeg = "Al De Baran", gefg = "Geffen", payg = "Payon", prtg =
 -- A castle's master recovers HP and SP twice as fast in it (rules.regen).
 local HOME_REGEN = 200
 
--- What defence investment gives: rAthena pre-renewal (status.cpp, status_calc_mob,
--- tier later; the iRO guide's page says only "the castle Emperium's defense and HP
--- as well as the Guardian's HP"; jAthena //1046 cuts damage by defense/100 and
--- doubts it, "らしい?"): +1000 HP a level for the Emperium, +2000 for a guardian.
+-- What defence investment gives: +2000 HP a level to the Emperium and to a guardian,
+-- eAthena's changelog of 2004-06-05 ("Guardians and emp will now get +2000 hp for every
+-- defense investment within a castle [Valaris]"; `mob.c:183`, `:301` in rAthena's first
+-- commit 706e785, 2004-11-04, which adds it to mob_db itself on every spawn: not taken).
+-- Tier later. The iRO guide's page says only "the castle Emperium's defense and HP as
+-- well as the Guardian's HP"; jAthena //1046 cuts damage by defense/100 and doubts it,
+-- "らしい?"; rAthena pre-renewal later gave the Emperium +1000.
 local function defended(c, id, per_level)
   local u = battle.get(id)
   if u then mob_max_hp(id, u.max_hp + per_level * g[key(c, "def")]) end
@@ -248,7 +251,7 @@ local function emperium_defended(c)
   if not map_size(c[1]) then return end
   kill_monster(c[1], emp_event(c))
   for _, id in ipairs(monster(c[1], c[4][1], c[4][2], "Emperium", 1288, 1, emp_event(c))) do
-    defended(c, id, 1000)
+    defended(c, id, 2000)
   end
 end
 
