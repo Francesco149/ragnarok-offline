@@ -97,7 +97,8 @@ Working with the real client:
   and pet taming, have been used in the real client's own windows;
 - pets: taming, eggs, hunger, intimacy, accessories;
 - **skills**: the Novice, the six first jobs and the six 2-1 jobs, with cast
-  times, delays, SP and item costs, ground skills and traps, status changes
+  times, delays, SP and item costs, ground skills and traps (an Ice Wall
+  that area spells wear down, Venom Splasher's delayed burst), status changes
   and ailments with their icons; ailments last as jRO's players measured
   them in 2003. The Assassin's, Blacksmith's, Hunter's,
   Wizard's, Priest's and Knight's skills have been tried in the real client;

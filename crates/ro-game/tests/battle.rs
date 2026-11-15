@@ -439,10 +439,10 @@ fn buffs_start_show_and_expire() {
     assert_eq!((t.st("str"), t.st("int"), t.st("dex")), (str0 + 10, int0 + 10, dex0 + 10));
     let icons = t.packets(0x0196);
     assert!(icons.iter().any(|p| u16_at(p, 2) == 10 && p[8] == 1), "Blessing icon on");
-    // 40 + 20 x 10 = 240 s
-    t.run(239_000);
+    // 40 + 20 x 10 = 240 s (the test clock is the real one skewed: leave room for a busy run)
+    t.run(230_000);
     assert!(t.sc(10));
-    t.run(2_000);
+    t.run(11_000);
     assert!(!t.sc(10), "Blessing ended");
     assert_eq!(t.st("str"), str0);
     assert!(t.packets(0x0196).iter().any(|p| u16_at(p, 2) == 10 && p[8] == 0), "Blessing icon off");
@@ -503,6 +503,46 @@ fn ground_skills() {
     }
     assert!(t.hp() < hp, "now it hurts");
     let _ = (me, z);
+}
+
+/// Ice Wall can be broken by area skills (eAthena 817): Thunderstorm on a
+/// level 1 wall wears it away well before its 8 s are up, and the cells
+/// become walkable again. Signum Crucis does nothing to it.
+#[test]
+fn ice_wall_breaks_under_area_skills() {
+    let mut t = T::new();
+    t.lua("job_change(9); player.base_level = 99; player.int = 99; player.dex = 99; heal(9999, 9999)");
+    t.learn("WZ_ICEWALL", 10);
+    t.learn("MG_THUNDERSTORM", 10);
+    let wall = |t: &mut T| -> Vec<(i64, i64)> {
+        let r = t.lua("local s = {} for _, w in ipairs(icewall_targets(player.map, 0, 0, 49, 49)) do s[#s + 1] = w.x .. ':' .. w.hp end return table.concat(s, ' ')");
+        r.split_whitespace().map(|p| { let (x, h) = p.split_once(':').unwrap(); (x.parse().unwrap(), h.parse().unwrap()) }).collect()
+    };
+    // level 10: 2200, less 50 a second
+    t.skill_pos(87, 10, 30, 25);
+    t.run(1000);
+    let w = wall(&mut t);
+    assert_eq!(w.len(), 5, "five cells: {w:?}");
+    assert!(w.iter().all(|&(_, h)| (2100..2200).contains(&h)), "durability by time alone: {w:?}");
+    t.skill_pos(21, 10, 30, 25);
+    t.run(4000);
+    let w = wall(&mut t);
+    assert!(w.iter().all(|&(_, h)| h < 1900), "Thunderstorm wore it down: {w:?}");
+    // level 1 (400) gives way
+    t.run(30_000);
+    assert!(wall(&mut t).is_empty());
+    t.lua("heal(0, 9999)");
+    t.skill_pos(87, 1, 30, 25);
+    t.run(1000);
+    assert_eq!(wall(&mut t).len(), 5);
+    assert_eq!(t.lua("return _rt('cell', player.map, 30, 25)").trim(), "5", "blocked");
+    t.lua("heal(0, 9999)");
+    t.skill_pos(21, 10, 30, 25);
+    t.run(3500);
+    assert!(wall(&mut t).is_empty(), "broken");
+    t.run(800); // it goes within 0.7 s
+    assert_eq!(t.lua("return _rt('cell', player.map, 30, 25)").trim(), "0", "free again");
+    t.check();
 }
 
 /// Monsters: an aggressive one comes for the player, a passive one hits

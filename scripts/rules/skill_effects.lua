@@ -23,7 +23,7 @@ local function nodamage(src, bl, skill, val, ok) _rt("clif_skill_nodamage", src,
 -- Hit everything hostile in a square around (x, y) except `skip`.
 -- fn(target_bl) does the hit.
 local function area_enemies(src, x, y, range, skip, fn)
-  for _, bl in ipairs(skill_area(src, src.map, x, y, range, BCT.ENEMY)) do
+  for _, bl in ipairs(skill_area(src, src.map, x, y, range, BCT.ENEMY, true)) do
     if bl.id ~= skip then fn(bl) end
   end
 end
@@ -154,7 +154,7 @@ function skill_castend_damage_id(src_id, bl_id, skillid, skilllv, opt)
     nodamage(src_id, src_id, skillid, skilllv)
     skill_status_change_end(src_id, SC.SIGHT)
     local reach = floor((skilllv + 1) / 2)
-    for _, t in ipairs(skill_area(src, src.map, src.x, src.y, reach, BCT.ENEMY)) do
+    for _, t in ipairs(skill_area(src, src.map, src.x, src.y, reach, BCT.ENEMY, true)) do
       local dx, dy = t.x - src.x, t.y - src.y
       if dx == 0 or dy == 0 or math.abs(dx) == math.abs(dy) then
         skill_castend_damage_id(src_id, t.id, skillid, skilllv, { sub = true })
@@ -302,7 +302,7 @@ function venom_splasher_burst(bl_id, src_id, skilllv)
   if not src or src.dead or not bl or bl.dead or src.map ~= bl.map then return end
   local x, y, map = bl.x, bl.y, bl.map
   skill_attack(BF.WEAPON, src_id, src_id, bl_id, SK.AS_SPLASHER, skilllv, 0, { type = 5 })
-  for _, t in ipairs(skill_area(src, map, x, y, 1, BCT.ENEMY)) do
+  for _, t in ipairs(skill_area(src, map, x, y, 1, BCT.ENEMY, true)) do
     if t.id ~= bl_id then skill_attack(BF.WEAPON, src_id, src_id, t.id, SK.AS_SPLASHER, skilllv, 0, { type = 5, splash = 25 }) end
   end
 end
@@ -367,7 +367,7 @@ function skill_castend_nodamage_id(src_id, bl_id, skillid, skilllv, opt)
 
   elseif skillid == SK.RG_RAID then
     nodamage(src_id, bl_id, skillid, skilllv)
-    for _, t in ipairs(skill_area(src, bl.map, bl.x, bl.y, 1, BCT.ENEMY)) do
+    for _, t in ipairs(skill_area(src, bl.map, bl.x, bl.y, 1, BCT.ENEMY, true)) do
       skill_castend_damage_id(src_id, t.id, skillid, skilllv, { sub = true })
     end
     skill_status_change_end(src_id, SC.HIDDING)
@@ -657,7 +657,7 @@ function skill_castend_pos2(src_id, x, y, skillid, skilllv, opt)
   if skillid ~= SK.WZ_METEOR then _rt("clif_skill_poseffect", src_id, skillid, skilllv, x, y) end
 
   if skillid == SK.MG_THUNDERSTORM or skillid == SK.WZ_HEAVENDRIVE then
-    for _, t in ipairs(skill_area(src, src.map, x, y, 2, BCT.ENEMY)) do
+    for _, t in ipairs(skill_area(src, src.map, x, y, 2, BCT.ENEMY, true)) do
       skill_castend_damage_id(src_id, t.id, skillid, skilllv, { sub = true, ground = true })
     end
 

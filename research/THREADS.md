@@ -917,6 +917,20 @@ level of Poison React to the damage (`battle.c:3296`): not taken, the iRO
 guide's 220% to 400% has none. Open: how long the official mark ran, and
 whether the client of 2003 drew anything over the target (the FAQ's
 "timer appears above the target" is iRO of mid-2004).
+**Ice Wall built as a target (2026-11-15).** Tried in the rig first: this
+client turns a click on a wall cell into a walk (0x0085 to the cell behind
+it), so no 0x0089 or 0x0113 can name one. 817 still hurts it through area
+skills: `skill_area_sub` takes skill units (`skill.c:847`), the wall is
+everyone's enemy (`battle.c:3464`), the blow comes off its durability
+(`skill.c:3718`), at nothing left it goes within 0.7 s (`:6157`). Built so,
+for the area skills that strike (not Signum Crucis, Hammer Fall or
+Sandman's sleep). Durability 200 + 200 a level, the guide's 400 to 2200 (817:
+500 at level 1); Water 1 (817's own element sum for a skill unit, `battle.c:
+716`, adds 0x20 to Water and lands outside its table). One level-10
+Thunderstorm breaks a level-10 wall (4,270 a cell from a Hunter of INT 91).
+Open: did official area skills hurt the wall, and did monsters' splash?
+817's monster splash goes through the same `skill_area_sub`; ours does not
+hit walls yet.
 **Read against the iRO guide's skill pages** (2004-03-27 to 2004-04-13,
 `research/notes/round4-review.md`; 2026-11-11):
 * *Agrees with the draft:* Enchant Poison's chance to poison (3% to 7%)

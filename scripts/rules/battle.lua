@@ -24,7 +24,7 @@ battle.rnd = rnd
 function battle.get(id)
   if not id or id == 0 then return nil end
   local bl = _rt("bl", id)
-  if not bl then return nil end
+  if not bl then return icewall_bl and icewall_bl(id) or nil end
   if bl.kind == "player" then bl.st = rules.status(bl.char) end
   return bl
 end
@@ -235,6 +235,7 @@ function battle.is_enemy(a, b)
   return a.kind ~= b.kind
 end
 function battle.check_target(src, target, flag)
+  if target.wall then return flag == BCT.ENEMY end -- everyone's enemy (817 battle.c:3464)
   if flag == BCT.ALL then return true end
   if flag == BCT.ENEMY then return battle.is_enemy(src, target) end
   if flag == BCT.PARTY then

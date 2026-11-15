@@ -859,7 +859,7 @@ always fires.
 | Change Cart | Cart look by base level (41, 66, 81, 91) | The client's skill text for the five carts; the levels are later emulators' (tier later) |
 | Provoke | Refused on the undead | The client's skill text: "Not appliable for the Undead" |
 | Sonic Blow | Needs a Katar | The client's skill text: "using Katar" |
-| Ice Wall | A cell someone stands on stays free | Nobody gets walled into a cell. The wall cannot be attacked yet |
+| Ice Wall | A cell someone stands on stays free. Area skills wear the wall down (Magnum Break, Arrow Shower, Napalm Beat, Fire Ball, Thunderstorm, Heaven's Drive, Sightrasher, Blitz Beat's splash, Venom Splasher's burst); it cannot be clicked | Nobody gets walled into a cell. The rest is eAthena 817 (`skill.c:847`, `3718`, `battle.c:3464`): durability 200 + 200 a level (the iRO guide's 400 to 2200; 817 gives level 1 500), no DEF, Water 1. This client turns a click on the wall into a walk (tried 2026-11-15) |
 | Vending | "There is nobody to sell to." | Single player |
 
 **Engine:**
@@ -936,7 +936,7 @@ always fires.
   jAthena's change to a used trap is not sent: this client applies 0x00c3
   to characters only (docs/PROTOCOL.md).
 * **Not built yet:** the other 2-2 skills, Repair Weapon
-  (nothing breaks in this era's data), attacking an Ice Wall, monsters'
+  (nothing breaks in this era's data), monsters'
   "friend" skill targets (mod0631 has none either).
 * **One cast at a time for monsters.** In mod0631 a counter skill could
   start over a cast in progress.

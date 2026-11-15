@@ -63,8 +63,10 @@ overweight icons.
 
 Next:
 
-* **Skills left out** (DEVIATIONS.md, THREADS.md #22): attacking an Ice Wall. Venom Splasher's delayed burst is in since
-  2026-11-15 (the timer from jAthena, tier later). Sandman's sleep on those nearby is in. Poison React,
+* **Skills left out** (DEVIATIONS.md, THREADS.md #22): none known. Since
+  2026-11-15 Venom Splasher's delayed burst is in (the timer from jAthena,
+  tier later), and area skills wear an Ice Wall down as in 817 (this
+  client cannot click one). Sandman's sleep on those nearby is in. Poison React,
   Remove Trap and Spring Trap are drafts to try in the client.
 * **The 2-2 jobs' skills** (behind `jobs2_2`): Crusader, Monk, Sage, Rogue,
   Alchemist, Bard, Dancer. Their damage formulas and status changes came

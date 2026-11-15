@@ -193,6 +193,11 @@ function skill_unitsetting(src_id, skillid, skilllv, x, y, flag)
       local id = _rt("su_new", src.map, ux, uy, g.unit_id, src_id, g.id)
       cells[id] = { id = id, group = g.id, map = src.map, x = ux, y = uy, val1 = skilllv, val2 = cval2,
                     limit = limit, range = crange, alive = true }
+      if skillid == SK.WZ_ICEWALL then
+        -- durability (eAthena 817 skill.c:3184 val1; the iRO guide's 400 to 2200): it loses 5
+        -- every 100 ms (skill.c:6155), which is the group's time above, and what blows take
+        cells[id].durability, cells[id].born = 200 + 200 * skilllv, now
+      end
       g.cells[#g.cells + 1] = id
       g.alive = g.alive + 1
     end
@@ -389,6 +394,52 @@ local function onlimit(c, now)
     if ng then ng.valstr, ng.to_x, ng.to_y = g.valstr, g.to_x, g.to_y end
   elseif g.unit_id == 0x8d then
     _rt("set_cell", c.map, c.x, c.y, true)
+  end
+end
+
+-- ------------------------------------------------------------ Ice Wall as a target
+
+-- eAthena 817 lets area skills hit an Ice Wall's cells (skill.c:847 skill_area_sub takes
+-- BL_SKILL; battle.c:3464 calls the wall everyone's enemy) and takes the damage off the
+-- cell's durability (skill.c:3718). This client cannot click one (tried 2026-11-15: a click
+-- on the wall is a walk to the cell behind it), so area skills are the only way, as there.
+local function wall_left(c, now) return c.durability - floor((now - c.born) / 100) * 5 end
+
+-- A wall cell as a target for battle's formulas: no DEF, no flee, Water 1 (817 battle.c:716
+-- gives the skill's element, the wall's being Water), formless, medium.
+local WALL_DB = { level = 1, str = 0, agi = 0, vit = 0, int = 0, dex = 0, luk = 0, def = 0, mdef = 0,
+                  race = 0, size = 1, element = 21, mode = 0, mvp_exp = 0, range = 0, atk1 = 0, atk2 = 0,
+                  attack_motion = 0, damage_motion = 0, attack_delay = 0, drops = {} }
+function icewall_bl(id)
+  local c = cells[id]
+  if not c or not c.alive or not c.durability then return nil end
+  local left = wall_left(c, _rt("now"))
+  return { id = id, kind = "mob", wall = true, map = c.map, x = c.x, y = c.y, dir = 0, dead = left <= 0,
+           hp = math.max(0, left), max_hp = c.durability, def_ele = 21, sc = {}, option = 0, opt1 = 0, opt2 = 0,
+           db = WALL_DB, class = 0, side = 0 }
+end
+
+-- Ice Wall cells in a rectangle, as targets.
+function icewall_targets(map, x0, y0, x1, y1)
+  local out = {}
+  for id, c in pairs(cells) do
+    if c.durability and c.alive and c.map == map and c.x >= x0 and c.x <= x1 and c.y >= y0 and c.y <= y1 then
+      local bl = icewall_bl(id)
+      if bl and not bl.dead then out[#out + 1] = bl end
+    end
+  end
+  table.sort(out, function(a, b) return a.id < b.id end)
+  return out
+end
+
+-- A blow on a wall cell; at nothing left it goes within 0.7 s (817 skill.c:6157).
+function icewall_damage(id, damage)
+  local c = cells[id]
+  if not c or not c.alive or not c.durability or damage <= 0 then return end
+  c.durability = c.durability - damage
+  local now = _rt("now")
+  if wall_left(c, now) <= 0 then
+    c.limit = math.min(c.limit, now - (groups[c.group] and groups[c.group].tick or now) + 700)
   end
 end
 

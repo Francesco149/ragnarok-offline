@@ -261,6 +261,13 @@ function skill_attack(attack_type, src_id, dsrc, bl_id, skillid, skilllv, wflag,
   local dsrc_bl = type(dsrc) == "table" and dsrc or (dsrc == src_id and src or get(dsrc))
   if not dsrc_bl then return 0 end
   local dmg = battle.calc_attack(attack_type, src, bl, skillid, skilllv, wflag or 0)
+  if bl.wall then
+    -- an Ice Wall cell: the blow comes off its durability; nothing else happens to it
+    if opt.splash then dmg.damage = floor(dmg.damage * opt.splash / 100) end
+    local total = dmg.damage + math.max(0, dmg.damage2)
+    icewall_damage(bl_id, total)
+    return total
+  end
   local lv = opt.lv or skilllv
   local ptype = opt.type or -1
   if opt.splash then
@@ -290,11 +297,15 @@ end
 
 -- Everyone in a square around (x, y) the skill may touch, as fresh snapshots.
 -- flag: BCT.ENEMY / NOENEMY / ALL / PARTY, judged from `src`.
-function skill_area(src, map, x, y, range, flag)
+-- `walls`: Ice Wall cells too, for searches that lead to a blow (skill_units.lua icewall_bl)
+function skill_area(src, map, x, y, range, flag, walls)
   local out = {}
   for _, id in ipairs(_rt("in_area", map, x - range, y - range, x + range, y + range)) do
     local bl = get(id)
     if bl and not bl.dead and battle.check_target(src, bl, flag) then out[#out + 1] = bl end
+  end
+  if walls and flag == BCT.ENEMY then
+    for _, w in ipairs(icewall_targets(map, x - range, y - range, x + range, y + range)) do out[#out + 1] = w end
   end
   return out
 end
