@@ -1142,12 +1142,16 @@ them. Built from it: a blind monster's sight of one cell (with Ragu Memo).
 cast begins in both (`rules/skill.lua`, mod0631 `skill.c:3308`). The page
 differs, and is kept as a witness only (it says itself it "is not 100%
 correct"): a looter keeps at most 10 items, mod0631 20 (`LOOTITEM_SIZE`,
-`map.h:14`); Detect for *Dark property* monsters, mod0631 for the Demon
+`map.h:14`) (**taken 2026-11-15**: jAthena //0764, `cf52bed`, 2004-02-01,
+set 10 as well, research round 22; DEVIATIONS.md); Detect for *Dark property* monsters, mod0631 for the Demon
 race (`mob.c:801`); an immobile monster sees only as far as it attacks,
 mod0631 locks on within 9 cells like any other (`mob.c:796`); an Active
 monster switches to the latest attacker one cell away after its blow,
 mod0631 a quarter of the time to whoever hit it (`mob.c:1100`). A second
-iRO or jRO witness for any of these would decide it. Its monster table
+iRO or jRO witness for any of these would decide it. **Round 22:** Detect
+by race, as mod0631 has it, in anjingbalap's Dagger Assassin guide (idRO,
+v2.2, 2004-06-02: "Insects, Demons and Boss monsters see through this
+invisibility"), not from the client's text. Its monster table
 (`monsters/monsters.js`, captured 2004-02-11, saved there too) agrees with
 `data/db/mobs.toml` on level, HP, EXP, ATK, DEF and stats for 204 monsters
 but for about 40 numbers, most of them DEX and AGI; the larger ones (the
@@ -1393,7 +1397,9 @@ Shelf, `other/books.txt`). **Left as 817 has them, open:**
   Orange Gooey one (`thief.txt:421`, `:485`); mod0631 pays a flat 100z
   (`npc_job_thief.txt:446`) and calls it "subsidy and the mushrooms'
   price". 817 takes "99 of each" mushroom, which takes none when fewer are
-  held (so they stay in the bag); mod0631 takes one of each. mod0631 has a
+  held (so they stay in the bag); mod0631 takes one of each. Weggy (iRO,
+  v6.4, 2004-06-07) has players carry them over to the Monk's mushroom
+  quest (round 22): they stayed, as here. mod0631 has a
   separate application step and counts at most 9 Net and 20 Gooey.
 * *Merchant.* Kay's wrong parcel is item 1083 in 817 and 1091 in mod0631;
   817 goes on to the confirmation with a number out of range where mod0631
@@ -1518,7 +1524,8 @@ for iRO:**
   2026-11-14: mod0631's own line, Ragu Memo, RODataZone and blood3d say 30,
   only mod0631's code took 20;
 * Marx Hansen's juices: one fruit a bottle (RODataZone: three; two pRO
-  guides of 2004, blood3d and Guide Maker: one, round 14);
+  guides of 2004, blood3d and Guide Maker: one, round 14; Weggy's Item
+  Creation section, iRO, likely mid-2003: one, round 22);
 * the training ground: Leo Von Frisch's 2 Bananas (RODataZone 1), the last
   Helper's tiers (ours 1 herb + 100z ... 10 herbs + 500z; RODataZone 3
   herbs + 100z or 5 + 150z), and every job's subsidy (RODataZone: Swordman
