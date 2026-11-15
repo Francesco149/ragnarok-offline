@@ -255,12 +255,12 @@ KAFRA_LIST = {
   { src = "817:other/kafra.txt:1197", map = "aldeba_in", x = 96, y = 181, dir = 4, sprite = 113, cutin = "kafra_05",
     save = { "aldeba_in", 96, 179 } },
   -- Comodo, the beach and the Pharos lighthouse: mod0631 only (sprite 721 is the
-  -- client's Comodo Kafra; the two in Comodo rent no cart)
+  -- client's Comodo Kafra; all three rent carts at 800z, conf/npc_town_kafra.txt:4615)
   { m631 = 4598, map = "comodo", x = 195, y = 150, dir = 4, sprite = 721, cutin = "kafra_07",
-    save = { "comodo", 180, 151 }, storage = 80, no_cart = true,
+    save = { "comodo", 180, 151 }, storage = 80,
     tele = { { "Pharos Lighthouse", 800, "cmd_fild07", 127, 134 }, { "Morroc", 1500, "morocc", 156, 46 } } },
   { m631 = 4216, map = "cmd_in02", x = 146, y = 180, dir = 4, sprite = 721, cutin = "kafra_07",
-    save = { "comodo", 209, 143 }, storage = 40, no_cart = true,
+    save = { "comodo", 209, 143 }, storage = 40,
     tele = { { "Pharos Lighthouse", 800, "cmd_fild07", 127, 134 }, { "Morroc", 2000, "morocc", 156, 46 } } },
   { m631 = 4407, map = "cmd_fild07", x = 136, y = 134, dir = 4, sprite = 721, cutin = "kafra_07",
     save = { "cmd_fild07", 127, 134 }, storage = 80,
