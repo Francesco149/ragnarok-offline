@@ -1088,6 +1088,16 @@ skill had a cast as well; and Summon Spirit Sphere's cast (the guide says
 "3 second casting delay" and that DEX shortens it; mod0631's 1.5 s is
 kept). A player account of 2004 of the combo timing would sharpen the
 window (jAthena's 1 s less 4 ms an AGI and 2 a DEX).
+**Round 29 (2026-11-16, `research/notes/round29-review.md`):** admira's
+idRO Monk FAQ (2004-09-29) agrees on Throw Spirit Sphere's 150% to 250%
+and Blade Stop sparing bosses; it adds two things not built: under Steel
+Body "enemy won't recognize you ... not attacked by any monster even if
+the monster is aggresive" (jAthena //1020 has nothing of it), and Snap
+"can go Through Ice Wall, Quagmire (unconfirmed) and Traps". Dikiwinky
+(idRO, 2004-11-13) gives Ugly Dance 10 to 30 SP a time against the iRO
+guide's 10 to 50 (kept). A song stopping on a blow over a quarter of max
+HP or on an ailment: built from jAthena (there by //0693) with two late
+player guides.
 **Impact:** Hunter, Assassin, Blacksmith and Wizard play.
 **Look:** jAthena's history (`refs/jathena`, `git log -S` on each skill
 name gives the date and often a source note), 817 and eathena-v0.5.2, the
