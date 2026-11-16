@@ -1179,9 +1179,19 @@ always fires.
   Bottle Grenade, as Fire (jAthena's skill_db and euRO's text of May 2004;
   mod0631's row says Neutral); Aid Potion throws a Red, Orange, Yellow,
   White or Blue Potion by level, worth 110% to 150%. Ours:
-  * the armour (Acid Terror) and weapon (Bomb) damage the guide gives is
-    left out: it is for players, jAthena comments it out, and no monster
-    casts either skill;
+  * the armour (Acid Terror, 3% to 13% a throw) and weapon (Bomb, 1% to
+    5% a burn) damage the guide gives falls on monsters: ArislanX's iRO
+    Alchemist guide (2004-08-20, later) has a monster's broken armour
+    cost it a quarter of its DEF and a broken weapon a quarter of its
+    attack. Ours: it lasts as long as the monster lives (no source gives
+    a time). jAthena breaks only players' gear, and nothing breaks a
+    player's here: no monster casts either skill (test
+    `alchemist_breaks_monster_gear`);
+  * Acid Terror is Neutral whatever the weapon (ArislanX: "is neutral,
+    so not subject to elemental weaknesses"; jAthena //1072, 2004-12-06);
+    817's and mod0631's rows give it the weapon's element. jAthena's
+    //1072 also has it ignore DEF and cards, which no player source of
+    2004 says: not built;
   * Aid Potion's heal grows with the target's VIT (INT for the Blue
     Potion) and recovery skills as a potion drunk does here (jAthena
     counts VIT twice), and the Blue Potion takes the guide's 10% a level

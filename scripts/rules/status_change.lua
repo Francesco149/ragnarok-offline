@@ -134,6 +134,9 @@ function skill_status_change_start(id, type, val1, val2, opt)
     -- mod0631 (skill.c:3861): 15 s + 15 s a level, Enchant Poison's line copied
     tick = 1200000
     enchant_end(bl, type)
+  elseif type == SC.BROKENARMOR or type == SC.BROKENWEAPON then
+    if not md then return false end -- ours: nothing in this world breaks a player's gear
+    tick = 86400000 -- ours: broken for as long as the monster lives (the guide gives no time)
   elseif type == SC.STRIPWEAPON or type == SC.STRIPSHIELD or type == SC.STRIPARMOR or type == SC.STRIPHELM then
     tick = 60000 -- eAthena 817 skill.c:5508; the guide: "for a short amount of time"
   elseif type == SC.CP_WEAPON or type == SC.CP_SHIELD or type == SC.CP_ARMOR or type == SC.CP_HELM then

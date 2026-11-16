@@ -35,8 +35,7 @@ for _, n in ipairs({
   "SM_BASH", "MC_MAMMONITE", "AC_DOUBLE", "AS_SONICBLOW", "KN_PIERCE", "KN_SPEARBOOMERANG", "TF_POISON",
   "TF_SPRINKLESAND", "AC_CHARGEARROW", "KN_SPEARSTAB", "RG_BACKSTAP", "RG_INTIMIDATE",
   "CR_HOLYCROSS", "CR_SHIELDCHARGE", "CR_SHIELDBOOMERANG", -- eAthena 817 skill.c:1201
-  "AM_ACIDTERROR", -- jAthena //0969 skill.c:1406. Its armour damage (the guide: 3% to 13%, Synthetic
-  -- Armor stops it) is for players, and jAthena comments it out: no monster casts it, so it is left out
+  "AM_ACIDTERROR", -- jAthena //0969 skill.c:1406; its armour damage: skill_break_mob below
   "NPC_PIERCINGATT", "NPC_MENTALBREAKER", "NPC_RANGEATTACK", "NPC_CRITICALSLASH", "NPC_COMBOATTACK",
   "NPC_GUIDEDATTACK", "NPC_POISON", "NPC_BLINDATTACK", "NPC_SILENCEATTACK", "NPC_STUNATTACK",
   "NPC_PETRIFYATTACK", "NPC_CURSEATTACK", "NPC_SLEEPATTACK", "NPC_RANDOMATTACK",
@@ -50,6 +49,18 @@ for _, n in ipairs({
   "ALL_RESURRECTION", "PR_TURNUNDEAD", "MG_FROSTDIVER", "WZ_JUPITEL", "NPC_MAGICALATTACK",
 }) do MAGIC_SINGLE[SK[n]] = true end
 
+-- Acid Terror breaks armour at 3% to 13% a throw, each burn of Bomb a weapon at 1% to 5%
+-- (the iRO guide's Alchemist page of 2004-03-27, ArislanX's guide of 2004-08-20). On a
+-- player the piece breaks (jAthena //0969 skill.c:1406); a monster's broken armour costs it
+-- a quarter of its DEF and a broken weapon a quarter of its attack (ArislanX: "if a
+-- monster's armor is broken, its DEF lowers by 25%", Bomb "lower the enemies attack by 25%
+-- if fighting a monster"). Only monsters here: no monster casts either skill.
+function skill_break_mob(bl_id, type, chance)
+  local bl = get(bl_id)
+  if not bl or bl.dead or bl.kind ~= "mob" or battle.sc(bl, type) then return end
+  if rnd(100) < chance then skill_status_change_start(bl_id, type, 1, 0) end
+end
+
 -- skill.c:780. opt: the server's cast-end arguments, or for a secondary hit
 -- {sub = true, wflag =, main = id of the main target, cx =, cy =}.
 function skill_castend_damage_id(src_id, bl_id, skillid, skilllv, opt)
@@ -60,6 +71,7 @@ function skill_castend_damage_id(src_id, bl_id, skillid, skilllv, opt)
 
   if WEAPON_SINGLE[skillid] then
     skill_attack(BF.WEAPON, src_id, src_id, bl_id, skillid, skilllv, 0)
+    if skillid == SK.AM_ACIDTERROR then skill_break_mob(bl_id, SC.BROKENARMOR, ({ 3, 7, 10, 12, 13 })[skilllv] or 13) end
 
   elseif skillid == SK.KN_BRANDISHSPEAR then
     -- 817:1237 the target, pushed back if it lives (817: one cell; two, as

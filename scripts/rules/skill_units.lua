@@ -425,9 +425,8 @@ local function onplace(c, bl, now)
     local t = sc(bl, type)
     if not t or t.val2 ~= c.id then skill_status_change_start(bl.id, type, g.lv, c.id, { tick = g.limit }) end
   elseif uid == 0xb1 then -- Bomb (jAthena //0969 skill.c:4095)
-    -- The guide's weapon damage (1% to 5%) is for players, as jAthena's commented-out
-    -- pc_break_weapon: no monster casts Bomb, so it is left out
     skill_attack(BF.WEAPON, g.src, cell_src, bl.id, g.skill, g.lv, 0)
+    skill_break_mob(bl.id, SC.BROKENWEAPON, g.lv) -- skill_effects.lua
   elseif uid == 0x93 then -- Land Mine
     skill_attack(BF.MISC, g.src, cell_src, bl.id, g.skill, g.lv, 0)
     del_cell(c)

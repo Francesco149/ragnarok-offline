@@ -125,7 +125,9 @@ function battle.critical(bl) return bl.kind == "mob" and floor(battle.luk(bl) / 
 -- number. jAthena of 2004-05-07 has `atk2 -= atk2*90/100`, likely a slip for x90/100.
 -- The other three: Strip Shield here (battle.def), Armor and Helm at battle.vit and .int.
 local function stripped_atk(bl, atk)
-  if sc(bl, SC.STRIPWEAPON) then return atk - floor(atk * 10 / 100) end
+  if sc(bl, SC.STRIPWEAPON) then atk = atk - floor(atk * 10 / 100) end
+  -- a weapon broken by Bomb: a quarter off (ArislanX's iRO Alchemist guide, 2004-08-20)
+  if sc(bl, SC.BROKENWEAPON) then atk = atk - floor(atk * 25 / 100) end
   return atk
 end
 function battle.atk(bl) -- battle.c:207
@@ -160,6 +162,8 @@ function battle.def(bl)
   -- Strip Shield: 15% off (euRO's text of May 2004, skilldesctable.txt:1316; jAthena of
   -- 2004-05-07 has x85/100). The iRO guide of March gave 10% for each of three Strips.
   if sc(bl, SC.STRIPSHIELD) and def < 10000 then def = def - floor(def * 15 / 100) end
+  -- armour broken by Acid Terror: a quarter off (ArislanX's iRO Alchemist guide, 2004-08-20)
+  if sc(bl, SC.BROKENARMOR) and def < 10000 then def = def - floor(def * 25 / 100) end
   -- a poisoned monster loses a quarter (players: status.lua), a frozen or stone one half
   -- (817 battle.c battle_get_def; Ragu Memo's ailment page, 2003-08 and 2003-12)
   if def < 10000 then
@@ -867,7 +871,10 @@ battle.weapon_skill = {
   [SK.CR_GRANDCROSS] = function(w) w.hitrate = 1000000; return w end,
   -- Acid Terror and Bomb: jAthena //0969 (2004-05-13) battle.c:1597; the iRO guide's Alchemist
   -- page (2004-03-27) gives the same, 140% to 300% and 120% to 200%. Neither period emulator has them
-  [SK.AM_ACIDTERROR] = function(w) return pct(w, 100 + 40 * w.lv) end,
+  -- Acid Terror is Neutral whatever the weapon: ArislanX's iRO Alchemist guide (2004-08-20)
+  -- "is neutral, so not subject to elemental weaknesses"; jAthena //1072 (2004-12-06) makes
+  -- it so. 817's and mod0631's skill_db say 0, the weapon's element
+  [SK.AM_ACIDTERROR] = function(w) w.s_ele, w.s_ele_ = 0, 0; return pct(w, 100 + 40 * w.lv) end,
   -- (Bomb burns as Fire: skill_get_pl, 00_const.lua)
   [SK.AM_DEMONSTRATION] = function(w) return pct(w, 100 + 20 * w.lv) end,
   [SK.MO_INVESTIGATE] = function(w)

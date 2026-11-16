@@ -2812,6 +2812,49 @@ fn sage_rod_breaker_fields() {
     assert_eq!(cells_at(&mut t, 26, 32, 0x7e), 1, "beside it, yes");
 }
 
+/// A monster's armour broken by Acid Terror loses a quarter of its DEF, its weapon broken by
+/// Bomb a quarter of its attack, for as long as it lives (ArislanX's iRO guide, 2004-08-20);
+/// nothing breaks a player's. Acid Terror is Neutral whatever the weapon.
+#[test]
+fn alchemist_breaks_monster_gear() {
+    let mut t = T::new();
+    // STR 1, bare hands: blows too weak to kill the Orc before its armour goes
+    t.lua("job_change(18); player.base_level = 80; player.str = 1; player.dex = 99; heal(30000, 30000)");
+    t.learn("AM_ACIDTERROR", 5);
+    let me = t.me;
+    let orc = t.spawn(27, 25, 1023); // Orc Warrior: DEF 10, ATK 104-126
+    let num = |t: &mut T, code: &str| -> i64 { t.lua(code).trim().parse::<f64>().unwrap() as i64 };
+    let def = |t: &mut T| num(t, &format!("battle.def(battle.get({orc}))"));
+    let atk = |t: &mut T| num(t, &format!("battle.atk(battle.get({orc})) + battle.atk2(battle.get({orc}))"));
+    assert_eq!((def(&mut t), atk(&mut t)), (10, 230));
+
+    // thrown until the armour goes (13% a throw at level 5)
+    t.lua("give_item(7136, 200)");
+    let mut throws = 0;
+    while !t.has_sc(orc, "BROKENARMOR") {
+        t.lua(&format!("battle.get({orc}).hp = 1400; heal(30000, 30000)")); // and the SP for the next throw
+        t.cast("AM_ACIDTERROR", orc);
+        t.run(1500);
+        throws += 1;
+        assert!(throws < 120, "Acid Terror never broke the armour");
+    }
+    assert_eq!(def(&mut t), 10 - 10 / 4);
+    t.run(600_000);
+    assert!(t.has_sc(orc, "BROKENARMOR"), "still broken ten minutes on");
+
+    // Bomb's weapon break, a quarter off both halves of the attack
+    t.lua(&format!("skill_break_mob({orc}, SC.BROKENWEAPON, 100)"));
+    assert_eq!(atk(&mut t), (104 - 104 / 4) + (126 - 126 / 4));
+
+    // a player's gear is never broken
+    t.lua(&format!("skill_break_mob({me}, SC.BROKENARMOR, 100); skill_status_change_start({me}, SC.BROKENWEAPON, 1, 0)"));
+    assert!(!t.has_sc(me, "BROKENARMOR") && !t.has_sc(me, "BROKENWEAPON"));
+
+    // Neutral whatever the weapon's element
+    let ele = t.lua("local w = battle.weapon_skill[SK.AM_ACIDTERROR]({ damage = 100, lv = 1, s_ele = 3, s_ele_ = 3 }); return w.s_ele * 10 + w.s_ele_");
+    assert_eq!(ele.trim(), "0");
+}
+
 /// Bio Cannibalize and Sphere Mine (jAthena //0969's numbers; what they do from the iRO guide's
 /// Alchemist page and euRO's text of May 2004): a Flora fights the monsters and its Alchemist
 /// gets the EXP; three at most; gone when its time is up. A Marine Sphere hit by its Alchemist
