@@ -562,7 +562,16 @@ function skill_unit_timer(now)
             if bl and not bl.dead and battle.check_target(owner, bl, g.target) then onplace(c, bl, now) end
           end
         end
-        if c.alive and groups[c.group] and (now - g.tick >= g.limit or now - g.tick >= c.limit) then del_cell(c) end
+        if c.alive and groups[c.group] and (now - g.tick >= g.limit or now - g.tick >= c.limit) then
+          -- a player's trap that ran out unsprung leaves its Trap on the cell (817 skill.c:6143,
+          -- not Venom Dust; mod0631 has nothing): "any unused trap will be able to be picked up
+          -- after it's lasting time has depleted" (Giga Bahamut's iRO beta 2 Hunter FAQ, GameFAQs
+          -- 20075, section of 2003-02-22)
+          if g.unit_id >= 0x8f and g.unit_id <= 0x98 and g.unit_id ~= 0x92 and g.val2 == 0 and owner.kind == "player" then
+            _rt("drop_item", c.map, c.x, c.y, 1065, 1)
+          end
+          del_cell(c)
+        end
       end
     end
   end

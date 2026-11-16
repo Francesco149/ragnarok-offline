@@ -2589,3 +2589,37 @@ fn cards_mod0631_left_empty() {
     let empty = |id: u32| t.g.db.items.get(&id).map(|i| i.athena_equip.is_empty());
     assert_eq!((empty(4094), empty(4142)), (Some(true), Some(true)));
 }
+
+/// A Hunter's trap that runs out unsprung leaves its Trap on the cell (817 skill.c:6143; an
+/// iRO player of 2003: "any unused trap will be able to be picked up after it's lasting time
+/// has depleted"). One that went off leaves nothing.
+#[test]
+fn unused_trap_leaves_its_trap() {
+    let mut t = T::new();
+    t.lua("job_change(11); player.base_level = 70; player.dex = 90; player.int = 40; heal(9999, 9999); give_item(1065, 10)");
+    t.learn("HT_LANDMINE", 5);
+    let traps_on = |t: &T, x: u16, y: u16| -> u32 {
+        t.g.world.units.values().filter(|u| u.is_item() && (u.x, u.y) == (x, y)).filter_map(|u| match &u.kind {
+            ro_game::world::UnitKind::Item(f) if f.item.nameid == 1065 => Some(f.item.amount),
+            _ => None,
+        }).sum()
+    };
+    // level 5 lasts 40 s; nothing walks over it
+    t.cast_at("HT_LANDMINE", 25, 22);
+    assert!(t.g.world.units.values().any(|u| u.skill().is_some() && (u.x, u.y) == (25, 22)), "the mine is set");
+    t.run(39_000);
+    assert_eq!(traps_on(&t, 25, 22), 0, "still set");
+    t.run(2_000);
+    assert!(!t.g.world.units.values().any(|u| u.skill().is_some()), "the mine has run out");
+    assert_eq!(traps_on(&t, 25, 22), 1, "its Trap lies on the cell");
+    // a mine that goes off gives nothing back
+    t.run(2_000);
+    t.cast_at("HT_LANDMINE", 27, 25);
+    assert!(t.g.world.units.values().any(|u| u.skill().is_some() && (u.x, u.y) == (27, 25)), "the second mine is set");
+    let z = t.spawn(31, 25, 1015);
+    t.run(6_000);
+    assert!(!t.g.world.units.values().any(|u| u.skill().is_some()), "the mine went off");
+    t.kill(z);
+    t.run(41_000);
+    assert_eq!(traps_on(&t, 27, 25), 0, "nothing left of a sprung mine");
+}

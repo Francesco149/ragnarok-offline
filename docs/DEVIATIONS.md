@@ -938,6 +938,12 @@ always fires.
   * The Archer Skeleton and Doppelganger Cards still do nothing. The
     client's text says "(Not implemented yet)" for both, and so does
     RODataZone; jAthena //0679 and 817 give the Doppelganger Card 30% ASPD.
+* **A trap that runs out unsprung leaves its Trap** on its cell
+  (2026-11-16), as 817 does (`skill.c:6143`: a player's traps, not Venom
+  Dust) and an iRO beta 2 player describes ("any unused trap will be able
+  to be picked up after it's lasting time has depleted", GameFAQs 20075,
+  2003-02). mod0631 gives nothing back (`scripts/rules/skill_units.lua`
+  `skill_unit_timer`, test `unused_trap_leaves_its_trap`).
 * **Effects the client and RODataZone call not implemented are out**
   (2026-11-16; `research/nyi_items.py`, `EXTRA_EQUIP`). mod0631 (jRO)
   scripts some effects that this client's item text marks "Not
