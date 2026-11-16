@@ -564,6 +564,15 @@ So on at least one English server the floor had no Skeletons in January
 2004, and the game follows it. The other floors keep December's jRO
 counts: no English account counts them.
 
+**Round 25 (2026-11-16):** a second English-server list of Payon Cave 1F
+without Skeletons (excaladbiur's Dungeon FAQ, GameFAQs 24632, an iRO
+player, lists revised in v1.30, before 2004-02-01). The same guide puts
+a Joker on Geffen Dungeon 3F (ours, mod0631, has none) and gives Glast
+Heim's "Castle Level 1" as Baphomet Jr., Joker, Khalitzburg, Marduk,
+Mysteltainn, Pest, Rideword, Tirfing, where mod0631's `gl_cas01` (Ragu
+Memo's jRO counts) has Carat, Sageworm, Alice, Owl Duke, Dark Frame and
+Whisper besides. An iRO/jRO split, or another map? Not changed.
+
 ### 11. Shop NPC names and stock
 Done in part: shops are named from 817 by cell. Two of 817's lines have a
 space before the tab and were missed until 2026-11-14 (Izlude's Butcher,
@@ -1822,6 +1831,15 @@ was athena's slip, and the element may have changed after 2004).
 **Look:** RODataZone's monster pages per dungeon (rates?), GameFAQs monster
 guides of early 2004, Ragu Memo's monster pages (jRO).
 
+**Round 25 (2026-11-16): three MVP prizes restored.** 817's rows for
+Osiris, Baphomet and Doppelganger lack MEXP and ExpPer, so their MVP
+prizes start two columns early; the importer read them from the usual
+columns and dropped each boss's first prize. Osiris has the Old Blue Box
+(40%) again, Doppelganger the Cursed Ruby (15%), Baphomet a third prize:
+the Yggdrasil Berry at 817's 10%, as RODataZone's iRO table (2004-02) and
+a cRO MVP guide (GameFAQs 28266, 2004-03) name it (817: the Seed).
+AZn2th3N's monster FAQ (2003-10) has the Thief Bug Insect, Shadow 1 too.
+
 ### 33. Monster numbers against RODataZone's iRO table
 `research/rdz_mob_numbers.py` (2026-11-15) sets the HP and EXP of
 RODataZone's monster table (iRO, capture 2004-02-11) beside ours (mod0631,
@@ -1840,6 +1858,11 @@ the MVP reward slots in random order (`i = rand() % 3`), mod0631 in order;
 ours keeps mod0631's. (The EXP share and the MVP EXP of the same function
 were taken from jAthena //0764 and 817 on 2026-11-15, DEVIATIONS.md.)
 **Look:** an iRO or euRO monster guide of early 2004 for the eight.
+
+*Round 25:* AZn2th3N's Monsters FAQ (GameFAQs 19673, 2003-10-01) agrees
+with ours on all six, but its table is Ragnagate's database ("most of the
+monsters' info I got from there") and agrees with mod0631 on 181 of 200
+monsters: the emulators' own data line, not a witness against RODataZone.
 
 ### 34. jAthena's "real server" commits of 2004-01 to 2004-03
 jAthena's commit messages of the period often say a change matches "the
@@ -1894,8 +1917,18 @@ against 817 and jAthena: not built. Before Comodo, pRO's Mad Monarch
 "Strike back enemy with Critical Attack". Hammer Fall: "14% chance to stun
 enemies in a 3x3 tile area" at level 1 (the only KoW, 2003-07-13, who
 plays cRO and kRO); ours 5x5 with both emulators, kept.
+*Round 25:* how many a boss brings. A cRO MVP guide (GameFAQs 28266,
+2004-03): "Pawns" Osiris 6 Isis, Baphomet 6 Baphomet Jr., Moonlight
+Flower 3 Nine Tails, Phreeoni 6 Wormtail, Dark Lord 3, Eddga 6 Bigfoot.
+RODataZone's iRO table (2004-02), "Minions": Osiris 7 Isis, Baphomet 8,
+Doppelganger 9 Nightmares, Moonlight Flower 4, Orc Hero 6 Orc Warriors
+(ours summons High Orcs), Phreeoni Hode. Ours call 4 or 5 at a time. The
+two lists agree with neither ours nor each other; they may count the
+escort a boss spawns with (which no period emulator gives) rather than
+its summons.
 **Look:** the kRO patch notice //0785 cites (2004-01/02), and when euRO
-took it; period accounts of MVP summons.
+took it; period accounts of MVP summons; whether bosses of 2004 spawned
+with an escort.
 
 ### 35. jAthena's "real server" remarks before our date (2003-10-30 to 11-30)
 jAthena's history starts at //0505 (2003-10-30); thread 34's sweep began

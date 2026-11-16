@@ -95,6 +95,11 @@ church (`prt_church`), Prontera and its inns (`prt_in`), the Clock Tower's
 random warps (`c_tower1`, `c_tower2`, `c_tower4`), Turtle Island
 (`tur_dun01`, `tur_dun03`), the Morroc pyramids (`moc_pryd01`).
 
+**Claymore Trap** (round 25 review, 2026-11-16): this client's
+`skilldesctable.txt` says "1 Trap Needed", the May one's (yuno_lang)
+"2 Trap Needed". euRO raised the cost between the two; the May version
+should spend two.
+
 ## What that version would switch on
 
 * `jobs2_2` by default, and the 2-2 skills that need the packets above:
