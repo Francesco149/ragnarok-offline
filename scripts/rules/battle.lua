@@ -846,13 +846,14 @@ battle.weapon_skill = {
   [SK.CR_SHIELDCHARGE] = function(w) w.blewcount = 4 + w.lv; w.s_ele, w.s_ele_ = 0, 0; return pct(w, 100 + 20 * w.lv) end,
   [SK.CR_SHIELDBOOMERANG] = function(w) w.s_ele, w.s_ele_ = 0, 0; w.long = true; return pct(w, 100 + 30 * w.lv) end,
   [SK.CR_HOLYCROSS] = function(w) w.div = 2; return pct(w, 100 + 35 * w.lv) end,
-  [SK.CR_GRANDCROSS] = function(w) return pct(w, 100 + 40 * w.lv) end,
+  -- Grand Cross's weapon half never misses; the multiplier comes after the magic half is added
+  -- (eAthena 817 battle.c:1546 and 3158, jAthena //0969 the same)
+  [SK.CR_GRANDCROSS] = function(w) w.hitrate = 1000000; return w end,
   -- Acid Terror and Bomb: jAthena //0969 (2004-05-13) battle.c:1597; the iRO guide's Alchemist
   -- page (2004-03-27) gives the same, 140% to 300% and 120% to 200%. Neither period emulator has them
   [SK.AM_ACIDTERROR] = function(w) return pct(w, 100 + 40 * w.lv) end,
-  -- Bomb burns as Fire: jAthena's skill_db and euRO's skill text of May 2004 ("Offensive (Fire)");
-  -- mod0631's and 817's rows say Neutral
-  [SK.AM_DEMONSTRATION] = function(w) w.s_ele, w.s_ele_ = 3, 3; return pct(w, 100 + 20 * w.lv) end,
+  -- (Bomb burns as Fire: skill_get_pl, 00_const.lua)
+  [SK.AM_DEMONSTRATION] = function(w) return pct(w, 100 + 20 * w.lv) end,
   [SK.MO_INVESTIGATE] = function(w)
     w.damage = floor(floor(w.damage * (100 + 75 * w.lv) / 100) * (w.def1 + w.def2) / 100)
     w.hitrate, w.s_ele, w.s_ele_ = 100000, 0, 0
@@ -950,6 +951,13 @@ function battle.calc_magic_attack(bl, target, skill_num, skill_lv, flag)
   end
   damage = battle.attr_fix(damage, skill_get_pl(skill_num), battle.element(target))
   div = skill_get_num(skill_num, skill_lv)
+  if skill_num == SK.CR_GRANDCROSS then
+    -- eAthena 817 battle.c:3158: the weapon blow added, then 140% to 500%. One hit at a time:
+    -- the ground strikes three times (skill_units.lua), where mod0631's row says 3 (817's 1)
+    local wd = battle.calc_weapon_attack(bl, target, skill_num, skill_lv, 0)
+    damage = floor((damage + wd.damage) * (100 + 40 * skill_lv) / 100)
+    div = 1
+  end
   if div > 1 and skill_num ~= SK.WZ_VERMILION then damage = damage * div end
   if battle.dcard(target, 4128) then damage = 0 end -- Golden Thief Bug Card: no magic damage
   if target.kind == "player" and damage > 0 then

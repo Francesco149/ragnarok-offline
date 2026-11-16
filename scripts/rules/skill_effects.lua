@@ -704,6 +704,7 @@ function skill_castend_pos2(src_id, x, y, skillid, skilllv, opt)
   local src = get(src_id)
   if not src then return end
   local sd = src.kind == "player" and src or nil
+  if skillid == SK.CR_GRANDCROSS then x, y = src.x, src.y end -- around the caster, wherever aimed
   if skillid ~= SK.WZ_METEOR then _rt("clif_skill_poseffect", src_id, skillid, skilllv, x, y) end
 
   if skillid == SK.MG_THUNDERSTORM or skillid == SK.WZ_HEAVENDRIVE then
@@ -739,6 +740,17 @@ function skill_castend_pos2(src_id, x, y, skillid, skilllv, opt)
 
   elseif UNIT_SKILLS[skillid] then
     skill_unitsetting(src_id, skillid, skilllv, x, y, 0)
+
+  elseif skillid == SK.CR_GRANDCROSS then
+    -- eAthena 817 skill.c:1510: the cross is laid and the caster held 0.9 s
+    skill_unitsetting(src_id, skillid, skilllv, x, y, 0)
+    _rt("bl_set", src_id, "canmove", 900)
+    -- "this skill damages not only enemies but the caster at the same time, the damage amount
+    -- the caster takes is half the amount the enemy takes" (the iRO guide's Crusader page,
+    -- 2004-04-11): his own cross strikes him three times, at half. Neither emulator has it
+    for i = 0, 2 do
+      battle.after(i * 300, function() skill_attack(BF.MAGIC, src_id, src_id, src_id, skillid, skilllv, 0, { splash = 50 }) end)
+    end
 
   elseif skillid == SK.WZ_METEOR then
     -- skill.c:1863: 2 + level/2 meteors, a second apart, on random cells within 2 of the spot

@@ -33,6 +33,7 @@ local UNIT_ID = {
   [SK.HT_SHOCKWAVE] = 0x94, [SK.HT_SANDMAN] = 0x95, [SK.HT_FLASHER] = 0x96, [SK.HT_FREEZINGTRAP] = 0x97,
   [SK.HT_CLAYMORETRAP] = 0x98,
   [SK.AM_DEMONSTRATION] = 0xb1, -- jAthena //0969 skill.c:314
+  [SK.CR_GRANDCROSS] = 0x86, -- eAthena 817 skill.c:254, Lord of Vermilion's
 }
 UNIT_ID[-1] = nil
 local function unit_id(skill, flag)
@@ -129,6 +130,10 @@ function skill_unitsetting(src_id, skillid, skilllv, x, y, flag)
     limit, interval, count = 5000 * skilllv, 1000, 5
   elseif skillid == SK.HT_TALKIEBOX then
     limit, range, target = 600000, 1, BCT.ALL -- 817 cast_db: 600 s
+  elseif skillid == SK.CR_GRANDCROSS then
+    -- a cross of 29 cells (817 skill.c:2962, jAthena the same), each striking who stands on it
+    -- every 0.3 s. The guide's 0.9 s ("damaged 3 times"), where 817 and jAthena keep it 1 s
+    count, limit, interval = 29, 900, 300
   elseif skillid == SK.AM_DEMONSTRATION then
     -- Bomb: jAthena //0969 skill.c:3589 and its cast_db, 40 s to 60 s; a blow a second
     -- ("every 1 second", the iRO guide's Alchemist page, 2004-03-27)
@@ -189,6 +194,10 @@ function skill_unitsetting(src_id, skillid, skilllv, x, y, flag)
       end
     elseif skillid == SK.WZ_QUAGMIRE then
       ux, uy = ux + (i % 5 - 2), uy + (i // 5 - 2)
+    elseif skillid == SK.CR_GRANDCROSS then
+      local dx = { 0, 0, -1, 0, 1, -2, -1, 0, 1, 2, -4, -3, -2, -1, 0, 1, 2, 3, 4, -2, -1, 0, 1, 2, -1, 0, 1, 0, 0 }
+      local dy = { -4, -3, -2, -2, -2, -1, -1, -1, -1, -1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 2, 2, 2, 3, 4 }
+      ux, uy = ux + dx[i + 1], uy + dy[i + 1]
     elseif skillid == SK.AM_DEMONSTRATION then
       -- nine cells, the middle one burning the 3x3 and the rest for show (jAthena skill.c:3759,
       -- which puts the square a cell up and left of the spot: ours centres it)
@@ -325,7 +334,13 @@ local function onplace(c, bl, now)
       end
       g.ticks[bl.id] = now - g.interval
     end
-  elseif uid == 0x86 then -- Lord of Vermilion, Storm Gust, Meteor Storm
+  elseif uid == 0x86 then -- Lord of Vermilion, Storm Gust, Meteor Storm, Grand Cross
+    if g.skill == SK.CR_GRANDCROSS then
+      -- three strikes each, whatever the clock does near the 0.9 s
+      local n = (g.vallist[bl.id] or 0) + 1
+      if n > 3 then return end
+      g.vallist[bl.id] = n
+    end
     skill_attack(BF.MAGIC, g.src, cell_src, bl.id, g.skill, g.lv, 0)
   elseif uid == 0x7f then -- Fire Wall: each cell burns a number of times
     if c.val2 > 0 then

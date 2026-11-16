@@ -2699,3 +2699,39 @@ fn alchemist_acid_bomb_aid() {
     assert!(t.sp() > 10 + 40 - 1, "SP {}", t.sp());
     assert_eq!(count(&mut t, 505), 0);
 }
+
+/// Grand Cross (draft): 3 s of cast nothing breaks, a fifth of the caster's HP, then a cross of
+/// 29 cells around him strikes who stands on it three times as Holy, and the caster at half.
+#[test]
+fn grand_cross() {
+    let mut t = T::new();
+    // weak, or the first blow kills a Pupa
+    t.lua("job_change(14); player.base_level = 80; player.str = 1; player.int = 1; player.vit = 60; heal(30000, 30000)");
+    t.learn("CR_GRANDCROSS", 1);
+    t.wear(1104); // a Falchion
+    let on = t.spawn(27, 25, 1008); // two cells east: on the cross
+    let off = t.spawn(27, 27, 1008); // two east and two south: beside it
+    let (hp_on, hp_off) = (t.mob_hp(on).unwrap(), t.mob_hp(off).unwrap());
+    let hp0 = t.hp();
+    t.cast_at("CR_GRANDCROSS", 25, 25);
+    t.run(2700);
+    assert_eq!(t.mob_hp(on), Some(hp_on), "still casting at 2.7 s");
+    assert_eq!(t.hp(), hp0);
+    // count the blows the Pupa on the cross takes
+    let mut blows = 0;
+    let mut last = hp_on;
+    for _ in 0..30 {
+        t.run(100);
+        let Some(now) = t.mob_hp(on) else { blows += 1; break };
+        if now < last {
+            blows += 1;
+        }
+        last = now;
+    }
+    assert_eq!(blows, 3, "three blows");
+    assert_eq!(t.mob_hp(off), Some(hp_off), "off the cross");
+    // a fifth of the HP at the cast's end (costs are taken then, as mod0631 does), then his own share
+    let cost = hp0 / 5;
+    let hurt = hp0 - cost - t.hp();
+    assert!(hurt > 0 && hurt < hp_on - last, "the caster takes less than the Pupa: {hurt}");
+}

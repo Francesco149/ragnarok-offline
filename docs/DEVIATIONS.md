@@ -1115,6 +1115,19 @@ always fires.
     rolls). What it ends is 817's list: the ailments, Increase and Decrease
     AGI, Suffragium, Magnificat, Gloria, Apple of Idun, the endows and the
     Chemical Protections. The guide says "all magical effects".
+* **Grand Cross** (behind `jobs2_2`; draft, test `grand_cross`). mod0631
+  calls it "no damage" and Neutral. eAthena 817's (jAthena //0969 the
+  same): 3 s of cast nothing breaks, a cross of 29 cells around the caster,
+  each blow the magic and the weapon damage added and then 140% to 500%,
+  Holy, the undead and demons sometimes blinded. With them: a fifth of the
+  HP the caster has (euRO's skill text of May 2004, jAthena's
+  skill_require_db), any weapon but a bow, no blinding a boss (euRO's
+  text). Ours, from the iRO guide's Crusader page (2004-04-11): the cross
+  lasts 0.9 s and strikes three times, one hit each (817 keeps it 1 s and
+  mod0631's row counts 3 a hit), and strikes the caster too, at half
+  ("the damage amount the caster takes is half the amount the enemy
+  takes"; neither emulator has it). The guide's lower DEF while casting
+  ("decreases by 2/3": by or to?) is left out.
 * **The Alchemist's Acid Terror, Bomb (Demonstration) and Aid Potion
   (Potion Pitcher)** (behind `jobs2_2`; drafts, test
   `alchemist_acid_bomb_aid`). mod0631 never built them; 817's Acid Terror

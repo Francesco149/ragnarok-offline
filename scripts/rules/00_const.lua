@@ -53,7 +53,12 @@ function skill_get(id) return skill_db[id] or { id = id, name = "?", max = 0, in
 function skill_get_range(id) return skill_get(id).range end
 function skill_get_hit(id) return skill_get(id).hit end
 function skill_get_inf(id) return skill_get(id).inf end
-function skill_get_pl(id) return skill_get(id).pl end
+-- Elements mod0631's skill_db leaves Neutral for skills it never built: Grand Cross is Holy
+-- (eAthena 817's and jAthena's skill_db, the iRO guide's "holy attack"), Bomb Fire (jAthena's
+-- skill_db, euRO's skill text of May 2004)
+local PL_FIX = { [SK.CR_GRANDCROSS] = 6, [SK.AM_DEMONSTRATION] = 3 }
+PL_FIX[-1] = nil
+function skill_get_pl(id) return PL_FIX[id] or skill_get(id).pl end
 function skill_get_nk(id) return skill_get(id).nk end
 function skill_get_sp(id, lv) return per_level(skill_get(id).sp, lv, 0) end
 function skill_get_num(id, lv) return per_level(skill_get(id).num, lv, 1) end

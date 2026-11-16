@@ -158,6 +158,13 @@ function skill_additional_effect(src_id, bl_id, skillid, skilllv, attack_type)
     if rnd(100) < floor(5 * sc_def_vit / 100) then start(SC.STAN, skilllv, time2()) end
   elseif skillid == SK.CR_HOLYCROSS then
     if rnd(100) < floor(3 * skilllv * sc_def_int / 100) then start(SC.BLIND, skilllv, time2()) end
+  elseif skillid == SK.CR_GRANDCROSS then
+    -- the undead and demons may go blind (eAthena 817 skill.c:487), "except boss monster"
+    -- (euRO's skill text of May 2004); not the caster struck by his own cross
+    local race = battle.race(bl)
+    if bl_id ~= src_id and (undead or race == 6) and (battle.mode(bl) & 0x20) == 0 and rnd(100) < sc_def_int then
+      start(SC.BLIND, skilllv, time2())
+    end
   elseif skillid == SK.CR_SHIELDCHARGE then
     if rnd(100) < floor((15 + skilllv * 5) * sc_def_vit / 100) then start(SC.STAN, skilllv, time2()) end
   elseif skillid == SK.RG_RAID then
@@ -413,6 +420,7 @@ local CAST_817 = {
   [SK.CR_PROVIDENCE] = 3000,
   [SK.SA_FLAMELAUNCHER] = 3000, [SK.SA_FROSTWEAPON] = 3000, [SK.SA_LIGHTNINGLOADER] = 3000, [SK.SA_SEISMICWEAPON] = 3000,
   [SK.SA_DISPELL] = 2000,
+  [SK.CR_GRANDCROSS] = 3000, -- also the iRO guide's (2004-04-11): "a 3 second casting delay"
   -- jAthena //0969's cast_db (2004-05-13): neither period emulator's has them
   [SK.AM_ACIDTERROR] = 1000, [SK.AM_DEMONSTRATION] = 1000,
 }
@@ -466,6 +474,8 @@ function rules.skill_use(a)
   local casttime = skill_castfix(sd, CAST_817[skill] or skill_get_cast(skill, lv))
   local delay = skill_delayfix(sd, skill_get_delay(skill, lv))
   local cancelable, forcecast = true, false
+  -- Grand Cross is aimed at the caster's own cell (a ground skill in mod0631's skill_db)
+  if skill == SK.CR_GRANDCROSS then cancelable = false end
 
   if bl then
     if skill == SK.AL_HEAL then
@@ -509,7 +519,7 @@ function skill_check_condition(sd, skill, lv, a)
 
   local sp = skill_get_sp(skill, lv)
   if sd.st.dsprate ~= 100 then sp = floor(sp * sd.st.dsprate / 100) end
-  local zeny = 0
+  local zeny, hpcost = 0, 0
   local items = {}
   local w = sd.st.weapon
   local function water() return _rt("cell", sd.map, sd.x, sd.y) == 3 end
@@ -525,6 +535,11 @@ function skill_check_condition(sd, skill, lv, a)
     items[715] = 1; items[716] = 1
   elseif skill == SK.AM_CP_WEAPON or skill == SK.AM_CP_SHIELD or skill == SK.AM_CP_ARMOR or skill == SK.AM_CP_HELM then
     items[7139] = 1 -- the guide's "Glistening Coat"; 817's skill_require_db
+  elseif skill == SK.CR_GRANDCROSS then
+    -- a fifth of the HP the caster has: euRO's skill text of May 2004 ("Consume 20% of remained
+    -- HP"), jAthena //0969's skill_require_db (hp_rate 20), with any weapon but a bow
+    if w == 11 then return fail(6) end
+    hpcost = floor(sd.char.hp * 20 / 100)
   elseif skill == SK.AM_ACIDTERROR then items[7136] = 1 -- Acid Bottle; the iRO guide's Alchemist page
   elseif skill == SK.AM_DEMONSTRATION then items[7135] = 1 -- Bottle Grenade (Fire Bottle), jAthena //0969's skill_db
   elseif skill == SK.AM_POTIONPITCHER then
@@ -605,6 +620,7 @@ function skill_check_condition(sd, skill, lv, a)
     if not (GEMS[item] and battle.dcard(sd, 4132)) then _rt("pc_item_take", id, item, n) end
   end
   if sp > 0 then _rt("bl_set", id, "sp", sd.char.sp - sp) end
+  if hpcost > 0 then _rt("bl_set", id, "hp", math.max(1, sd.char.hp - hpcost)) end
   if zeny > 0 then _rt("bl_set", id, "zeny", sd.char.zeny - zeny) end
   return true
 end
