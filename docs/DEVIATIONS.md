@@ -1238,8 +1238,11 @@ always fires.
   * while playing: a walk four times slower, no plain blow, no sitting, no
     SP recovery (HP comes back), and no skill but Adaptation, Musical
     Strike and Slinging Arrow (jAthena //0998-//1001); Adaptation only after
-    the first 5 s (//0995); a weapon that is no instrument or whip, or no
-    SP, ends it. Encore plays the last song again for half its SP, plus
+    the first 5 s (//0995); a weapon that is no instrument or whip, no
+    SP, a blow of more than a quarter of the max HP, or being stunned,
+    frozen, asleep or turned to stone ends it (jAthena, both rules there
+    by //0693 of 2004-01-09; the blow also in two player guides of late
+    2004, round 29). Encore plays the last song again for half its SP, plus
     its own 1 (the guide, euRO's May text; mod0631's row: 0 SP);
   * what a song gives: the guide's level column (mod0631's level numbers
     are the same) with jAthena //0820's Lessons and stat parts, which the

@@ -3259,6 +3259,26 @@ fn ensembles() {
         t.run(6000);
     }
     assert!(slept, "no egg asleep");
+    stop(&mut t);
+
+    // a blow of more than a quarter of the max HP stops the song; a quarter or less does not;
+    // nor does a stun leave it playing (jAthena //1020 pc.c:4494, skill.c:7624)
+    let mhp = num(&mut t, "battle.get(player.id).st.max_hp");
+    t.cast("BD_DRUMBATTLEFIELD", me);
+    t.run(300);
+    t.lua(&format!("_rt('bl_damage', {pupa}, player.id, {})", mhp / 4));
+    t.run(300);
+    assert!(t.has_sc(me, "DANCING"), "a quarter: still playing");
+    t.lua(&format!("_rt('bl_damage', {pupa}, player.id, {})", mhp / 4 + 1));
+    t.run(300);
+    assert!(!t.has_sc(me, "DANCING"), "more than a quarter: stopped");
+    t.lua("heal(30000, 30000)");
+    t.cast("BD_DRUMBATTLEFIELD", me);
+    t.run(300);
+    assert!(t.has_sc(me, "DANCING"));
+    t.lua("skill_status_change_start(player.id, SC.STAN, 1, 0, { tick = 2000, nodef = true })");
+    t.run(300);
+    assert!(!t.has_sc(me, "DANCING"), "stunned: stopped");
     t.check();
 }
 

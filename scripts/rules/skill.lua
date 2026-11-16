@@ -899,6 +899,10 @@ end
 function rules.pc_damaged(a)
   local sd = get(a.bl)
   if not sd or sd.dead then return end
+  -- a blow of more than a quarter of the max HP stops a song (jAthena //1020 pc.c:4494, there
+  -- before //0693 of 2004-01-09; "if you lose more then 25% of your HP in one hit you lose your
+  -- song", Jath's Bard FAQ of 2004-09, and Dikiwinky's idRO guide of 2004-11)
+  if (a.damage or 0) * 4 > sd.st.max_hp and sc(sd, SC.DANCING) then skill_stop_dancing(sd.id) end
   if sd.char.hp < (sd.st.max_hp >> 2) and checkskill(sd, SK.SM_AUTOBERSERK) > 0 then
     local t = sc(sd, SC.PROVOKE)
     if not t or t.val2 == 0 then skill_status_change_start(sd.id, SC.PROVOKE, 10, 1) end

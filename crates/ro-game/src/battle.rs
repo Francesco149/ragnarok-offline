@@ -547,7 +547,7 @@ impl Game {
         if dead {
             self.player_dies(target);
         } else {
-            self.defer_rule("pc_damaged", json!({"bl": target}));
+            self.defer_rule("pc_damaged", json!({"bl": target, "damage": damage}));
         }
         dead
     }

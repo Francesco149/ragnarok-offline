@@ -338,6 +338,8 @@ function skill_status_change_start(id, type, val1, val2, opt)
   if type == SC.STONE or type == SC.FREEZE or type == SC.STAN or type == SC.SLEEP then
     _rt("stop_attack", id)
     for t = SC.STONE, SC.SLEEP do if t ~= type then stop(t) end end
+    -- and no song (jAthena //1020 skill.c:7624, there since //0693 of 2004-01-09)
+    if has(SC.DANCING) then skill_stop_dancing(id) end
   elseif type == SC.HIDDING or type == SC.CLOAKING then
     _rt("stop_attack", id)
   end
