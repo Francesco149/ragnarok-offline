@@ -585,6 +585,9 @@ function battle.calc_weapon_attack(src, target, skill_num, skill_lv, wflag, opt)
     if target.kind == "mob" then
       if st.riding and (st.weapontype1 == 4 or st.weapontype1 == 5) and t_size == 1 then
         atkmax = st.watk -- a spear from a Peco hits medium size in full
+      elseif skill_num == SK.MO_EXTREMITYFIST then
+        -- Guillotine Fist pierces "the size" (the iRO guide's Monk page; jAthena //1020 battle.c:2913)
+        atkmax = st.watk
       else
         atkmax = floor((st.watk - st.watk_) * st.atkmods[t_size] / 100)
         atkmax_ = floor(st.watk_ * st.atkmods_[t_size] / 100)
@@ -754,10 +757,12 @@ function battle.calc_weapon_attack(src, target, skill_num, skill_lv, wflag, opt)
   if tsd and battle.attack_element(src) == 3 and checkskill(tsd, SK.BS_SKINTEMPER) > 0 then
     damage = floor(damage * (100 - checkskill(tsd, SK.BS_SKINTEMPER) * 5) / 100)
   end
-  -- battle.c:1271 Star Crumbs
+  -- battle.c:1271 Star Crumbs; a Monk's spirit spheres, 3 each (jAthena //1020 battle.c:3676,
+  -- since //0510 of 2003-11-01)
   if sd and damage > 0 then
     damage = damage + st.star - st.star_
     damage2 = damage2 + st.star_
+    damage = damage + 3 * pc_spiritball(sd.id)
   end
 
   if sd then
@@ -892,7 +897,28 @@ battle.weapon_skill = {
     return w
   end,
   [SK.MO_CHAINCOMBO] = function(w) w.div = 4; return pct(w, 150 + 50 * w.lv) end,
-  [SK.MO_COMBOFINISH] = function(w) w.blewcount = 3; return pct(w, 240 + 60 * w.lv) end,
+  -- pushed 5 cells: the iRO guide's Monk page (2004-03-27) and eAthena 817 battle.c:1568;
+  -- mod0631 3 (jAthena //1020 none)
+  [SK.MO_COMBOFINISH] = function(w) w.blewcount = 5; return pct(w, 240 + 60 * w.lv) end,
+  -- Throw Spirit Sphere: one blow of 150% to 250% for each sphere thrown (the iRO guide's
+  -- Monk page, 2004-03-27). Both emulators give 150% to 350% (100 + 50 a level: 817
+  -- battle.c:1549, jAthena //1020 battle.c:3307, its finger_offensive_type 0). The count
+  -- thrown is set when the cast ends (skill_effects.lua)
+  [SK.MO_FINGEROFFENSIVE] = function(w)
+    local n = math.max(1, finger_offensive_count[w.src.id] or 1)
+    w.div = n
+    w.long = true
+    return pct(w, (125 + 25 * w.lv) * n)
+  end,
+  -- Guillotine Fist: ATK x (8 + SP / 10) + 250 + 150 a level, never misses, Neutral, past
+  -- DEF (jAthena //1020 battle.c:3328; the guide's "Additional ATK" 400 to 1000 and "pierces
+  -- the flee rate, the size and the defence ... neutral property"). The SP goes after the blow
+  [SK.MO_EXTREMITYFIST] = function(w)
+    local sp = w.src.kind == "player" and w.src.char.sp or 0
+    w.damage = w.damage * (8 + floor(sp / 10)) + 250 + 150 * w.lv
+    w.hitrate, w.s_ele, w.s_ele_ = 100000, 0, 0
+    return w
+  end,
   -- Musical Strike and Slinging Arrow: an arrow shot from an instrument or a whip, 150% to 250%
   -- (the iRO guide's Bard and Dancer pages, mod0631's numbers), from afar, of the arrow's
   -- element and with its ATK, 0 to all of it, before the multiplier (jAthena //1020
@@ -1082,6 +1108,9 @@ function rules.weapon_attack(a)
     local t = sc(src, SC.DONTFORGETME)
     if t then adelay = floor(adelay * (100 + song_effect(SC.DONTFORGETME, t)) / 100) end
   end
+  -- no plain blow in a Monk's combo window (jAthena //1020 pc.c:3869: the target is kept for
+  -- the next blow of the chain) nor while Blade Stop holds either side (battle.c:4278)
+  if sc(src, SC.COMBO) or sc(src, SC.BLADESTOP) then return { adelay = adelay } end
   -- Auto Counter (not in mod0631; eAthena 817 battle.c:1698, 3403): a blow
   -- from the front does nothing and is answered, ignoring DEF, with twice
   -- the critical rate and HIT +20 (817's default type 1; jAthena //0751,
@@ -1133,5 +1162,9 @@ function rules.weapon_attack(a)
   if total > 0 then battle.drain(src, math.max(0, wd.damage), math.max(0, wd.damage2)) end
   if total > 0 then skill_additional_effect(src.id, target.id, 0, 0) end
   if total > 0 then skill_poison_react(src.id, target.id, battle.attack_element(src)) end
+  -- Triple Attack opens the window for Chain Combo (jAthena //1020 battle.c:4333)
+  if wd.div == 255 and src.kind == "player" then monk_combo_after(src.id, SK.MO_TRIPLEATTACK, target.id) end
+  -- a Monk waiting with Blade Stop catches the blow's striker (battle.c:4484)
+  if sc(target, SC.BLADESTOP_WAIT) then blade_stop_catch(src, target) end
   return { adelay = adelay }
 end

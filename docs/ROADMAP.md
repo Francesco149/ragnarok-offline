@@ -111,9 +111,12 @@ Next:
   2004-05/06 and the guide (test `bard_dancer_songs`): the ten songs
   walking with their player, Adaptation, Encore, Frost Joke, Scream, the
   arrow shots; played in the client (Whistle's notes following the Bard,
-  Apple of Idun's heal, Dissonance's strikes, Frost Joke's freeze). Left:
-  Free Cast's attack while casting (it walks, as mod0631 `pc.c:1094`),
-  Abracadabra, the ensembles, the Monk's skills.
+  Apple of Idun's heal, Dissonance's strikes, Frost Joke's freeze). The Monk's
+  skills drafted the same day from jAthena //1020 and the guide's Monk
+  page (test `monk_skills`): spirit spheres, the combos, Guillotine Fist,
+  Blade Stop, Snap; this client draws none of the spheres, windows or
+  holds. Left: Free Cast's attack while casting (it walks, as mod0631
+  `pc.c:1094`), Abracadabra, the ensembles.
 * **Check the drafted skills against the iRO guide's pages** (THREADS.md
   #22) and the ailments against period guides (#21). The client's skill
   text against the emulators is settled (R6).

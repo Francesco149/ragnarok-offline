@@ -1267,6 +1267,51 @@ always fires.
     ensembles (they need a partner; jAthena //1003's switch lets one play
     them alone), and the guide's rule that two songs overlapping make a
     level-1 Dissonance or Ugly Dance (a lone player plays one song).
+* **The Monk's skills** (behind `jobs2_2`; drafts, test `monk_skills`;
+  `scripts/rules/monk.lua`). mod0631 has the damage of Occult Impaction,
+  Chain Combo and Combo Finish, Steel Body, Fury, Iron Fists, Flee and
+  Spiritual Cadence, and nothing that makes or spends a spirit sphere.
+  The rest follows jAthena //1020 (2004-06-08; its Monk dates from //0507
+  to //0544 of 2003-10/11, before our client), checked against the iRO
+  guide's Monk page (2004-03-27), which agrees on almost every number:
+  * spirit spheres: one a Summon Spirit Sphere, 10 minutes each, as many as
+    the skill's level; 3 ATK each on every blow (jAthena). Occult
+    Impaction, Blade Stop, Combo Finish and Snap cost one, Steel Body and
+    Fury five, Guillotine Fist five (four straight after Combo Finish or
+    in Blade Stop), Throw Spirit Sphere one a level or what is left. Not
+    kept over a logout (jAthena);
+  * combos: Triple Attack opens a window of 1 s less 4 ms a point of AGI
+    and 2 of DEX (300 ms more if the next blow is known) in which Chain
+    Combo may follow, and that one a window for Combo Finish (0.7 s), and
+    that one for Guillotine Fist, which then needs no cast and reaches the
+    target Combo Finish threw back. The Monk stands and does not swing
+    in a window (jAthena);
+  * Combo Finish throws the target back 5 cells (the guide and 817;
+    mod0631 3, jAthena none). Throw Spirit Sphere does 150% to 250% a
+    sphere (the guide; mod0631 has none, 817 and jAthena 150% to 350%);
+    its cast is a second more for each sphere (both). Fury adds 10% to 20%
+    critical rate (the guide, 817, jAthena; mod0631 raised the rate by that
+    share of itself). Steel Body has the guide's 5 s cast (every emulator:
+    none);
+  * Guillotine Fist: ATK x (8 + SP / 10) + 250 + 150 a level, past FLEE,
+    size and DEF, Neutral; the Monk dashes to the cell beyond the target,
+    is left with no SP, Fury ends and no SP comes back for 5 minutes
+    (jAthena //0979 and //0998; the guide);
+  * Absorb Spirit Sphere gives 10 SP a sphere (the guide; jAthena 7), from
+    the Monk's own spheres only (jAthena //0980 later added a chance of SP
+    from a monster, "a little ahead of time": not built);
+  * Blade Stop waits 0.5 s to 1.3 s; a plain blow then holds the striker
+    and the Monk 20 s to 60 s, neither walking nor striking, the Monk
+    allowed Throw Spirit Sphere from level 2, Occult Impaction from 3,
+    Chain Combo from 4 and Guillotine Fist at 5, which let go. Not on a
+    boss (the guide; jAthena catches anything). A monster held uses no
+    skill either (ours: jAthena's check is for players);
+  * Snap moves the Monk at once to a cell in a free straight line (the
+    guide: "if there is no obstacle"); jAthena moves it anywhere.
+  This client has no packet for spheres, the combo window or Blade Stop,
+  and no skill window entry for any of it (THREADS.md #25): the combos
+  can be reached only by `@useskill` inside a window shorter than a
+  second. euRO's May-2004 client draws them all.
 * **Talkie Box** speaks: mod0631 lets it lie silent and 817's attempt is
   marked "not working", so it follows jAthena //0988 (2004-05-25, five
   months after our date): the first one to step on it makes it say the

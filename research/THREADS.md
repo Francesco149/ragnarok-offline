@@ -1077,6 +1077,17 @@ poisonous (ours: neutral, as Athena)?
   The server now sends the cast's 0x011a on the target (result 1): played
   in the client, the ice shows on the target, the units around it take the
   hit and freeze, the target does not.
+**The Monk drafted (2026-11-16)** from jAthena //1020 and the iRO guide's
+Monk page (DEVIATIONS.md, `scripts/rules/monk.lua`). Where they split, the
+guide was taken, each open: Throw Spirit Sphere 150% to 250% a sphere (817
+and jAthena 150% to 350%); Absorb Spirit Sphere 10 SP a sphere (jAthena 7);
+Steel Body's 5 s cast (no emulator has one); Blade Stop sparing bosses;
+Snap needing a free line. Also open: the guide's Blade Stop "Casting Time"
+column (0.5 s to 1.3 s) is jAthena's catching window; whether the official
+skill had a cast as well; and Summon Spirit Sphere's cast (the guide says
+"3 second casting delay" and that DEX shortens it; mod0631's 1.5 s is
+kept). A player account of 2004 of the combo timing would sharpen the
+window (jAthena's 1 s less 4 ms an AGI and 2 a DEX).
 **Impact:** Hunter, Assassin, Blacksmith and Wizard play.
 **Look:** jAthena's history (`refs/jathena`, `git log -S` on each skill
 name gives the date and often a source note), 817 and eathena-v0.5.2, the

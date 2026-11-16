@@ -74,6 +74,46 @@ function skill_castend_damage_id(src_id, bl_id, skillid, skilllv, opt)
     skill_attack(BF.WEAPON, src_id, src_id, bl_id, skillid, skilllv, 0)
     if skillid == SK.AM_ACIDTERROR then skill_break_mob(bl_id, SC.BROKENARMOR, ({ 3, 7, 10, 12, 13 })[skilllv] or 13) end
 
+  elseif skillid == SK.MO_INVESTIGATE or skillid == SK.MO_FINGEROFFENSIVE or skillid == SK.MO_CHAINCOMBO
+    or skillid == SK.MO_COMBOFINISH then
+    -- the Monk's blows (jAthena //1020 skill.c:1590-1668, monk.lua): Chain Combo and Combo
+    -- Finish leave a window for the next; all but Combo Finish let go of Blade Stop
+    skill_attack(BF.WEAPON, src_id, src_id, bl_id, skillid, skilllv, 0)
+    if skillid ~= SK.MO_COMBOFINISH and sc(src, SC.BLADESTOP) then blade_stop_release(src_id) end
+    if sd and (skillid == SK.MO_CHAINCOMBO or skillid == SK.MO_COMBOFINISH) then
+      monk_combo_after(src_id, skillid, bl_id)
+    end
+
+  elseif skillid == SK.MO_EXTREMITYFIST then
+    -- skill.c:1669: the blow, and the Monk dashes through to the cell beyond the target (or
+    -- onto its cell when that one is blocked), held still while it runs; then no SP, Fury
+    -- over, and 5 minutes without SP coming back (status_change.lua)
+    if sd then
+      local function step(d) return d > 0 and 1 or (d < 0 and -1 or 0) end
+      local dx, dy = bl.x - src.x, bl.y - src.y
+      local ex, ey = dx + step(dx), dy + step(dy)
+      if ex == 0 and ey == 0 then ex = 1 end
+      local function free(x, y) local c = _rt("cell", src.map, x, y); return c == 0 or c == 3 end
+      if not free(src.x + ex, src.y + ey) then
+        ex, ey = dx, dy
+        if not free(src.x + ex, src.y + ey) then
+          _rt("clif_skill_fail", src_id, skillid, 0, 0)
+          return
+        end
+      end
+      skill_attack(BF.WEAPON, src_id, src_id, bl_id, skillid, skilllv, 0)
+      local held = math.max(math.abs(ex), math.abs(ey))
+      _rt("move_pos", src_id, src.x + ex, src.y + ey)
+      _rt("bl_set", src_id, "canmove", 100 + src.speed * held)
+      _rt("bl_set", src_id, "sp", 0)
+      skill_status_change_end(src_id, SC.COMBO)
+      skill_status_change_start(src_id, SC.EXTREMITYFIST, skilllv, 0)
+    else
+      skill_attack(BF.WEAPON, src_id, src_id, bl_id, skillid, skilllv, 0)
+    end
+    skill_status_change_end(src_id, SC.EXPLOSIONSPIRITS)
+    if sc(src, SC.BLADESTOP) then blade_stop_release(src_id) end
+
   elseif skillid == SK.KN_BRANDISHSPEAR then
     -- 817:1237 the target, pushed back if it lives (817: one cell; two, as
     -- the iRO guide's Knight page has it); the cells around it by the rows
@@ -242,6 +282,7 @@ for _, n in ipairs({
   "PR_BENEDICTIO", "PR_SLOWPOISON", "KN_AUTOCOUNTER",
   "CR_PROVIDENCE", -- skill.c:1248
   "CR_REFLECTSHIELD", -- ours, from the iRO guide: 817 only plays the effect (skill.c:1841)
+  "MO_STEELBODY", "MO_EXPLOSIONSPIRITS", -- jAthena //1020 skill.c:2280
 }) do SC_SIMPLE[SK[n]] = true end
 
 local SC_PARTY = {}
@@ -783,6 +824,33 @@ function skill_castend_nodamage_id(src_id, bl_id, skillid, skilllv, opt)
       end
     end)
 
+  elseif skillid == SK.MO_CALLSPIRITS then
+    -- one sphere for 10 minutes, as many as the level (jAthena //1020 skill.c:2383; the guide)
+    if sd then
+      nodamage(src_id, bl_id, skillid, skilllv)
+      pc_addspiritball(src_id, skill_get_time(skillid, skilllv) > 0 and skill_get_time(skillid, skilllv) or 600000, skilllv)
+    end
+
+  elseif skillid == SK.MO_ABSORBSPIRITS then
+    -- the Monk's own spheres back as SP, 10 each: the iRO guide's Monk page (2004-03-27,
+    -- "Restores 10 SP by absorbing one spirit sphere"). jAthena //1020 skill.c:2400 gives 7,
+    -- and from //0980 (2004-05-21, "a little ahead of time") a fifth of the time twice a
+    -- monster's level from a monster; neither here. Another player's: PvP only, not here
+    if sd and bl_id == src_id and pc_spiritball(src_id) > 0 then
+      nodamage(src_id, bl_id, skillid, skilllv)
+      local n = pc_spiritball(src_id)
+      pc_delspiritball(src_id, n)
+      local gain = math.min(10 * n, sd.st.max_sp - sd.char.sp)
+      if gain > 0 then battle.heal(src_id, 0, gain) end
+    elseif sd then
+      _rt("clif_skill_fail", src_id, skillid, 0, 0)
+    end
+
+  elseif skillid == SK.MO_BLADESTOP then
+    -- waiting to catch a blow (skill.c:2396; what happens then: battle.lua, monk.lua)
+    nodamage(src_id, bl_id, skillid, skilllv)
+    skill_status_change_start(src_id, SC.BLADESTOP_WAIT, skilllv, 0)
+
   elseif skillid == SK.NPC_METAMORPHOSIS then
     -- eAthena 817 skill.c:2421: `val` of the skill line is the monster it becomes
     -- (mod0631 names the skill and leaves it empty; its lines carry no monster)
@@ -832,7 +900,17 @@ function skill_castend_pos2(src_id, x, y, skillid, skilllv, opt)
   if skillid == SK.CR_GRANDCROSS then x, y = src.x, src.y end -- around the caster, wherever aimed
   if skillid ~= SK.WZ_METEOR then _rt("clif_skill_poseffect", src_id, skillid, skilllv, x, y) end
 
-  if skillid == SK.MG_THUNDERSTORM or skillid == SK.WZ_HEAVENDRIVE then
+  if skillid == SK.MO_BODYRELOCATION then
+    -- Snap: at once to the cell "if there is no obstacle between the caster and the location"
+    -- (the iRO guide's Monk page); jAthena //1020 skill.c:3600 moves there wherever it is
+    local c = _rt("cell", src.map, x, y)
+    if (c == 0 or c == 3) and _rt("can_shoot", src.map, src.x, src.y, x, y) then
+      _rt("move_pos", src_id, x, y)
+    elseif sd then
+      _rt("clif_skill_fail", src_id, skillid, 0, 0)
+    end
+
+  elseif skillid == SK.MG_THUNDERSTORM or skillid == SK.WZ_HEAVENDRIVE then
     for _, t in ipairs(skill_area(src, src.map, x, y, 2, BCT.ENEMY, true)) do
       skill_castend_damage_id(src_id, t.id, skillid, skilllv, { sub = true, ground = true })
     end

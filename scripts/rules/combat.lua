@@ -81,6 +81,8 @@ function rules.regen(t)
     if t.sitting then r.hp_clock, r.sp_clock = 200, 200 end
     if sc[tostring(SC.MAGNIFICAT)] then r.sp_clock = r.sp_clock * 2 end
     if sc[tostring(SC.EXPLOSIONSPIRITS)] then r.sp_clock = 0 end -- pc.c:3933
+    -- nor for 5 minutes after Guillotine Fist (jAthena //0998 pc.c:6456; the iRO guide's Monk page)
+    if sc[tostring(SC.EXTREMITYFIST)] then r.sp_clock = 0 end
     if t.walking then
       -- pc.c:3846: only Moving HP Recovery heals on the move, a quarter as much
       if skill(SK.SM_MOVINGRECOVERY) > 0 then

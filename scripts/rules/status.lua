@@ -420,8 +420,11 @@ function rules.status(c)
   end
   t = has(SC.FORTUNE)
   if t then s.critical = s.critical + song_effect(SC.FORTUNE, t) * 10 end
+  -- Fury: critical +10% to +20% (val2 in tenths), as eAthena 817 pc.c:1392, jAthena //1020
+  -- pc.c:1653 and the iRO guide's Monk page (2004-03-27, "Additional Critical Chance 10%"
+  -- to "20%"). mod0631 raised the rate by that share of itself instead
   t = has(SC.EXPLOSIONSPIRITS)
-  if t then s.critical = s.critical + floor(t.val2 * s.critical / 1000) end
+  if t then s.critical = s.critical + floor(t.val2 / 10) end
   if has(SC.STEELBODY) then
     s.def, s.mdef = 90, 90
     aspd = floor(aspd * 125 / 100)

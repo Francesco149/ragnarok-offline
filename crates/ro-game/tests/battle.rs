@@ -3141,3 +3141,166 @@ fn bard_dancer_songs() {
     let base = num(&mut t, &format!("battle.get({mob}).db.attack_delay"));
     assert_eq!(adelay, base * (100 + slower) / 100);
 }
+
+/// Monk (a draft from jAthena //1020 and the iRO guide, scripts/rules/monk.lua): spirit
+/// spheres, Absorb Spirit Sphere, Throw Spirit Sphere, Triple Attack opening the combo,
+/// Chain Combo and Combo Finish in their windows, Guillotine Fist after them, Blade Stop
+/// and Snap.
+#[test]
+fn monk_skills() {
+    let mut t = T::new();
+    t.lua("job_change(15); player.base_level = 80; player.dex = 60; player.agi = 40; heal(30000, 30000)");
+    for (s, lv) in [("MO_CALLSPIRITS", 5), ("MO_ABSORBSPIRITS", 1), ("MO_FINGEROFFENSIVE", 5), ("MO_TRIPLEATTACK", 10),
+                    ("MO_CHAINCOMBO", 5), ("MO_COMBOFINISH", 5), ("MO_EXPLOSIONSPIRITS", 5), ("MO_EXTREMITYFIST", 5),
+                    ("MO_BLADESTOP", 5), ("MO_INVESTIGATE", 5), ("MO_BODYRELOCATION", 1)] {
+        t.learn(s, lv);
+    }
+    let me = t.me;
+    let num = |t: &mut T, code: &str| -> i64 { t.lua(code).trim().parse::<f64>().unwrap() as i64 };
+    let balls = |t: &mut T| -> i64 { t.lua("pc_spiritball(player.id)").trim().parse::<f64>().unwrap() as i64 };
+    let summon = |t: &mut T, n: i64| {
+        for _ in 0..n {
+            t.cast("MO_CALLSPIRITS", t.me);
+            t.run(2000);
+        }
+    };
+
+    // Summon Spirit Sphere: one a cast, as many as the level, then no more
+    summon(&mut t, 5);
+    assert_eq!(balls(&mut t), 5);
+    t.packets(0);
+    t.cast("MO_CALLSPIRITS", me);
+    t.run(2000);
+    assert_eq!(balls(&mut t), 5);
+    assert!(!t.packets(0x0110).is_empty(), "a sixth sphere refused");
+
+    // Absorb Spirit Sphere: 10 SP a sphere (the guide), all of them
+    t.lua("_rt('bl_set', player.id, 'sp', 10)");
+    t.cast("MO_ABSORBSPIRITS", me);
+    t.run(2500);
+    assert_eq!(balls(&mut t), 0);
+    assert_eq!(t.sp(), 10 - 5 + 50, "5 SP spent, 50 back");
+    t.lua("heal(30000, 30000)");
+
+    // Throw Spirit Sphere 5 with three spheres: throws the three, in one blow of three hits
+    summon(&mut t, 3);
+    let pupa = t.spawn(28, 25, 1008);
+    let full = t.mob_hp(pupa).unwrap();
+    t.cast("MO_FINGEROFFENSIVE", pupa);
+    t.run(5000);
+    assert_eq!(balls(&mut t), 0);
+    assert_eq!(num(&mut t, "finger_offensive_count[player.id]"), 3);
+    assert!(t.mob_hp(pupa).unwrap() < full, "the spheres hit");
+    // no spheres: refused
+    let hp = t.mob_hp(pupa).unwrap();
+    t.cast("MO_FINGEROFFENSIVE", pupa);
+    t.run(3000);
+    assert_eq!(t.mob_hp(pupa).unwrap(), hp);
+    t.kill(pupa);
+
+    // Chain Combo out of its window: nothing (a Pupa that will not die of plain blows first)
+    let pupa = t.spawn(26, 25, 1008);
+    if let Some(m) = t.g.world.units.get_mut(&pupa).and_then(|u| u.mob_mut()) {
+        (m.max_hp, m.hp) = (1_000_000, 1_000_000);
+    }
+    let full = t.mob_hp(pupa).unwrap();
+    t.cast("MO_CHAINCOMBO", me);
+    t.run(300);
+    assert_eq!(t.mob_hp(pupa).unwrap(), full);
+
+    // Triple Attack opens the window (20% a blow at level 10): no plain blow while it lasts
+    let mut w = Writer::new(0x0089);
+    w.u32(pupa).u8(7);
+    t.send(w);
+    let mut opened = false;
+    for _ in 0..400 {
+        t.run(40);
+        if t.has_sc(me, "COMBO") {
+            opened = true;
+            break;
+        }
+    }
+    assert!(opened, "Triple Attack never came");
+    assert_eq!(num(&mut t, "battle.sc(battle.get(player.id), SC.COMBO).val1"), t.skill_id("MO_TRIPLEATTACK") as i64);
+    // Chain Combo strikes the one being fought, and leaves the window for Combo Finish
+    t.lua("heal(30000, 30000)");
+    let hp = t.mob_hp(pupa).unwrap();
+    t.cast("MO_CHAINCOMBO", me);
+    t.run(60);
+    assert!(t.mob_hp(pupa).unwrap() < hp, "Chain Combo hit");
+    assert_eq!(num(&mut t, "battle.sc(battle.get(player.id), SC.COMBO).val1"), t.skill_id("MO_CHAINCOMBO") as i64);
+    // Combo Finish costs a sphere and throws the target back 5 cells
+    t.lua("pc_addspiritball(player.id, 600000, 5); pc_addspiritball(player.id, 600000, 5); \
+           pc_addspiritball(player.id, 600000, 5); pc_addspiritball(player.id, 600000, 5); \
+           pc_addspiritball(player.id, 600000, 5)");
+    t.lua("skill_status_change_start(player.id, SC.EXPLOSIONSPIRITS, 5, 0)");
+    let before = t.pos(pupa);
+    t.cast("MO_COMBOFINISH", me);
+    t.run(60);
+    assert_eq!(balls(&mut t), 4);
+    let after = t.pos(pupa);
+    assert_eq!(after.0 as i32 - before.0 as i32, 5, "pushed 5 cells: {before:?} -> {after:?}");
+    assert_eq!(num(&mut t, "battle.sc(battle.get(player.id), SC.COMBO).val1"), t.skill_id("MO_COMBOFINISH") as i64);
+    // Guillotine Fist straight after: no cast, four spheres, reaches the one thrown back; the
+    // Monk lands past it, with no SP, Fury over and no SP coming back for a while
+    let hp = t.mob_hp(pupa).unwrap();
+    t.cast("MO_EXTREMITYFIST", pupa);
+    t.run(60);
+    assert_eq!(balls(&mut t), 0);
+    assert!(t.mob_hp(pupa).is_none_or(|h| h < hp), "Guillotine Fist hit");
+    assert_eq!(t.sp(), 0);
+    assert!(!t.has_sc(me, "EXPLOSIONSPIRITS"));
+    assert!(t.has_sc(me, "EXTREMITYFIST"));
+    assert_eq!(t.pos(me), (after.0 + 1, after.1), "the Monk dashes through");
+    t.kill(pupa);
+    // without Fury, no Guillotine Fist
+    t.lua("skill_status_change_end(player.id, SC.EXTREMITYFIST); heal(30000, 30000)");
+    t.run(1500); // Guillotine Fist's delay
+    summon(&mut t, 5);
+    let (mx, my) = t.pos(me);
+    let pupa = t.spawn(mx + 1, my, 1008);
+    let full = t.mob_hp(pupa).unwrap();
+    t.cast("MO_EXTREMITYFIST", pupa);
+    t.run(5000);
+    assert_eq!(t.mob_hp(pupa).unwrap(), full);
+    assert_eq!(balls(&mut t), 5);
+    t.kill(pupa);
+
+    // Blade Stop: a blow while it waits holds both; the monster neither walks nor strikes;
+    // Occult Impaction (level 3 and up) lets go
+    let poring = t.spawn(mx + 1, my, 1002);
+    t.cast("MO_BLADESTOP", me);
+    t.run(100);
+    assert!(t.has_sc(me, "BLADESTOP_WAIT"));
+    t.lua(&format!("rules.weapon_attack({{src = {poring}, target = player.id}})"));
+    assert!(t.has_sc(me, "BLADESTOP") && t.has_sc(poring, "BLADESTOP"));
+    assert_eq!(balls(&mut t), 4);
+    t.lua(&format!("_rt('mob_target', {poring}, player.id, 0)"));
+    t.packets(0);
+    t.run(4000);
+    // (the Monk's HP may rise meanwhile: natural recovery. Look for the blows instead)
+    let blows = t.packets(0x008a).iter().filter(|p| u32::from_le_bytes(p[2..6].try_into().unwrap()) == poring).count();
+    assert_eq!(blows, 0, "the one held strikes no more");
+    assert_eq!(t.pos(poring), (mx + 1, my));
+    t.cast("MO_INVESTIGATE", poring);
+    t.run(1500);
+    assert!(!t.has_sc(me, "BLADESTOP"));
+    assert!(!t.g.world.units.contains_key(&poring) || !t.has_sc(poring, "BLADESTOP"));
+    t.kill(poring);
+    // held again, and the monster dies: the Monk is let go within a second
+    let poring = t.spawn(mx + 1, my, 1002);
+    t.cast("MO_BLADESTOP", me);
+    t.run(100);
+    t.lua(&format!("rules.weapon_attack({{src = {poring}, target = player.id}})"));
+    assert!(t.has_sc(me, "BLADESTOP"));
+    t.kill(poring);
+    t.run(1200);
+    assert!(!t.has_sc(me, "BLADESTOP"));
+
+    // Snap: at once to a free cell in sight, for a sphere
+    let n = balls(&mut t);
+    t.cast_at("MO_BODYRELOCATION", 10, 10);
+    t.run(100);
+    assert_eq!(t.pos(me), (10, 10));
+    assert_eq!(balls(&mut t), n - 1);
+}

@@ -159,3 +159,15 @@ Chaos (0xa0), Ring of Nibelungen (0xa2) and Siegfried (0xa5) for
 `effect\twirl.bmp`. The May-2004 `data.grf` adds all three (`ADDED 16428
 ...ring_red.tga`, `21816 ...zz.bmp`, `12344 ...twirl.bmp`): that version
 can draw every song, so `UNDRAWN` empties.
+
+**The Monk (2026-11-16).** The Monk's skills are drafted server-side
+(`scripts/rules/monk.lua`, DEVIATIONS.md) with nothing sent for the spheres,
+the combo window or Blade Stop, which the Dec-2003 exe has no packets for.
+jAthena //1020 sends `clif_spiritball` (0x01d0: id, count) whenever the count
+changes, `clif_combo_delay` (0x01d2: id, delay) when a window opens and
+`clif_bladestop` (0x01d1: src, dst, on/off) when Blade Stop starts and ends,
+and shows Triple Attack as a skill hit (`clif_skill_damage`, skill 263)
+rather than a plain triple blow. That version should send all four: the
+hooks are `pc_addspiritball` / `pc_delspiritball`, `monk_combo_after` and
+`blade_stop_catch` / `blade_stop_release`. Without 0x01d2 a player cannot
+time a combo by hand.

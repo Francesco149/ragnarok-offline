@@ -461,6 +461,9 @@ local CAST_817 = {
   [SK.SA_VOLCANO] = 5000, [SK.SA_DELUGE] = 5000, [SK.SA_VIOLENTGALE] = 5000, [SK.SA_LANDPROTECTOR] = 5000,
   -- jAthena //0969's cast_db (2004-05-13): neither period emulator's has them
   [SK.AM_ACIDTERROR] = 1000, [SK.AM_DEMONSTRATION] = 1000,
+  -- Mental Strength: "a 5 second casting time which cannot be interrupted" (the iRO guide's
+  -- Monk page, 2004-03-27). mod0631, 817 and jAthena //1020 cast it at once
+  [SK.MO_STEELBODY] = 5000,
 }
 local function skill_range(sd, skill, lv)
   if lv and LEVEL_RANGE[skill] then return LEVEL_RANGE[skill](lv) end
@@ -505,6 +508,29 @@ function rules.skill_use(a)
     return nil
   end
 
+  -- held in Blade Stop, the Monk may use only what its level allows; the one held, nothing
+  if not blade_stop_allows(sd, skill) then
+    _rt("clif_skill_fail", sd.id, skill, 0, 0)
+    return nil
+  end
+  -- the combo skills strike the one being fought, in the window the blow before left
+  -- (jAthena //1020 skill.c:5695-5714; they are self skills in skill_db); Chain Combo may
+  -- also strike the one Blade Stop holds, and Guillotine Fist follows Combo Finish at once
+  local in_combo = false
+  if COMBO_AFTER[skill] or skill == SK.MO_EXTREMITYFIST then
+    local held = skill == SK.MO_CHAINCOMBO and blade_stop_partner(sd)
+    if held then
+      target_id, bl = held.id, held
+    elseif monk_in_combo(sd, COMBO_AFTER[skill] or SK.MO_COMBOFINISH) then
+      in_combo = true
+      local t = sd.attacking and get(sd.attacking)
+      if not t or t.map ~= sd.map then return nil end
+      target_id, bl = t.id, t
+    elseif COMBO_AFTER[skill] then
+      return nil -- out of the window: nothing (skill_check_condition returns 0 there)
+    end
+  end
+
   -- range
   local tx, ty = a.x, a.y
   if bl then tx, ty = bl.x, bl.y end
@@ -512,7 +538,7 @@ function rules.skill_use(a)
   -- for Remove Trap at range 2 from 3 cells, 2026-11-13) and mod0631 refused
   -- it without a word (skill.c:3237, 3360). jAthena //1082 (2004-12-18) let it
   -- through: "a skill used one cell beyond its range does nothing" was its bug.
-  local range = skill_range(sd, skill, a.lv)
+  local range = skill_range(sd, skill, a.lv) + monk_range_bonus(sd, skill)
   if not battle.check_range(sd, tx, ty, range > 0 and range + 1 or range) then return nil end
 
   local casttime = skill_castfix(sd, CAST_817[skill] or skill_get_cast(skill, lv))
@@ -535,6 +561,16 @@ function rules.skill_use(a)
       or skill == SK.MO_INVESTIGATE or skill == SK.MO_STEELBODY then
       cancelable = false -- casts nothing interrupts
     end
+  end
+  if skill == SK.MO_FINGEROFFENSIVE then
+    -- a second more for each sphere thrown (jAthena //1020 skill.c:5692; the iRO guide:
+    -- "[1 second + (The numbers of spirit spheres x 1 second)]")
+    casttime = casttime + casttime * math.min(lv, pc_spiritball(sd.id))
+  elseif skill == SK.MO_EXTREMITYFIST then
+    -- straight after Combo Finish, no cast (skill.c:5709; the guide: "can be activated
+    -- without a casting delay after this skill"); a cast that shows either way
+    if in_combo then casttime = 0 end
+    forcecast = true
   end
   if a.item then casttime, delay = 0, 0 end -- a skill from an item: instant
 
@@ -703,7 +739,23 @@ function skill_check_condition(sd, skill, lv, a)
     -- of its cast_db)
     local played = skill_dance_elapsed(id)
     if not played or played < 5000 then return fail() end
+  elseif skill == SK.MO_CALLSPIRITS then
+    -- as many spheres as the level, no more (jAthena //1020 skill.c:5244)
+    if pc_spiritball(id) >= lv then return fail() end
+  elseif COMBO_AFTER[skill] then
+    -- only in the window the blow before left (skill.c:5263), or Chain Combo in Blade Stop
+    local held = skill == SK.MO_CHAINCOMBO and blade_stop_partner(sd)
+    if not held and not monk_in_combo(sd, COMBO_AFTER[skill]) then return false end
+  elseif skill == SK.MO_EXTREMITYFIST then
+    -- in Fury (skill_require_db: explosionspirits; the guide: "During the fury status")
+    if not sc(sd, SC.EXPLOSIONSPIRITS) then return fail() end
+  elseif skill == SK.MO_BODYRELOCATION then
+    -- not while held fast (skill_require_db: move_enable)
+    if sc(sd, SC.ANKLE) or sc(sd, SC.BLADESTOP) or sc(sd, SC.AUTOCOUNTER) then return fail() end
   end
+  -- spirit spheres (monk.lua)
+  local balls = monk_spheres_needed(sd, skill, lv)
+  if balls > 0 and pc_spiritball(id) < balls then return fail() end
 
   if sp > 0 and sd.char.sp < sp then return fail(1) end
   -- (mod0631 takes arrows for plain shots only: the bow skills use none. THREADS.md #22)
@@ -721,6 +773,10 @@ function skill_check_condition(sd, skill, lv, a)
     if not (GEMS[item] and battle.dcard(sd, 4132)) then _rt("pc_item_take", id, item, n) end
   end
   if sp > 0 then _rt("bl_set", id, "sp", sd.char.sp - sp) end
+  if balls > 0 then
+    if skill == SK.MO_FINGEROFFENSIVE then finger_offensive_count[id] = balls end
+    pc_delspiritball(id, balls)
+  end
   if hpcost > 0 then _rt("bl_set", id, "hp", math.max(1, sd.char.hp - hpcost)) end
   if zeny > 0 then _rt("bl_set", id, "zeny", sd.char.zeny - zeny) end
   return true
@@ -749,7 +805,7 @@ function rules.skill_castend(a)
   end
   local tx, ty = a.x, a.y
   if bl then tx, ty = bl.x, bl.y end
-  local range = sd and skill_range(sd, skill, lv) + battle_config.pc_skill_add_range or skill_get_range(skill)
+  local range = sd and skill_range(sd, skill, lv) + battle_config.pc_skill_add_range + monk_range_bonus(sd, skill) or skill_get_range(skill)
   -- the cell beyond the range that rules.skill_use lets a player ask from counts
   -- here too (ours: jAthena //1082 widened only the request, so a skill asked
   -- for from there would spend its SP and items and fail)

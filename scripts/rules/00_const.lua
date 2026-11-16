@@ -36,6 +36,8 @@ SC = {
   MAGICROD = 108, VIOLENTGALE = 109,
   -- ours too: a Bard or Dancer playing (jAthena's 144)
   DANCING = 110,
+  -- ours too, the Monk's (monk.lua): jAthena //1020's 89, 156, 157, 158
+  COMBO = 111, BLADESTOP_WAIT = 112, BLADESTOP = 113, EXTREMITYFIST = 114,
 }
 -- the Sage's fields and the element each strengthens
 FIELD_ELEMENT = { [SC.VOLCANO] = 3, [SC.DELUGE] = 1, [SC.VIOLENTGALE] = 4 }

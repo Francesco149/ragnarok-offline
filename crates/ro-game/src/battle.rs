@@ -48,6 +48,8 @@ pub const SC_AUTOCOUNTER: u16 = 77;
 pub const SC_HALLUCINATION: u16 = 34;
 /// A Bard or Dancer playing (ours: scripts/rules/00_const.lua)
 pub const SC_DANCING: u16 = 110;
+/// Held in a Monk's Blade Stop, either side (ours: scripts/rules/00_const.lua, monk.lua)
+pub const SC_BLADESTOP: u16 = 113;
 /// Standing in Don't Forget Me (mod0631's number)
 pub const SC_DONTFORGETME: u16 = 106;
 /// The Sage's Cast Cancel, the one skill asked for during a cast.
@@ -428,8 +430,9 @@ impl Game {
         let (opt1, _, option) = self.opts_of(unit);
         // (playing dead: ours. clif_parse_WalkToXY does not check it, so in
         // mod0631 one could walk about while "dead")
-        // (Auto Counter's stance holds one still: 817 clif.c:5019, mob.c:220)
-        if opt1 > 0 || self.has_sc(unit, SC_ANKLE) || self.has_sc(unit, SC_TRICKDEAD) || self.has_sc(unit, SC_AUTOCOUNTER) {
+        // (Auto Counter's stance holds one still: 817 clif.c:5019, mob.c:220; so does Blade
+        // Stop, both sides: jAthena //1020 pc.c:3830)
+        if opt1 > 0 || self.has_sc(unit, SC_ANKLE) || self.has_sc(unit, SC_TRICKDEAD) || self.has_sc(unit, SC_AUTOCOUNTER) || self.has_sc(unit, SC_BLADESTOP) {
             return false;
         }
         match &u.kind {

@@ -216,6 +216,18 @@ function skill_status_change_start(id, type, val1, val2, opt)
   elseif type == SC.SIEGFRIED then tick = 60000; val2 = (val1 + 3) * 10
   elseif type == SC.EXPLOSIONSPIRITS then tick = 180000; val2 = 75 + 25 * val1
   elseif type == SC.STEELBODY then tick = 1000 * 30 * val1
+  -- the Monk's (monk.lua). COMBO: val1 the blow just struck, for the window it leaves.
+  -- BLADESTOP_WAIT: 0.5 s to 1.3 s to catch a blow (jAthena //1020 cast_db; the guide's
+  -- "Casting Time" column has the same numbers). BLADESTOP: held, counted down a second at
+  -- a time so it ends when the other one is gone (val4 = seconds left).
+  -- EXTREMITYFIST: no SP comes back for 5 minutes after Guillotine Fist (jAthena //0979 and
+  -- //0998; the guide: "for 5 minutes after the skill is used, the caster cannot restore SP")
+  elseif type == SC.COMBO then tick = opt.tick or 1000
+  elseif type == SC.BLADESTOP_WAIT then tick = opt.tick or (300 + 200 * val1)
+  elseif type == SC.BLADESTOP then
+    val4 = floor((opt.tick or 20000) / 1000)
+    tick = 1000
+  elseif type == SC.EXTREMITYFIST then tick = opt.tick or 300000
   elseif type == SC.SPEEDPOTION0 or type == SC.SPEEDPOTION1 or type == SC.SPEEDPOTION2 then
     -- Concentration 90, Awakening 85, Berserk 80 (% of the attack delay); if
     -- several are on, the strongest counts (status.lua)
@@ -410,6 +422,13 @@ function skill_status_change_timer(id, type)
       return again(1000, nil, nil, left)
     end
     skill_stop_dancing(id)
+    return
+  elseif type == SC.BLADESTOP then
+    -- held while the other one still holds (jAthena //1020 skill.c:6668 ends both together)
+    if t.val4 - 1 > 0 and blade_stop_partner(bl) then
+      return _rt("sc_touch", id, type, nil, nil, nil, 1000, t.val4 - 1)
+    end
+    blade_stop_release(id)
     return
   elseif type == SC.SPLASHER then
     -- not hit while it ran: it bursts (skill_effects.lua)
