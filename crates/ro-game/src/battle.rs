@@ -812,6 +812,7 @@ impl Game {
                 m.insert("hp".into(), json!(c.hp));
                 m.insert("sp".into(), json!(c.sp));
                 m.insert("casting".into(), json!(p.cast.as_ref().map(|c| c.skill)));
+                m.insert("casting_lv".into(), json!(p.cast.as_ref().map(|c| c.lv)));
                 m.insert("canact".into(), json!(p.canact.saturating_sub(now)));
                 m.insert("attacking".into(), json!(p.attack.map(|a| a.target)));
                 m.insert("char".into(), self.char_lua(c));
@@ -828,6 +829,7 @@ impl Game {
                 m.insert("master".into(), json!(mob.master));
                 m.insert("target".into(), json!(mob.target));
                 m.insert("casting".into(), json!(mob.cast.as_ref().map(|c| c.skill)));
+                m.insert("casting_lv".into(), json!(mob.cast.as_ref().map(|c| c.lv)));
                 m.insert("state".into(), json!(mob.skill_state.name()));
                 m.insert("db".into(), serde_json::to_value(d).unwrap_or(Value::Null));
             }

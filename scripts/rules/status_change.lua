@@ -239,6 +239,23 @@ function skill_status_change_start(id, type, val1, val2, opt)
   -- jAthena //0850's cast_db (2004-02-29): neither period emulator has these NPC skills
   elseif type == SC.HALLUCINATION then tick = opt.tick or (30000 + 10000 * (val1 - 1))
   elseif type == SC.KEEPING then tick = opt.tick or (60000 + 10000 * (val1 - 1))
+  elseif type == SC.MAGICROD then
+    -- jAthena //0868: 20% to 100% of a spell's SP taken in; 0.4 s to 1.2 s (817's and jAthena's
+    -- cast_db, the iRO guide's Sage page)
+    tick = opt.tick or skill_get_time(SK.SA_MAGICROD, val1)
+    val2 = val1 * 20
+  elseif FIELD_ELEMENT[type] then
+    -- standing in a Sage's field (val2 = the cell), as long as the field lasts. jAthena //0969
+    -- skill.c:6188: val4 the element's 10% to 20%; val3 Volcano's ATK (10 a level), Deluge's max
+    -- HP (5% to 15%) and Violent Gale's FLEE (3 a level), as the iRO guide's tables (2004-03-27)
+    tick = opt.tick or 180000
+    local step = ({ 10, 14, 17, 19, 20 })[math.max(1, math.min(5, val1))]
+    val4 = step
+    if type == SC.VOLCANO then val3 = val1 * 10
+    elseif type == SC.DELUGE then val3 = ({ 5, 9, 12, 14, 15 })[math.max(1, math.min(5, val1))]
+    else val3 = val1 * 3 end
+    -- one field at a time (817 skill.c:5468)
+    for other in pairs(FIELD_ELEMENT) do if other ~= type then stop(other) end end
   elseif type == SC.RIDING or type == SC.FALCON or type == SC.WEIGHT50 or type == SC.WEIGHT90 then tick = 600000
   else
     return false -- UnknownStatusChange

@@ -28,7 +28,12 @@ SC = {
   ASSNCROS = 100, POEMBRAGI = 101, NIBELUNGEN = 103, HUMMING = 104, ETERNALCHAOS = 105, DONTFORGETME = 106,
   SPLASHER = 107, -- jAthena //1046's (2004-09-12): Venom Splasher's mark
   KEEPING = 145, -- jAthena //0850 (2004-02-29)
+  -- ours: mod0631 has no number for them (jAthena 149, 155; 817 181, 182). Above 63 and not in
+  -- battle.rs sc_icon, so no icon is sent: this client has none for them
+  MAGICROD = 108, VIOLENTGALE = 109,
 }
+-- the Sage's fields and the element each strengthens
+FIELD_ELEMENT = { [SC.VOLCANO] = 3, [SC.DELUGE] = 1, [SC.VIOLENTGALE] = 4 }
 SC.DIVINA = SC.SILENCE
 
 -- Skill database by id; SK.<NAME> = id.
@@ -52,7 +57,10 @@ end
 function skill_get(id) return skill_db[id] or { id = id, name = "?", max = 0, inf = 0, range = 0, hit = 6, pl = 0, nk = 0 } end
 function skill_get_range(id) return skill_get(id).range end
 function skill_get_hit(id) return skill_get(id).hit end
-function skill_get_inf(id) return skill_get(id).inf end
+-- Spell Breaker is aimed at an enemy (eAthena 817's and jAthena's skill_db); mod0631's row says ground
+local INF_FIX = { [SK.SA_SPELLBREAKER] = 1 }
+INF_FIX[-1] = nil
+function skill_get_inf(id) return INF_FIX[id] or skill_get(id).inf end
 -- Elements mod0631's skill_db leaves Neutral for skills it never built: Grand Cross is Holy
 -- (eAthena 817's and jAthena's skill_db, the iRO guide's "holy attack"), Bomb Fire (jAthena's
 -- skill_db, euRO's skill text of May 2004)

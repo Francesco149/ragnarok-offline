@@ -1115,6 +1115,36 @@ always fires.
     rolls). What it ends is 817's list: the ailments, Increase and Decrease
     AGI, Suffragium, Magnificat, Gloria, Apple of Idun, the endows and the
     Chemical Protections. The guide says "all magical effects".
+* **The Sage's Magic Rod, Spell Breaker, Volcano, Deluge, Violent Gale
+  and Land Protector** (behind `jobs2_2`; drafts, test
+  `sage_rod_breaker_fields`). mod0631 never built them; 817 has Spell
+  Breaker and lays the fields with no effect beyond ending each other. They
+  follow jAthena (Magic Rod //0868 of 2004-03-06, the rest as of //0969),
+  whose numbers the iRO guide's Sage page of 2004-03-27 gives too:
+  * Magic Rod for 0.4 s to 1.2 s: a spell cast at the Sage does nothing and
+    gives him 20% to 100% of its SP; turned on a Spell Breaker, its caster
+    loses a fifth of his SP. Spell Breaker (0.7 s, 817) breaks off a spell
+    being cast (jAthena's list of spells; a Phen Card does not help),
+    takes its SP from a player who cast it and gives the Sage 0% to 100% of
+    it. Aimed at an enemy (817, jAthena); mod0631's row says ground.
+  * Volcano, Deluge and Violent Gale: 5x5 to 9x9 for 180 s, 5 s of cast and
+    a Yellow Gemstone; a Fire, Water or Wind blow on whoever stands in it
+    does 10% to 20% more, and a player of that armour element gains 10 to 50
+    ATK, 5% to 15% max HP, 3 to 15 FLEE. jAthena reads a plain blow's
+    element off the target (the attacker's here), adds Violent Gale's
+    number to Volcano's ATK and makes the FLEE a percentage: slips, read as
+    the guide's table. From the guide and euRO's text of May 2004, in no
+    emulator: Fire Wall lasts half as long again in a Violent Gale, Ice
+    Wall cannot be laid in a field, Deluge lets Water Ball and Aqua
+    Benedicta be cast on dry land.
+  * Land Protector: 7x7 to 11x11, a Yellow and a Blue Gemstone (the guide,
+    euRO's text, jAthena; mod0631 the yellow one), 2 to 5 min (the guide's
+    table; the emulators' cast_db 120 s to 240 s or 180 s). As jAthena: it
+    wipes the ground skills on its cells, a one-cell skill is not laid on
+    it (its catalyst is spent all the same), and nothing on the ground
+    touches someone standing on it.
+  * A Sage has one field at a time (jAthena); a field ends the other
+    fields' status on whoever enters it (817).
 * **Grand Cross** (behind `jobs2_2`; draft, test `grand_cross`). mod0631
   calls it "no damage" and Neutral. eAthena 817's (jAthena //0969 the
   same): 3 s of cast nothing breaks, a cross of 29 cells around the caster,

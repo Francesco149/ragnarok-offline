@@ -252,6 +252,25 @@ local STRIP = {
 }
 local CHEMICAL = {}
 for _, n in ipairs({ "AM_CP_WEAPON", "AM_CP_SHIELD", "AM_CP_ARMOR", "AM_CP_HELM" }) do CHEMICAL[SK[n]] = true end
+-- Spells, for Spell Breaker: the skills jAthena //0969's skill_db calls "magic" (2004-05-13)
+local MAGIC = {}
+for _, n in ipairs({
+  "MG_SIGHT", "MG_NAPALMBEAT", "MG_SAFETYWALL", "MG_SOULSTRIKE", "MG_COLDBOLT", "MG_FROSTDIVER", "MG_STONECURSE",
+  "MG_FIREBALL", "MG_FIREWALL", "MG_FIREBOLT", "MG_LIGHTNINGBOLT", "MG_THUNDERSTORM", "AL_RUWACH", "AL_PNEUMA",
+  "AL_TELEPORT", "AL_WARP", "AL_HEAL", "AL_INCAGI", "AL_DECAGI", "AL_HOLYWATER", "AL_CRUCIS", "AL_ANGELUS",
+  "AL_BLESSING", "AL_CURE", "ALL_RESURRECTION", "PR_IMPOSITIO", "PR_SUFFRAGIUM", "PR_ASPERSIO", "PR_BENEDICTIO",
+  "PR_SANCTUARY", "PR_SLOWPOISON", "PR_STRECOVERY", "PR_KYRIE", "PR_MAGNIFICAT", "PR_GLORIA", "PR_LEXDIVINA",
+  "PR_TURNUNDEAD", "PR_LEXAETERNA", "PR_MAGNUS", "WZ_FIREPILLAR", "WZ_SIGHTRASHER", "WZ_METEOR", "WZ_JUPITEL",
+  "WZ_VERMILION", "WZ_WATERBALL", "WZ_ICEWALL", "WZ_FROSTNOVA", "WZ_STORMGUST", "WZ_EARTHSPIKE", "WZ_HEAVENDRIVE",
+  "WZ_QUAGMIRE", "WZ_ESTIMATION", "AL_HOLYLIGHT", "MG_ENERGYCOAT", "CR_GRANDCROSS", "CR_PROVIDENCE",
+  "SA_CASTCANCEL", "SA_MAGICROD", "SA_SPELLBREAKER", "SA_FLAMELAUNCHER", "SA_FROSTWEAPON", "SA_LIGHTNINGLOADER",
+  "SA_SEISMICWEAPON", "SA_VOLCANO", "SA_DELUGE", "SA_VIOLENTGALE", "SA_LANDPROTECTOR", "SA_DISPELL",
+  "NPC_ATTRICHANGE", "NPC_CHANGEWATER", "NPC_CHANGEGROUND", "NPC_CHANGEFIRE", "NPC_CHANGEWIND", "NPC_CHANGEPOISON",
+  "NPC_CHANGEHOLY", "NPC_CHANGEDARKNESS", "NPC_CHANGETELEKINESIS", "NPC_SUMMONSLAVE", "NPC_SUMMONMONSTER",
+  "NPC_ENERGYDRAIN", "NPC_DARKBLESSING", "NPC_HALLUCINATION",
+}) do MAGIC[SK[n]] = true end
+MAGIC[-1] = nil
+
 -- Aid Potion's potion by level, and what it holds (items.toml's use_script: Red, Orange,
 -- Yellow, White and Blue Potions)
 AID_POTION = {
@@ -442,6 +461,37 @@ function skill_castend_nodamage_id(src_id, bl_id, skillid, skilllv, opt)
     if hp > 0 then _rt("clif_skill_nodamage", src_id, bl_id, SK.AL_HEAL, hp, 1) end
     if sp > 0 then _rt("clif_skill_nodamage", src_id, bl_id, SK.MG_SRECOVERY, sp, 1) end
     battle.heal(bl_id, hp, sp)
+
+  elseif skillid == SK.SA_MAGICROD then
+    -- jAthena //0868 skill.c:2778 (not in 817): not on a Golden Thief Bug Card's wearer
+    if not battle.dcard(bl, 4128) then
+      nodamage(src_id, bl_id, skillid, skilllv)
+      skill_status_change_start(bl_id, SC.MAGICROD, skilllv, 0)
+    end
+
+  elseif skillid == SK.SA_SPELLBREAKER then
+    -- jAthena //0868 skill.c:2714: a spell being cast is broken off (a Phen Card does not save it:
+    -- the iRO guide's Sage page), its caster loses its SP and the Sage takes in 0% to 100% of it
+    -- (the guide; 817 the same, skill.c:2362). A target holding Magic Rod turns it round: the
+    -- Sage loses a fifth of his SP and the target takes in the Spell Breaker's own
+    local rod = sc(bl, SC.MAGICROD)
+    if rod then
+      if bl.kind == "player" then
+        battle.heal(bl_id, 0, math.max(1, floor(skill_get_sp(skillid, skilllv) * rod.val2 / 100)))
+      end
+      _rt("clif_skill_nodamage", bl_id, bl_id, SK.SA_MAGICROD, rod.val1, 1)
+      if sd then _rt("bl_set", src_id, "sp", math.max(0, sd.char.sp - math.max(1, floor(sd.st.max_sp / 5)))) end
+    elseif bl.casting and MAGIC[bl.casting] then
+      nodamage(src_id, bl_id, skillid, skilllv)
+      local sp = skill_get_sp(bl.casting, bl.casting_lv or 1)
+      _rt("cast_cancel", bl_id)
+      if bl.kind == "player" then _rt("bl_set", bl_id, "sp", math.max(0, bl.char.sp - sp)) end
+      if sd and skilllv > 1 then battle.heal(src_id, 0, math.max(1, floor(sp * 25 * (skilllv - 1) / 100))) end
+    else
+      nodamage(src_id, bl_id, skillid, skilllv, false)
+      if sd then _rt("clif_skill_fail", src_id, skillid, 0, 0) end
+    end
+    if bl.kind == "mob" then _rt("mob_target", bl_id, src_id, skill_get_range(skillid)) end
 
   elseif skillid == SK.SA_DISPELL then
     -- 817:2309. Not on a Golden Thief Bug Card's wearer. The chance is the iRO guide's
@@ -697,6 +747,7 @@ for _, n in ipairs({
   "WZ_STORMGUST", "PR_SANCTUARY", "PR_MAGNUS", "HT_SKIDTRAP", "HT_LANDMINE", "HT_ANKLESNARE", "HT_SHOCKWAVE",
   "HT_SANDMAN", "HT_FLASHER", "HT_FREEZINGTRAP", "HT_BLASTMINE", "HT_CLAYMORETRAP", "AS_VENOMDUST", "HT_TALKIEBOX",
   "AM_DEMONSTRATION", -- jAthena //0969 skill.c:3122
+  "SA_VOLCANO", "SA_DELUGE", "SA_VIOLENTGALE", "SA_LANDPROTECTOR", -- jAthena //0969 skill.c:3126
 }) do UNIT_SKILLS[SK[n]] = true end
 
 -- skill.c:1795
@@ -739,6 +790,10 @@ function skill_castend_pos2(src_id, x, y, skillid, skilllv, opt)
     end
 
   elseif UNIT_SKILLS[skillid] then
+    if skillid == SK.SA_VOLCANO or skillid == SK.SA_DELUGE or skillid == SK.SA_VIOLENTGALE
+      or skillid == SK.SA_LANDPROTECTOR then
+      skill_clear_element_field(src_id)
+    end
     skill_unitsetting(src_id, skillid, skilllv, x, y, 0)
 
   elseif skillid == SK.CR_GRANDCROSS then

@@ -379,6 +379,16 @@ function rules.status(c)
   if t then s.subele[1] = s.subele[1] + t.val2; s.subele[3] = s.subele[3] + t.val2 end -- mod0631 wrote addele
   t = has(SC.PROVIDENCE)
   if t then s.subele[6] = s.subele[6] + t.val2; s.subrace[6] = s.subrace[6] + t.val2 end -- mod0631 wrote add*
+  -- the Sage's fields on one of their element (jAthena //0969 pc.c:1391-1461, armour element):
+  -- Volcano's ATK (jAthena adds Violent Gale's number there, a slip), Violent Gale's FLEE (jAthena
+  -- a percentage; the iRO guide's "Flee Rate Increment 3 ... 15", and euRO's text "flee rate", read
+  -- as points), Deluge's max HP
+  t = has(SC.VOLCANO)
+  if t and s.def_ele == 3 then s.watk = s.watk + t.val3 end
+  t = has(SC.VIOLENTGALE)
+  if t and s.def_ele == 4 then s.flee = s.flee + t.val3 end
+  t = has(SC.DELUGE)
+  if t and s.def_ele == 1 then s.max_hp = math.min(32000, s.max_hp + floor(t.val3 * s.max_hp / 100)) end
   t = has(SC.APPLEIDUN)
   if t then s.max_hp = math.min(32000, s.max_hp + floor(t.val2 * s.max_hp / 100)) end
   t = has(SC.SERVICE4U)

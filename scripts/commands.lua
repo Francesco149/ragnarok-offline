@@ -37,9 +37,10 @@ command("useskill", function(args)
       if not best or d < best then best, target, tx, ty = d, u.id, u.x, u.y end
     end
   end
-  if (s.inf & 2) ~= 0 then
+  local inf = skill_get_inf(id)
+  if (inf & 2) ~= 0 then
     _rt("skill_request", player.id, id, lv, 0, tx, ty)
-  elseif (s.inf & 1) ~= 0 then
+  elseif (inf & 1) ~= 0 then
     if not best then return "no monster in sight" end
     _rt("skill_request", player.id, id, lv, target, 0, 0)
   else

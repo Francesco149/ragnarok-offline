@@ -34,7 +34,25 @@ local UNIT_ID = {
   [SK.HT_CLAYMORETRAP] = 0x98,
   [SK.AM_DEMONSTRATION] = 0xb1, -- jAthena //0969 skill.c:314
   [SK.CR_GRANDCROSS] = 0x86, -- eAthena 817 skill.c:254, Lord of Vermilion's
+  [SK.SA_VOLCANO] = 0x9a, [SK.SA_DELUGE] = 0x9b, [SK.SA_VIOLENTGALE] = 0x9c, [SK.SA_LANDPROTECTOR] = 0x9d, -- 817 skill.c:272
 }
+local FIELD_UNIT = { [0x9a] = SC.VOLCANO, [0x9b] = SC.DELUGE, [0x9c] = SC.VIOLENTGALE }
+local FIELD_SKILL = {}
+for _, n in ipairs({ "SA_VOLCANO", "SA_DELUGE", "SA_VIOLENTGALE", "SA_LANDPROTECTOR" }) do FIELD_SKILL[SK[n]] = true end
+FIELD_SKILL[-1] = nil
+
+-- The live cell of one of `uids` whose reach covers map x,y, if any.
+local function covered_by(map, x, y, uids)
+  for _, c in pairs(cells) do
+    local g = c.alive and groups[c.group]
+    if g and c.map == map and uids[g.unit_id] then
+      local r = c.range ~= 0 and c.range or g.range
+      if r >= 0 and math.abs(c.x - x) <= r and math.abs(c.y - y) <= r then return c end
+    end
+  end
+  return nil
+end
+local LAND_PROTECTOR = { [0x9d] = true }
 UNIT_ID[-1] = nil
 local function unit_id(skill, flag)
   if skill == SK.AL_WARP then return flag == 0 and 0x81 or 0x80 end        -- opening, open
@@ -77,6 +95,9 @@ function skill_unitsetting(src_id, skillid, skilllv, x, y, flag)
     val2 = 4 + skilllv -- hits each cell deals
     limit = 1000 * val2
     interval = 250
+    -- in a Violent Gale it lasts half as long again (the iRO guide's Sage page, 2004-03-27, and
+    -- euRO's text of May 2004; no emulator of the period has it)
+    if covered_by(src.map, x, y, { [0x9c] = true }) then limit = floor(limit * 3 / 2) end
   elseif skillid == SK.AL_PNEUMA then
     target = shelter
     range = 1
@@ -130,6 +151,19 @@ function skill_unitsetting(src_id, skillid, skilllv, x, y, flag)
     limit, interval, count = 5000 * skilllv, 1000, 5
   elseif skillid == SK.HT_TALKIEBOX then
     limit, range, target = 600000, 1, BCT.ALL -- 817 cast_db: 600 s
+  elseif FIELD_UNIT[unit_id(skillid, 0)] then
+    -- Volcano, Deluge, Violent Gale: 5x5, 7x7, 9x9 cells for 180 s, the middle one reaching the
+    -- square and the rest for show; on everyone (jAthena //0969 skill.c:3470, 3720; the guide's
+    -- "Range 5, 7, 9 cells")
+    limit, target = 180000, BCT.ALL
+    local r = skilllv <= 2 and 2 or (skilllv <= 4 and 3 or 4)
+    count, val2 = (2 * r + 1) * (2 * r + 1), r
+  elseif skillid == SK.SA_LANDPROTECTOR then
+    -- 7x7, 9x9, 11x11 cells (jAthena skill.c:3477, the guide); 2 min to 5 min, the iRO guide's
+    -- table (2004-03-27; mod0631's and 817's cast_db 120 s to 240 s, jAthena's 180 s)
+    limit, target = ({ 120000, 165000, 210000, 255000, 300000 })[math.max(1, math.min(5, skilllv))], BCT.ALL
+    local r = skilllv <= 2 and 3 or (skilllv <= 4 and 4 or 5)
+    count, val2 = (2 * r + 1) * (2 * r + 1), r
   elseif skillid == SK.CR_GRANDCROSS then
     -- a cross of 29 cells (817 skill.c:2962, jAthena the same), each striking who stands on it
     -- every 0.3 s. The guide's 0.9 s ("damaged 3 times"), where 817 and jAthena keep it 1 s
@@ -187,13 +221,20 @@ function skill_unitsetting(src_id, skillid, skilllv, x, y, flag)
       ux = ux + (2 - i) * diry[dir]
       uy = uy + (i - 2) * dirx[dir]
       local c = _rt("cell", src.map, ux, uy)
-      if c == 5 or c == 1 or #_rt("in_area", src.map, ux, uy, ux, uy) > 0 then
-        alive = false -- a wall, or someone standing there (ours: nobody gets walled in)
+      if c == 5 or c == 1 or #_rt("in_area", src.map, ux, uy, ux, uy) > 0
+        or covered_by(src.map, ux, uy, { [0x9a] = true, [0x9b] = true, [0x9c] = true }) then
+        -- a wall, or someone standing there (ours: nobody gets walled in), or a Sage's field
+        -- ("Ice Wall can not be casted in this area", the iRO guide's Sage page)
+        alive = false
       else
         _rt("set_cell", src.map, ux, uy, false)
       end
     elseif skillid == SK.WZ_QUAGMIRE then
       ux, uy = ux + (i % 5 - 2), uy + (i // 5 - 2)
+    elseif FIELD_SKILL[skillid] then
+      local r, w = g.val2, 2 * g.val2 + 1
+      ux, uy = ux + (i % w - r), uy + (i // w - r)
+      if skillid ~= SK.SA_LANDPROTECTOR then crange = (i == (count - 1) // 2) and r or -1 end
     elseif skillid == SK.CR_GRANDCROSS then
       local dx = { 0, 0, -1, 0, 1, -2, -1, 0, 1, 2, -4, -3, -2, -1, 0, 1, 2, 3, 4, -2, -1, 0, 1, 2, -1, 0, 1, 0, 0 }
       local dy = { -4, -3, -2, -2, -2, -1, -1, -1, -1, -1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 2, 2, 2, 3, 4 }
@@ -207,6 +248,18 @@ function skill_unitsetting(src_id, skillid, skilllv, x, y, flag)
       local dx = { -1, 0, 0, 0, 1 }
       local dy = { 0, -1, 0, 1, 0 }
       ux, uy = ux + dx[i + 1], uy + dy[i + 1]
+    end
+    -- Land Protector (jAthena //0969 skill.c:3798, skill_landprotector): laid, it wipes the
+    -- ground skills on its cells; a one-cell skill is not laid on it
+    if skillid == SK.SA_LANDPROTECTOR then
+      for _, oc in pairs(cells) do
+        if oc.alive and oc.map == src.map and oc.x == ux and oc.y == uy then del_cell(oc) end
+      end
+    elseif alive and (crange ~= 0 and crange or range) <= 0 then
+      for _, oc in pairs(cells) do
+        local og = oc.alive and groups[oc.group]
+        if og and og.unit_id == 0x9d and oc.map == src.map and oc.x == ux and oc.y == uy then alive = false; break end
+      end
     end
     if alive then
       local id = _rt("su_new", src.map, ux, uy, g.unit_id, src_id, g.id)
@@ -294,6 +347,8 @@ local function onplace(c, bl, now)
   if not ss then return end
   local last = g.ticks[bl.id]
   if last and not (now - last > g.interval) then return end
+  -- nothing on the ground touches someone standing on a Land Protector (jAthena skill.c:3845)
+  if covered_by(bl.map, bl.x, bl.y, LAND_PROTECTOR) then return end
   g.ticks[bl.id] = now
   local uid = g.unit_id
   local cell_src = { id = c.id, x = c.x, y = c.y, kind = "cell" }
@@ -361,6 +416,10 @@ local function onplace(c, bl, now)
       g.limit = now - g.tick + 3000
       g.val2 = bl.id
     end
+  elseif FIELD_UNIT[uid] then -- Volcano, Deluge, Violent Gale (jAthena skill.c:4027)
+    local type = FIELD_UNIT[uid]
+    local t = sc(bl, type)
+    if not t or t.val2 ~= c.id then skill_status_change_start(bl.id, type, g.lv, c.id, { tick = g.limit }) end
   elseif uid == 0xb1 then -- Bomb (jAthena //0969 skill.c:4095)
     -- The guide's weapon damage (1% to 5%) is for players, as jAthena's commented-out
     -- pc_break_weapon: no monster casts Bomb, so it is left out
@@ -435,6 +494,9 @@ local function onout(c, bl, now)
   local uid = g.unit_id
   if uid == 0x83 then
     g.vallist[bl.id] = nil
+  elseif FIELD_UNIT[uid] then
+    local t = sc(bl, FIELD_UNIT[uid])
+    if t and t.val2 == c.id then skill_status_change_end(bl.id, FIELD_UNIT[uid]) end
   elseif uid == 0x7e or uid == 0x85 or uid == 0x8e then
     local type = uid == 0x85 and SC.PNEUMA or (uid == 0x7e and SC.SAFETYWALL or SC.QUAGMIRE)
     local t = sc(bl, type)
@@ -526,7 +588,7 @@ del_cell = function(c, from_group)
   if g then
     -- those standing in it lose what it gave (skill.c:2676)
     local uid = g.unit_id
-    if uid == 0x85 or uid == 0x7e or uid == 0x8e then
+    if uid == 0x85 or uid == 0x7e or uid == 0x8e or FIELD_UNIT[uid] then
       local range = c.range ~= 0 and c.range or g.range
       for _, id in ipairs(_rt("in_area", c.map, c.x - range, c.y - range, c.x + range, c.y + range)) do
         local bl = get(id)
@@ -630,6 +692,14 @@ function skill_unit_move(bl_id)
   if sc(bl, SC.CLOAKING) then skill_check_cloaking(bl_id) end
 end
 function rules.skill_unit_move(a) skill_unit_move(a.bl) end
+
+-- A Sage has one field at a time: a new one takes his last away (jAthena skill.c:5455
+-- skill_clear_element_field)
+function skill_clear_element_field(src_id)
+  local list = {}
+  for _, g in pairs(groups) do if g.src == src_id and FIELD_SKILL[g.skill] then list[#list + 1] = g end end
+  for _, g in ipairs(list) do skill_delunitgroup(g) end
+end
 
 -- The caster died or left: its ground skills go (skill_clear_unitgroup).
 function skill_unit_owner_gone(src_id)

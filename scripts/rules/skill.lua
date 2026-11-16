@@ -279,6 +279,18 @@ function skill_attack(attack_type, src_id, dsrc, bl_id, skillid, skilllv, wflag,
     and dsrc_bl.id == src_id and (skill_get_inf(skillid) & 2) == 0 and rnd(100) < bl.st.magic_return then
     credit, dsrc_bl, bl, bl_id = bl_id, bl, src, src_id
   end
+  -- Magic Rod: a spell cast at the holder (not a ground spell's cell) does nothing, and the
+  -- holder takes in a share of its SP, 20% to 100% (jAthena //0868, 2004-03-06, skill.c:732;
+  -- the iRO guide's Sage page; not in 817)
+  local rod = attack_type == BF.MAGIC and dsrc_bl.id == src_id and battle.sc(bl, SC.MAGICROD)
+  if rod then
+    if bl.kind == "player" then
+      local sp = math.max(1, floor(skill_get_sp(skillid, skilllv) * rod.val2 / 100))
+      battle.heal(bl_id, 0, sp)
+    end
+    _rt("clif_skill_nodamage", bl_id, bl_id, SK.SA_MAGICROD, rod.val1, 1)
+    return 0
+  end
   local dmg = battle.calc_attack(attack_type, src, bl, skillid, skilllv, wflag or 0)
   if bl.wall then
     -- an Ice Wall cell: the blow comes off its durability; nothing else happens to it
@@ -421,6 +433,8 @@ local CAST_817 = {
   [SK.SA_FLAMELAUNCHER] = 3000, [SK.SA_FROSTWEAPON] = 3000, [SK.SA_LIGHTNINGLOADER] = 3000, [SK.SA_SEISMICWEAPON] = 3000,
   [SK.SA_DISPELL] = 2000,
   [SK.CR_GRANDCROSS] = 3000, -- also the iRO guide's (2004-04-11): "a 3 second casting delay"
+  [SK.SA_SPELLBREAKER] = 700,
+  [SK.SA_VOLCANO] = 5000, [SK.SA_DELUGE] = 5000, [SK.SA_VIOLENTGALE] = 5000, [SK.SA_LANDPROTECTOR] = 5000,
   -- jAthena //0969's cast_db (2004-05-13): neither period emulator's has them
   [SK.AM_ACIDTERROR] = 1000, [SK.AM_DEMONSTRATION] = 1000,
 }
@@ -522,13 +536,18 @@ function skill_check_condition(sd, skill, lv, a)
   local zeny, hpcost = 0, 0
   local items = {}
   local w = sd.st.weapon
-  local function water() return _rt("cell", sd.map, sd.x, sd.y) == 3 end
+  -- Deluge lets Water Ball and Aqua Benedicta be cast on dry land (the iRO guide's Sage page,
+  -- euRO's text of May 2004: "you can use magics what available on water")
+  local function water() return _rt("cell", sd.map, sd.x, sd.y) == 3 or sc(sd, SC.DELUGE) ~= nil end
 
   if skill == SK.MG_STONECURSE or skill == SK.AS_VENOMDUST then items[716] = 1 -- Red Gemstone
   elseif skill == SK.MG_SAFETYWALL or skill == SK.AL_WARP or skill == SK.ALL_RESURRECTION
     or skill == SK.PR_SANCTUARY or skill == SK.PR_MAGNUS or skill == SK.WZ_FIREPILLAR then items[717] = 1 -- Blue Gemstone
-  elseif skill == SK.SA_VOLCANO or skill == SK.SA_DELUGE or skill == SK.SA_VIOLENTGALE
-    or skill == SK.SA_LANDPROTECTOR then items[715] = 1
+  elseif skill == SK.SA_VOLCANO or skill == SK.SA_DELUGE or skill == SK.SA_VIOLENTGALE then items[715] = 1
+  elseif skill == SK.SA_LANDPROTECTOR then
+    -- a Blue Gemstone too: the iRO guide's Sage page (2004-03-27), euRO's text of May 2004,
+    -- jAthena //0969's skill_require_db (mod0631 the yellow one alone)
+    items[715] = 1; items[717] = 1
   elseif skill == SK.SA_DISPELL then
     -- a Yellow and a Red Gemstone: eAthena 817's skill_require_db and the iRO guide's Sage
     -- page (2004-03-27). mod0631 takes the yellow one only (skill.c:2863)

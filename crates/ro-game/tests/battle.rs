@@ -2735,3 +2735,79 @@ fn grand_cross() {
     let hurt = hp0 - cost - t.hp();
     assert!(hurt > 0 && hurt < hp_on - last, "the caster takes less than the Pupa: {hurt}");
 }
+
+/// The Sage (drafts): Magic Rod drinks a spell aimed at him, Spell Breaker breaks a cast off,
+/// Volcano and Deluge lay fields that strengthen their element on whoever stands in them (one
+/// field a Sage at a time), and a Land Protector wipes what lies on it and takes no more.
+#[test]
+fn sage_rod_breaker_fields() {
+    let mut t = T::new();
+    t.lua("job_change(16); player.base_level = 80; player.int = 80; player.dex = 80; heal(30000, 30000)");
+    for (s, lv) in [("SA_MAGICROD", 5), ("SA_SPELLBREAKER", 5), ("SA_VOLCANO", 5), ("SA_DELUGE", 1), ("SA_LANDPROTECTOR", 1), ("MG_FIREBOLT", 10), ("MG_SAFETYWALL", 1)] {
+        t.learn(s, lv);
+    }
+    let me = t.me;
+    let num = |t: &mut T, code: &str| -> i64 { t.lua(code).trim().parse::<f64>().unwrap() as i64 };
+
+    // Magic Rod: a Cold Bolt at the Sage does nothing and gives him its SP (level 5: all of it)
+    let pupa = t.spawn(27, 25, 1008);
+    t.cast("SA_MAGICROD", me);
+    t.run(100);
+    assert!(t.has_sc(me, "MAGICROD"));
+    t.lua("player.sp = 10");
+    let (hp, cost) = (t.hp(), num(&mut t, "skill_get_sp(SK.MG_COLDBOLT, 5)"));
+    assert_eq!(num(&mut t, &format!("skill_attack(BF.MAGIC, {pupa}, {pupa}, {me}, SK.MG_COLDBOLT, 5, 0)")), 0);
+    assert_eq!(t.hp(), hp);
+    assert_eq!(t.sp() as i64, 10 + cost);
+    t.run(1500);
+    assert!(!t.has_sc(me, "MAGICROD"), "1.2 s at level 5");
+
+    // Spell Breaker (from a monster, for the test) breaks the Sage's Fire Bolt off and takes its SP
+    t.lua("heal(30000, 30000)");
+    let sp0 = t.sp() as i64;
+    t.cast("MG_FIREBOLT", pupa);
+    t.run(200);
+    let bolt = num(&mut t, "skill_get_sp(SK.MG_FIREBOLT, 10)");
+    assert_eq!(t.sp() as i64, sp0, "still casting");
+    t.lua(&format!("skill_castend_nodamage_id({pupa}, {me}, SK.SA_SPELLBREAKER, 5)"));
+    assert_eq!(t.sp() as i64, sp0 - bolt, "the bolt's SP lost");
+    assert_eq!(t.lua(&format!("tostring(battle.get({me}).casting)")).trim(), "nil", "the cast broken off");
+    let full = t.mob_hp(pupa);
+    t.run(5000);
+    assert_eq!(t.mob_hp(pupa), full, "and no bolt");
+
+    // Volcano 5 (9x9) on the Pupa: it stands in the field, and Fire hits it 20% harder
+    t.lua("give_item(715, 3); give_item(717, 1)");
+    t.cast_at("SA_VOLCANO", 29, 25);
+    t.run(6500);
+    assert!(t.has_sc(pupa, "VOLCANO"));
+    assert!(t.has_sc(me, "VOLCANO"), "the Sage at 25,25 is inside 29 +- 4");
+    assert_eq!(num(&mut t, &format!("battle.calc_damage(battle.get({pupa}), 100, BF.MAGIC, battle.get({me}), 3)")), 120);
+    assert_eq!(num(&mut t, &format!("battle.calc_damage(battle.get({pupa}), 100, BF.MAGIC, battle.get({me}), 1)")), 100);
+    // Deluge 1 (5x5) away from both: the Sage's Volcano goes, and with it the Pupa's
+    t.cast_at("SA_DELUGE", 20, 20);
+    t.run(6500);
+    assert!(!t.has_sc(pupa, "VOLCANO"), "one field a Sage");
+    assert!(!t.has_sc(me, "VOLCANO"));
+
+    // Land Protector 1 (7x7) over a Safety Wall wipes it; a new Safety Wall is not laid on it
+    t.lua("give_item(717, 4)");
+    t.cast_at("MG_SAFETYWALL", 30, 30);
+    t.run(5000);
+    let walls = |t: &mut T| num(t, "(function() local n = 0 for _, id in ipairs(_rt('in_area', player.map, 30, 30, 49, 49)) do end return #(skill_traps_in(player.map, 0, 0, 49, 49)) + n end)()");
+    let _ = walls;
+    let cells_at = |t: &mut T, x: u16, y: u16, uid: u8| -> usize {
+        t.g.world.units.values().filter(|u| u.x == x && u.y == y && matches!(&u.kind, ro_game::world::UnitKind::Skill(c) if c.unit_id == uid)).count()
+    };
+    assert_eq!(cells_at(&mut t, 30, 30, 0x7e), 1, "the Safety Wall");
+    t.cast_at("SA_LANDPROTECTOR", 31, 31);
+    t.run(6500);
+    assert_eq!(cells_at(&mut t, 30, 30, 0x7e), 0, "wiped");
+    assert_eq!(cells_at(&mut t, 30, 30, 0x9d), 1);
+    t.cast_at("MG_SAFETYWALL", 32, 32);
+    t.run(5000);
+    assert_eq!(cells_at(&mut t, 32, 32, 0x7e), 0, "no Safety Wall on the Land Protector");
+    t.cast_at("MG_SAFETYWALL", 26, 32);
+    t.run(5000);
+    assert_eq!(cells_at(&mut t, 26, 32, 0x7e), 1, "beside it, yes");
+}

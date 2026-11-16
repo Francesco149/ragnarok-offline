@@ -388,7 +388,8 @@ end
 
 -- battle.c:619 battle_calc_damage: what stands between a computed hit and the
 -- target (Safety Wall, Pneuma, Lex Aeterna, Energy Coat, Kyrie Eleison).
-function battle.calc_damage(bl, damage, flag, src)
+-- `ele`: the blow's element, for the Sage's fields.
+function battle.calc_damage(bl, damage, flag, src, ele)
   local t
   t = sc(bl, SC.SAFETYWALL)
   if t and damage > 0 and (flag & BF.WEAPON) ~= 0 and (flag & BF.SHORT) ~= 0 then
@@ -401,6 +402,13 @@ function battle.calc_damage(bl, damage, flag, src)
   if sc(bl, SC.AETERNA) and damage > 0 then
     damage = damage * 2
     sc_end(bl.id, SC.AETERNA)
+  end
+  -- Volcano, Deluge, Violent Gale: a Fire, Water or Wind blow on someone standing in the field
+  -- does 10% to 20% more (jAthena //0969 battle.c:1136, which reads the plain attack's element
+  -- off the target: the attacker's here)
+  for type, e in pairs(FIELD_ELEMENT) do
+    t = sc(bl, type)
+    if t and ele == e and damage > 0 then damage = damage + floor(damage * t.val4 / 100) end
   end
   if sc(bl, SC.ENERGYCOAT) and damage > 0 and bl.kind == "player" then
     local sp = bl.char.sp
@@ -768,12 +776,12 @@ function battle.calc_weapon_attack(src, target, skill_num, skill_lv, wflag, opt)
   end
 
   if damage2 < 1 then
-    damage = battle.calc_damage(target, damage, flag, src)
+    damage = battle.calc_damage(target, damage, flag, src, s_ele)
   elseif damage == 0 then
-    damage2 = battle.calc_damage(target, damage2, flag, src)
+    damage2 = battle.calc_damage(target, damage2, flag, src, s_ele_)
   else
     local d1, d2 = damage + damage2, damage2
-    damage = battle.calc_damage(target, damage + damage2, flag, src)
+    damage = battle.calc_damage(target, damage + damage2, flag, src, s_ele)
     damage2 = floor(damage * d2 / d1)
     if damage2 <= 0 then damage2 = -1 end
     damage = damage - damage2
@@ -965,7 +973,7 @@ function battle.calc_magic_attack(bl, target, skill_num, skill_lv, flag)
     -- (mod0631 applies them to weapon attacks only)
     damage = floor(damage * (100 - target.st.subele[skill_get_pl(skill_num)]) / 100)
   end
-  damage = battle.calc_damage(target, damage, aflag, bl)
+  damage = battle.calc_damage(target, damage, aflag, bl, skill_get_pl(skill_num))
   if mdef1 >= 10000 and damage > 0 then damage = 1 end
   return { damage = damage, damage2 = 0, type = 0, div = div, amotion = battle.amotion(bl),
            dmotion = battle.dmotion(target), blewcount = blewcount, flag = aflag }
@@ -994,7 +1002,7 @@ function battle.calc_misc_attack(bl, target, skill_num, skill_lv, flag)
   end
   div = skill_get_num(skill_num, skill_lv)
   if div > 1 then damage = damage * div end
-  damage = battle.calc_damage(target, damage, aflag, bl)
+  damage = battle.calc_damage(target, damage, aflag, bl, skill_get_pl(skill_num))
   if (damage > 0 and damage < div) or (battle.def(target) >= 10000 and battle.mdef(target) >= 10000 and damage > 0) then
     damage = div
   end
