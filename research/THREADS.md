@@ -1073,6 +1073,13 @@ also comes with the skill's result. The goblins' elemental attacks
 over the goblin each time one lands; so does every monster with such an
 attack. Left as it is: whether Aegis sent these as skill damage (named or
 not) or as plain attacks (0x008a) is the same open question.
+**2026-11-16:** casting every monster skill row once (test
+`every_monster_skill_row_runs`) found three skills with rows and no code:
+Metamorphosis (built from 817, its rows' monsters too), Hallucination and
+Keeping (built from jAthena //0850, 2004-02-29; DEVIATIONS.md). This
+client draws status 34 with an icon of its own (a red eye), so it knew
+Hallucination. **Look:** a period account of Hallucination (did the
+screen sway, were the numbers wrong?) and of a Cornutus closing up.
 **The exe (2026-11-15):** every skill packet (0x0114, 0x0115, 0x0117,
 0x011a, 0x013e, 0x01de) sends the game mode message 0x63, which shouts the
 name over the caster (`0x50f6e1`), but only when the packet's level is 0

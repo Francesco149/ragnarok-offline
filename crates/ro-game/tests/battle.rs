@@ -1944,7 +1944,7 @@ fn endows_strips_protections_dispell() {
 #[test]
 fn faq_monster_skills_run() {
     let mut t = T::new();
-    let mut rows: Vec<(u32, u16, u16, String)> = t
+    let mut rows: Vec<(u32, u16, u16, String, i32)> = t
         .g
         .db
         .mob_skills
@@ -1952,11 +1952,11 @@ fn faq_monster_skills_run() {
         .flatten()
         // rows with their own source, less mob_skills.toml's summons from jAthena //0743
         .filter(|r| r.source.as_ref().is_some_and(|s| !s.starts_with("jAthena //0743")))
-        .map(|r| (r.mob, r.skill, r.lv, r.target.clone()))
+        .map(|r| (r.mob, r.skill, r.lv, r.target.clone(), r.val))
         .collect();
     rows.sort();
     rows.dedup();
-    for (mob, skill, lv, target) in rows {
+    for (mob, skill, lv, target, val) in rows {
         if t.hp() == 0 {
             t = T::new();
         }
@@ -1972,9 +1972,9 @@ fn faq_monster_skills_run() {
             _ => (me, 25, 25),
         };
         let call = if sk.inf & 2 != 0 {
-            format!("rules.skill_castend{{src={m}, skill={skill}, lv={lv}, target=0, x={x}, y={y}, item=false, val=0}}")
+            format!("rules.skill_castend{{src={m}, skill={skill}, lv={lv}, target=0, x={x}, y={y}, item=false, val={val}}}")
         } else {
-            format!("rules.skill_castend{{src={m}, skill={skill}, lv={lv}, target={tid}, x=0, y=0, item=false, val=0}}")
+            format!("rules.skill_castend{{src={m}, skill={skill}, lv={lv}, target={tid}, x=0, y=0, item=false, val={val}}}")
         };
         let r = t.g.console_eval(&call, me);
         let n = std::mem::take(&mut t.g.notices);
@@ -1994,6 +1994,144 @@ fn faq_monster_skills_run() {
             t.lua("warp('testmap', 25, 25)");
             t.send(Writer::new(0x007d));
         }
+    }
+}
+
+/// Every distinct monster skill row (skill, level, target, argument) of every file, cast once by
+/// the first monster that has it, against a sturdy character: no script error, and the cast is
+/// accepted. `faq_monster_skills_run` checks the FAQ's rows more closely; this one catches rows
+/// of mod0631, 817 and jAthena that nothing else casts.
+#[test]
+fn every_monster_skill_row_runs() {
+    let mut t = T::new();
+    let mut seen = std::collections::HashSet::new();
+    let mut rows: Vec<(u32, u16, u16, String, i32)> = Vec::new();
+    let mut all: Vec<_> = t.g.db.mob_skills.values().flatten().cloned().collect();
+    all.sort_by_key(|r| (r.mob, r.skill, r.lv));
+    for r in all {
+        if r.target == "friend" {
+            continue; // never cast (mobskill_use skips the line, as mod0631)
+        }
+        if seen.insert((r.skill, r.lv, r.target.clone(), r.val)) {
+            rows.push((r.mob, r.skill, r.lv, r.target.clone(), r.val));
+        }
+    }
+    let mut bad = Vec::new();
+    for (mob, skill, lv, target, val) in rows {
+        if t.hp() == 0 {
+            t = T::new();
+        }
+        t.lua("player.base_level = 99; player.vit = 99; player.agi = 30; heal(30000, 30000); _rt('sc_clear', player.id)");
+        let me = t.me;
+        let Some(sk) = t.g.db.skill(skill).cloned() else {
+            bad.push(format!("{mob}: skill {skill} not in the database"));
+            continue;
+        };
+        let m = t.spawn(26, 25, mob);
+        t.cap.take();
+        let (tid, x, y) = if target == "self" { (m, 26, 25) } else { (me, 25, 25) };
+        let call = if sk.inf & 2 != 0 {
+            format!("rules.skill_castend{{src={m}, skill={skill}, lv={lv}, target=0, x={x}, y={y}, item=false, val={val}}}")
+        } else {
+            format!("rules.skill_castend{{src={m}, skill={skill}, lv={lv}, target={tid}, x=0, y=0, item=false, val={val}}}")
+        };
+        let r = t.g.console_eval(&call, me);
+        let n = std::mem::take(&mut t.g.notices);
+        t.run(300);
+        let n2 = std::mem::take(&mut t.g.notices);
+        if r.starts_with("error") || !n.is_empty() || !n2.is_empty() || r.trim() != "true" {
+            bad.push(format!("{mob} {} lv{lv} {target} val{val}: {} {:?} {:?}", sk.name, r.trim(), n.first(), n2.first()));
+        }
+        t.kill(m);
+        // slaves and summons left behind
+        t.lua("for _, u in ipairs(nearby(30)) do if u.kind == 'mob' then _rt('mob_kill', u.id) end end");
+        t.lua("_rt('sc_clear', player.id)");
+        if t.hp() > 0 && (t.pos(me), t.g.world.units[&me].map.as_str()) != ((25, 25), "testmap") {
+            t.lua("warp('testmap', 25, 25)");
+            t.send(Writer::new(0x007d));
+        }
+    }
+    assert!(bad.is_empty(), "{} rows failed:\n{}", bad.len(), bad.join("\n"));
+}
+
+/// Three monster skills neither period emulator's code fully had: a Fabre turns into a Pupa
+/// (817's Metamorphosis, its line's monster from 817), a Hallucination makes the hits drawn
+/// nonsense while the HP taken stays true, and Keeping shuts a Cornutus in its shell (jAthena
+/// //0850, 2004-02-29).
+#[test]
+fn metamorphosis_hallucination_keeping() {
+    let mut t = T::new();
+    let me = t.me;
+    // Metamorphosis: the line carries 1008 now; half its HP stays half
+    let row = t.g.db.mob_skills[&1007].iter().find(|r| r.skill == t.skill_id("NPC_METAMORPHOSIS")).cloned().unwrap();
+    assert_eq!(row.val, 1008, "the Fabre's line names the Pupa (817)");
+    let m = t.spawn(30, 25, 1007);
+    let max = t.mob_hp(m).unwrap();
+    t.lua(&format!("_rt('bl_damage', player.id, {m}, {})", max / 2));
+    t.cap.take();
+    let r = t.g.console_eval(&format!("rules.skill_castend{{src={m}, skill={}, lv=1, target={m}, x=0, y=0, item=false, val=1008}}", row.skill), me);
+    assert_eq!(r.trim(), "true");
+    assert_eq!(t.g.world.units[&m].class, 1008, "now a Pupa");
+    let pupa = t.g.db.mob(1008).unwrap().hp;
+    let hp = t.mob_hp(m).unwrap();
+    assert!(hp > 0 && hp <= pupa / 2 + 1 && hp + 2 >= pupa / 2, "half of the Pupa's HP: {hp} of {pupa}");
+    let pk = t.cap.take();
+    assert!(pk.iter().any(|p| id_of(p) == 0x0080 && u32_at(p, 2) == m), "drawn anew: vanish");
+    assert!(pk.iter().any(|p| matches!(id_of(p), 0x0078 | 0x007c) && u32_at(p, 2) == m), "drawn anew: appear");
+    t.kill(m);
+
+    // Hallucination: the icon, the length, and hits drawn as nonsense
+    t.lua("player.base_level = 99; player.vit = 99; heal(30000, 30000)");
+    let m = t.spawn(26, 25, 1101); // Baphomet Jr.
+    t.lua("skill_status_change_start(player.id, SC.HALLUCINATION, 1, 0)");
+    assert!(t.sc(34), "Hallucination on");
+    let mut differs = false;
+    for _ in 0..12 {
+        t.cap.take();
+        let real: i64 = t.lua(&format!("return skill_attack(BF.WEAPON, {m}, {m}, player.id, SK.NPC_PIERCINGATT, 1, 0)")).trim().parse().unwrap();
+        let skill = t.skill_id("NPC_PIERCINGATT");
+        let p = t.cap.take().into_iter().find(|p| id_of(p) == 0x01de && u16::from_le_bytes([p[2], p[3]]) == skill).expect("the hit is drawn");
+        let shown = i32::from_le_bytes(p[24..28].try_into().unwrap()) as i64;
+        if real > 0 {
+            assert!(shown >= real && shown <= real * 10 + 99, "shown {shown} for {real}");
+            differs |= shown != real;
+        } else {
+            assert_eq!(shown, 0, "a miss stays a miss");
+        }
+        // a hit that kills leaves the character dead under heal(): stand it up
+        t.lua("if battle.get(player.id).dead then _rt('bl_stand', player.id, 30000) end heal(30000, 30000)");
+    }
+    assert!(differs, "some hit drawn as another number");
+    t.kill(m);
+    t.run(31_000);
+    assert!(!t.sc(34), "level 1 lasts 30 s");
+
+    // Keeping: the Cornutus takes next to nothing, and neither walks nor strikes for 60 s
+    t.lua("player.str = 90; player.dex = 90; heal(30000, 30000)");
+    let open = t.spawn(24, 27, 1067);
+    let open_lost = t.bashed(open);
+    t.kill(open);
+    let m = t.spawn(27, 25, 1067);
+    t.lua(&format!("skill_status_change_start({m}, SC.KEEPING, 1, 0)"));
+    let kept_lost = t.bashed(m);
+    assert!(kept_lost <= 5 && open_lost > 50, "DEF 100: {kept_lost} through the shell, {open_lost} without");
+    t.lua(&format!("_rt('mob_target', {m}, player.id, 2)"));
+    let me_hp = t.hp();
+    t.run(5_000);
+    assert_eq!(t.pos(m), (27, 25), "shut in: it does not move");
+    assert_eq!(t.hp(), me_hp, "shut in: it does not strike");
+    t.kill(m);
+}
+
+impl T {
+    /// HP five Bashes of level 10 take from a monster.
+    fn bashed(&mut self, m: u32) -> u32 {
+        let before = self.mob_hp(m).unwrap();
+        for _ in 0..5 {
+            self.lua(&format!("skill_attack(BF.WEAPON, player.id, player.id, {m}, SK.SM_BASH, 10, 0)"));
+        }
+        self.run(1_000); // the HP goes when the hits land
+        before - self.mob_hp(m).unwrap_or(0)
     }
 }
 
@@ -2279,3 +2417,4 @@ fn armour_refine_def_two_thirds() {
     t.send(w);
     assert_eq!(t.st("def"), plain + 4, "+6: four more DEF, not six");
 }
+

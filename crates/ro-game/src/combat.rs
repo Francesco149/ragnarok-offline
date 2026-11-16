@@ -42,6 +42,8 @@ const SC_INCREASEAGI: u16 = 12;
 const SC_DECREASEAGI: u16 = 13;
 const SC_QUAGMIRE: u16 = 8;
 const SC_SILENCE: u16 = 70;
+/// jAthena //0850's number (scripts/rules/00_const.lua)
+const SC_KEEPING: u16 = 145;
 use crate::battle::SC_AUTOCOUNTER;
 
 impl Game {
@@ -335,6 +337,52 @@ impl Game {
         path::distance(x, y, ax, ay) > mdb_range(self, m.mob_id) && !self.mob_can_reach(&u.map, x, y, ax, ay, chase)
     }
 
+    /// NPC_METAMORPHOSIS (eAthena 817 mob.c:1930 mob_class_change): the
+    /// monster becomes another kind where it stands, keeping its share of HP,
+    /// forgetting whom it fought, and is drawn anew. It comes back as its
+    /// first kind when it respawns (817 mob.c:636 base_class; ours keeps the
+    /// spawn record). 817 also sends 0x01b0 first; this client's handler for
+    /// it is unread, so only the redraw goes out (vanish and appear, which
+    /// 817 sends too).
+    pub(crate) fn mob_class_change(&mut self, mob: u32, class: u32) -> bool {
+        let Some(mdb) = self.db.mob(class).cloned() else { return false };
+        if self.world.units.get(&mob).and_then(|u| u.mob()).is_none() {
+            return false;
+        }
+        self.cast_cancel(mob);
+        let now = self.now();
+        let skills = self.db.mob_skills.get(&class).map_or(0, |l| l.len());
+        let u = self.world.units.get_mut(&mob).unwrap();
+        u.class = class as u16;
+        u.name = mdb.display.clone();
+        u.speed = if mdb.speed > 0 { mdb.speed as u16 } else { DEFAULT_SPEED };
+        u.walk = None;
+        let m = u.mob_mut().unwrap();
+        let rate = m.hp as u64 * 100 / m.max_hp.max(1) as u64;
+        m.mob_id = class;
+        m.max_hp = mdb.hp.max(1);
+        m.hp = ((m.max_hp as u64 * rate / 100) as u32).clamp(1, m.max_hp);
+        m.def_ele = None;
+        m.target = None;
+        m.attacked = None;
+        m.looting = false;
+        m.attacking = false;
+        m.move_fail = 0;
+        m.skill_state = MobState::Idle;
+        m.skill_used = vec![0; skills];
+        m.next_think = now;
+        m.next_attack_at = now;
+        m.next_walk = now + 5000 + rand::random::<u64>() % 50;
+        self.area_send(mob, packets::vanish(mob, 0), false);
+        for u in self.world.units.values_mut() {
+            if let Some(p) = u.player_mut() {
+                p.visible.remove(&mob);
+            }
+        }
+        self.update_watchers(mob, false);
+        true
+    }
+
     pub(crate) fn mob_dies(&mut self, mob: u32) {
         let Some(u) = self.world.units.get(&mob).cloned() else { return };
         let Some(m) = u.mob() else { return };
@@ -550,8 +598,9 @@ impl Game {
                 m.target = None;
             }
         }
-        // stone, frozen, stunned, asleep; or flinching from a hit (MS_DELAY)
-        if self.opts_of(id).0 > 0 || self.world.units[&id].mob().unwrap().delay_until > now {
+        // stone, frozen, stunned, asleep; flinching from a hit (MS_DELAY); or
+        // shut in its shell by Keeping (jAthena //0850 holds it in MS_DELAY too)
+        if self.opts_of(id).0 > 0 || self.world.units[&id].mob().unwrap().delay_until > now || self.has_sc(id, SC_KEEPING) {
             return;
         }
         let m = self.world.units[&id].mob().unwrap();

@@ -626,6 +626,22 @@ function skill_castend_nodamage_id(src_id, bl_id, skillid, skilllv, opt)
   elseif skillid == SK.NPC_EMOTION then
     if md then _rt("clif_emotion", src_id, opt.val or 0) end
 
+  elseif skillid == SK.NPC_METAMORPHOSIS then
+    -- eAthena 817 skill.c:2421: `val` of the skill line is the monster it becomes
+    -- (mod0631 names the skill and leaves it empty; its lines carry no monster)
+    if md and opt.val and opt.val > 1000 then _rt("mob_class_change", src_id, opt.val) end
+
+  elseif skillid == SK.NPC_HALLUCINATION then
+    -- jAthena //0850 (2004-02-29), as neither period emulator has it: the
+    -- target sees the damage it takes as nonsense numbers for 30 s + 10 s a level
+    nodamage(src_id, bl_id, skillid, skilllv)
+    skill_status_change_start(bl_id, SC.HALLUCINATION, skilllv, 0)
+
+  elseif skillid == SK.NPC_KEEPING then
+    -- jAthena //0850: DEF 100, neither moving nor striking back, 60 s + 10 s a level
+    nodamage(src_id, bl_id, skillid, skilllv)
+    skill_status_change_start(bl_id, SC.KEEPING, skilllv, 0)
+
   elseif skillid == SK.MC_CHANGECART then
     -- Neither period emulator has it. The client's skill text: "Change the
     -- appearance of cart among 5 kinds, suited by the level of character".

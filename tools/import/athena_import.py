@@ -707,9 +707,27 @@ def summon_patch_0743():
     return removed, added
 
 
+# mod0631 names NPC_METAMORPHOSIS (193) and gives five monsters a line of it (the Fabre, the
+# Pupa and three eggs), but never built the skill, and the lines carry no monster to become.
+# 817 builds it (map/skill.c:2421) and its lines (db/mob_skill_db.txt) are mod0631's with the
+# monster filled in: Fabre -> Pupa -> Creamy, Peco Peco Egg -> Peco Peco, Thief Bug Egg -> Thief
+# Bug Larva, Ant Egg -> Andre. Taken from 817 by (mob, skill), like the drop holes.
+METAMORPHOSIS = 193
+
+
+def metamorphosis_817():
+    out = {}
+    for line in csv_records(E817 / "db/mob_skill_db.txt"):
+        cols = [c.strip() for c in line.split(",")]
+        if len(cols) > 12 and cols[0].isdigit() and cols[3] == str(METAMORPHOSIS) and cols[12]:
+            out[cols[0]] = cols[12]
+    return out
+
+
 def import_mob_skills():
     """mod0631 db/mob_skill_db.txt: which skill a monster uses, when and how often."""
     rows = []
+    meta817 = metamorphosis_817()
     removed, added = summon_patch_0743()
     found = set()
     lines = []
@@ -724,6 +742,11 @@ def import_mob_skills():
         if k in removed:
             found.add(k)
             lines.extend((c, "jAthena //0743 db/mob_skill_db.txt") for c in added.pop(cols[0], []))
+            continue
+        if cols[3] == str(METAMORPHOSIS) and not val and cols[0] in meta817:
+            cols = (cols + [""] * 13)[:13]
+            cols[12] = meta817[cols[0]]
+            lines.append((cols, "eAthena 817 db/mob_skill_db.txt (the monster it becomes)"))
             continue
         lines.append((cols, None))
     for k in removed:

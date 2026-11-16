@@ -151,6 +151,8 @@ local function player_def(bl) local d = bl.st.def; if hard(bl) then d = d >> 1 e
 function battle.def(bl)
   if bl.kind ~= "mob" then return player_def(bl) end
   local def = bl.db.def
+  -- Keeping: DEF 100 while it lasts (jAthena //0850, 2004-02-29)
+  if sc(bl, SC.KEEPING) and def < 10000 then def = 100 end
   -- Signum Crucis: eAthena 817 battle.c:502 (mod0631 never starts the status).
   -- Plants keep their DEF of 10000+ (mod0631's "one damage a hit" value).
   local t = sc(bl, SC.SIGNUMCRUCIS)

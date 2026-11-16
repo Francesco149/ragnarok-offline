@@ -44,6 +44,8 @@ pub const SC_ANKLE: u16 = 94;
 pub const SC_TRICKDEAD: u16 = 29;
 pub const SC_ENDURE: u16 = 1;
 pub const SC_AUTOCOUNTER: u16 = 77;
+/// jAthena //0850 (scripts/rules/00_const.lua)
+pub const SC_HALLUCINATION: u16 = 34;
 
 /// How often `rules.battle_tick` runs (Athena skill_unit_timer: 100 ms).
 const BATTLE_TICK_MS: u64 = 100;
@@ -696,6 +698,18 @@ impl Game {
         }
     }
 
+    /// The damage number shown for a hit on `dst`: under Hallucination a
+    /// nonsense one, damage x (1..10) + (0..99), as jAthena //0850's
+    /// clif_damage and clif_skill_damage (2004-02-29). Only what is drawn
+    /// changes; the HP taken is the real damage.
+    fn hallucinated(&self, dst: u32, damage: i64) -> i64 {
+        if damage > 0 && self.has_sc(dst, SC_HALLUCINATION) {
+            damage * (1 + rand::random::<i64>().rem_euclid(10)) + rand::random::<i64>().rem_euclid(100)
+        } else {
+            damage
+        }
+    }
+
     /// Athena skill_castcancel.
     pub(crate) fn cast_cancel(&mut self, unit: u32) {
         if self.take_cast(unit).is_some() {
@@ -977,7 +991,8 @@ impl Game {
             "clif_damage" => {
                 // src, dst, sdelay, ddelay, damage, div, type, damage2
                 let tick = self.tick32();
-                let pkt = packets::action(id(0), id(1), tick, int(a, 2) as u32, int(a, 3) as u32, int(a, 4).clamp(0, 32000) as u16, int(a, 5) as u16, int(a, 6) as u8, int(a, 7).clamp(0, 32000) as u16);
+                let (d1, d2) = (self.hallucinated(id(1), int(a, 4)), self.hallucinated(id(1), int(a, 7)));
+                let pkt = packets::action(id(0), id(1), tick, int(a, 2) as u32, int(a, 3) as u32, d1.clamp(0, 32000) as u16, int(a, 5) as u16, int(a, 6) as u8, d2.clamp(0, 32000) as u16);
                 self.area_send(id(0), pkt, true);
                 Value::Null
             }
@@ -992,11 +1007,12 @@ impl Game {
                 if self.has_sc(dst, SC_ENDURE) && self.world.units.get(&dst).is_some_and(|u| u.is_player()) {
                     kind = 9;
                 }
+                let dmg = self.hallucinated(dst, int(a, 4));
                 let pkt = if op == "clif_skill_damage" {
-                    packets::skill_damage(int(a, 6) as u16, src, dst, tick, int(a, 2) as u32, int(a, 3) as u32, int(a, 4) as i32, int(a, 7) as u16, int(a, 5) as u16, kind as u8)
+                    packets::skill_damage(int(a, 6) as u16, src, dst, tick, int(a, 2) as u32, int(a, 3) as u32, dmg as i32, int(a, 7) as u16, int(a, 5) as u16, kind as u8)
                 } else {
                     let (x, y) = self.world.units.get(&dst).map(|u| (u.x, u.y)).unwrap_or((0, 0));
-                    packets::skill_damage_blown(int(a, 6) as u16, src, dst, tick, int(a, 2) as u32, int(a, 3) as u32, x, y, int(a, 4).clamp(0, 32000) as u16, int(a, 7) as u16, int(a, 5) as u16, kind as u8)
+                    packets::skill_damage_blown(int(a, 6) as u16, src, dst, tick, int(a, 2) as u32, int(a, 3) as u32, x, y, dmg.clamp(0, 32000) as u16, int(a, 7) as u16, int(a, 5) as u16, kind as u8)
                 };
                 // a ground cell is no viewer anchor: send around the target
                 let anchor = if self.world.units.get(&src).is_some_and(|u| u.is_fighter()) { src } else { dst };
@@ -1326,6 +1342,7 @@ impl Game {
                 }
                 json!(r)
             }
+            "mob_class_change" => json!(self.mob_class_change(id(0), int(a, 1) as u32)),
             "mob_kill" => {
                 // dies without giving anything (NPC_SUICIDE, self-destruction)
                 let mob = id(0);

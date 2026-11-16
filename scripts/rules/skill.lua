@@ -621,6 +621,9 @@ function rules.skill_castend(a)
   -- here too (ours: jAthena //1082 widened only the request, so a skill asked
   -- for from there would spend its SP and items and fail)
   if sd and range > 0 then range = range + 1 end
+  -- Hallucination: range 0 in mod0631's and 817's skill_db, so no target was ever near
+  -- enough; jAthena //0850 (2004-02-29), which built the skill, gives it 1
+  if skill == SK.NPC_HALLUCINATION and range < 1 then range = 1 end
   local out = range < battle.distance(src, { x = tx, y = ty })
   -- the target walked off: with skill_out_range_consume the SP is spent anyway
   if sd then
@@ -656,6 +659,8 @@ function rules.skill_castend(a)
   -- them to skill_castend_damage_id, which has no case for them, and its support-side code
   -- (skill.c:1680) never runs. jAthena //0850 (2004-02-29) made them nk 1
   if skill >= SK.NPC_ATTRICHANGE and skill <= SK.NPC_CHANGETELEKINESIS then nk = 1 end
+  -- Metamorphosis: nk 0 in mod0631's skill_db (it never built the skill); 817's has 1
+  if skill == SK.NPC_METAMORPHOSIS then nk = 1 end
   if nk == 1 then
     -- Heal and Resurrection hurt whatever is of the Undead element (friend or not: skill.c:1780)
     if (skill == SK.AL_HEAL or skill == SK.ALL_RESURRECTION) and battle.elem_type(bl) == 9 then

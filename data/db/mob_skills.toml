@@ -134,6 +134,8 @@ cancel = true
 target = "self"
 cond = "always"
 cond_val = 0
+val = 1008
+source = "eAthena 817 db/mob_skill_db.txt (the monster it becomes)"
 
 [[skill]]
 mob = 1008
@@ -160,6 +162,8 @@ cancel = true
 target = "self"
 cond = "always"
 cond_val = 0
+val = 1018
+source = "eAthena 817 db/mob_skill_db.txt (the monster it becomes)"
 
 [[skill]]
 mob = 1009
@@ -1554,6 +1558,8 @@ cancel = true
 target = "self"
 cond = "always"
 cond_val = 0
+val = 1019
+source = "eAthena 817 db/mob_skill_db.txt (the monster it becomes)"
 
 [[skill]]
 mob = 1048
@@ -1567,6 +1573,8 @@ cancel = true
 target = "self"
 cond = "always"
 cond_val = 0
+val = 1051
+source = "eAthena 817 db/mob_skill_db.txt (the monster it becomes)"
 
 [[skill]]
 mob = 1049
@@ -3223,6 +3231,8 @@ cancel = true
 target = "self"
 cond = "always"
 cond_val = 0
+val = 1095
+source = "eAthena 817 db/mob_skill_db.txt (the monster it becomes)"
 
 [[skill]]
 mob = 1099

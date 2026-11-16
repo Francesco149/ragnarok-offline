@@ -872,6 +872,34 @@ always fires.
   go back to the Fake Angel (the Fur Seal summoned and cursed to stone).
   Each row says its source; `summon_patch_0743` in
   `tools/import/athena_import.py` reads the commit from jAthena's git.
+* **Three monster skills mod0631 lists but never built** (2026-11-16),
+  found by casting every monster skill row once
+  (`every_monster_skill_row_runs`):
+  * **Metamorphosis**: a Fabre may turn into a Pupa, a Pupa into a
+    Creamy, the Peco Peco, Thief Bug and Ant eggs into a Peco Peco, a
+    Thief Bug Larva and an Andre (one chance in a thousand each time it idles).
+    mod0631's rows carry no monster to become and its skill table files
+    the skill as an attack (nk 0); eAthena 817 fills both and builds it
+    (`skill.c:2421`, `mob.c:1930`): the share of HP is kept, the new
+    monster forgets whom it fought, and it respawns as the first kind.
+    817 also sends 0x01b0, whose handler in this client is unread; we
+    send only the vanish and appear that follow it. The rows say their
+    source (`metamorphosis_817` in `tools/import/athena_import.py`).
+  * **Hallucination** (Baphomet Jr., Horong, Myst Case, Stormy Knight,
+    Carat, Gajomart, Perimeter, Karakasa): for
+    30 s, plus 10 s a level, the hits the target takes are drawn as
+    damage x 1-10 + 0-99; the HP taken is the true damage. Its status
+    number is 34, which goes out as an icon: this client has its own
+    picture for it, an eye in red (seen in the rig on 2026-11-16, with a
+    hit of 464 drawn as 4645), so the status itself is older than the
+    client. No screen effect showed in still shots. Neither 817 nor mod0631
+    built it, and both give it range 0, so it could never reach anyone.
+    Built as jAthena //0850 (2004-02-29, two months after this client),
+    which also gives it range 1 (tier later).
+  * **Keeping** (Cornutus, Stainer): below 30% HP the monster shuts
+    itself in, DEF 100 (only VIT's part gets through), neither moving
+    nor striking back, for 60 s plus 10 s a level. jAthena //0850, as
+    above (tier later); 817 does not build it.
 * **The Baphomet Card splashes** (2026-11-15): a weapon blow that lands
   also strikes every other enemy within a cell of the target, each with a
   weapon attack of its own that may miss, as this client's item text says

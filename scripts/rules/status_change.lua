@@ -236,6 +236,9 @@ function skill_status_change_start(id, type, val1, val2, opt)
   -- Venom Splasher's mark: 5.5 s to 10 s by level (jAthena //1046 skill_cast_db, 2004-09-12;
   -- no period source gives the time). val2 = the Assassin
   elseif type == SC.SPLASHER then tick = opt.tick or (5000 + 500 * val1)
+  -- jAthena //0850's cast_db (2004-02-29): neither period emulator has these NPC skills
+  elseif type == SC.HALLUCINATION then tick = opt.tick or (30000 + 10000 * (val1 - 1))
+  elseif type == SC.KEEPING then tick = opt.tick or (60000 + 10000 * (val1 - 1))
   elseif type == SC.RIDING or type == SC.FALCON or type == SC.WEIGHT50 or type == SC.WEIGHT90 then tick = 600000
   else
     return false -- UnknownStatusChange

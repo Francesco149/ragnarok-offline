@@ -122,7 +122,10 @@ Next:
   Monsters: Eddga fought in the client on 2026-11-15 (slaves, its HP
   steps, the boss rows, the MVP reward; THREADS.md #23), and walled into
   Ice Walls and shot from outside, teleporting away as iRO's boss rule
-  says (2026-11-15).
+  says (2026-11-15). Every monster skill row is cast once by a test since
+  2026-11-16; it found Metamorphosis, Hallucination and Keeping unbuilt
+  (now built; a Fabre turning into a Pupa and a hallucinating hit seen in
+  the client).
 
 ## 4. NPC content
 
