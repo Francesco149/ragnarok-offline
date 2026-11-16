@@ -103,8 +103,10 @@ Working with the real client:
   and ailments with their icons; ailments last as jRO's players measured
   them in 2003. The Assassin's, Blacksmith's, Hunter's,
   Wizard's, Priest's and Knight's skills have been tried in the real client;
-- battle as the period emulators have it: elements, sizes, cards, refine
-  bonuses, criticals, arrows (with their ATK and the bow formula iRO's
+- battle as the period emulators have it: elements, sizes, cards (the ones
+  the December 2003 emulator left blank follow the client's own item text,
+  and effects that text and an iRO fan site of February 2004 both call "not
+  implemented yet" stay out), refine bonuses, criticals, arrows (with their ATK and the bow formula iRO's
   players had worked out by December 2003); monsters with their period AI and skills,
   and the 93 skills an iRO player's list of April 2004 gives monsters that
   the December 2003 emulator lacks (Endure, Increase Agility, Piercing
