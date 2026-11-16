@@ -104,10 +104,11 @@ Next:
   Land Protector as their fields; Volcano's asks for `effect\ring_red.tga`,
   which this GRF lacks, and stops the game with a ResourceError box, so it
   is sent undrawn (`UNDRAWN` in skill_units.lua). Cast Cancel drafted
-  on 2026-11-16 too (test `sage_cast_cancel`). Left: Free Cast's attack
-  while casting (it walks, as mod0631 `pc.c:1094`), Abracadabra, the
-  Alchemist's summons (Flora, Marine Sphere), the Monk's, Bard's and
-  Dancer's skills.
+  on 2026-11-16 too (test `sage_cast_cancel`), and the Alchemist's
+  summons, Bio Cannibalize and Sphere Mine (test `alchemist_summons`; a
+  Flora fighting and a Marine Sphere set off seen in the client). Left:
+  Free Cast's attack while casting (it walks, as mod0631 `pc.c:1094`),
+  Abracadabra, the Monk's, Bard's and Dancer's skills.
 * **Check the drafted skills against the iRO guide's pages** (THREADS.md
   #22) and the ailments against period guides (#21). The client's skill
   text against the emulators is settled (R6).

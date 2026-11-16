@@ -18,7 +18,7 @@ use crate::game::Game;
 use crate::model::{InvItem, Point};
 use crate::packets;
 use crate::path;
-use crate::world::{AttackIntent, DEFAULT_SPEED, MobState, MobUnit, Unit, UnitKind, Walk};
+use crate::world::{AttackIntent, DEFAULT_SPEED, MobState, MobUnit, SIDE_SUMMONED, SummonKind, Unit, UnitKind, Walk};
 
 /// mob.c MIN_MOBTHINKTIME.
 const MOB_THINK_MS: u64 = 100;
@@ -29,6 +29,8 @@ const DEFAULT_RESPAWN_MS: u32 = 5000;
 /// set it to 10 in the commit that made EXP "like the real server". The full
 /// bag still lets its oldest item go, as in both emulators.
 const LOOT_SIZE: usize = 10;
+/// The blast a Marine Sphere sets off when hit.
+const NPC_SELFDESTRUCTION: u16 = 173;
 
 // Athena monster mode bits
 const MD_CANMOVE: u32 = 0x01;
@@ -139,6 +141,7 @@ impl Game {
                 delay_until: 0,
                 side: 0,
                 march_at: 0,
+                summon: None,
             })),
         });
         self.update_watchers(id, true);
@@ -213,6 +216,13 @@ impl Game {
             .collect();
         for id in attackers {
             self.player_attack_step(id, now);
+        }
+        // an Alchemist's summons go when their time is up (jAthena //0969
+        // mob_timer_delete: gone from sight, not dead)
+        let gone: Vec<u32> = self.world.units.values().filter(|u| u.mob().and_then(|m| m.summon).is_some_and(|s| s.expires != 0 && s.expires <= now)).map(|u| u.id).collect();
+        for id in gone {
+            self.despawn(id, 0);
+            self.defer_rule("unit_gone", json!({"bl": id}));
         }
         // monsters: the real AI near players, the lazy one elsewhere
         let mobs: Vec<(u32, bool)> = self
@@ -289,6 +299,9 @@ impl Game {
     pub(crate) fn damage_mob(&mut self, mob: u32, by: u32, dmg: u32) -> bool {
         let by_player = self.world.units.get(&by).is_some_and(|u| u.is_player());
         let by_side = self.world.units.get(&by).and_then(|u| u.mob()).map(|m| m.side).unwrap_or(0);
+        let by_mob = self.world.units.get(&by).is_some_and(|u| u.mob().is_some());
+        // what an Alchemist's summon hurts counts as his own damage (jAthena //0969 mob.c:1822)
+        let by_owner = self.world.units.get(&by).and_then(|u| u.mob()).and_then(|m| m.summon).map(|s| s.owner).filter(|o| self.world.units.contains_key(o));
         let now = self.now();
         let flinch = self.world.units.get(&mob).and_then(|u| u.mob()).and_then(|m| self.db.mob(m.mob_id)).map(|d| d.damage_motion as u64).unwrap_or(0);
         let Some(u) = self.world.units.get_mut(&mob) else { return false };
@@ -307,11 +320,27 @@ impl Game {
             }
         } else if by_side != 0 && m.side != 0 && by_side != m.side && m.attacked.is_none() {
             m.attacked = Some(by); // a siege: the other side hit it (ours)
+        } else if by_mob && by != mob && (by_side == SIDE_SUMMONED) != (m.side == SIDE_SUMMONED) && m.attacked.is_none() {
+            m.attacked = Some(by); // a summon hit it, or it hit a summon: they fight (ours)
+        }
+        if let Some(owner) = by_owner {
+            *m.damage_log.entry(owner).or_default() += dmg;
         }
         m.hp -= dmg;
         let dead = m.hp == 0;
+        // a Marine Sphere that is hit starts its blast: 5 s, the iRO guide's Alchemist page
+        // (2004-03-27); jAthena //0969 casts its monster row (3 s) from mob_damage
+        let lit = !dead && m.summon.is_some_and(|s| s.kind == SummonKind::Sphere);
+        if lit {
+            if let Some(s) = m.summon.as_mut() {
+                s.kind = SummonKind::SphereLit;
+            }
+        }
         if stopped && !dead {
             self.area_send(mob, packets::stop_move(mob, x, y), false);
+        }
+        if lit {
+            self.begin_cast(mob, NPC_SELFDESTRUCTION, 1, mob, x, y, 5000, 0, false, true, 0, -1);
         }
         if dead {
             self.mob_dies(mob);
@@ -388,6 +417,12 @@ impl Game {
         let Some(m) = u.mob() else { return };
         let mdb = self.db.mob(m.mob_id).cloned().unwrap_or_default();
         self.despawn(mob, 1);
+        // an Alchemist's summon leaves nothing: no EXP, no drops (ours: jAthena //0969 spawns
+        // it as any monster, and a Flora killed would drop a Flora's loot)
+        if m.summon.is_some() {
+            self.defer_rule("unit_gone", json!({"bl": mob}));
+            return;
+        }
         if let Some(ev) = m.event.clone().filter(|e| !e.is_empty()) {
             // Athena: the killer is attached (the last player to hit it)
             let killer = m.damage_log.keys().copied().find(|p| self.world.units.contains_key(p)).unwrap_or(0);
@@ -496,8 +531,12 @@ impl Game {
 
     /// Can this monster see `target` as prey? Hiding, cloaking and playing
     /// dead fool everything but bosses, insects and demons (mob.c:746).
-    fn mob_sees(&self, mdb: &ro_data::db::Mob, target: u32) -> bool {
+    fn mob_sees(&self, id: u32, mdb: &ro_data::db::Mob, target: u32) -> bool {
         let Some(t) = self.world.units.get(&target) else { return false };
+        // an Alchemist's summon sees every other monster, and no player (ours)
+        if self.world.units.get(&id).and_then(|u| u.mob()).is_some_and(|m| m.side == SIDE_SUMMONED) {
+            return t.state != 1 && t.mob().is_some_and(|om| om.side != SIDE_SUMMONED && om.side != 2);
+        }
         if t.state != 1 && t.mob().is_some_and(|m| m.side != 0) {
             return true; // the other side of a siege (ours)
         }
@@ -529,7 +568,7 @@ impl Game {
         if m.target.is_some() && !m.looting && (mdb.mode & MD_AGGRESSIVE == 0 || rand::random::<u32>() % 100 > 25) {
             return;
         }
-        if self.mob_sees(&mdb, src) {
+        if self.mob_sees(mob, &mdb, src) {
             if let Some(m) = self.world.units.get_mut(&mob).and_then(|u| u.mob_mut()) {
                 m.target = Some(src);
                 m.looting = false;
@@ -701,7 +740,7 @@ impl Game {
                 master_check = true;
             }
             if let (Some(t), true) = (mtarget, free) {
-                if self.mob_sees(&mdb, t) {
+                if self.mob_sees(id, &mdb, t) {
                     let d = dist_to(self, t).unwrap_or(0);
                     let m = self.world.units.get_mut(&id).unwrap().mob_mut().unwrap();
                     m.target = Some(t);
@@ -721,22 +760,24 @@ impl Game {
         let m = self.world.units[&id].mob().unwrap();
         // In a siege (ours) both sides look for the other side; defenders never for players.
         let side = m.side;
-        let aggressive = mode & MD_AGGRESSIVE != 0 || (side != 0 && mode & MD_CANMOVE != 0) || (side == 2 && mode != 0);
+        let aggressive = mode & MD_AGGRESSIVE != 0 || (side != 0 && mode & MD_CANMOVE != 0) || ((side == 2 || side == SIDE_SUMMONED) && mode != 0);
         if (m.target.is_none() || m.looting) && aggressive && !master_check {
             let mut n = 0u32;
             let mut pick = None;
-            let mut prey: Vec<u32> = if side == 2 { Vec::new() } else { self.world.players_on(&map) };
+            let mut prey: Vec<u32> = if side == 2 || side == SIDE_SUMMONED { Vec::new() } else { self.world.players_on(&map) };
             if side != 0 {
                 if let Some(mi) = self.world.maps.get(&map) {
                     prey.extend(mi.units.iter().copied().filter(|i| {
-                        self.world.units.get(i).and_then(|u| u.mob()).is_some_and(|om| om.side != 0 && om.side != side)
+                        self.world.units.get(i).and_then(|u| u.mob()).is_some_and(|om| {
+                            if side == SIDE_SUMMONED { om.side != SIDE_SUMMONED && om.side != 2 } else { om.side != 0 && om.side != side }
+                        })
                     }));
                 }
             }
             for pid in prey {
                 let p = &self.world.units[&pid];
                 let (px, py) = (p.x as i32, p.y as i32);
-                if p.state == 1 || path::distance(x, y, px, py) >= sight || !self.mob_sees(&mdb, pid) {
+                if p.state == 1 || path::distance(x, y, px, py) >= sight || !self.mob_sees(id, &mdb, pid) {
                     continue;
                 }
                 if !self.mob_can_reach(&map, x, y, px, py, 12) {
@@ -811,7 +852,7 @@ impl Game {
                     let (_, _, option) = self.opts_of(t);
                     self.has_sc(t, crate::battle::SC_TRICKDEAD) || (option & 6 != 0 && mdb.race != 4 && mdb.race != 6)
                 };
-                if dist >= min_chase || fooled || !(tu.is_player() || tu.mob().is_some_and(|om| om.side != 0 && tu.state != 1)) {
+                if dist >= min_chase || fooled || !(tu.is_player() || tu.mob().is_some_and(|om| (om.side != 0 || side == SIDE_SUMMONED) && tu.state != 1)) {
                     self.mob_unlock(id, now);
                 } else if dist > mdb.range.max(1) as i32 || !self.grid(&map).is_some_and(|g| path::can_shoot(&g, x, y, tx, ty)) {
                     // out of reach, or no free line (battle_check_range): chase
@@ -1107,7 +1148,7 @@ impl Game {
             return;
         }
         let (x, y) = (self.world.units[&id].x as i32, self.world.units[&id].y as i32);
-        if dead || path::distance(x, y, tx, ty) >= 13 || !self.mob_sees(mdb, target) {
+        if dead || path::distance(x, y, tx, ty) >= 13 || !self.mob_sees(id, mdb, target) {
             lose(self);
             return;
         }
@@ -1152,6 +1193,11 @@ impl Game {
         // ours: one cast at a time (in mod0631 a counter skill could start
         // over a cast in progress and leave both timers running)
         if m.cast.is_some() {
+            return false;
+        }
+        // an Alchemist's summon uses no skill of its own (jAthena //0969 mob.c:2844); a
+        // Marine Sphere's blast is started when it is hit (`damage_mob`)
+        if m.summon.is_some() {
             return false;
         }
         let Some(list) = self.db.mob_skills.get(&m.mob_id).cloned() else { return false };

@@ -835,6 +835,11 @@ impl Game {
                 m.insert("max_hp".into(), json!(mob.max_hp));
                 m.insert("class".into(), json!(mob.mob_id));
                 m.insert("side".into(), json!(mob.side));
+                m.insert("summoner".into(), json!(mob.summon.map(|s| s.owner)));
+                m.insert("summon".into(), json!(mob.summon.map(|s| match s.kind {
+                    crate::world::SummonKind::Flora => "flora",
+                    _ => "sphere",
+                })));
                 m.insert("def_ele".into(), json!(mob.def_ele));
                 m.insert("master".into(), json!(mob.master));
                 m.insert("target".into(), json!(mob.target));
@@ -1351,6 +1356,25 @@ impl Game {
                         m.master = Some(master);
                         m.side = side;
                     }
+                }
+                json!(r)
+            }
+            "summon" => {
+                // owner, map, x, y, class, hp, ms, kind ("flora" | "sphere") -> id: an
+                // Alchemist's summon (jAthena //0969 skill_castend_pos2), on his side
+                let owner = id(0);
+                let kind = match text(a, 7).as_str() {
+                    "flora" => crate::world::SummonKind::Flora,
+                    _ => crate::world::SummonKind::Sphere,
+                };
+                let r = self.spawn_mob(&text(a, 1), int(a, 2) as u16, int(a, 3) as u16, int(a, 4) as u32, None);
+                let expires = self.now() + int(a, 6).max(0) as u64;
+                if let Some(m) = r.and_then(|nid| self.world.units.get_mut(&nid)).and_then(|u| u.mob_mut()) {
+                    let hp = int(a, 5).max(1) as u32;
+                    m.hp = hp;
+                    m.max_hp = hp;
+                    m.side = crate::world::SIDE_SUMMONED;
+                    m.summon = Some(crate::world::Summon { owner, kind, expires });
                 }
                 json!(r)
             }

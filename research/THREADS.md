@@ -1386,6 +1386,17 @@ Strip Weapon keeps the guide's tenth: jAthena's `atk2 -= atk2*90/100`
 looks like a slip for x90/100. The two bytes the unit packets gained are the base level (817
 `map/clif.c:544`, `630`, `855`, its packet version 4).
 
+**2026-11-16: Cast Cancel and the Alchemist's summons drafted**
+(DEVIATIONS.md). Cast Cancel is jAthena //0969's with the guide's table.
+The summons take jAthena's HP and times, but jAthena's targeting makes a
+summon no monster's enemy, so what they do is ours on the guide's and
+euRO's May text. Open: could an Alchemist hit his own Flora; did a Marine
+Sphere's blast hurt players or its Alchemist; did a summon drop anything
+when killed; did the sphere walk about before or only after it was hit
+(the guide: it "randomly moves ... as time goes by the marine sphere can
+move faster"); the limit of three Floras (euRO's May text) in early 2004.
+Seen in the client: both are drawn as the monsters 1118 and 1142, a click
+on the sphere attacks it (0x0089), its blast shows its HP as the number.
 
 ### 26. What `check` still lists
 The world audit (`ragnarok-offline check`, 2026-11-11) walks the client's

@@ -174,10 +174,36 @@ pub struct MobUnit {
     pub delay_until: u64,
     /// A side in a castle siege (ours, scripts/npc/castle_lord.lua): 0 none,
     /// 1 an attacker (goes for players and defenders), 2 a defender (the
-    /// Emperium and the guardians: goes for attackers, never for players).
+    /// Emperium and the guardians: goes for attackers, never for players),
+    /// [`SIDE_SUMMONED`] an Alchemist's (goes for every other monster).
     pub side: u8,
     /// A siege attacker sets out for the Emperium at this tick (0: it does not).
     pub march_at: u64,
+    /// An Alchemist's summon (Athena special_mob_ai): who called it, what it
+    /// is, and when it goes (0: never).
+    pub summon: Option<Summon>,
+}
+
+/// The side of the monsters an Alchemist calls (ours: see [`MobUnit::side`]).
+pub const SIDE_SUMMONED: u8 = 3;
+
+/// What an Alchemist called up (jAthena //0969 `skill_castend_pos2`).
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct Summon {
+    /// The Alchemist's unit: he gets the EXP for what it hurts.
+    pub owner: u32,
+    pub kind: SummonKind,
+    pub expires: u64,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum SummonKind {
+    /// Bio Cannibalize: fights the monsters about it.
+    Flora,
+    /// Sphere Mine: waits to be hit, then blows itself up.
+    Sphere,
+    /// A Marine Sphere that has been hit and is counting down.
+    SphereLit,
 }
 
 /// Athena MSS_*: the state monster skills are conditioned on.

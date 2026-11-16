@@ -1188,6 +1188,32 @@ always fires.
     (jAthena's 1% looks a slip);
   * Bomb's square is centred on the cell aimed at (jAthena's sits a cell
     up and to the left of it).
+* **The Alchemist's Bio Cannibalize and Sphere Mine** (behind `jobs2_2`;
+  drafts, test `alchemist_summons`; seen in the client on 2026-11-16).
+  jAthena //0969's numbers: a Flora of 2210 + 200 x level HP for 30 s +
+  10 s a level, for a Plant Bottle; a Marine Sphere of 1000 + 200 x level
+  HP for 30 s, for a Mine Bottle; both go out of sight when their time is
+  up. What they do is ours, on the iRO guide's Alchemist page (2004-03-27)
+  and euRO's text of May 2004 ("Summon Flora on selected ground for attack
+  your enemy"; the sphere uses "Suicidal Attack if it's attacked"): in
+  jAthena a summon is no monster's enemy, so a Flora attacks nobody but
+  another player and a sphere's blast can only hurt players. Here:
+  * a summon is on its Alchemist's side (a third side beside a siege's
+    two): a Flora strikes the monsters about it, they strike back, and
+    what a summon takes off a monster counts as its Alchemist's damage for
+    the EXP (jAthena's `mob_damage` does that part). Summons use no
+    monster skills (jAthena) and leave no drops or EXP when they die;
+  * the Alchemist cannot hit his own Flora; he hits his Marine Sphere to
+    set it off (jAthena: every summon is a player's enemy), and it blows 5 s
+    later (the guide; jAthena casts the monster's own 3 s row) on the
+    monsters within 5 cells, sparing players (jAthena's blast strikes
+    everything, its Alchemist too). The guide's sphere moves about and
+    hurries as the fuse burns; this one stands, as the monster's row in
+    every period database (mode 0);
+  * on the chosen cell (the guide, euRO's text; jAthena scatters it up to 5
+    cells off), and no more than three Floras at once (euRO's text; neither
+    the guide nor jAthena sets a limit). Bio Cannibalize costs 15 SP (the
+    guide, mod0631; jAthena 20).
 * **Talkie Box** speaks: mod0631 lets it lie silent and 817's attempt is
   marked "not working", so it follows jAthena //0988 (2004-05-25, five
   months after our date): the first one to step on it makes it say the

@@ -2812,6 +2812,93 @@ fn sage_rod_breaker_fields() {
     assert_eq!(cells_at(&mut t, 26, 32, 0x7e), 1, "beside it, yes");
 }
 
+/// Bio Cannibalize and Sphere Mine (jAthena //0969's numbers; what they do from the iRO guide's
+/// Alchemist page and euRO's text of May 2004): a Flora fights the monsters and its Alchemist
+/// gets the EXP; three at most; gone when its time is up. A Marine Sphere hit by its Alchemist
+/// blows up 5 s later, on the monsters only.
+#[test]
+fn alchemist_summons() {
+    let mut t = T::new();
+    t.lua("job_change(18); player.base_level = 80; player.dex = 80; heal(30000, 30000)");
+    t.learn("AM_CANNIBALIZE", 5);
+    t.learn("AM_SPHEREMINE", 5);
+    let me = t.me;
+    let count = |t: &mut T, item: u32| -> i64 { t.lua(&format!("_rt('pc_item_count', {me}, {item})")).trim().parse::<f64>().unwrap() as i64 };
+    let mobs_of = |t: &T, class: u32| -> Vec<u32> {
+        t.g.world.units.values().filter(|u| u.mob().is_some_and(|m| m.mob_id == class)).map(|u| u.id).collect()
+    };
+
+    // no bottle, no Flora
+    t.cast_at("AM_CANNIBALIZE", 27, 27);
+    t.run(500);
+    assert!(mobs_of(&t, 1118).is_empty());
+    t.lua("give_item(7137, 4)");
+    t.cast_at("AM_CANNIBALIZE", 27, 27);
+    t.run(500);
+    let flora = mobs_of(&t, 1118);
+    assert_eq!(flora.len(), 1);
+    let flora = flora[0];
+    assert_eq!(t.mob_hp(flora), Some(2210 + 5 * 200));
+    assert_eq!(count(&mut t, 7137), 3);
+    assert_eq!(t.lua(&format!("tostring(battle.is_enemy(battle.get({me}), battle.get({flora})))")).trim(), "false", "not the Alchemist's enemy");
+
+    // a Thara Frog (2152 HP, passive) two cells off: the Flora (range 3) strikes it, it strikes
+    // back, it dies, the EXP is the Alchemist's
+    let exp0 = t.g.store.chars[&t.cid].base_exp;
+    let poring = t.spawn(29, 27, 1034);
+    let hp_me = t.hp();
+    let mut fought_back = false;
+    for _ in 0..600 {
+        t.run(100);
+        if t.g.world.units.get(&poring).and_then(|u| u.mob()).is_some_and(|m| m.target == Some(flora)) {
+            fought_back = true;
+        }
+        if t.mob_hp(poring).is_none() {
+            break;
+        }
+    }
+    assert!(t.mob_hp(poring).is_none(), "the Flora killed the frog");
+    assert!(fought_back, "the frog turned on the Flora");
+    assert_eq!(t.hp(), hp_me, "nobody touched the Alchemist");
+    assert!(t.g.store.chars[&t.cid].base_exp > exp0, "his EXP");
+
+    // two more, then no fourth (its bottle kept)
+    t.cast_at("AM_CANNIBALIZE", 20, 20);
+    t.run(500);
+    t.cast_at("AM_CANNIBALIZE", 21, 20);
+    t.run(500);
+    assert_eq!(mobs_of(&t, 1118).len(), 3);
+    t.cast_at("AM_CANNIBALIZE", 22, 20);
+    t.run(500);
+    assert_eq!(mobs_of(&t, 1118).len(), 3);
+    assert_eq!(count(&mut t, 7137), 1);
+    // 30 s + 10 s a level: all three gone after 80 s, and nothing dropped
+    t.run(81_000);
+    assert!(mobs_of(&t, 1118).is_empty());
+    assert!(!t.g.world.units.values().any(|u| u.is_item()), "a summon drops nothing");
+
+    // Sphere Mine beside a Pupa (which stays put); the Alchemist hits it, 5 s later it blows
+    t.lua("give_item(7138, 1); heal(30000, 30000)");
+    let poring = t.spawn(30, 30, 1008);
+    t.cast_at("AM_SPHEREMINE", 29, 30);
+    t.run(500);
+    let sphere = mobs_of(&t, 1142);
+    assert_eq!(sphere.len(), 1);
+    let sphere = sphere[0];
+    assert_eq!(t.mob_hp(sphere), Some(2000));
+    t.run(3000);
+    assert!(t.mob_hp(sphere).is_some(), "it waits");
+    let (p0, hp_me) = (t.mob_hp(poring).unwrap(), t.hp());
+    t.lua(&format!("battle.damage({me}, {sphere}, 10)"));
+    t.run(4000);
+    assert!(t.mob_hp(sphere).is_some(), "counting down");
+    assert_eq!(t.mob_hp(poring), Some(p0));
+    t.run(1500);
+    assert!(t.mob_hp(sphere).is_none(), "blown");
+    assert!(t.mob_hp(poring).is_none_or(|h| h < p0), "the Pupa caught the blast");
+    assert_eq!(t.hp(), hp_me, "the Alchemist did not");
+}
+
 /// Cast Cancel (jAthena //0969, the iRO guide's Sage page of 2004-03-27): only during a cast; the
 /// spell stops and the Sage pays 2 SP and 90% (level 1) to 10% (level 5) of the spell's SP.
 #[test]

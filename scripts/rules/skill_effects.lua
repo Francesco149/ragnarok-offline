@@ -182,7 +182,9 @@ function skill_castend_damage_id(src_id, bl_id, skillid, skilllv, opt)
   elseif skillid == SK.NPC_SELFDESTRUCTION then
     -- skill.c:1070: its HP as damage to everyone within 5 cells, then it dies
     skill_attack(BF.MISC, src_id, src_id, bl_id, skillid, skilllv, 0)
-    for _, t in ipairs(skill_area(src, src.map, bl.x, bl.y, 5, BCT.ALL)) do
+    -- an Alchemist's Marine Sphere spares the players (ours: jAthena //0969 strikes all, its
+    -- Alchemist included; the iRO guide's page says nothing)
+    for _, t in ipairs(skill_area(src, src.map, bl.x, bl.y, 5, src.summon and BCT.ENEMY or BCT.ALL)) do
       if t.id ~= bl_id and t.id ~= src_id then
         -- the snapshot keeps the HP it had before the first hit
         local dmg = battle.calc_misc_attack(src, t, skillid, skilllv, 0)
@@ -788,6 +790,19 @@ function skill_castend_pos2(src_id, x, y, skillid, skilllv, opt)
   elseif skillid == SK.BS_HAMMERFALL then
     for _, t in ipairs(skill_area(src, src.map, x, y, 2, BCT.ENEMY)) do
       skill_castend_nodamage_id(src_id, t.id, skillid, skilllv)
+    end
+
+  elseif skillid == SK.AM_CANNIBALIZE or skillid == SK.AM_SPHEREMINE then
+    -- jAthena //0969 skill.c:3183: a Flora with 2210 + 200 x level HP for 30 s + 10 s a level, or a
+    -- Marine Sphere with 1000 + 200 x level HP for 30 s. jAthena scatters it up to 5 cells off
+    -- the spot; the iRO guide and euRO's text of May 2004 put it "on a chosen spot", as here.
+    -- What they do is ours, on those two texts (Flora "for attack your enemy"; the Sphere's blast
+    -- "when attacked"): jAthena's targeting makes neither of them anyone's enemy but a player's
+    if sd then
+      local flora = skillid == SK.AM_CANNIBALIZE
+      _rt("summon", src_id, src.map, x, y, flora and 1118 or 1142,
+          flora and 2210 + skilllv * 200 or 1000 + skilllv * 200,
+          flora and 30000 + skilllv * 10000 or 30000, flora and "flora" or "sphere")
     end
 
   elseif skillid == SK.HT_DETECTING then

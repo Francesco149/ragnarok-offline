@@ -578,6 +578,18 @@ function skill_check_condition(sd, skill, lv, a)
     hpcost = floor(sd.char.hp * 20 / 100)
   elseif skill == SK.AM_ACIDTERROR then items[7136] = 1 -- Acid Bottle; the iRO guide's Alchemist page
   elseif skill == SK.AM_DEMONSTRATION then items[7135] = 1 -- Bottle Grenade (Fire Bottle), jAthena //0969's skill_db
+  elseif skill == SK.AM_CANNIBALIZE then
+    -- a Plant Bottle: jAthena //0969's skill_require_db, the iRO guide (2004-03-27), euRO's text of
+    -- May 2004 ("MenEater Plant Bottle"); and no more than three Floras, as that text says (the
+    -- emulator and the guide set no limit)
+    items[7137] = 1
+    local n = 0
+    for _, id in ipairs(_rt("in_area", sd.map, 0, 0, 1000, 1000)) do
+      local m = get(id)
+      if m and m.kind == "mob" and m.summoner == sd.id and m.summon == "flora" then n = n + 1 end
+    end
+    if n >= 3 then return fail() end
+  elseif skill == SK.AM_SPHEREMINE then items[7138] = 1 -- Mine Bottle: jAthena //0969, euRO's text of May 2004
   elseif skill == SK.AM_POTIONPITCHER then
     -- the potion by level (skill_effects.lua AID_POTION)
     items[(AID_POTION[lv] or AID_POTION[1]).item] = 1

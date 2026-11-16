@@ -232,6 +232,14 @@ function battle.is_enemy(a, b)
   -- (side 1) and the castle's Emperium and guardians (side 2) are enemies; the
   -- castle's own are no enemy of its master
   local sa, sb = a.kind == "mob" and a.side or 0, b.kind == "mob" and b.side or 0
+  -- an Alchemist's summons (side 3, ours): every other monster is their enemy but a castle's
+  -- own; a player is not, save that he may strike a Marine Sphere to set it off
+  if sa == 3 or sb == 3 then
+    if sa == sb then return false end
+    local other = sa == 3 and b or a
+    if other.kind == "player" then return sb == 3 and b.summon == "sphere" end
+    return other.kind == "mob" and other.side ~= 2
+  end
   if sa ~= 0 and sb ~= 0 then return sa ~= sb end
   if sa == 2 or sb == 2 then return false end
   return a.kind ~= b.kind
