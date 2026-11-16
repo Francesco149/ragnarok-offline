@@ -1397,6 +1397,15 @@ when killed; did the sphere walk about before or only after it was hit
 move faster"); the limit of three Floras (euRO's May text) in early 2004.
 Seen in the client: both are drawn as the monsters 1118 and 1142, a click
 on the sphere attacks it (0x0089), its blast shows its HP as the number.
+**2026-11-16, round 28:** ArislanX's iRO Alchemist guide (2004-08-20):
+a monster's armour broken by Acid Terror loses 25% DEF, its weapon broken
+by Bomb 25% ATK, and Acid Terror is Neutral: built (DEVIATIONS.md). Open:
+how long a monster stays broken (ours: while it lives); whether Acid
+Terror ignored DEF and cards before jAthena //1072 (2004-12-06) said so.
+Grand Cross: Tangowr's Crusader guide (2004-07-01, server not said) has
+"total damage 2/3 would be reflect toward you" against the iRO guide's
+half; SoulEclipse (2005) only restates the guide. Still open, with the
+guide's "decreases by 2/3" (by or to?).
 
 ### 26. What `check` still lists
 The world audit (`ragnarok-offline check`, 2026-11-11) walks the client's
