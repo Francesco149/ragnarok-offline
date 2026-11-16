@@ -36,6 +36,10 @@ local UNIT_ID = {
   [SK.CR_GRANDCROSS] = 0x86, -- eAthena 817 skill.c:254, Lord of Vermilion's
   [SK.SA_VOLCANO] = 0x9a, [SK.SA_DELUGE] = 0x9b, [SK.SA_VIOLENTGALE] = 0x9c, [SK.SA_LANDPROTECTOR] = 0x9d, -- 817 skill.c:272
 }
+-- Units this client cannot draw: sent as type 0, which it ignores (docs/PROTOCOL.md 0x01c9).
+-- Volcano's 0x9a asks for effect\ring_red.tga, missing from its GRF (Deluge's ring_blue and Violent
+-- Gale's ring_yellow are there), and stops the game with a ResourceError box (rig, 2026-11-16)
+local UNDRAWN = { [0x9a] = true }
 local FIELD_UNIT = { [0x9a] = SC.VOLCANO, [0x9b] = SC.DELUGE, [0x9c] = SC.VIOLENTGALE }
 local FIELD_SKILL = {}
 for _, n in ipairs({ "SA_VOLCANO", "SA_DELUGE", "SA_VIOLENTGALE", "SA_LANDPROTECTOR" }) do FIELD_SKILL[SK[n]] = true end
@@ -262,7 +266,7 @@ function skill_unitsetting(src_id, skillid, skilllv, x, y, flag)
       end
     end
     if alive then
-      local id = _rt("su_new", src.map, ux, uy, g.unit_id, src_id, g.id)
+      local id = _rt("su_new", src.map, ux, uy, UNDRAWN[g.unit_id] and 0 or g.unit_id, src_id, g.id)
       cells[id] = { id = id, group = g.id, map = src.map, x = ux, y = uy, val1 = skilllv, val2 = cval2,
                     limit = limit, range = crange, alive = true }
       if skillid == SK.WZ_ICEWALL then

@@ -95,9 +95,17 @@ Next:
   the skill window leaves them out and a cast shouts "Unknown Skill !!";
   only the status icons are drawn. Until a later exe is found (euRO's of
   2004-04-15 or 2004-05-31) they are reachable through `@useskill` alone,
-  so more 2-2 drafts come after that search. Then: Grand Cross, the Sage's
-  ground skills, Magic Rod and Spell Breaker, Potion Pitcher, Acid Terror,
-  Demonstration.
+  so more 2-2 drafts come after that search. Drafted on 2026-11-16, from
+  jAthena of 2004-03 to 2004-05 and the iRO guide (tests
+  `alchemist_acid_bomb_aid`, `grand_cross`, `sage_rod_breaker_fields`):
+  Acid Terror, Bomb, Aid Potion, Grand Cross, Magic Rod, Spell Breaker,
+  Volcano, Deluge, Violent Gale, Land Protector. Their ground units seen
+  in the rig the same day: Bomb draws as fire, Deluge, Violent Gale and
+  Land Protector as their fields; Volcano's asks for `effect\ring_red.tga`,
+  which this GRF lacks, and stops the game with a ResourceError box, so it
+  is sent undrawn (`UNDRAWN` in skill_units.lua). Left: Cast Cancel, Free Cast, Abracadabra, the
+  Alchemist's summons (Flora, Marine Sphere), the Monk's, Bard's and
+  Dancer's skills.
 * **Check the drafted skills against the iRO guide's pages** (THREADS.md
   #22) and the ailments against period guides (#21). The client's skill
   text against the emulators is settled (R6).

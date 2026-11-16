@@ -143,3 +143,10 @@ failed : no path found"), point `emu_path.py`'s addresses at it (the
 function, `operator new`/`delete`, `atexit`, `_Lockit`, the error log, the
 two static initialisers, the instance) and run the committed fixture
 through it. If any path differs, that version needs its own finder.
+
+**Volcano's texture (2026-11-16).** The Dec-2003 client draws ground unit
+0x9a (Volcano) with `data\texture\effect\ring_red.tga`, which its GRF
+lacks (a ResourceError box stops the game); ours therefore sends Volcano's
+cells as type 0 (`UNDRAWN` in `scripts/rules/skill_units.lua`). The May-2004
+`data.grf` adds the file (`datagrf-diff-dec2003-may2004.txt`): that version
+can drop the entry and draw it.
