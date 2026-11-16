@@ -152,6 +152,7 @@ function rules.status(c)
   -- pc.c:757 equipment: ATK, DEF, refine bonuses, the item's script
   local items = (c.equip or {}).items or {}
   local armor_refines = 0
+  local weapon_wlv = 0
   for _, it in ipairs(items) do
     s.def = s.def + (it.def or 0)
     if it.type == 4 then
@@ -167,6 +168,7 @@ function rules.status(c)
         run_script(s, it.script, true)
       else
         s.weapontype1 = it.view
+        weapon_wlv = it.wlv or 0
         s.watk = s.watk + it.atk
         s.watk2 = s.watk2 + r * rb[1]
         if r > rb[3] then s.overrefine = s.overrefine + (r - rb[3]) * rb[2] end
@@ -343,10 +345,16 @@ function rules.status(c)
     s.def2 = floor(s.def2 * (100 - 6 * t.val1) / 100)
     s.watk = floor(s.watk * (100 + 2 * t.val1) / 100)
   end
+  -- the ensembles (status_change.lua song_effect): War Drum's ATK and DEF; Ring of Nibelungen's
+  -- ATK for a level-4 weapon only (jAthena //1020 pc.c:1536; the guide: "amplifies level 4
+  -- weapon damage"); Eternal Chaos takes the armour's DEF to 0 (pc.c:1551)
   t = has(SC.DRUMBATTLE)
-  if t then s.watk = s.watk + t.val2; s.def = s.def + t.val3 end
+  if t then
+    local atk, def = song_effect(SC.DRUMBATTLE, t)
+    s.watk = s.watk + atk; s.def = s.def + def
+  end
   t = has(SC.NIBELUNGEN)
-  if t then s.watk = s.watk + t.val2 end
+  if t and weapon_wlv >= 4 then s.watk = s.watk + song_effect(SC.NIBELUNGEN, t) end
   if has(SC.ETERNALCHAOS) then s.def = 0 end
   -- Poison takes a quarter off DEF (817 pc.c:1302, both parts; Ragu Memo's ailment page of
   -- 2003-08 and 2003-12: "DEF 25% down"; mod0631 has neither), a Curse slows the walk
@@ -397,7 +405,10 @@ function rules.status(c)
     s.flee = s.flee - floor(s.flee * 25 / 100)
   end
   t = has(SC.SIEGFRIED)
-  if t then s.subele[1] = s.subele[1] + t.val2; s.subele[3] = s.subele[3] + t.val2 end -- mod0631 wrote addele
+  if t then -- mod0631 wrote addele
+    local r = song_effect(SC.SIEGFRIED, t)
+    s.subele[1] = s.subele[1] + r; s.subele[3] = s.subele[3] + r
+  end
   t = has(SC.PROVIDENCE)
   if t then s.subele[6] = s.subele[6] + t.val2; s.subrace[6] = s.subrace[6] + t.val2 end -- mod0631 wrote add*
   -- the Sage's fields on one of their element (jAthena //0969 pc.c:1391-1461, armour element):

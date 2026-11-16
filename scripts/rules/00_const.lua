@@ -38,6 +38,9 @@ SC = {
   DANCING = 110,
   -- ours too, the Monk's (monk.lua): jAthena //1020's 89, 156, 157, 158
   COMBO = 111, BLADESTOP_WAIT = 112, BLADESTOP = 113, EXTREMITYFIST = 114,
+  -- ours too, standing in an ensemble (jAthena //1020's SC_RICHMANKIM, SC_ROKISWEIL, SC_INTOABYSS);
+  -- War Drum, Ring of Nibelungen, Eternal Chaos and Siegfried keep mod0631's numbers above
+  RICHMANKIM = 115, ROKISWEIL = 116, INTOABYSS = 117,
 }
 -- the Sage's fields and the element each strengthens
 FIELD_ELEMENT = { [SC.VOLCANO] = 3, [SC.DELUGE] = 1, [SC.VIOLENTGALE] = 4 }
@@ -77,9 +80,12 @@ function skill_get_pl(id) return PL_FIX[id] or skill_get(id).pl end
 function skill_get_nk(id) return skill_get(id).nk end
 -- Service For You costs 40 to 85 SP: the iRO guide's Dancer page (2004-03-27) and jAthena's
 -- skill_require_db (2004-05); mod0631's skill_db has Assassin Cross of Sunset's 38 to 65 on it.
--- Adaptation and Encore cost 1 SP (the guide; jAthena's skill_require_db): mod0631's row says 0
+-- Adaptation and Encore cost 1 SP (the guide; jAthena's skill_require_db): mod0631's row says 0.
+-- War Drum (the guide's "Battle Theme") 40 to 60 SP, as the guide's table and jAthena's
+-- skill_require_db; mod0631 has 38 to 50. Ring of Nibelungen the same (jAthena; the guide names none)
 local SP_FIX = { [SK.DC_SERVICEFORYOU] = { 40, 45, 50, 55, 60, 65, 70, 75, 80, 85 },
-                 [SK.BD_ADAPTATION] = { 1 }, [SK.BD_ENCORE] = { 1 } }
+                 [SK.BD_ADAPTATION] = { 1 }, [SK.BD_ENCORE] = { 1 },
+                 [SK.BD_DRUMBATTLEFIELD] = { 40, 45, 50, 55, 60 }, [SK.BD_RINGNIBELUNGEN] = { 40, 45, 50, 55, 60 } }
 SP_FIX[-1] = nil
 function skill_get_sp(id, lv) return per_level(SP_FIX[id] or skill_get(id).sp, lv, 0) end
 function skill_get_num(id, lv) return per_level(skill_get(id).num, lv, 1) end

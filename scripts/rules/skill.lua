@@ -181,6 +181,10 @@ function skill_additional_effect(src_id, bl_id, skillid, skilllv, attack_type)
   elseif skillid == SK.DC_SCREAM then
     -- 30% to 50% (jAthena //1020 skill.c:570; the guide's Dancer page names no number)
     if rnd(100) < floor((25 + 5 * skilllv) * sc_def_vit / 100) then start(SC.STAN, skilllv, time2()) end
+  elseif skillid == SK.BD_LULLABY then
+    -- 15% less the target's INT resistance, asleep for its time2, 15 s (jAthena //1020
+    -- skill.c:575 and cast_db). The guide: the chance "is affected by INT of the caster", no number
+    if rnd(100) < floor(15 * sc_def_int / 100) then start(SC.SLEEP, skilllv, time2()) end
   elseif skillid == SK.NPC_PETRIFYATTACK then
     if rnd(100) < sc_def_mdef then start(SC.STONE, skilllv, time2()) end
   elseif skillid == SK.NPC_POISON then
@@ -501,6 +505,12 @@ function rules.skill_use(a)
     _rt("clif_skill_fail", sd.id, skill, 0, 0)
     return nil
   end
+  -- in Loki's Veil, no skill at all (jAthena //1020 skill.c:5189; the guide: "all skills and
+  -- magic are not allowed")
+  if sc(sd, SC.ROKISWEIL) then
+    _rt("clif_skill_fail", sd.id, skill, 0, 0)
+    return nil
+  end
   -- playing a song, only Adaptation, Musical Strike and Slinging Arrow (jAthena //1020
   -- skill.c:5592; the guide: "This skill is also usable while playing music")
   if sc(sd, SC.DANCING) and skill ~= SK.BD_ADAPTATION and skill ~= SK.BA_MUSICALSTRIKE and skill ~= SK.DC_THROWARROW then
@@ -608,6 +618,11 @@ for _, n in ipairs({ "BA_MUSICALSTRIKE", "BA_DISSONANCE", "BA_WHISTLE", "BA_ASSA
 end
 for _, n in ipairs({ "DC_THROWARROW", "DC_UGLYDANCE", "DC_HUMMING", "DC_DONTFORGETME", "DC_FORTUNEKISS", "DC_SERVICEFORYOU" }) do
   BARD_WEAPON[SK[n]] = 14
+end
+-- the ensembles with either (jAthena //1020 skill_require_db: 13:14)
+for _, n in ipairs({ "BD_LULLABY", "BD_RICHMANKIM", "BD_ETERNALCHAOS", "BD_DRUMBATTLEFIELD", "BD_RINGNIBELUNGEN",
+                     "BD_ROKISWEIL", "BD_INTOABYSS", "BD_SIEGFRIED" }) do
+  BARD_WEAPON[SK[n]] = 0
 end
 BARD_WEAPON[-1] = nil
 -- the last song each player played, for Encore (jAthena's sd->skillid_dance; not kept over a logout)
@@ -727,7 +742,8 @@ function skill_check_condition(sd, skill, lv, a)
   elseif BARD_WEAPON[skill] then
     -- an instrument for the Bard's, a whip for the Dancer's (jAthena //1020 skill_require_db,
     -- euRO's text of May 2004: "only when you putting on musical instrument")
-    if w ~= BARD_WEAPON[skill] then return fail(6) end
+    local want = BARD_WEAPON[skill]
+    if (want == 0 and w ~= 13 and w ~= 14) or (want ~= 0 and w ~= want) then return fail(6) end
     -- Encore plays the last song again for half its SP (the guide, euRO's text); here, as its
     -- own cast, it pays the song's half and its own 1 SP
     if a.encore then sp = floor(sp / 2) end
@@ -759,6 +775,13 @@ function skill_check_condition(sd, skill, lv, a)
 
   if sp > 0 and sd.char.sp < sp then return fail(1) end
   -- (mod0631 takes arrows for plain shots only: the bow skills use none. THREADS.md #22)
+  -- standing in Into the Abyss ("Power Cord"), no gemstones and no Traps (jAthena //1020
+  -- skill.c:5429; the guide: "without required items such as gemstones or traps")
+  if sc(sd, SC.INTOABYSS) then
+    for item in pairs(items) do
+      if GEMS[item] or item == 1065 then items[item] = nil end
+    end
+  end
   for item, n in pairs(items) do
     -- a Mistress Card (4132) casts without gemstones
     if not (GEMS[item] and battle.dcard(sd, 4132)) then

@@ -30,7 +30,7 @@ questions that could change an entry here are in
 | Chat rooms | Player chat rooms; NPC "waiting rooms" (arena, PvP queues) | NPC rooms are drawn: the bubble with its title over the NPC (817's PvP ushers). Nobody is ever seated, so a room with limit 0 answers "The Room is already full." like Athena, and so does any other (none in our scripts); its event never fires. Player rooms are not offered | Player rooms are pointless. A queue that leads somewhere is reworked by hand (the Wizard test's lounge) |
 | Whisper, friends | — | Whispers get "not online" | — |
 | Announcements | Server-wide broadcasts | Shown to you (`announce` and friends) | — |
-| Bard and Dancer songs (`jobs2_2`) | A song touches everyone in its square but the one playing it (jAthena //1020 skill.c:4528); ensembles need a Bard and a Dancer side by side | **Ours:** the one playing stands in their own song too, so a lone Bard's Whistle or Dancer's Humming does something; Service For You and Apple of Idun, party songs there, reach everyone who is no enemy (with no party, that is the player). rAthena's later Soul Link gives a Bard or Dancer the same. Ensembles are not built | Nobody else to sing for. `battle_config.song_on_self = false` (`scripts/rules/00_const.lua`) gives the period rule |
+| Bard and Dancer songs (`jobs2_2`) | A song touches everyone in its square but the one playing it (jAthena //1020 skill.c:4528); ensembles need a Bard and a Dancer side by side | **Ours:** the one playing stands in their own song too, so a lone Bard's Whistle or Dancer's Humming does something; Service For You and Apple of Idun, party songs there, reach everyone who is no enemy (with no party, that is the player). rAthena's later Soul Link gives a Bard or Dancer the same. The ensembles, which need a Bard and a Dancer of one party side by side, are played by one player alone at their own level (jAthena //1003's `player_skill_partner_check: no`) | Nobody else to sing for. `battle_config.song_on_self = false` (`scripts/rules/00_const.lua`) gives the period rule |
 | Arena (time attack) | Not open: kRO added the Izlude arena on 2004-10-12 | 817's arena (entered from mid-Prontera, its own placement) is imported but off | `arena = true` to visit it. THREADS.md R5 |
 
 ## Meta and convenience
@@ -1263,10 +1263,31 @@ always fires.
     bow skills here;
   * this client draws ten of the solo songs' cells; Assassin Cross of
     Sunset's and Ugly Dance's ask for `ring_red.tga`, which its GRF lacks,
-    and are sent undrawn as Volcano's (`UNDRAWN`). Not built: the
-    ensembles (they need a partner; jAthena //1003's switch lets one play
-    them alone), and the guide's rule that two songs overlapping make a
-    level-1 Dissonance or Ugly Dance (a lone player plays one song).
+    and are sent undrawn as Volcano's (`UNDRAWN`). Not built: the guide's
+    rule that two songs overlapping make a level-1 Dissonance or Ugly Dance
+    (a lone player plays one song);
+  * **the ensembles** (2026-11-16, test `ensembles`), played **alone**: in
+    the period game a Bard and a Dancer of one party stand side by side,
+    each knowing the skill, and play it at the mean of their levels
+    (jAthena //1020 skill.c:5111). Here one Bard or Dancer plays it at
+    their own level, as jAthena //1003's `player_skill_partner_check: no`
+    does. The rest is the solo songs' (9x9 square, 60 s, one SP every 3 to
+    5 s, either an instrument or a whip). What each does: War Drum ATK +50
+    to +150 and DEF +4 to +12, Ring of Nibelungen ATK +150 to +350 with a
+    level-4 weapon (the guide and jAthena agree; its SP 40 to 60 is the
+    guide's, mod0631 38 to 50), Siegfried Fire and Water 40% to 80% (the
+    guide; jAthena 20% to 80%), Mr. Kim A Rich Man EXP +36% to +80% (the
+    guide's 136% to 180%; jAthena +50% to +150%), Into the Abyss no
+    gemstones or Traps, these five for the party (the player); Eternal
+    Chaos DEF 0 and Loki's Veil no skills (not on bosses, the guide) for
+    everyone there but the one playing; Lullaby 15% against INT (jAthena;
+    the guide: "affected by INT of the caster", no number) to sleep each
+    enemy there, at once and every 6 s. This client draws Mr. Kim's, War
+    Drum's, Loki's Veil's and Into the Abyss's cells; Lullaby's,
+    Eternal Chaos's, Nibelungen's and Siegfried's want files its GRF
+    lacks and are sent undrawn (`UNDRAWN`). Played in the client on
+    2026-11-16 (`@useskill`): War Drum's notes and Loki's Veil's field
+    walking with the Bard, the monsters in the veil and not the Bard.
 * **The Monk's skills** (behind `jobs2_2`; drafts, test `monk_skills`;
   `scripts/rules/monk.lua`). mod0631 has the damage of Occult Impaction,
   Chain Combo and Combo Finish, Steel Body, Fury, Iron Fists, Flee and

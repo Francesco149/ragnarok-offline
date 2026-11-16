@@ -1248,8 +1248,14 @@ impl Game {
             let Some((tx, ty)) = self.world.units.get(&tgt).map(|t| (t.x, t.y)) else { return false };
             // silenced, stunned, hidden: no skills (mob.c:2011)
             let (_, _, option) = self.opts_of(id);
-            // nor while held in a Monk's Blade Stop (jAthena //1020 skill.c:5573, for players; ours for monsters)
-            if self.cannot_act(id) || option & 6 != 0 || self.has_sc(id, SC_SILENCE) || self.has_sc(id, crate::battle::SC_BLADESTOP) {
+            // nor while held in a Monk's Blade Stop (jAthena //1020 skill.c:5573, for players; ours for monsters),
+            // nor in Loki's Veil (jAthena //1020 mob.c:2691)
+            if self.cannot_act(id)
+                || option & 6 != 0
+                || self.has_sc(id, SC_SILENCE)
+                || self.has_sc(id, crate::battle::SC_BLADESTOP)
+                || self.has_sc(id, crate::battle::SC_ROKISWEIL)
+            {
                 return false;
             }
             // in Auto Counter's stance, no other skill (817 mob.c:2304)

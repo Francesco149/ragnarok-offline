@@ -328,6 +328,15 @@ impl Game {
         if self.sid_of(unit).is_none() || self.world.units.get(&unit).is_none_or(|u| u.state == 1) {
             return;
         }
+        // standing in Mr. Kim A Rich Man: a share more of all EXP (jAthena //1020 pc.c:4043, in
+        // pc_gainexp; the share is the guide's, scripts/rules/status_change.lua)
+        let (base, job) = match self.sc_get(unit, crate::battle::SC_RICHMANKIM) {
+            Some(sc) if sc.val3 > 0 => {
+                let more = sc.val3 as u64;
+                (base + base * more / 100, job + job * more / 100)
+            }
+            _ => (base, job),
+        };
         let Some(c) = self.char_of_unit_mut(unit) else { return };
         c.base_exp += base;
         c.job_exp += job;

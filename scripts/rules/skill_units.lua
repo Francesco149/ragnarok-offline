@@ -40,6 +40,8 @@ local UNIT_ID = {
   [SK.BA_DISSONANCE] = 0xa6, [SK.BA_WHISTLE] = 0xa7, [SK.BA_ASSASSINCROSS] = 0xa8, [SK.BA_POEMBRAGI] = 0xa9,
   [SK.BA_APPLEIDUN] = 0xaa, [SK.DC_UGLYDANCE] = 0xab, [SK.DC_HUMMING] = 0xac, [SK.DC_DONTFORGETME] = 0xad,
   [SK.DC_FORTUNEKISS] = 0xae, [SK.DC_SERVICEFORYOU] = 0xaf,
+  [SK.BD_LULLABY] = 0x9e, [SK.BD_RICHMANKIM] = 0x9f, [SK.BD_ETERNALCHAOS] = 0xa0, [SK.BD_DRUMBATTLEFIELD] = 0xa1,
+  [SK.BD_RINGNIBELUNGEN] = 0xa2, [SK.BD_ROKISWEIL] = 0xa3, [SK.BD_INTOABYSS] = 0xa4, [SK.BD_SIEGFRIED] = 0xa5,
 }
 -- Units this client cannot draw: sent as type 0, which it ignores (docs/PROTOCOL.md 0x01c9).
 -- Volcano's 0x9a asks for effect\ring_red.tga, missing from its GRF (Deluge's ring_blue and Violent
@@ -72,14 +74,21 @@ local LAND_PROTECTOR = { [0x9d] = true }
 -- gives those in it: SONG_UNIT's status change (status_change.lua song_effect); Dissonance hurts
 -- and Ugly Dance drains SP every 3 s.
 local SONG_UNIT = { [0xa7] = SC.WHISTLE, [0xa8] = SC.ASSNCROS, [0xa9] = SC.POEMBRAGI, [0xaa] = SC.APPLEIDUN,
-                    [0xac] = SC.HUMMING, [0xad] = SC.DONTFORGETME, [0xae] = SC.FORTUNE, [0xaf] = SC.SERVICE4U }
+                    [0xac] = SC.HUMMING, [0xad] = SC.DONTFORGETME, [0xae] = SC.FORTUNE, [0xaf] = SC.SERVICE4U,
+                    [0x9f] = SC.RICHMANKIM, [0xa0] = SC.ETERNALCHAOS, [0xa1] = SC.DRUMBATTLE, [0xa2] = SC.NIBELUNGEN,
+                    [0xa3] = SC.ROKISWEIL, [0xa4] = SC.INTOABYSS, [0xa5] = SC.SIEGFRIED }
 DANCE_SKILL = {}
 for _, n in ipairs({ "BA_DISSONANCE", "BA_WHISTLE", "BA_ASSASSINCROSS", "BA_POEMBRAGI", "BA_APPLEIDUN",
-                     "DC_UGLYDANCE", "DC_HUMMING", "DC_DONTFORGETME", "DC_FORTUNEKISS", "DC_SERVICEFORYOU" }) do
+                     "DC_UGLYDANCE", "DC_HUMMING", "DC_DONTFORGETME", "DC_FORTUNEKISS", "DC_SERVICEFORYOU",
+                     "BD_LULLABY", "BD_RICHMANKIM", "BD_ETERNALCHAOS", "BD_DRUMBATTLEFIELD", "BD_RINGNIBELUNGEN",
+                     "BD_ROKISWEIL", "BD_INTOABYSS", "BD_SIEGFRIED" }) do
   DANCE_SKILL[SK[n]] = true
 end
 DANCE_SKILL[-1] = nil
-local function is_song_unit(uid) return uid >= 0xa6 and uid <= 0xaf end
+local function is_song_unit(uid) return uid >= 0x9e and uid <= 0xaf end
+-- The ensembles that reach everyone there but the one playing (jAthena //1020 skill.c:3911,
+-- BCT_ALL, and skill.c:4529, never the source): Lullaby, Eternal Chaos, Loki's Veil
+local ON_ALL_BUT_SINGER = { [0x9e] = true, [0xa0] = true, [0xa3] = true }
 
 -- The singer's part of a song, taken when it starts (jAthena //1020 skill.c:3930-4015): the
 -- Lessons part (val1) and the stat parts packed a * 65536 + b (val2). status_change.lua
@@ -260,6 +269,15 @@ function skill_unitsetting(src_id, skillid, skilllv, x, y, flag)
     if skillid == SK.BA_DISSONANCE or skillid == SK.DC_UGLYDANCE then interval = 3000
     elseif skillid == SK.BA_APPLEIDUN then interval = 6000 end
     val1, val2 = song_values(src, skillid)
+    -- The ensembles (jAthena //1020 skill.c:3911-3925; the guide's Bard and Dancer pages,
+    -- 2004-03-27), all 60 s. A Bard and a Dancer side by side play one there; here one plays it
+    -- alone at their own level, as jAthena //1003's `player_skill_partner_check: no`
+    -- (DEVIATIONS.md). Lullaby, Eternal Chaos and Loki's Veil reach everyone (jAthena BCT_ALL; the
+    -- guide: "every character", Lullaby "all enemies"); the five others the party, which here is
+    -- everyone who is no enemy. Lullaby tries to put them to sleep at once and every 6 s, eleven
+    -- times in 60 s (the guide; jAthena: its time / 10)
+    if skillid == SK.BD_LULLABY then target, interval = BCT.ENEMY, 6000
+    elseif skillid == SK.BD_ETERNALCHAOS or skillid == SK.BD_ROKISWEIL then target = BCT.ALL end
   end
 
   -- skill.c:4223: a player keeps 32 groups, a monster 4; the oldest makes room
@@ -520,12 +538,16 @@ local function onplace(c, bl, now)
   elseif is_song_unit(uid) then
     -- jAthena //1020 skill.c:4510: never on the one playing it; ours, for one player, on them
     -- too (battle_config.song_on_self)
-    if bl.id == g.src and not battle_config.song_on_self then return end
+    if bl.id == g.src and (ON_ALL_BUT_SINGER[uid] or not battle_config.song_on_self) then return end
     if uid == 0xa6 then -- Dissonance
       skill_attack(BF.MISC, g.src, cell_src, bl.id, g.skill, g.lv, 0)
     elseif uid == 0xab then -- Ugly Dance: SP, so only on a player (monsters have none)
       -- 10 to 50 SP a time: the iRO guide's Dancer page. jAthena gives the status and nothing else
       if bl.kind == "player" and bl.char.sp > 0 then _rt("bl_set", bl.id, "sp", math.max(0, bl.char.sp - 10 * g.lv)) end
+    elseif uid == 0x9e then -- Lullaby
+      skill_additional_effect(g.src, bl.id, g.skill, g.lv, BF.MISC)
+    elseif uid == 0xa3 and battle.is_boss(bl) then -- Loki's Veil: "Boss Monsters can not be effected" (the guide)
+      return
     else
       local type = SONG_UNIT[uid]
       local t = sc(bl, type)

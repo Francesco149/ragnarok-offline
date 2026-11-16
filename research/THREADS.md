@@ -1430,8 +1430,19 @@ numbers; whether a singer stood in their own song on iRO (we say yes, for
 one player: DEVIATIONS.md); how much slower a dancer walked (jAthena: four
 times); Scream's chance; Ugly Dance's SP and whether Dissonance had a
 Lessons part (the guide's 40-80 has none); how the official client drew a
-song (81 cells, as jAthena sends, or fewer); the ensembles alone (jAthena
-//1003's switch).
+song (81 cells, as jAthena sends, or fewer).
+**2026-11-16 (later): the ensembles drafted**, played alone (jAthena
+//1003's `player_skill_partner_check: no`; DEVIATIONS.md, test
+`ensembles`). Where the guide and jAthena part, the guide is taken:
+Mental Sensing (Mr. Kim A Rich Man) EXP 136% to 180% against jAthena's
+150% to 250%; Acoustic Rhythm (Siegfried) 40% to 80% against 20% to 80%.
+**Open:** Lullaby's chance (the guide: "affected by INT of the caster",
+no number; jAthena a flat 15% against the target's INT); whether Loki's
+Veil and Eternal Chaos touched the two playing (jAthena: no); whether the
+pair could walk while playing an ensemble (jAthena //1020 lets them, the
+square following the one who laid it); Ring of Nibelungen's damage
+(jAthena adds ATK; the guide's "amplifies level 4 weapon damage" with a
+garbled table on the Bard page, "175% ... 250%").
 
 ### 26. What `check` still lists
 The world audit (`ragnarok-offline check`, 2026-11-11) walks the client's

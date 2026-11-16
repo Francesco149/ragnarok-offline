@@ -115,8 +115,11 @@ Next:
   skills drafted the same day from jAthena //1020 and the guide's Monk
   page (test `monk_skills`): spirit spheres, the combos, Guillotine Fist,
   Blade Stop, Snap; this client draws none of the spheres, windows or
-  holds. Left: Free Cast's attack while casting (it walks, as mod0631
-  `pc.c:1094`), Abracadabra, the ensembles.
+  holds. The ensembles drafted the same day (test `ensembles`), each
+  played by one Bard or Dancer alone; War Drum and Loki's Veil played in
+  the client. Left: Free Cast's attack while
+  casting (it walks, as mod0631 `pc.c:1094`), Abracadabra, Devotion and
+  Auto Spell (THREADS.md #25: no packets for their lines and window).
 * **Check the drafted skills against the iRO guide's pages** (THREADS.md
   #22) and the ailments against period guides (#21). The client's skill
   text against the emulators is settled (R6).

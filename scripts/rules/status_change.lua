@@ -23,12 +23,17 @@ local function rnd(n) if n <= 0 then return 0 end return random(0, n - 1) end
 -- The status changes a Bard's or Dancer's song gives those standing in it
 SONG_SC = {}
 for _, t in ipairs({ SC.WHISTLE, SC.ASSNCROS, SC.POEMBRAGI, SC.APPLEIDUN, SC.HUMMING, SC.DONTFORGETME, SC.FORTUNE,
-                     SC.SERVICE4U }) do SONG_SC[t] = true end
+                     SC.SERVICE4U, SC.RICHMANKIM, SC.ETERNALCHAOS, SC.DRUMBATTLE, SC.NIBELUNGEN, SC.ROKISWEIL,
+                     SC.INTOABYSS, SC.SIEGFRIED }) do SONG_SC[t] = true end
 -- how many seconds each song plays for one SP (jAthena //1003 skill.c:6962)
 DANCE_SP_EVERY = {
   [SK.BA_DISSONANCE] = 3, [SK.BA_ASSASSINCROSS] = 3, [SK.DC_UGLYDANCE] = 3, [SK.DC_FORTUNEKISS] = 4,
   [SK.BA_WHISTLE] = 5, [SK.DC_HUMMING] = 5, [SK.BA_POEMBRAGI] = 5, [SK.DC_SERVICEFORYOU] = 5,
   [SK.BA_APPLEIDUN] = 6, [SK.DC_DONTFORGETME] = 10,
+  -- the ensembles (jAthena //1003 the same; the guide's pages: Acoustic Rhythm, Harmonic Lick and
+  -- Mental Sensing 3 s, Classical Pluck, Down Tempo and Lullaby 4 s, Power Cord 5 s)
+  [SK.BD_RICHMANKIM] = 3, [SK.BD_DRUMBATTLEFIELD] = 3, [SK.BD_RINGNIBELUNGEN] = 3, [SK.BD_SIEGFRIED] = 3,
+  [SK.BD_LULLABY] = 4, [SK.BD_ETERNALCHAOS] = 4, [SK.BD_ROKISWEIL] = 4, [SK.BD_INTOABYSS] = 5,
 }
 
 -- What a song gives, from its status change (val1 the level, val3 the singer's Lessons part,
@@ -50,6 +55,17 @@ function song_effect(type, t)
   elseif type == SC.DONTFORGETME then return 3 * lv + les + a, 2 * lv + les + b  -- attack delay, walk +%
   elseif type == SC.FORTUNE then return lv + les + a                             -- critical +% (jAthena adds 10 more)
   elseif type == SC.SERVICE4U then return 10 + lv + les + a, 10 + 3 * lv + les + a -- max SP +%, SP cost -%
+  -- the ensembles: the level alone (no Lessons or stat part in jAthena //1020 or the guide).
+  -- War Drum ("Battle Theme"): ATK 50 to 150, DEF 4 to 12, the guide's table and jAthena
+  -- skill.c:7349. Ring of Nibelungen ("Harmonic Lick"): ATK 150 to 350 for a level-4 weapon, the
+  -- guide's Dancer page and jAthena skill.c:7354. Siegfried ("Acoustic Rhythm"): Fire and Water
+  -- resistance 40% to 80%, the guide's table (jAthena 20% to 80%, 5 + 15 a level). Mr. Kim A Rich
+  -- Man ("Mental Sensing"): EXP +36% to +80%, the guide's 136% to 180% (jAthena pc.c:4044: +50% to
+  -- +150%)
+  elseif type == SC.DRUMBATTLE then return (lv + 1) * 25, (lv + 1) * 2
+  elseif type == SC.NIBELUNGEN then return (lv + 2) * 50
+  elseif type == SC.SIEGFRIED then return 30 + 10 * lv
+  elseif type == SC.RICHMANKIM then return 25 + 11 * lv
   end
   return 0
 end
@@ -204,16 +220,15 @@ function skill_status_change_start(id, type, val1, val2, opt)
       -- it ends what makes one quicker (jAthena //1020 skill.c:7386; euRO's text of May 2004:
       -- "If they were in condition of fast movement and attack speed, it'll be released")
       for _, t in ipairs({ SC.INCREASEAGI, SC.TWOHANDQUICKEN, SC.SPEARSQUICKEN, SC.ADRENALINE, SC.ASSNCROS }) do stop(t) end
+    elseif type == SC.RICHMANKIM then
+      -- the EXP share, kept where the server's gain_exp reads it (crates/ro-game/src/status.rs)
+      val3 = song_effect(type, { val1 = val1, val3 = 0, val4 = 0 })
     end
   elseif type == SC.DANCING then
     -- a Bard or Dancer playing: val1 the song, val2 its group, val3 the seconds left, counted
     -- one at a time for the SP it uses (jAthena //1003 skill.c:6962)
     val3 = floor((opt.tick or 60000) / 1000)
     tick = 1000
-  elseif type == SC.DRUMBATTLE then tick = 60000; val2 = (val1 + 1) * 25; val3 = (val1 + 1) * 2
-  elseif type == SC.ETERNALCHAOS then tick = 60000
-  elseif type == SC.NIBELUNGEN then tick = 60000; val2 = (val1 + 2) * 50
-  elseif type == SC.SIEGFRIED then tick = 60000; val2 = (val1 + 3) * 10
   elseif type == SC.EXPLOSIONSPIRITS then tick = 180000; val2 = 75 + 25 * val1
   elseif type == SC.STEELBODY then tick = 1000 * 30 * val1
   -- the Monk's (monk.lua). COMBO: val1 the blow just struck, for the window it leaves.

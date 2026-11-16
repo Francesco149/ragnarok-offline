@@ -164,6 +164,9 @@ function battle.def(bl)
   if sc(bl, SC.STRIPSHIELD) and def < 10000 then def = def - floor(def * 15 / 100) end
   -- armour broken by Acid Terror: a quarter off (ArislanX's iRO Alchemist guide, 2004-08-20)
   if sc(bl, SC.BROKENARMOR) and def < 10000 then def = def - floor(def * 25 / 100) end
+  -- Eternal Chaos ("Down Tempo"): DEF 0 (jAthena //1020 battle.c:797; the guide: "the defense of
+  -- all the characters within the area drop down to 0"). Plants keep theirs, as above
+  if sc(bl, SC.ETERNALCHAOS) and def < 10000 then def = 0 end
   -- a poisoned monster loses a quarter (players: status.lua), a frozen or stone one half
   -- (817 battle.c battle_get_def; Ragu Memo's ailment page, 2003-08 and 2003-12)
   if def < 10000 then

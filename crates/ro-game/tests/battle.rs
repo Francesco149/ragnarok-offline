@@ -3142,6 +3142,126 @@ fn bard_dancer_songs() {
     assert_eq!(adelay, base * (100 + slower) / 100);
 }
 
+/// The ensembles, played alone (jAthena //1003's partner switch off): War Drum's ATK and DEF,
+/// Ring of Nibelungen for a level-4 weapon, Eternal Chaos and Loki's Veil on the monsters there
+/// and not the one playing, Into the Abyss's free gemstones, Mr. Kim's EXP, Lullaby's sleep.
+#[test]
+fn ensembles() {
+    let mut t = T::new();
+    t.lua("job_change(20); player.base_level = 80; player.int = 1; heal(30000, 30000)");
+    for (s, lv) in [("BD_DRUMBATTLEFIELD", 5), ("BD_RINGNIBELUNGEN", 5), ("BD_ETERNALCHAOS", 1), ("BD_ROKISWEIL", 1),
+                    ("BD_INTOABYSS", 1), ("BD_RICHMANKIM", 5), ("BD_LULLABY", 1), ("BD_SIEGFRIED", 5), ("BD_ADAPTATION", 1)] {
+        t.learn(s, lv);
+    }
+    let me = t.me;
+    let num = |t: &mut T, code: &str| -> i64 { t.lua(code).trim().parse::<f64>().unwrap() as i64 };
+    let stop = |t: &mut T| {
+        t.run(5000);
+        t.cast("BD_ADAPTATION", t.me);
+        t.run(300);
+        assert!(!t.has_sc(t.me, "DANCING"));
+        t.lua("heal(30000, 30000)");
+    };
+
+    // no instrument or whip, no ensemble
+    t.cast("BD_DRUMBATTLEFIELD", me);
+    t.run(200);
+    assert!(!t.has_sc(me, "DANCING"));
+
+    // War Drum 5: ATK +150, DEF +12, for 60 SP (the guide's table)
+    t.wear(1962); // Lariat, a level-4 whip
+    let (atk0, def0) = (t.st("watk"), t.st("def"));
+    let sp0 = t.sp() as i64;
+    t.cast("BD_DRUMBATTLEFIELD", me);
+    t.run(300);
+    assert!(t.has_sc(me, "DANCING") && t.has_sc(me, "DRUMBATTLE"));
+    // (a busy test clock can reach the first upkeep SP, a second in)
+    assert!((60..=61).contains(&(sp0 - t.sp() as i64)), "War Drum 5's SP: {}", sp0 - t.sp() as i64);
+    assert_eq!((t.st("watk"), t.st("def")), (atk0 + 150, def0 + 12));
+    stop(&mut t);
+    assert_eq!(t.st("watk"), atk0);
+
+    // Ring of Nibelungen 5: +350 with the Lariat, nothing with a level-1 whip
+    t.cast("BD_RINGNIBELUNGEN", me);
+    t.run(300);
+    assert_eq!(t.st("watk"), atk0 + 350);
+    stop(&mut t);
+    t.wear(1950); // Rope
+    let atk1 = t.st("watk");
+    t.cast("BD_RINGNIBELUNGEN", me);
+    t.run(300);
+    assert!(t.has_sc(me, "NIBELUNGEN"));
+    assert_eq!(t.st("watk"), atk1);
+    stop(&mut t);
+
+    // Siegfried 5: Fire and Water 80% (the guide)
+    t.cast("BD_SIEGFRIED", me);
+    t.run(300);
+    assert_eq!(num(&mut t, "battle.get(player.id).st.subele[3]"), 80);
+    stop(&mut t);
+
+    // Eternal Chaos: a monster there has DEF 0, the one playing keeps hers
+    let pupa = t.spawn(27, 25, 1047); // a Peco Peco Egg, DEF 20, INT 0
+    let def_mob = num(&mut t, &format!("battle.def(battle.get({pupa}))"));
+    assert!(def_mob > 0);
+    let def_me = t.st("def");
+    t.cast("BD_ETERNALCHAOS", me);
+    t.run(300);
+    assert!(t.has_sc(pupa, "ETERNALCHAOS") && !t.has_sc(me, "ETERNALCHAOS"));
+    assert_eq!(num(&mut t, &format!("battle.def(battle.get({pupa}))")), 0);
+    assert_eq!(t.st("def"), def_me);
+    stop(&mut t);
+    assert_eq!(num(&mut t, &format!("battle.def(battle.get({pupa}))")), def_mob, "gone with the song");
+
+    // Loki's Veil: on the monster, not on a boss, not on the one playing (who may still stop)
+    let boss = t.spawn(23, 25, 1039); // Baphomet
+    t.cast("BD_ROKISWEIL", me);
+    t.run(300);
+    assert!(t.has_sc(pupa, "ROKISWEIL"));
+    assert!(!t.has_sc(boss, "ROKISWEIL"), "bosses are not touched");
+    assert!(!t.has_sc(me, "ROKISWEIL"));
+    t.kill(boss);
+    stop(&mut t);
+
+    // Into the Abyss: Safety Wall's Blue Gemstone is not needed
+    let no_gem = "skill_check_condition(battle.get(player.id), SK.MG_SAFETYWALL, 1, {}) and 1 or 0";
+    assert_eq!(num(&mut t, no_gem), 0);
+    t.cast("BD_INTOABYSS", me);
+    t.run(300);
+    assert!(t.has_sc(me, "INTOABYSS"));
+    assert_eq!(num(&mut t, no_gem), 1);
+    stop(&mut t);
+
+    // Mr. Kim A Rich Man 5: EXP +80% (the guide's 180%)
+    t.lua("player.base_exp = 0; player.job_exp = 0");
+    t.cast("BD_RICHMANKIM", me);
+    t.run(300);
+    t.lua("_rt('pc_gain_exp', player.id, 100, 50)");
+    let c = &t.g.store.chars[&t.cid];
+    assert_eq!((c.base_exp, c.job_exp), (180, 90));
+    stop(&mut t);
+
+    // Lullaby: one of four eggs (INT 0) falls asleep sooner or later (eleven tries at 15% each:
+    // none asleep 1 time in 1,200); the one playing never
+    let mut eggs = vec![pupa];
+    for x in [25, 26, 28] {
+        eggs.push(t.spawn(x, 27, 1047));
+    }
+    t.cast("BD_LULLABY", me);
+    t.run(300);
+    let mut slept = false;
+    for _ in 0..11 {
+        if eggs.iter().any(|&e| t.has_sc(e, "SLEEP")) {
+            slept = true;
+            break;
+        }
+        assert!(!t.has_sc(me, "SLEEP"));
+        t.run(6000);
+    }
+    assert!(slept, "no egg asleep");
+    t.check();
+}
+
 /// Monk (a draft from jAthena //1020 and the iRO guide, scripts/rules/monk.lua): spirit
 /// spheres, Absorb Spirit Sphere, Throw Spirit Sphere, Triple Attack opening the combo,
 /// Chain Combo and Combo Finish in their windows, Guillotine Fist after them, Blade Stop

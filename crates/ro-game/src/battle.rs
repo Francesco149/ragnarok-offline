@@ -50,6 +50,10 @@ pub const SC_HALLUCINATION: u16 = 34;
 pub const SC_DANCING: u16 = 110;
 /// Held in a Monk's Blade Stop, either side (ours: scripts/rules/00_const.lua, monk.lua)
 pub const SC_BLADESTOP: u16 = 113;
+/// Standing in Mr. Kim A Rich Man: val3 the EXP share in percent (ours: scripts/rules/00_const.lua)
+pub const SC_RICHMANKIM: u16 = 115;
+/// Standing in Loki's Veil: no skills (ours: scripts/rules/00_const.lua)
+pub const SC_ROKISWEIL: u16 = 116;
 /// Standing in Don't Forget Me (mod0631's number)
 pub const SC_DONTFORGETME: u16 = 106;
 /// The Sage's Cast Cancel, the one skill asked for during a cast.
