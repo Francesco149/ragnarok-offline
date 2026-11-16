@@ -51,6 +51,8 @@ end
 -- (pc.c:4036). t: max_hp, max_sp, vit, int, sitting, walking, weight,
 -- max_weight, hiding, skills = {["4"] = level}, sc = {["20"] = true},
 -- regen_rate: percent a script set (tmp.regen_rate; 100 if none).
+-- hprecov_rate / sprecov_rate: percent from equipment (the Muka, Zombie and
+--   Eggyra Cards; 817 pc.c:1271: the natural amount only, not the skills'); 0 = 100.
 --   A castle's master recovers faster in the castle ("guild members ...
 --   recover their HP/SP faster", the iRO guide's War of Emperium page,
 --   2004-04, no number). How much is rAthena's (tier later: pc.cpp:7128
@@ -64,6 +66,9 @@ function rules.regen(t)
     sp = 1 + floor(t.int / 6) + floor(t.max_sp / 100), sp_interval = 8000,
     hp_clock = 100, sp_clock = 100,
   }
+  local hr, sr = t.hprecov_rate or 0, t.sprecov_rate or 0
+  if hr > 0 and hr ~= 100 then r.hp = floor(r.hp * hr / 100) end
+  if sr > 0 and sr ~= 100 then r.sp = floor(r.sp * sr / 100) end
   local rate = t.regen_rate or 100
   if rate ~= 100 and rate > 0 then
     r.hp_interval = floor(r.hp_interval * 100 / rate)

@@ -909,6 +909,35 @@ always fires.
   out as skill damage of skill 0 at level -1, as 817 sends it; at level -1
   this client shouts no skill name (`tools/import/athena_import.py`
   `EXTRA_EQUIP`, `scripts/rules/battle.lua` `rules.weapon_attack`).
+* **Nine cards mod0631 left empty do what the client's text says**
+  (2026-11-16; `EXTRA_EQUIP`, test `cards_mod0631_left_empty`). mod0631's
+  item database gives these cards no script, so they did nothing. Each
+  now follows its line in `idnum2itemdesctable.txt`, with the bonus
+  names and the first jAthena commit that built it:
+  * Muka (HP recovery +10%), Eggyra (SP +15%), Sidewinder (Double Attack
+    level 1, 5%, with any weapon), Moonlight Flower (a quarter faster on
+    foot, DEX -2): jAthena //0679 and //0695 (2004-01), 817 the same.
+  * Zombie: HP recovery +15%, the client's number. jAthena and 817 have
+    20, RODataZone's iRO card table (2004-02-24) 25: no two agree.
+  * Hunter Fly (3%: 15% of a blow back as HP) and Dracula (3%: 5% as SP):
+    jAthena //0842 and //0843 (2004-02-24/26), the same numbers as the
+    client. jAthena also raised a gain of 0 to 1 whether the card fired
+    or not, so every blow healed 1 HP and 1 SP. That slip is not kept.
+  * Orc Lord: 25% of a close blow sent back, the client's number.
+    jAthena //0843 has 30%. The client says "every single Physical
+    Damage"; we keep jAthena's reading that blows from afar are not
+    returned.
+  * Maya: the client says "reflect Magical Damages back (Success Chance
+    30%)" and RODataZone "30% chance to Reflect magic damage back on
+    caster", but no period emulator builds it: jAthena has nothing before
+    2005, and 817 and eAthena 0.5.2 cancel 30% of spells instead. How it
+    works is **ours**: 30% of the spells aimed at the wearer (not a ground
+    spell's cells) come back on the caster, worked out as if the caster had
+    cast it on itself, drawn as coming from the wearer, and the kill counted
+    as the wearer's.
+  * The Archer Skeleton and Doppelganger Cards still do nothing. The
+    client's text says "(Not implemented yet)" for both, and so does
+    RODataZone; jAthena //0679 and 817 give the Doppelganger Card 30% ASPD.
 * **EXP is shared by the monster's max HP, and the MVP EXP comes with
   the reward item** (2026-11-15): the share as jAthena //0764 of
   2004-02-01 has it ("monster EXP handled like the real server", the same

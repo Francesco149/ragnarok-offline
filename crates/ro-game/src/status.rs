@@ -58,6 +58,8 @@ pub struct Derived {
     pub dmotion: u32,
     /// Stat bonuses (equipment, job, status changes): str..luk, shown as "+n".
     pub bonus: [i32; 6],
+    /// Natural HP and SP recovery, percent (cards: 817's hprecov_rate); 0 = 100.
+    pub recov_rate: [u32; 2],
 }
 
 /// A Lua number as u64 (Lua 5.4 hands back floats from `^` and `/`).
@@ -93,6 +95,7 @@ impl Derived {
             },
             dmotion: g("dmotion"),
             bonus: ["bstr", "bagi", "bvit", "bint", "bdex", "bluk"].map(|k| o.get(k).and_then(Value::as_i64).unwrap_or(0) as i32),
+            recov_rate: [g("hprecov_rate"), g("sprecov_rate")],
         })
     }
 }

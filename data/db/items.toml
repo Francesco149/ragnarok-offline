@@ -12153,6 +12153,7 @@ buy = 20
 weight = 10
 gender = 2
 loc = 136
+athena_equip = "bonus bHPrecovRate,10;"
 
 [[item]]
 id = 4037
@@ -12174,6 +12175,7 @@ buy = 20
 weight = 10
 gender = 2
 loc = 64
+athena_equip = "bonus bHPrecovRate,15;"
 
 [[item]]
 id = 4039
@@ -12524,6 +12526,7 @@ buy = 20
 weight = 10
 gender = 2
 loc = 64
+athena_equip = "bonus bSPrecovRate,15;"
 
 [[item]]
 id = 4071
@@ -13017,6 +13020,7 @@ buy = 20
 weight = 10
 gender = 2
 loc = 2
+athena_equip = "bonus2 bHpDrainRate,3,15;"
 
 [[item]]
 id = 4116
@@ -13038,6 +13042,7 @@ buy = 20
 weight = 10
 gender = 2
 loc = 2
+athena_equip = "bonus bDoubleRate,5;"
 
 [[item]]
 id = 4118
@@ -13191,6 +13196,7 @@ buy = 20
 weight = 10
 gender = 2
 loc = 64
+athena_equip = "bonus bSpeedRate,25; bonus bDex,-2;"
 
 [[item]]
 id = 4132
@@ -13223,6 +13229,7 @@ buy = 20
 weight = 10
 gender = 2
 loc = 2
+athena_equip = "bonus2 bSpDrainRate,3,5;"
 
 [[item]]
 id = 4135
@@ -13233,6 +13240,7 @@ buy = 20
 weight = 10
 gender = 2
 loc = 16
+athena_equip = "bonus bShortWeaponDamageReturn,25;"
 
 [[item]]
 id = 4136
@@ -13349,6 +13357,7 @@ buy = 20
 weight = 10
 gender = 2
 loc = 32
+athena_equip = "bonus bMagicDamageReturn,30;"
 
 [[item]]
 id = 4147

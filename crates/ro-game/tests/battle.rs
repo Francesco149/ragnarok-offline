@@ -2469,3 +2469,123 @@ fn armour_refine_def_two_thirds() {
     assert_eq!(t.st("def"), plain + 4, "+6: four more DEF, not six");
 }
 
+
+impl T {
+    /// Give an item with these cards in it (0x017c, one card at a time) and wear it.
+    fn wear_with(&mut self, nameid: u32, cards: &[u32]) {
+        self.lua(&format!("give_item({nameid}, 1)"));
+        for &card in cards {
+            self.lua(&format!("give_item({card}, 1)"));
+            let (c, i) = (self.inv(card), self.inv(nameid));
+            let mut w = Writer::new(0x017c);
+            w.u16(c).u16(i);
+            self.send(w);
+            let ack = self.packets(0x017d);
+            assert!(ack.len() == 1 && ack[0][6] == 0, "card {card} into {nameid}");
+        }
+        let i = self.inv(nameid);
+        let mut w = Writer::new(0x00a9);
+        w.u16(i).u16(0);
+        self.send(w);
+        let c = &self.g.store.chars[&self.cid];
+        assert!(c.inventory.iter().any(|i| i.nameid == nameid && i.equip != 0), "item {nameid} was not equipped");
+    }
+}
+
+/// The cards mod0631 left empty, as the client's own text describes them (scripts from jAthena
+/// //0679-//0843 where they agree; tools/import/athena_import.py EXTRA_EQUIP): recovery, speed,
+/// Double Attack with any weapon, HP and SP drain, close blows and spells sent back.
+#[test]
+fn cards_mod0631_left_empty() {
+    let mut t = T::new();
+    t.lua("job_change(1); player.base_level = 99; player.str = 60; player.dex = 60; player.vit = 99; heal(30000, 30000)");
+    let me = t.me;
+
+    // Moonlight Flower in Sandals: the walk a quarter faster (150 -> 112 ms a cell), DEX -2
+    let dex = t.st("dex");
+    t.wear_with(2402, &[4131]);
+    assert_eq!(t.st("speed"), 112);
+    assert_eq!(t.st("dex"), dex - 2);
+    t.lua("unequip_all()");
+
+    // Zombie in Shoes: natural HP recovery +15%, each tick (sitting: every 2 s)
+    let per_tick = |t: &mut T| -> u32 {
+        t.lua("player.hp = 1");
+        let act = |t: &mut T, a: u8| {
+            let mut w = Writer::new(0x0089);
+            w.u32(0).u8(a);
+            t.send(w);
+        };
+        act(t, 2); // sit
+        let hp0 = t.hp();
+        t.run(5_000);
+        act(t, 3); // stand
+        t.hp() - hp0
+    };
+    let plain = t.lua("local d = battle.get(player.id).st return 1 + math.floor(d.vit / 6) + math.floor(d.max_hp / 200)").trim().parse::<u32>().unwrap();
+    let gain = per_tick(&mut t);
+    assert!(gain > 0 && gain % plain == 0, "without the card: {gain} in ticks of {plain}");
+    t.wear_with(2404, &[4038]);
+    assert_eq!(t.st("hprecov_rate"), 115);
+    let more = plain * 115 / 100;
+    let gain = per_tick(&mut t);
+    assert!(gain > 0 && gain % more == 0, "with the card: {gain} in ticks of {more}");
+    t.lua("unequip_all()");
+
+    // Sidewinder in a Sword: Double Attack's 5% with a weapon that is no dagger
+    t.wear_with(1101, &[4117, 4115, 4134]);
+    assert_eq!(t.st("double_rate"), 5);
+    let pupa = t.spawn(26, 25, 1008);
+    let doubles: u32 = t
+        .lua(&format!("local sd, m, n = battle.get(player.id), battle.get({pupa}), 0 for i = 1, 1000 do if battle.calc_weapon_attack(sd, m, 0, 0, 0).div == 2 then n = n + 1 end end return n"))
+        .trim()
+        .parse()
+        .unwrap();
+    assert!((20..=90).contains(&doubles), "{doubles} doubles in 1000 blows");
+
+    // Hunter Fly and Dracula in the same Sword: 3% of blows give 15% back as HP, 5% as SP
+    let (hp_back, sp_back) = (t.st("hp_drain_per"), t.st("sp_drain_per"));
+    assert_eq!((t.st("hp_drain_rate"), hp_back, t.st("sp_drain_rate"), sp_back), (3, 15, 3, 5));
+    let r = t.lua("local sd = battle.get(player.id) local h, s = 0, 0 for i = 1, 1000 do _rt('bl_set', player.id, 'hp', 1) _rt('bl_set', player.id, 'sp', 1) battle.drain(battle.get(player.id), 1000, 0) local me = battle.get(player.id) if me.hp > 1 then h = h + 1; assert(me.hp == 151, me.hp) end if me.sp > 1 then s = s + 1; assert(me.sp == 51, me.sp) end end return h .. ' ' .. s");
+    let n: Vec<u32> = r.split_whitespace().map(|x| x.parse().unwrap()).collect();
+    assert!(n.iter().all(|n| (5..=70).contains(n)), "drains fired {r} times in 1000");
+    // and a plain blow takes the drain path without an error
+    t.lua("heal(30000, 30000)");
+    let mut w = Writer::new(0x0089);
+    w.u32(pupa).u8(7);
+    t.send(w);
+    t.run(2_000);
+    t.lua(&format!("_rt('mob_kill', {pupa})"));
+    t.lua("unequip_all(); heal(30000, 30000)");
+
+    // Orc Lord in a Cotton Shirt: a close blow comes back a quarter on the striker (level 5, so
+    // that the Wolf's blows land)
+    t.lua("player.base_level = 5; heal(30000, 30000)");
+    t.wear_with(2302, &[4135]);
+    assert_eq!(t.st("short_return"), 25);
+    let wolf = t.spawn(26, 25, 1013);
+    let full = t.mob_hp(wolf).unwrap();
+    t.lua(&format!("_rt('mob_target', {wolf}, player.id, 2)"));
+    t.run(6_000);
+    assert!(t.mob_hp(wolf).unwrap() < full, "the Wolf hurt by its own blows");
+    t.lua(&format!("_rt('mob_kill', {wolf})"));
+    t.lua("unequip_all(); player.base_level = 99; heal(30000, 30000)");
+
+    // Maya in a Guard: three spells in ten come back on the caster; none without the card
+    let bolts = |t: &mut T, m: u32| -> u32 {
+        let full = t.mob_hp(m).unwrap();
+        for _ in 0..40 {
+            t.lua(&format!("skill_attack(BF.MAGIC, {m}, {m}, {me}, SK.MG_FIREBOLT, 1, 0) heal(30000, 30000)"));
+        }
+        full - t.mob_hp(m).unwrap()
+    };
+    let jr = t.spawn(27, 25, 1101); // Baphomet Jr.
+    assert_eq!(bolts(&mut t, jr), 0, "without the card the caster is untouched");
+    t.wear_with(2102, &[4146]);
+    assert_eq!(t.st("magic_return"), 30);
+    assert!(bolts(&mut t, jr) > 0, "some bolts came back");
+
+    // "(Not implemented yet)", the client says: the Archer Skeleton and Doppelganger Cards do nothing
+    let empty = |id: u32| t.g.db.items.get(&id).map(|i| i.athena_equip.is_empty());
+    assert_eq!((empty(4094), empty(4142)), (Some(true), Some(true)));
+}

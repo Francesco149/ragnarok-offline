@@ -263,6 +263,15 @@ function skill_attack(attack_type, src_id, dsrc, bl_id, skillid, skilllv, wflag,
   -- Storm Gust passes over the frozen (817 skill.c:715; jAthena //0738, 2004-01-24, "the real
   -- server's way", with the third hit's freeze). mod0631 hits them
   if skillid == SK.WZ_STORMGUST and battle.sc(bl, SC.FREEZE) then return 0 end
+  -- The Maya Card turns a spell back (the client's text: "Enable to reflect Magical Damages
+  -- back( Success Chance 30%)"; no period emulator has it, 817 nullified the spell instead).
+  -- Ours: a spell aimed at the wearer, not a ground spell's cell, comes back on its caster as
+  -- it would have struck the wearer, drawn from the wearer, who is credited with the damage.
+  local credit = src_id
+  if attack_type == BF.MAGIC and bl.kind == "player" and (bl.st.magic_return or 0) > 0 and src_id ~= bl_id
+    and dsrc_bl.id == src_id and (skill_get_inf(skillid) & 2) == 0 and rnd(100) < bl.st.magic_return then
+    credit, dsrc_bl, bl, bl_id = bl_id, bl, src, src_id
+  end
   local dmg = battle.calc_attack(attack_type, src, bl, skillid, skilllv, wflag or 0)
   if bl.wall then
     -- an Ice Wall cell: the blow comes off its durability; nothing else happens to it
@@ -286,7 +295,7 @@ function skill_attack(attack_type, src_id, dsrc, bl_id, skillid, skilllv, wflag,
     _rt("clif_skill_damage", dsrc_bl.id, bl_id, dmg.amotion, dmg.dmotion, dmg.damage, dmg.div, skillid, lv, ptype)
   end
   local total = dmg.damage + math.max(0, dmg.damage2)
-  battle.damage(src_id, bl_id, total)
+  battle.damage(credit, bl_id, total)
   if attack_type == BF.WEAPON then battle.reflect(src, bl, total, dmg.flag or 0) end
   if total > 0 then skill_additional_effect(src_id, bl_id, skillid, skilllv, attack_type) end
   -- Poison React answers a blow that lands ("hit by a Poisonous attack"), not a miss

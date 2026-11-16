@@ -467,12 +467,38 @@ end
 -- (2004-04-11): "Reflect an amount of the full damage taken from an enemy back to the
 -- enemy", 13% to 40%. Here: of a weapon hit from close by, after the Crusader has taken
 -- it; at least 1. That only close hits come back is our reading (docs/DEVIATIONS.md).
+-- The Orc Lord Card returns a share of close blows too (jAthena //0843, 2004-02-26,
+-- battle.c:3373, before Reflect Shield; the client's text gives 25%, "every single Physical
+-- Damage": that blows from afar stay unanswered is jAthena's reading, kept).
 function battle.reflect(src, target, damage, flag)
+  if damage <= 0 or (flag & BF.WEAPON) == 0 or (flag & BF.SHORT) == 0 or src.id == target.id then return end
+  local card = target.kind == "player" and (target.st.short_return or 0) or 0
+  if card > 0 then
+    local back = math.max(1, floor(damage * card / 100))
+    _rt("clif_damage", src.id, src.id, 0, 0, back, 1, 4, 0)
+    battle.damage(target.id, src.id, back)
+  end
   local t = sc(target, SC.REFLECTSHIELD)
-  if not t or damage <= 0 or (flag & BF.WEAPON) == 0 or (flag & BF.SHORT) == 0 or src.id == target.id then return end
+  if not t then return end
   local back = math.max(1, floor(damage * t.val2 / 100))
   _rt("clif_damage", src.id, src.id, 0, 0, back, 1, 4, 0)
   battle.damage(target.id, src.id, back)
+end
+
+-- The Hunter Fly and Dracula Cards: a weapon blow that lands may give back a share of each
+-- hand's damage as HP or SP (jAthena //0842-0843 battle.c:3471). jAthena raised a zero gain to
+-- 1 whether or not the card fired, so every blow healed 1 HP and 1 SP: a slip, not kept (a
+-- card that fires gives 1 at least).
+function battle.drain(src, damage, damage2)
+  if src.kind ~= "player" then return end
+  local st = src.st
+  local function take(rate, per, d)
+    if (rate or 0) > 0 and (per or 0) > 0 and d > 0 and rnd(100) < rate then return math.max(1, floor(d * per / 100)) end
+    return 0
+  end
+  local hp = take(st.hp_drain_rate, st.hp_drain_per, damage) + take(st.hp_drain__rate, st.hp_drain__per, damage2)
+  local sp = take(st.sp_drain_rate, st.sp_drain_per, damage) + take(st.sp_drain__rate, st.sp_drain__per, damage2)
+  if hp > 0 or sp > 0 then battle.heal(src.id, hp, sp) end
 end
 
 -- battle.c:699 battle_addmastery: flat damage from weapon masteries
@@ -577,6 +603,8 @@ function battle.calc_weapon_attack(src, target, skill_num, skill_lv, wflag, opt)
     end
     local tri = checkskill(sd, SK.MO_TRIPLEATTACK)
     if tri > 0 then da = rnd(100) < (30 - tri) and 2 or 0 end
+    -- 817 battle.c:2226: equipment's double rate (the Sidewinder Card), any weapon; not in mod0631
+    if da == 0 and (st.double_rate or 0) > 0 then da = rnd(100) < st.double_rate and 1 or 0 end
   end
 
   local cri = 0
@@ -1043,6 +1071,7 @@ function rules.weapon_attack(a)
   end
   battle.damage(src.id, target.id, total)
   battle.reflect(src, target, total, wd.flag)
+  if total > 0 then battle.drain(src, math.max(0, wd.damage), math.max(0, wd.damage2)) end
   if total > 0 then skill_additional_effect(src.id, target.id, 0, 0) end
   if total > 0 then skill_poison_react(src.id, target.id, battle.attack_element(src)) end
   return { adelay = adelay }

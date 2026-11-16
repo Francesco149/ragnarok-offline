@@ -1366,7 +1366,7 @@ impl Game {
                         "regen",
                         &json!({"max_hp": d.max_hp, "max_sp": d.max_sp, "vit": c.stats[2] as i32 + d.bonus[2], "int": c.stats[3] as i32 + d.bonus[3],
                                 "sitting": sitting, "walking": walking, "weight": self.weight_of(&c), "max_weight": d.max_weight,
-                                "hiding": option & 6 != 0, "regen_rate": regen_rate, "skills": c.skills.iter().map(|(k, v)| (k.to_string(), json!(v))).collect::<serde_json::Map<_, _>>(),
+                                "hiding": option & 6 != 0, "regen_rate": regen_rate, "hprecov_rate": d.recov_rate[0], "sprecov_rate": d.recov_rate[1], "skills": c.skills.iter().map(|(k, v)| (k.to_string(), json!(v))).collect::<serde_json::Map<_, _>>(),
                                 "sc": c.sc.keys().map(|k| (k.to_string(), json!(true))).collect::<serde_json::Map<_, _>>()}),
                     )
                     .ok()

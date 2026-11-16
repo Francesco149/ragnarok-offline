@@ -90,12 +90,25 @@ local function run_script(s, script, left)
       elseif k == "bMaxSPrate" then s.sprate = s.sprate + v
       elseif k == "bUseSPrate" then s.dsprate = s.dsprate + v
       elseif k == "bRange" then s.range_bonus = s.range_bonus + v -- not in mod0631's pc_bonus (two bows use it)
+      -- not in mod0631's pc_bonus; 817 pc.c:1650-1696 and jAthena //0843 (the cards that use
+      -- them: tools/import/athena_import.py EXTRA_EQUIP)
+      elseif k == "bHPrecovRate" then s.hprecov_rate = s.hprecov_rate + v
+      elseif k == "bSPrecovRate" then s.sprecov_rate = s.sprecov_rate + v
+      elseif k == "bSpeedRate" then s.speed_rate = math.min(s.speed_rate, 100 - v) -- the strongest only
+      elseif k == "bDoubleRate" then if not left then s.double_rate = math.max(s.double_rate, v) end
+      elseif k == "bShortWeaponDamageReturn" then s.short_return = s.short_return + v
+      elseif k == "bMagicDamageReturn" then s.magic_return = s.magic_return + v -- ours: the Maya Card
       end
     elseif cmd == "bonus2" then
       local k, t, v = a[1], a[2] or 0, a[3] or 0
       local tab = ({ bAddEle = s.addele, bAddRace = s.addrace, bAddSize = s.addsize, bSubEle = s.subele,
                      bSubRace = s.subrace, bAddEff = s.addeff, bResEff = s.reseff })[k]
-      if tab then tab[t] = (tab[t] or 0) + v end
+      if tab then tab[t] = (tab[t] or 0) + v
+      elseif k == "bHpDrainRate" or k == "bSpDrainRate" then
+        -- jAthena //0842-0843 pc.c:2001: chance t%, v% of the blow; per hand
+        local d = (k == "bHpDrainRate" and "hp_drain" or "sp_drain") .. (left and "_" or "")
+        s[d .. "_rate"], s[d .. "_per"] = s[d .. "_rate"] + t, s[d .. "_per"] + v
+      end
     elseif cmd == "skill" then
       -- pc.c:1293 pc_skill: a card or item lends a skill level
       local id, lv = a[1], a[2] or 1
@@ -129,6 +142,9 @@ function rules.status(c)
     wcards = {}, dcards = {}, card_skills = {},
     weapontype1 = 0, weapontype2 = 0, shield = false, ammo = false, splash_range = 0, splash_add = 0,
     skills = {},
+    hprecov_rate = 100, sprecov_rate = 100, speed_rate = 100, double_rate = 0, short_return = 0, magic_return = 0,
+    hp_drain_rate = 0, hp_drain_per = 0, sp_drain_rate = 0, sp_drain_per = 0,
+    hp_drain__rate = 0, hp_drain__per = 0, sp_drain__rate = 0, sp_drain__per = 0,
   }
   for k, v in pairs(c.skills or {}) do s.skills[tonumber(k)] = v end
   local function skill(id) return s.skills[id] or 0 end
@@ -380,6 +396,8 @@ function rules.status(c)
   if c.casting and skill(SK.SA_FREECAST) > 0 then
     s.speed = floor(s.speed * (175 - skill(SK.SA_FREECAST) * 5) / 100)
   end
+  -- 817 pc.c:1416: equipment's speed rate (the Moonlight Flower Card) last
+  if s.speed_rate ~= 100 then s.speed = math.max(1, floor(s.speed * s.speed_rate / 100)) end
 
   s.aspd = aspd
   -- pc.c:690 max_weight = job base + str*300 (tenths; the character's own STR), +1000 per Enlarge Weight Limit
@@ -407,7 +425,8 @@ end
 -- What the server itself keeps of a character's status (the status window,
 -- walk and attack speed, weight limit, attack range).
 local VIEW = { "max_hp", "max_sp", "atk", "atk2", "matk_min", "matk_max", "def", "def2", "mdef", "mdef2", "hit", "flee",
-               "flee2", "crit", "max_weight", "range", "speed", "dmotion", "bstr", "bagi", "bvit", "bint", "bdex", "bluk" }
+               "flee2", "crit", "max_weight", "range", "speed", "dmotion", "bstr", "bagi", "bvit", "bint", "bdex", "bluk",
+               "hprecov_rate", "sprecov_rate" }
 function rules.status_view(c)
   local s = rules.status(c)
   local v = {}

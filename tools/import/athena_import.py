@@ -422,6 +422,31 @@ CLIENT_IRO_JOBS = {
 # The Baphomet Card's splash: the client's own text ("Do splashed damages around 9 cells every
 # time"), 817 and jAthena //0797 (2004-02-13) `bonus bSplashRange,1`; mod0631 has only the HIT -10.
 EXTRA_EQUIP = {2615: "bonus bMdef,3;", 4147: "bonus bHit,-10; bonus bSplashRange,1;"}
+# Cards mod0631 left empty, from the client's own text (data\idnum2itemdesctable.txt), with the
+# bonus names and the jAthena commit that first scripted each (git log -G on db/item_db.txt):
+#   Muka "HP recovery + 10%", Eggyra "SP Recovery + 15%", Sidewinder "[Double Attack] Lv1
+#   with all Weapons" (5%), Moonlight Flower "Fast-Move all the time.DEX -2": //0679 (2004-01-05),
+#   the speed as //0695's bSpeedRate (2004-01-11); 817 the same.
+#   Zombie "HP recovery + 15%": the client's number; jAthena //0679 and 817 have 20.
+#   Hunter Fly "Regain 15% of the Damage Done on an enemy as HP(Success Chance 3%)": //0842
+#   (2004-02-24); Dracula "Regain 5% ... as SP (Success Chance 3%)": //0843 (2004-02-26).
+#   Orc Lord "reflect 25% of every single Physical Damage": the client's number; //0843 has
+#   bShortWeaponDamageReturn,30 (close blows only, which we keep).
+#   Maya "reflect Magical Damages back( Success Chance 30%)": the client's text alone (ours:
+#   bMagicDamageReturn, rAthena's later name). jAthena has nothing to 2005; 817 and eAthena 0.5.2
+#   wrote bNoMagicDamage,30 (spells nullified, not turned back), which the text does not say.
+# The Archer Skeleton and Doppelganger Cards stay empty: the client says "(Not implemented yet)".
+EXTRA_EQUIP.update({
+    4036: "bonus bHPrecovRate,10;",
+    4038: "bonus bHPrecovRate,15;",
+    4070: "bonus bSPrecovRate,15;",
+    4115: "bonus2 bHpDrainRate,3,15;",
+    4117: "bonus bDoubleRate,5;",
+    4131: "bonus bSpeedRate,25; bonus bDex,-2;",
+    4134: "bonus2 bSpDrainRate,3,5;",
+    4135: "bonus bShortWeaponDamageReturn,25;",
+    4146: "bonus bMagicDamageReturn,30;",
+})
 
 
 def import_items():
