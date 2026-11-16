@@ -2054,6 +2054,47 @@ fn every_monster_skill_row_runs() {
     assert!(bad.is_empty(), "{} rows failed:\n{}", bad.len(), bad.join("\n"));
 }
 
+/// Every item with a use effect, used once by a level-99 character whose job may use it: no
+/// script error and nothing reported unimplemented. Items that open a window or ask (a
+/// Magnifier, Warp items) only need to start without an error here.
+#[test]
+fn every_usable_item_runs() {
+    let mut t = T::new();
+    // the character is male: the Chocolates (gender 0) are refused it, rightly
+    let mut items: Vec<(u32, String, u32)> = t.g.db.items.values().filter(|i| !i.use_script.is_empty() && i.gender != 0).map(|i| (i.id, i.display.clone(), i.jobs)).collect();
+    items.sort();
+    let mut bad = Vec::new();
+    for (id, name, jobs) in items {
+        if t.hp() == 0 || t.g.world.units[&t.me].state == 1 {
+            t = T::new();
+        }
+        // a job the item allows (Novice first)
+        let job = (0..24).find(|j| jobs == 0 || jobs & (1 << j) != 0).unwrap_or(0);
+        t.lua(&format!("job_change({job}); player.base_level = 99; heal(30000, 30000); _rt('sc_clear', player.id)"));
+        t.lua(&format!("give_item({id}, 1)"));
+        let idx = t.inv(id);
+        t.cap.take();
+        let mut w = Writer::new(0x00a7);
+        w.u16(idx).u32(t.me);
+        t.send(w);
+        let n = std::mem::take(&mut t.g.notices);
+        t.run(200);
+        let n2 = std::mem::take(&mut t.g.notices);
+        let ack = t.cap.take().into_iter().find(|p| id_of(p) == 0x00a8);
+        let ok = ack.as_ref().is_some_and(|p| p[6] == 1);
+        if !n.is_empty() || !n2.is_empty() || !ok {
+            bad.push(format!("{id} {name} (job {job}): used={ok} {:?} {:?}", n.first(), n2.first()));
+        }
+        // close what the item opened, and go back
+        t.lua("for _, u in ipairs(nearby(30)) do if u.kind == 'mob' then _rt('mob_kill', u.id) end end");
+        if t.hp() > 0 && (t.pos(t.me), t.g.world.units[&t.me].map.as_str()) != ((25, 25), "testmap") {
+            t.lua("warp('testmap', 25, 25)");
+            t.send(Writer::new(0x007d));
+        }
+    }
+    assert!(bad.is_empty(), "{} items failed:\n{}", bad.len(), bad.join("\n"));
+}
+
 /// Three monster skills neither period emulator's code fully had: a Fabre turns into a Pupa
 /// (817's Metamorphosis, its line's monster from 817), a Hallucination makes the hits drawn
 /// nonsense while the HP taken stays true, and Keeping shuts a Cornutus in its shell (jAthena
