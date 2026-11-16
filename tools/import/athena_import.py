@@ -546,9 +546,24 @@ def import_mobs():
     # hold: 817's hole slots, slots where 817 and the page agree against mod0631, and three of
     # the eight where the page also differs from 817.
     swapped = (1038, 1039, 1046, 1087, 1150, 1159, 1249, 1272)
+    # 817's own rows for Osiris, Baphomet and Doppelganger leave out MEXP and ExpPer: their
+    # three MVP prizes start at column 47, where 817's engine reads MEXP, and the last pair is
+    # empty. Read there, the first prize was lost (Osiris's Old Blue Box, Baphomet's third,
+    # Doppelganger's Cursed Ruby; review of round 25). RODataZone's iRO table (2004-02) and a
+    # cRO MVP guide (GameFAQs 28266, 2004-03) list those prizes too. mod0631's MEXP is kept.
+    shifted = (1038, 1039, 1046)
     for mid in swapped:
         c, b = rows[mid][0], e817[mid]
-        c[29:45], c[49:55] = b[29:45], b[49:55]
+        c[29:45] = b[29:45]
+        if mid in shifted:
+            assert b[45:47] == ["0", "0"] and all(x.strip() in ("", "0") for x in b[53:55]), mid
+            c[49:55] = b[47:53]
+        else:
+            c[49:55] = b[49:55]
+    # Baphomet's: 817 has the Yggdrasil Seed (608); RODataZone and the cRO guide both name the
+    # Yggdrasil Berry (607). The Berry at 817's rate.
+    c = rows[1039][0]
+    c[49] = "607" if c[49].strip() == "608" else c[49]
     page_rates = {
         (1039, 2607): 625,   # Clip, Baphomet: 1/16 (817 800)
         (1087, 1124): 1000,  # Orcish Sword, Orc Hero: 1/10 (mod0631 100, 817 10)

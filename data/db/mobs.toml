@@ -1095,7 +1095,7 @@ attack_motion = 672
 damage_motion = 384
 drops = [{ item = 617, rate = 2000 }, { item = 1232, rate = 150 }, { item = 2235, rate = 200 }, { item = 1255, rate = 600 }, { item = 1009, rate = 1000 }, { item = 5053, rate = 150 }, { item = 984, rate = 3900 }, { item = 4144, rate = 1 }]
 mvp_exp = 7710
-mvp_drops = [{ item = 608, rate = 1000 }, { item = 751, rate = 200 }]
+mvp_drops = [{ item = 603, rate = 4000 }, { item = 608, rate = 1000 }, { item = 751, rate = 200 }]
 # drops and MVP prizes: eAthena 817's row, which Ragu Memo's jRO item pages of 2003-12 support
 
 [[mob]]
@@ -1129,7 +1129,7 @@ attack_motion = 768
 damage_motion = 576
 drops = [{ item = 1466, rate = 200 }, { item = 2256, rate = 200 }, { item = 2607, rate = 625 }, { item = 714, rate = 500 }, { item = 617, rate = 3000 }, { item = 984, rate = 4300 }, { item = 985, rate = 5600 }, { item = 4147, rate = 1 }]
 mvp_exp = 13000
-mvp_drops = [{ item = 750, rate = 400 }, { item = 923, rate = 3800 }]
+mvp_drops = [{ item = 607, rate = 1000 }, { item = 750, rate = 400 }, { item = 923, rate = 3800 }]
 # drops and MVP prizes: eAthena 817's row, which Ragu Memo's jRO item pages of 2003-12 support
 # rate of 2607: Ragu Memo's jRO item pages of 2003-12
 
@@ -1343,7 +1343,7 @@ attack_motion = 480
 damage_motion = 288
 drops = [{ item = 2258, rate = 350 }, { item = 2317, rate = 250 }, { item = 1162, rate = 220 }, { item = 1168, rate = 150 }, { item = 1411, rate = 550 }, { item = 985, rate = 3800 }, { item = 984, rate = 2400 }, { item = 4142, rate = 1 }]
 mvp_exp = 5340
-mvp_drops = [{ item = 505, rate = 5100 }]
+mvp_drops = [{ item = 724, rate = 1500 }, { item = 505, rate = 5100 }]
 # drops and MVP prizes: eAthena 817's row, which Ragu Memo's jRO item pages of 2003-12 support
 
 [[mob]]
