@@ -276,11 +276,12 @@ end
 -- those whose master a garrison reset took away (killmonster leaves slaves alive
 -- in mod0631 and 817, mob.c:1474) stood by the Emperium out of the siege
 -- (seen in the client, 2026-11-15).
+-- An Alchemist's summons stay on his side: they are no garrison.
 local function set_attackers(c, side, spread)
   if side == 1 then siege_field(c[1], c[4][1], c[4][2]) end
   for _, id in ipairs(mob_ids(c[1], "*")) do
     local u = battle.get(id)
-    if u and u.side ~= 2 and u.class ~= 1288 and not (u.class >= 1324 and u.class <= 1363) then
+    if u and u.side ~= 2 and not u.summon and u.class ~= 1288 and not (u.class >= 1324 and u.class <= 1363) then
       mob_side(id, side)
       if side == 1 then
         if spread and math.max(math.abs(u.x - c[4][1]), math.abs(u.y - c[4][2])) < 20 then
