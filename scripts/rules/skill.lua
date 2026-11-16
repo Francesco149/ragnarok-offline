@@ -125,7 +125,11 @@ function skill_additional_effect(src_id, bl_id, skillid, skilllv, attack_type)
   elseif skillid == SK.AS_SONICBLOW then
     if rnd(100) < floor((2 * skilllv + 10) * sc_def_vit / 100) then start(SC.STAN, skilllv, time2()) end
   elseif skillid == SK.MG_FROSTDIVER or skillid == SK.WZ_FROSTNOVA or skillid == SK.HT_FREEZINGTRAP then
-    if not undead and rnd(100) < floor((skilllv * 3 + 35) * sc_def_mdef / 100) then start(SC.FREEZE, skilllv, time2()) end
+    -- Frost Diver freezes 3 s a level, less MDEF: the iRO guide's Mage page (2004-04-06, "3sec" to
+    -- "30sec"), mod0631's own length (skill.c:3869), an iRO player's "around 20-30 seconds" at
+    -- level 10 (GameFAQs 25510, 2003-09). 817's cast_db (6 to 15 s) for the other two
+    local tick = skillid == SK.MG_FROSTDIVER and 3000 * skilllv or time2()
+    if not undead and rnd(100) < floor((skilllv * 3 + 35) * sc_def_mdef / 100) then start(SC.FREEZE, skilllv, tick) end
   elseif skillid == SK.WZ_STORMGUST then
     -- 817: the third hit of a Storm Gust freezes
     local n = storm_gust_hit(bl_id)

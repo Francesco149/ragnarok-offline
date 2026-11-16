@@ -924,6 +924,12 @@ frozen, as 817 does: built (DEVIATIONS.md).
 Agility Wizard FAQ, GameFAQs 25510, iRO Loki, v2.0 of 2003-09-29); ours
 (817's `cast_db`) is 15 s at level 10, less MDEF. One player's estimate:
 not changed.
+*Round 27:* the iRO guide's Mage page (2004-04-06, the same capture as
+`refs/web/iro-guide-2004/`): "Frozen Time 3sec" at level 1 to "30sec" at
+10, the chance 38% to 65% (ours), "the magic defense of the target affects
+the time, chance". With mod0631's own `3000 x level` and lvlika's estimate,
+three witnesses: **built** 2026-11-16, Frost Diver only (DEVIATIONS.md).
+Frost Nova and Freezing Trap keep 817's.
 **Impact:** `skill_additional_effect` and the ailment part of
 `skill_status_change_start` in `scripts/rules/`.
 **Look:** period player guides on stun and freeze resistance ("VIT 97

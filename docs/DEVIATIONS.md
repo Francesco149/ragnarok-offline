@@ -995,7 +995,10 @@ always fires.
   19 s), stone 17 s - MDEF/20 (817: Stone Curse's 10 to 19 s less MDEF/5),
   sleep about 30 s (817: Sandman 12 to 20 s) less INT + LUK/3 as in 817, and
   silence is shortened by VIT alone. Freezing (the same rule in both) and
-  Curse (unknown to the page) keep 817's.
+  Curse (unknown to the page) keep 817's, but for Frost Diver: 3 s a level
+  less MDEF (817: 6 to 15 s), the iRO guide's Mage page of 2004-04-06
+  ("3sec" to "30sec"), mod0631's own length and an iRO player's "around
+  20-30 seconds" at level 10 (research round 27; THREADS.md #21).
 * **Poison takes HP** down to a quarter: 3% of max HP every 3 seconds
   (Ragu Memo; 817 bit every second, 3 + 1.5% for a player, 3 + 0.5% for a
   monster); in mod0631 it only shows. **Poison takes a quarter off DEF,

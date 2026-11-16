@@ -2811,3 +2811,22 @@ fn sage_rod_breaker_fields() {
     t.run(5000);
     assert_eq!(cells_at(&mut t, 26, 32, 0x7e), 1, "beside it, yes");
 }
+
+/// Frost Diver freezes 3 s a level less MDEF (the iRO guide's Mage page of 2004-04-06, mod0631),
+/// not 817's 6 to 15 s: level 10 on a Pupa (MDEF 20) about 24 s.
+#[test]
+fn frost_diver_freezes_three_seconds_a_level() {
+    let mut t = T::new();
+    let me = t.me;
+    let pupa = t.spawn(27, 25, 1008);
+    let mdef = t.lua(&format!("battle.mdef(battle.get({pupa}))")).trim().parse::<f64>().unwrap() as i64; // before: freezing raises it
+    let mut tries = 0;
+    while !t.has_sc(pupa, "FREEZE") {
+        t.lua(&format!("skill_additional_effect({me}, {pupa}, SK.MG_FROSTDIVER, 10, BF.MAGIC)"));
+        tries += 1;
+        assert!(tries < 200, "never froze");
+    }
+    let left = t.lua(&format!("battle.sc(battle.get({pupa}), SC.FREEZE).left")).trim().parse::<f64>().unwrap() as i64;
+    let want = 30000 * (100 - mdef) / 100;
+    assert!((left - want).abs() <= 200, "{left} ms, not {want}");
+}
