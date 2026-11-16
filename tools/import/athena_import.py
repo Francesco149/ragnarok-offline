@@ -447,6 +447,35 @@ EXTRA_EQUIP.update({
     4135: "bonus bShortWeaponDamageReturn,25;",
     4146: "bonus bMagicDamageReturn,30;",
 })
+# Effects the client's text and RODataZone's iRO tables (items/*.js, captures of 2004-02-11 and
+# 2004-02-24) both call not implemented, which mod0631 (jRO) scripts: taken out
+# (research/nyi_items.py lists every such item). The status arrows' chances ("[Not Implemented
+# yet]" / "Chance of causing Stun effect (NYI)"; the Poison and Freeze Arrows keep their
+# element), the Sharp Arrow's critical, the Great Axe's stun ("Stun + 10% (Not Implemented
+# yet)" / "Stun +10% (NYI)") and the Requiem Card's chaos ("Success Chance 5% Not implemented
+# yet" / "(Not Yet Implemented)"). The Crescent Scythe's critical is 20 in both, 30 in mod0631.
+EXTRA_EQUIP.update({
+    1758: "", 1760: "", 1761: "", 1764: "", 1768: "", 1769: "",
+    1759: "bonus bAtkEle,1;",
+    1763: "bonus bAtkEle,5;",
+    1364: "",
+    4104: "",
+    1466: "bonus bCritical,20; bonus bHit,10;",
+})
+# Stats where the client's text and RODataZone's iRO tables give the same, against mod0631's
+# script (the rule of THREADS.md R6; found by comparing every stat RODataZone names):
+# Muramasa "Critical + 20%" (mod0631 30), the Kobold Card "Critical + 5%" (4), the Poring Card
+# "LUK + 1" and nothing more (LUK 2, Perfect Dodge 1), the Condor Card "Dodge + 5" / "Flee +5"
+# (10), the Ninja Suit "AGI + 1,MDEF + 3" (no MDEF; 817 has it too), the Nurse Cap "INT+1"
+# (LUK +1).
+EXTRA_EQUIP.update({
+    1164: "bonus bCritical,20;",
+    4091: "bonus bStr,1; bonus bCritical,5;",
+    4001: "bonus bLuk,1;",
+    4015: "bonus bFlee,5;",
+    2337: "bonus bAgi,1; bonus bMdef,3;",
+    2277: "bonus bInt,1;",
+})
 
 
 def import_items():

@@ -4549,7 +4549,7 @@ loc = 34
 weapon_level = 4
 equip_level = 48
 view = 3
-athena_equip = "bonus bCritical,30;"
+athena_equip = "bonus bCritical,20;"
 
 [[item]]
 id = 1165
@@ -5897,7 +5897,6 @@ loc = 34
 weapon_level = 4
 equip_level = 44
 view = 7
-athena_equip = "bonus2 bAddEff,Eff_Stan,15;"
 
 [[item]]
 id = 1365
@@ -6530,7 +6529,7 @@ loc = 34
 weapon_level = 4
 equip_level = 48
 view = 5
-athena_equip = "bonus bCritical,30; bonus bHit,10;"
+athena_equip = "bonus bCritical,20; bonus bHit,10;"
 
 [[item]]
 id = 1467
@@ -8070,7 +8069,6 @@ jobs = 1706056
 gender = 2
 loc = 32768
 equip_level = 1
-athena_equip = "bonus2 bAddEff,Eff_Stan,5;"
 
 [[item]]
 id = 1759
@@ -8084,7 +8082,7 @@ jobs = 1706056
 gender = 2
 loc = 32768
 equip_level = 1
-athena_equip = "bonus bAtkEle,1; bonus2 bAddEff,Eff_Freeze,5;"
+athena_equip = "bonus bAtkEle,1;"
 
 [[item]]
 id = 1760
@@ -8098,7 +8096,6 @@ jobs = 1706056
 gender = 2
 loc = 32768
 equip_level = 1
-athena_equip = "bonus2 bAddEff,Eff_Blind,5;"
 
 [[item]]
 id = 1761
@@ -8112,7 +8109,6 @@ jobs = 1706056
 gender = 2
 loc = 32768
 equip_level = 1
-athena_equip = "bonus2 bAddEff,Eff_Curse,5;"
 
 [[item]]
 id = 1762
@@ -8140,7 +8136,7 @@ jobs = 1706056
 gender = 2
 loc = 32768
 equip_level = 1
-athena_equip = "bonus bAtkEle,5; bonus2 bAddEff,Eff_Poison,5;"
+athena_equip = "bonus bAtkEle,5;"
 
 [[item]]
 id = 1764
@@ -8154,7 +8150,6 @@ jobs = 1706056
 gender = 2
 loc = 32768
 equip_level = 1
-athena_equip = "bonus bCritical,10;"
 
 [[item]]
 id = 1765
@@ -8209,7 +8204,6 @@ jobs = 1706056
 gender = 2
 loc = 32768
 equip_level = 1
-athena_equip = "bonus2 bAddEff,Eff_Sleep,5;"
 
 [[item]]
 id = 1769
@@ -8223,7 +8217,6 @@ jobs = 1706056
 gender = 2
 loc = 32768
 equip_level = 1
-athena_equip = "bonus2 bAddEff,Eff_Silence,5;"
 
 [[item]]
 id = 1770
@@ -10114,7 +10107,7 @@ jobs = 33040
 gender = 2
 loc = 256
 view = 64
-athena_equip = "bonus bLuk,1;"
+athena_equip = "bonus bInt,1;"
 
 [[item]]
 id = 2278
@@ -10893,7 +10886,7 @@ jobs = 135232
 gender = 2
 loc = 16
 equip_level = 50
-athena_equip = "bonus bAgi,1;"
+athena_equip = "bonus bAgi,1; bonus bMdef,3;"
 
 [[item]]
 id = 2338
@@ -11768,7 +11761,7 @@ buy = 20
 weight = 10
 gender = 2
 loc = 16
-athena_equip = "bonus bLuk,2; bonus bFlee2,1;"
+athena_equip = "bonus bLuk,1;"
 
 [[item]]
 id = 4002
@@ -11922,7 +11915,7 @@ buy = 20
 weight = 10
 gender = 2
 loc = 4
-athena_equip = "bonus bFlee,10;"
+athena_equip = "bonus bFlee,5;"
 
 [[item]]
 id = 4016
@@ -12757,7 +12750,7 @@ buy = 20
 weight = 10
 gender = 2
 loc = 136
-athena_equip = "bonus bStr,1; bonus bCritical,4;"
+athena_equip = "bonus bStr,1; bonus bCritical,5;"
 
 [[item]]
 id = 4092
@@ -12899,7 +12892,6 @@ buy = 20
 weight = 10
 gender = 2
 loc = 2
-athena_equip = "bonus2 bAddEff,Eff_Confusion,5;"
 
 [[item]]
 id = 4105

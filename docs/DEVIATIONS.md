@@ -938,6 +938,24 @@ always fires.
   * The Archer Skeleton and Doppelganger Cards still do nothing. The
     client's text says "(Not implemented yet)" for both, and so does
     RODataZone; jAthena //0679 and 817 give the Doppelganger Card 30% ASPD.
+* **Effects the client and RODataZone call not implemented are out**
+  (2026-11-16; `research/nyi_items.py`, `EXTRA_EQUIP`). mod0631 (jRO)
+  scripts some effects that this client's item text marks "Not
+  Implemented yet" and RODataZone's iRO tables (2004-02) mark "NYI". With
+  both witnesses against it (the rule of THREADS.md R6), the effect is
+  taken out: the status chances of the Stun, Freeze, Flash, Curse, Poison,
+  Sleep and Mute Arrows (the Freeze and Poison Arrows keep their element),
+  the Sharp Arrow's critical, the Great Axe's stun and the Requiem Card's
+  chaos. The Crescent Scythe's critical is +20, as both say, where mod0631
+  has 30. About thirty other items are marked by the client alone
+  (RODataZone lacks them, or shows the effect working); they keep
+  mod0631's scripts.
+* **Six items' stats follow the client and RODataZone** where both give
+  the same against mod0631's script (2026-11-16, `EXTRA_EQUIP`): Muramasa
+  critical +20% (mod0631 30), the Kobold Card critical +5% (4), the Poring
+  Card LUK +1 and nothing else (LUK +2, Perfect Dodge +1), the Condor Card
+  flee +5 (10), the Ninja Suit MDEF +3 beside its AGI +1 (none; 817 has
+  it), the Nurse Cap INT +1 (LUK +1).
 * **EXP is shared by the monster's max HP, and the MVP EXP comes with
   the reward item** (2026-11-15): the share as jAthena //0764 of
   2004-02-01 has it ("monster EXP handled like the real server", the same

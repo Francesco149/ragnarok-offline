@@ -2055,3 +2055,16 @@ the text, RODataZone, Ragu Memo's jRO spear table (2003-12-18) and
 mod0631's own two slotted Partizans; its 3/33 was a slip in one row.
 The client's slot table (data, not text) was taken where it differs
 (ROADMAP §1).
+**Cards and "not implemented" (2026-11-16):** eleven cards had no script in
+mod0631. Nine now follow the client's text with jAthena's bonus names
+(DEVIATIONS.md); RODataZone's `items/cards.js` (2004-02-24, now saved
+beside the other tables) and `items/arrow.js` were fetched for it. Open:
+the Zombie Card's HP recovery (client 15%, jAthena/817 20%, RODataZone 25%;
+ours 15), the Orc Lord Card's share (client 25%, jAthena 30%; RODataZone
+lacks the card) and whether it answers blows from afar ("every single
+Physical Damage"), and how the Maya Card's reflection behaves. The client
+marks about 45 items' effects "Not Implemented yet"
+(`research/nyi_items.py`); where RODataZone says NYI too they are out.
+Where they part: RODataZone shows the Bloody Axe's "Increased Movement",
+the Eddga Card's endure, the Ghostring Card's ghost armour and Light
+Epsilon's Heal working (ours: mod0631, which has the last two only).
