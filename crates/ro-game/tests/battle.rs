@@ -779,7 +779,9 @@ fn auto_counter() {
     assert_eq!(t.hp(), hp, "the blow was turned aside");
     assert!(!t.sc(77), "the stance ends");
     assert!(t.mob_hp(z).unwrap_or(0) < zhp, "and the Pupa was hit back");
-    // LUK 99: a plain blow is critical about 30% of the time, a counter about 60%
+    // LUK 99: a plain blow is critical 29.8% of the time, less the Pupa's LUK 20 x 3 (6%,
+    // 817 battle.c:1751); a counter twice that, 47.6% (an earlier band of 45-75% failed one run
+    // in six)
     t.packets(0);
     let (mut crits, n) = (0, 200);
     for _ in 0..n {
@@ -788,7 +790,7 @@ fn auto_counter() {
         t.lua(&format!("rules.weapon_attack{{src={z}, target={me}}}"));
         crits += t.packets(0x008a).iter().filter(|p| u32_at(p, 2) == me && p[26] == 0x0a).count();
     }
-    assert!((n * 45 / 100..=n * 75 / 100).contains(&crits), "{crits} critical counters of {n}");
+    assert!((n * 35 / 100..=n * 60 / 100).contains(&crits), "{crits} critical counters of {n}");
 }
 
 /// Merchant prices, potions scaled by VIT, the overweight icons.
