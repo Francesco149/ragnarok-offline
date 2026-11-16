@@ -413,6 +413,8 @@ local CAST_817 = {
   [SK.CR_PROVIDENCE] = 3000,
   [SK.SA_FLAMELAUNCHER] = 3000, [SK.SA_FROSTWEAPON] = 3000, [SK.SA_LIGHTNINGLOADER] = 3000, [SK.SA_SEISMICWEAPON] = 3000,
   [SK.SA_DISPELL] = 2000,
+  -- jAthena //0969's cast_db (2004-05-13): neither period emulator's has them
+  [SK.AM_ACIDTERROR] = 1000, [SK.AM_DEMONSTRATION] = 1000,
 }
 local function skill_range(sd, skill, lv)
   if lv and LEVEL_RANGE[skill] then return LEVEL_RANGE[skill](lv) end
@@ -523,6 +525,11 @@ function skill_check_condition(sd, skill, lv, a)
     items[715] = 1; items[716] = 1
   elseif skill == SK.AM_CP_WEAPON or skill == SK.AM_CP_SHIELD or skill == SK.AM_CP_ARMOR or skill == SK.AM_CP_HELM then
     items[7139] = 1 -- the guide's "Glistening Coat"; 817's skill_require_db
+  elseif skill == SK.AM_ACIDTERROR then items[7136] = 1 -- Acid Bottle; the iRO guide's Alchemist page
+  elseif skill == SK.AM_DEMONSTRATION then items[7135] = 1 -- Bottle Grenade (Fire Bottle), jAthena //0969's skill_db
+  elseif skill == SK.AM_POTIONPITCHER then
+    -- the potion by level (skill_effects.lua AID_POTION)
+    items[(AID_POTION[lv] or AID_POTION[1]).item] = 1
   elseif skill == SK.SA_FLAMELAUNCHER then items[990] = 1
   elseif skill == SK.SA_FROSTWEAPON then items[991] = 1
   elseif skill == SK.SA_LIGHTNINGLOADER then items[992] = 1
@@ -670,6 +677,8 @@ function rules.skill_castend(a)
   if skill >= SK.NPC_ATTRICHANGE and skill <= SK.NPC_CHANGETELEKINESIS then nk = 1 end
   -- Metamorphosis: nk 0 in mod0631's skill_db (it never built the skill); 817's has 1
   if skill == SK.NPC_METAMORPHOSIS then nk = 1 end
+  -- Acid Terror: nk 1 in mod0631's skill_db (it never built the skill), 0 in jAthena //0969's
+  if skill == SK.AM_ACIDTERROR then nk = 0 end
   if nk == 1 then
     -- Heal and Resurrection hurt whatever is of the Undead element (friend or not: skill.c:1780)
     if (skill == SK.AL_HEAL or skill == SK.ALL_RESURRECTION) and battle.elem_type(bl) == 9 then

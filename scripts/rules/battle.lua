@@ -847,6 +847,12 @@ battle.weapon_skill = {
   [SK.CR_SHIELDBOOMERANG] = function(w) w.s_ele, w.s_ele_ = 0, 0; w.long = true; return pct(w, 100 + 30 * w.lv) end,
   [SK.CR_HOLYCROSS] = function(w) w.div = 2; return pct(w, 100 + 35 * w.lv) end,
   [SK.CR_GRANDCROSS] = function(w) return pct(w, 100 + 40 * w.lv) end,
+  -- Acid Terror and Bomb: jAthena //0969 (2004-05-13) battle.c:1597; the iRO guide's Alchemist
+  -- page (2004-03-27) gives the same, 140% to 300% and 120% to 200%. Neither period emulator has them
+  [SK.AM_ACIDTERROR] = function(w) return pct(w, 100 + 40 * w.lv) end,
+  -- Bomb burns as Fire: jAthena's skill_db and euRO's skill text of May 2004 ("Offensive (Fire)");
+  -- mod0631's and 817's rows say Neutral
+  [SK.AM_DEMONSTRATION] = function(w) w.s_ele, w.s_ele_ = 3, 3; return pct(w, 100 + 20 * w.lv) end,
   [SK.MO_INVESTIGATE] = function(w)
     w.damage = floor(floor(w.damage * (100 + 75 * w.lv) / 100) * (w.def1 + w.def2) / 100)
     w.hitrate, w.s_ele, w.s_ele_ = 100000, 0, 0

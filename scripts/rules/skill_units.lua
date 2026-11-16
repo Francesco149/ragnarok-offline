@@ -32,6 +32,7 @@ local UNIT_ID = {
   [SK.HT_SKIDTRAP] = 0x90, [SK.HT_ANKLESNARE] = 0x91, [SK.AS_VENOMDUST] = 0x92, [SK.HT_LANDMINE] = 0x93,
   [SK.HT_SHOCKWAVE] = 0x94, [SK.HT_SANDMAN] = 0x95, [SK.HT_FLASHER] = 0x96, [SK.HT_FREEZINGTRAP] = 0x97,
   [SK.HT_CLAYMORETRAP] = 0x98,
+  [SK.AM_DEMONSTRATION] = 0xb1, -- jAthena //0969 skill.c:314
 }
 UNIT_ID[-1] = nil
 local function unit_id(skill, flag)
@@ -128,6 +129,10 @@ function skill_unitsetting(src_id, skillid, skilllv, x, y, flag)
     limit, interval, count = 5000 * skilllv, 1000, 5
   elseif skillid == SK.HT_TALKIEBOX then
     limit, range, target = 600000, 1, BCT.ALL -- 817 cast_db: 600 s
+  elseif skillid == SK.AM_DEMONSTRATION then
+    -- Bomb: jAthena //0969 skill.c:3589 and its cast_db, 40 s to 60 s; a blow a second
+    -- ("every 1 second", the iRO guide's Alchemist page, 2004-03-27)
+    count, limit, interval, range = 9, 35000 + 5000 * skilllv, 1000, 1
   end
 
   -- skill.c:4223: a player keeps 32 groups, a monster 4; the oldest makes room
@@ -184,6 +189,11 @@ function skill_unitsetting(src_id, skillid, skilllv, x, y, flag)
       end
     elseif skillid == SK.WZ_QUAGMIRE then
       ux, uy = ux + (i % 5 - 2), uy + (i // 5 - 2)
+    elseif skillid == SK.AM_DEMONSTRATION then
+      -- nine cells, the middle one burning the 3x3 and the rest for show (jAthena skill.c:3759,
+      -- which puts the square a cell up and left of the spot: ours centres it)
+      ux, uy = ux + (i % 3 - 1), uy + (i // 3 - 1)
+      if i ~= 4 then crange = -1 end
     elseif skillid == SK.AS_VENOMDUST then
       local dx = { -1, 0, 0, 0, 1 }
       local dy = { 0, -1, 0, 1, 0 }
@@ -336,6 +346,10 @@ local function onplace(c, bl, now)
       g.limit = now - g.tick + 3000
       g.val2 = bl.id
     end
+  elseif uid == 0xb1 then -- Bomb (jAthena //0969 skill.c:4095)
+    -- The guide's weapon damage (1% to 5%) is for players, as jAthena's commented-out
+    -- pc_break_weapon: no monster casts Bomb, so it is left out
+    skill_attack(BF.WEAPON, g.src, cell_src, bl.id, g.skill, g.lv, 0)
   elseif uid == 0x93 then -- Land Mine
     skill_attack(BF.MISC, g.src, cell_src, bl.id, g.skill, g.lv, 0)
     del_cell(c)

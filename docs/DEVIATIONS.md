@@ -1115,6 +1115,26 @@ always fires.
     rolls). What it ends is 817's list: the ailments, Increase and Decrease
     AGI, Suffragium, Magnificat, Gloria, Apple of Idun, the endows and the
     Chemical Protections. The guide says "all magical effects".
+* **The Alchemist's Acid Terror, Bomb (Demonstration) and Aid Potion
+  (Potion Pitcher)** (behind `jobs2_2`; drafts, test
+  `alchemist_acid_bomb_aid`). mod0631 never built them; 817's Acid Terror
+  deals no damage and its Aid Potion looks for item 0 above level 1. They
+  follow jAthena //0969 (2004-05-13, five months after our date), whose
+  numbers the iRO guide's Alchemist page of 2004-03-27 repeats: Acid
+  Terror a 140% to 300% weapon blow for an Acid Bottle, 1 s of cast; Bomb
+  a 3x3 that strikes 120% to 200% each second for 40 s to 60 s, for a
+  Bottle Grenade, as Fire (jAthena's skill_db and euRO's text of May 2004;
+  mod0631's row says Neutral); Aid Potion throws a Red, Orange, Yellow,
+  White or Blue Potion by level, worth 110% to 150%. Ours:
+  * the armour (Acid Terror) and weapon (Bomb) damage the guide gives is
+    left out: it is for players, jAthena comments it out, and no monster
+    casts either skill;
+  * Aid Potion's heal grows with the target's VIT (INT for the Blue
+    Potion) and recovery skills as a potion drunk does here (jAthena
+    counts VIT twice), and the Blue Potion takes the guide's 10% a level
+    (jAthena's 1% looks a slip);
+  * Bomb's square is centred on the cell aimed at (jAthena's sits a cell
+    up and to the left of it).
 * **Talkie Box** speaks: mod0631 lets it lie silent and 817's attempt is
   marked "not working", so it follows jAthena //0988 (2004-05-25, five
   months after our date): the first one to step on it makes it say the

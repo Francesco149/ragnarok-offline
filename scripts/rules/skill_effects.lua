@@ -10,7 +10,7 @@
 --
 -- Covered: Novice, the six first jobs, Knight, Priest, Wizard, Blacksmith,
 -- Hunter, Assassin, and the monsters' skills. The 2-2 jobs (Juno, June 2004)
--- are not in the default world; their skills are not here yet.
+-- are not in the default world; their skills here are drafts (docs/DEVIATIONS.md).
 
 local floor, random = math.floor, math.random
 local function rnd(n) if n <= 0 then return 0 end return random(0, n - 1) end
@@ -35,6 +35,8 @@ for _, n in ipairs({
   "SM_BASH", "MC_MAMMONITE", "AC_DOUBLE", "AS_SONICBLOW", "KN_PIERCE", "KN_SPEARBOOMERANG", "TF_POISON",
   "TF_SPRINKLESAND", "AC_CHARGEARROW", "KN_SPEARSTAB", "RG_BACKSTAP", "RG_INTIMIDATE",
   "CR_HOLYCROSS", "CR_SHIELDCHARGE", "CR_SHIELDBOOMERANG", -- eAthena 817 skill.c:1201
+  "AM_ACIDTERROR", -- jAthena //0969 skill.c:1406. Its armour damage (the guide: 3% to 13%, Synthetic
+  -- Armor stops it) is for players, and jAthena comments it out: no monster casts it, so it is left out
   "NPC_PIERCINGATT", "NPC_MENTALBREAKER", "NPC_RANGEATTACK", "NPC_CRITICALSLASH", "NPC_COMBOATTACK",
   "NPC_GUIDEDATTACK", "NPC_POISON", "NPC_BLINDATTACK", "NPC_SILENCEATTACK", "NPC_STUNATTACK",
   "NPC_PETRIFYATTACK", "NPC_CURSEATTACK", "NPC_SLEEPATTACK", "NPC_RANDOMATTACK",
@@ -250,6 +252,12 @@ local STRIP = {
 }
 local CHEMICAL = {}
 for _, n in ipairs({ "AM_CP_WEAPON", "AM_CP_SHIELD", "AM_CP_ARMOR", "AM_CP_HELM" }) do CHEMICAL[SK[n]] = true end
+-- Aid Potion's potion by level, and what it holds (items.toml's use_script: Red, Orange,
+-- Yellow, White and Blue Potions)
+AID_POTION = {
+  { item = 501, hp = { 45, 64 } }, { item = 502, hp = { 105, 144 } }, { item = 503, hp = { 175, 234 } },
+  { item = 504, hp = { 325, 404 } }, { item = 505, sp = { 40, 59 } },
+}
 -- eAthena 817 skill.c:2313-2337, what its Dispell ends: the ailments (mod0631's whole
 -- list, skill.c:1661), then the blessings and enchantments 817 added
 local DISPELLED = {
@@ -409,6 +417,31 @@ function skill_castend_nodamage_id(src_id, bl_id, skillid, skilllv, opt)
     -- 817:1779 (mod0631's four cases are empty, skill.c:1651). How long: the guide
     nodamage(src_id, bl_id, skillid, skilllv)
     skill_status_change_start(bl_id, SkillStatusChangeTable[skillid], skilllv, 0)
+
+  elseif skillid == SK.AM_POTIONPITCHER then
+    -- Aid Potion: jAthena //0969 skill.c:2587 (817's is broken: it looks for item 0 above
+    -- level 1). The potion by level and its worth, 110% to 150%: the iRO guide's Alchemist
+    -- page (2004-03-27); jAthena reads the same five potions from its skill_db and runs
+    -- their scripts. The potion was taken with the skill's other costs (skill.lua). The
+    -- target's VIT (INT for the Blue Potion) and recovery skills count as for a potion
+    -- drunk (combat.lua item_heal; jAthena counts VIT twice). Ours: the guide's 10% a
+    -- level for the Blue Potion too, where jAthena gives it 1%.
+    local p = AID_POTION[skilllv] or AID_POTION[1]
+    local bonus = 100 + 10 * skilllv + (sd and checkskill(sd, SK.AM_LEARNINGPOTION) * 5 or 0)
+    local hp, sp = 0, 0
+    if p.hp then
+      hp = floor((p.hp[1] + rnd(p.hp[2] - p.hp[1] + 1)) * bonus / 100)
+      local rec = bl.kind == "player" and checkskill(bl, SK.SM_RECOVERY) * 10 or 0
+      hp = floor(hp * (100 + battle.vit(bl) + rec) / 100)
+    else
+      sp = floor((p.sp[1] + rnd(p.sp[2] - p.sp[1] + 1)) * bonus / 100)
+      local rec = bl.kind == "player" and checkskill(bl, SK.MG_SRECOVERY) * 10 or 0
+      sp = floor(sp * (100 + battle.int(bl) + rec) / 100)
+    end
+    nodamage(src_id, bl_id, skillid, skilllv)
+    if hp > 0 then _rt("clif_skill_nodamage", src_id, bl_id, SK.AL_HEAL, hp, 1) end
+    if sp > 0 then _rt("clif_skill_nodamage", src_id, bl_id, SK.MG_SRECOVERY, sp, 1) end
+    battle.heal(bl_id, hp, sp)
 
   elseif skillid == SK.SA_DISPELL then
     -- 817:2309. Not on a Golden Thief Bug Card's wearer. The chance is the iRO guide's
@@ -663,6 +696,7 @@ for _, n in ipairs({
   "MG_SAFETYWALL", "MG_FIREWALL", "AL_PNEUMA", "WZ_ICEWALL", "WZ_FIREPILLAR", "WZ_QUAGMIRE", "WZ_VERMILION",
   "WZ_STORMGUST", "PR_SANCTUARY", "PR_MAGNUS", "HT_SKIDTRAP", "HT_LANDMINE", "HT_ANKLESNARE", "HT_SHOCKWAVE",
   "HT_SANDMAN", "HT_FLASHER", "HT_FREEZINGTRAP", "HT_BLASTMINE", "HT_CLAYMORETRAP", "AS_VENOMDUST", "HT_TALKIEBOX",
+  "AM_DEMONSTRATION", -- jAthena //0969 skill.c:3122
 }) do UNIT_SKILLS[SK[n]] = true end
 
 -- skill.c:1795

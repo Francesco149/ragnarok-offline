@@ -2623,3 +2623,79 @@ fn unused_trap_leaves_its_trap() {
     t.run(41_000);
     assert_eq!(traps_on(&t, 27, 25), 0, "nothing left of a sprung mine");
 }
+
+/// The Alchemist's Acid Terror, Bomb and Aid Potion (drafts from jAthena //0969 and the iRO
+/// guide's Alchemist page): each takes its bottle or potion, Acid Terror hits once, Bomb burns
+/// what stands in its 3x3 every second, Aid Potion heals by the potion its level throws.
+#[test]
+fn alchemist_acid_bomb_aid() {
+    let mut t = T::new();
+    t.lua("job_change(18); player.base_level = 80; player.str = 80; player.dex = 80; player.vit = 50; heal(30000, 30000)");
+    for (s, lv) in [("AM_ACIDTERROR", 5), ("AM_DEMONSTRATION", 5), ("AM_POTIONPITCHER", 1)] {
+        t.learn(s, lv);
+    }
+    t.wear(1301); // an Axe
+    let me = t.me;
+    let count = |t: &mut T, item: u32| -> i64 { t.lua(&format!("_rt('pc_item_count', {me}, {item})")).trim().parse::<f64>().unwrap() as i64 };
+
+    // Acid Terror: nothing without an Acid Bottle; with one, a blow and the bottle gone
+    let pupa = t.spawn(27, 25, 1008);
+    let full = t.mob_hp(pupa).unwrap();
+    t.cast("AM_ACIDTERROR", pupa);
+    t.run(1500);
+    assert_eq!(t.mob_hp(pupa), Some(full), "no bottle, no throw");
+    t.lua("give_item(7136, 2)");
+    let mut tries = 0;
+    while t.mob_hp(pupa) == Some(full) {
+        t.cast("AM_ACIDTERROR", pupa);
+        t.run(2500);
+        tries += 1;
+        assert!(tries < 3, "Acid Terror never hit");
+    }
+    assert_eq!(count(&mut t, 7136), 2 - tries, "a bottle a throw");
+    t.kill(pupa);
+
+    // Bomb: a Bottle Grenade, then a 3x3 that burns a monster standing in it again and again;
+    // one a cell outside is spared
+    t.lua("give_item(7135, 1); player.str = 1"); // weak blows, or the first burn kills a Pupa
+    let inside = t.spawn(31, 26, 1008);
+    let outside = t.spawn(33, 25, 1008);
+    let (hp_in, hp_out) = (t.mob_hp(inside).unwrap(), t.mob_hp(outside).unwrap());
+    t.cast_at("AM_DEMONSTRATION", 31, 25);
+    t.run(1500);
+    assert_eq!(count(&mut t, 7135), 0);
+    let mut drops = 0;
+    let mut last = t.mob_hp(inside).unwrap();
+    for _ in 0..6 {
+        t.run(1000);
+        let Some(now) = t.mob_hp(inside) else { break };
+        if now < last {
+            drops += 1;
+        }
+        last = now;
+    }
+    assert!(drops >= 3 || t.mob_hp(inside).is_none(), "Bomb burnt {drops} times in 6 s");
+    assert!(t.mob_hp(inside).map_or(true, |h| h < hp_in));
+    assert_eq!(t.mob_hp(outside), Some(hp_out), "a cell outside the 3x3");
+
+    // Aid Potion 1 throws a Red Potion: 110% of 45-64, then the target's VIT
+    t.lua("player.hp = 100");
+    t.cast("AM_POTIONPITCHER", me);
+    t.run(500);
+    assert_eq!(t.hp(), 100, "no potion, no throw");
+    t.lua("give_item(501, 1)");
+    t.cast("AM_POTIONPITCHER", me);
+    t.run(500);
+    let healed = t.hp() as i64 - 100;
+    let vit = t.st("vit");
+    let (lo, hi) = (45 * 110 / 100 * (100 + vit) / 100, 64 * 110 / 100 * (100 + vit) / 100);
+    assert!(healed >= lo && healed <= hi, "healed {healed}, not {lo}-{hi}");
+    assert_eq!(count(&mut t, 501), 0);
+    // level 5 throws a Blue Potion: SP
+    t.learn("AM_POTIONPITCHER", 5);
+    t.lua("give_item(505, 1); player.sp = 10");
+    t.cast("AM_POTIONPITCHER", me);
+    t.run(500);
+    assert!(t.sp() > 10 + 40 - 1, "SP {}", t.sp());
+    assert_eq!(count(&mut t, 505), 0);
+}
