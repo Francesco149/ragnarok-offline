@@ -2812,6 +2812,41 @@ fn sage_rod_breaker_fields() {
     assert_eq!(cells_at(&mut t, 26, 32, 0x7e), 1, "beside it, yes");
 }
 
+/// Cast Cancel (jAthena //0969, the iRO guide's Sage page of 2004-03-27): only during a cast; the
+/// spell stops and the Sage pays 2 SP and 90% (level 1) to 10% (level 5) of the spell's SP.
+#[test]
+fn sage_cast_cancel() {
+    let mut t = T::new();
+    t.lua("job_change(16); player.base_level = 80; player.int = 50; heal(30000, 30000)");
+    t.learn("MG_FIREBOLT", 10);
+    t.learn("SA_CASTCANCEL", 3);
+    let me = t.me;
+    let pupa = t.spawn(27, 25, 1008);
+    let num = |t: &mut T, code: &str| -> i64 { t.lua(code).trim().parse::<f64>().unwrap() as i64 };
+
+    // not casting: refused, nothing paid
+    let sp0 = t.sp() as i64;
+    t.cast("SA_CASTCANCEL", me);
+    t.run(100);
+    assert_eq!(t.sp() as i64, sp0);
+
+    let bolt = num(&mut t, "skill_get_sp(SK.MG_FIREBOLT, 10)");
+    t.cast("MG_FIREBOLT", pupa);
+    t.run(200);
+    assert_ne!(t.lua(&format!("tostring(battle.get({me}).casting)")).trim(), "nil", "casting");
+    t.cast("SA_CASTCANCEL", me);
+    t.run(100);
+    assert_eq!(t.lua(&format!("tostring(battle.get({me}).casting)")).trim(), "nil", "cancelled");
+    assert_eq!(t.sp() as i64, sp0 - 2 - bolt * 50 / 100, "2 SP and half the bolt's at level 3");
+    let full = t.mob_hp(pupa);
+    t.run(6000);
+    assert_eq!(t.mob_hp(pupa), full, "no bolt");
+    // and the Sage may cast again at once
+    t.cast("MG_FIREBOLT", pupa);
+    t.run(100);
+    assert_ne!(t.lua(&format!("tostring(battle.get({me}).casting)")).trim(), "nil");
+}
+
 /// Frost Diver freezes 3 s a level less MDEF (the iRO guide's Mage page of 2004-04-06, mod0631),
 /// not 817's 6 to 15 s: level 10 on a Pupa (MDEF 20) about 24 s.
 #[test]

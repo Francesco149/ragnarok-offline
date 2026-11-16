@@ -512,6 +512,18 @@ function rules.skill_use(a)
   end
   if a.item then casttime, delay = 0, 0 end -- a skill from an item: instant
 
+  -- Cast Cancel: only while casting (jAthena //0969 skill_check_condition), and only with its
+  -- own 2 SP to pay, as there the cast goes on when the condition fails. What is cancelled is
+  -- kept for the SP it costs (val = skill * 100 + level)
+  local val = 0
+  if skill == SK.SA_CASTCANCEL then
+    if not sd.casting or sd.char.sp < skill_get_sp(skill, lv) then
+      _rt("clif_skill_fail", sd.id, skill, 0, 0)
+      return nil
+    end
+    val = sd.casting * 100 + (sd.casting_lv or 1)
+  end
+
   -- A cast-sensing monster turns on whoever casts at it (skill.c:3308;
   -- there: unless it is attacking; here: unless it has a target). mod0631
   -- defines a "casttargeted" skill condition and never raises it; raised here.
@@ -519,7 +531,8 @@ function rules.skill_use(a)
     _rt("mob_target", bl.id, sd.id, 0)
     _rt("mob_event", bl.id, "casttargeted")
   end
-  return { cast = casttime, delay = delay, cancelable = cancelable, forcecast = forcecast, target = place and 0 or target_id }
+  return { cast = casttime, delay = delay, cancelable = cancelable, forcecast = forcecast, target = place and 0 or target_id,
+           val = val }
 end
 
 -- ------------------------------------------------------------ what a skill costs

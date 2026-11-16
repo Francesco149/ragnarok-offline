@@ -1148,6 +1148,13 @@ always fires.
     touches someone standing on it.
   * A Sage has one field at a time (jAthena); a field ends the other
     fields' status on whoever enters it (817).
+  * Cast Cancel (test `sage_cast_cancel`) as jAthena //0969: asked for
+    during a cast only, it stops the spell, and the Sage may act at once.
+    It costs its 2 SP and 90%, 70%, 50%, 30% or 10% by level of the
+    cancelled spell's SP (the guide's table; euRO's May text: "Consumption
+    SP of casted magic will be reduced by Skill-level"). jAthena charges
+    that share of Cast Cancel's own SP, having overwritten the spell it
+    saved (`skill_use_id`): a slip, not taken.
 * **Grand Cross** (behind `jobs2_2`; draft, test `grand_cross`). mod0631
   calls it "no damage" and Neutral. eAthena 817's (jAthena //0969 the
   same): 3 s of cast nothing breaks, a cross of 29 cells around the caster,

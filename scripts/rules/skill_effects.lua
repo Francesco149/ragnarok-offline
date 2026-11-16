@@ -462,6 +462,20 @@ function skill_castend_nodamage_id(src_id, bl_id, skillid, skilllv, opt)
     if sp > 0 then _rt("clif_skill_nodamage", src_id, bl_id, SK.MG_SRECOVERY, sp, 1) end
     battle.heal(bl_id, hp, sp)
 
+  elseif skillid == SK.SA_CASTCANCEL then
+    -- jAthena //0969 skill.c:2704: the spell is cancelled (rules.skill_use asked for that) and
+    -- part of its SP is spent all the same: 90% at level 1 down to 10% at level 5. The share is
+    -- jAthena's and the iRO guide's Sage page (2004-03-27); the SP is the cancelled spell's, as
+    -- the guide says ("the magic spell consumes the required SP"): jAthena saves the skill to
+    -- charge after it has already been overwritten by Cast Cancel itself (skill_use_id), and so
+    -- takes a share of Cast Cancel's own 2 SP
+    nodamage(src_id, bl_id, skillid, skilllv)
+    local was = opt and opt.val or 0
+    if sd and was > 0 then
+      local sp = floor(skill_get_sp(was // 100, was % 100) * (90 - (skilllv - 1) * 20) / 100)
+      if sp > 0 then _rt("bl_set", src_id, "sp", math.max(0, get(src_id).char.sp - sp)) end
+    end
+
   elseif skillid == SK.SA_MAGICROD then
     -- jAthena //0868 skill.c:2778 (not in 817): not on a Golden Thief Bug Card's wearer
     if not battle.dcard(bl, 4128) then

@@ -46,6 +46,8 @@ pub const SC_ENDURE: u16 = 1;
 pub const SC_AUTOCOUNTER: u16 = 77;
 /// jAthena //0850 (scripts/rules/00_const.lua)
 pub const SC_HALLUCINATION: u16 = 34;
+/// The Sage's Cast Cancel, the one skill asked for during a cast.
+const SA_CASTCANCEL: u16 = 275;
 
 /// How often `rules.battle_tick` runs (Athena skill_unit_timer: 100 ms).
 const BATTLE_TICK_MS: u64 = 100;
@@ -577,7 +579,10 @@ impl Game {
         let Some(sid) = self.sid_of(unit) else { return };
         let now = self.now();
         let Some(p) = self.world.units.get(&unit).and_then(|u| u.player()) else { return };
-        if p.canact > now || p.cast.is_some() {
+        // Cast Cancel is the one skill asked for during a cast (jAthena //0969
+        // clif_parse_UseSkillToId: with a cast under way the delay is not checked)
+        let cancelling = skill == SA_CASTCANCEL && p.cast.is_some();
+        if !cancelling && (p.canact > now || p.cast.is_some()) {
             // clif_parse_UseSkillToId: "skill delay" failure
             self.send(sid, packets::skill_fail(skill, 0, 4));
             return;
@@ -596,7 +601,12 @@ impl Game {
         let from_item = item.is_some_and(|(s, _)| s == skill);
         let r = self.rule_call("skill_use", json!({"src": unit, "skill": skill, "lv": lv, "target": target, "x": x, "y": y, "item": from_item}));
         let Some(r) = r.filter(|v| v.is_object()) else { return };
-        self.begin_cast(unit, skill, lv, field(&r, "target") as u32, x, y, field(&r, "cast") as u64, field(&r, "delay") as u64, r.get("cancelable").and_then(Value::as_bool).unwrap_or(true), r.get("forcecast").and_then(Value::as_bool).unwrap_or(false), 0, -1);
+        if cancelling {
+            // the spell under way stops here; the Lua has kept what it was in `val`
+            // (jAthena skill_castcancel(src, 1))
+            self.cast_cancel(unit);
+        }
+        self.begin_cast(unit, skill, lv, field(&r, "target") as u32, x, y, field(&r, "cast") as u64, field(&r, "delay") as u64, r.get("cancelable").and_then(Value::as_bool).unwrap_or(true), r.get("forcecast").and_then(Value::as_bool).unwrap_or(false), field(&r, "val"), -1);
     }
 
     /// Start a cast decided by `rules.skill_use` / the monster skill rules:

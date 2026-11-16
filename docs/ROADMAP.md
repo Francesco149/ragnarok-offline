@@ -103,7 +103,9 @@ Next:
   in the rig the same day: Bomb draws as fire, Deluge, Violent Gale and
   Land Protector as their fields; Volcano's asks for `effect\ring_red.tga`,
   which this GRF lacks, and stops the game with a ResourceError box, so it
-  is sent undrawn (`UNDRAWN` in skill_units.lua). Left: Cast Cancel, Free Cast, Abracadabra, the
+  is sent undrawn (`UNDRAWN` in skill_units.lua). Cast Cancel drafted
+  on 2026-11-16 too (test `sage_cast_cancel`). Left: Free Cast's attack
+  while casting (it walks, as mod0631 `pc.c:1094`), Abracadabra, the
   Alchemist's summons (Flora, Marine Sphere), the Monk's, Bard's and
   Dancer's skills.
 * **Check the drafted skills against the iRO guide's pages** (THREADS.md
