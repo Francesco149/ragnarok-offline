@@ -21,6 +21,14 @@ repo → `/work`, `~/data/ragnarok-cd` → `/data` (disc image, unpacked client,
 play copy, Wine prefix, saves, reference emulators — never in git), cargo
 registry → volume `ro-wb-cargo`.
 
+Start and end every session with `tools/strays.sh` (host): it lists
+workbenches and whatever runs in them beyond PID 1, project processes
+outside containers (Wine, Xvfb, the server, cargo on the host) and the
+Windows rig's agents, processes and mounted image; `--clean` stops them
+(`wb down --all`, `win.sh down`), `--no-win` skips the Windows box. It
+never touches `ro-play`. A session once ended with its workbench still up
+and an Xvfb in it (2026-11-16): harmless under the cap, but a stray.
+
 ## Build and test
 
 ```sh
@@ -74,6 +82,7 @@ saves, Wine prefix and config, all under `~/data/ragnarok-cd/stable`.
 ```sh
 tools/wb exec tools/play/update.sh          # end of every session: build + snapshot (builds/<stamp>, `current`)
 ~/data/ragnarok-cd/stable/play.sh --smoke   # host: headless check, server + client + a login (logs/smoke.png)
+tools/strays.sh --clean                     # host: last step, nothing of ours left running
 tools/play/install.sh                       # host, once: "Ragnarok Offline" in the app launcher
 ```
 

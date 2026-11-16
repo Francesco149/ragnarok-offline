@@ -2,7 +2,7 @@
 # Headless client test rig (runs INSIDE the workbench: tools/wb exec tools/client-test/rig.sh ...).
 #
 #   rig.sh server-start | server-stop | server-log [N]
-#   rig.sh client-start | client-stop
+#   rig.sh client-start | client-stop (also Xvfb) | down (client + server)
 #   rig.sh shot <name>             screenshot -> /data/shots/<name>.png
 #   rig.sh click X Y | dclick X Y | rclick X Y | drag X1 Y1 X2 Y2 | type TEXT | key KEY...
 #
@@ -30,7 +30,8 @@ case "$cmd" in
     cd "$CLIENT" && (wine Ragexe.exe 1rag1 >/tmp/ragexe.log 2>&1 &)
     for _ in $(seq 60); do xdotool search --name '^Ragnarok$' >/dev/null 2>&1 && break; sleep 0.5; done
     sleep 6; echo "client up" ;;
-  client-stop) wineserver -k 2>/dev/null || true ;;
+  client-stop) wineserver -k 2>/dev/null || true; pkill -x Xvfb 2>/dev/null || true ;;  # Xvfb outlived a session once (2026-11-16)
+  down) "$0" client-stop; "$0" server-stop ;;  # everything this rig started
   login) # from a fresh client to standing on the map: rig.sh login ID PASS
     # The login box can take keys late ("Passwords must be at least 4"): check the
     # server saw the login, else dismiss the message (OK at 589,457) and type again.

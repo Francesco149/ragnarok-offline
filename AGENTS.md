@@ -31,7 +31,8 @@ Single-player server for the 2003-12-18 euRO client (see README.md).
   headless client (docs/DEVELOPMENT.md) and look at a screenshot.
 - **End every session with a fresh playable snapshot**: from the committed
   tree, `tools/wb exec tools/play/update.sh`, then on the host
-  `~/data/ragnarok-cd/stable/play.sh --smoke` (docs/DEVELOPMENT.md). The owner
+  `~/data/ragnarok-cd/stable/play.sh --smoke`, then `tools/strays.sh --clean`
+  (docs/DEVELOPMENT.md; run `tools/strays.sh` at the start too). The owner
   plays it from the app launcher while work goes on: never touch
   `stable/saves`, `stable/wine` or a running `ro-play` container.
 - Commits: small, logical, with `Co-Authored-By:` naming your model.
