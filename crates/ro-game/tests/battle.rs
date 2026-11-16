@@ -120,6 +120,12 @@ impl T {
         g.handle(NetEvent::Packet { sid: 3, data: w.finish() });
         g.handle(NetEvent::Packet { sid: 3, data: Writer::new(0x007d).finish() });
         cap.0.lock().unwrap().clear();
+        // Monsters keep their kind here: many tests use Pupas as still targets, and a Pupa may
+        // turn into a Creamy (NPC_METAMORPHOSIS, one chance in a thousand each time it idles).
+        // `metamorphosis_hallucination_keeping` reads the real rows.
+        for rows in g.db.mob_skills.values_mut() {
+            rows.retain(|r| r.skill != 193);
+        }
         let mut t = T { g, cap, me: aid, cid };
         t.lua("unequip_all()"); // a new character wears the Knife and the Cotton Shirt; these tests start bare
         t.cap.0.lock().unwrap().clear();
@@ -2006,7 +2012,9 @@ fn every_monster_skill_row_runs() {
     let mut t = T::new();
     let mut seen = std::collections::HashSet::new();
     let mut rows: Vec<(u32, u16, u16, String, i32)> = Vec::new();
-    let mut all: Vec<_> = t.g.db.mob_skills.values().flatten().cloned().collect();
+    // the real rows (the fixture drops Metamorphosis)
+    let db = ro_data::db::Database::load(&PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../../data/db")).expect("db");
+    let mut all: Vec<_> = db.mob_skills.values().flatten().cloned().collect();
     all.sort_by_key(|r| (r.mob, r.skill, r.lv));
     for r in all {
         if r.target == "friend" {
@@ -2104,7 +2112,9 @@ fn metamorphosis_hallucination_keeping() {
     let mut t = T::new();
     let me = t.me;
     // Metamorphosis: the line carries 1008 now; half its HP stays half
-    let row = t.g.db.mob_skills[&1007].iter().find(|r| r.skill == t.skill_id("NPC_METAMORPHOSIS")).cloned().unwrap();
+    let root = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../..");
+    let db = ro_data::db::Database::load(&root.join("data/db")).expect("db");
+    let row = db.mob_skills[&1007].iter().find(|r| r.skill == t.skill_id("NPC_METAMORPHOSIS")).cloned().unwrap();
     assert_eq!(row.val, 1008, "the Fabre's line names the Pupa (817)");
     let m = t.spawn(30, 25, 1007);
     let max = t.mob_hp(m).unwrap();
