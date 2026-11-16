@@ -46,7 +46,7 @@ const SC_QUAGMIRE: u16 = 8;
 const SC_SILENCE: u16 = 70;
 /// jAthena //0850's number (scripts/rules/00_const.lua)
 const SC_KEEPING: u16 = 145;
-use crate::battle::SC_AUTOCOUNTER;
+use crate::battle::{SC_AUTOCOUNTER, SC_DANCING, SC_DONTFORGETME};
 
 impl Game {
     /// Instantiate the monster spawns of a map (first time a player enters).
@@ -169,9 +169,10 @@ impl Game {
             return;
         }
         // pc_attack_timer: not while stunned, frozen, asleep, stone, hidden or cloaked,
-        // nor in Auto Counter's stance (817 pc.c:3215)
+        // nor in Auto Counter's stance (817 pc.c:3215), nor playing a song (jAthena //0998
+        // clif.c:7245, "from the real-server differences thread")
         let (_, _, option) = self.opts_of(unit);
-        if self.cannot_act(unit) || option & 6 != 0 || self.has_sc(unit, SC_AUTOCOUNTER) {
+        if self.cannot_act(unit) || option & 6 != 0 || self.has_sc(unit, SC_AUTOCOUNTER) || self.has_sc(unit, SC_DANCING) {
             return;
         }
         let me = self.world.units.get_mut(&unit).unwrap();
@@ -248,7 +249,7 @@ impl Game {
         let Some(intent) = self.world.units.get(&id).and_then(|u| u.player()).and_then(|p| p.attack) else { return };
         let target_ok = self.world.units.get(&intent.target).is_some_and(|t| t.mob().is_some() && t.state != 1 && t.map == self.world.units[&id].map);
         let (_, _, option) = self.opts_of(id);
-        if !target_ok || self.cannot_act(id) || option & 6 != 0 || self.has_sc(id, SC_AUTOCOUNTER) || self.world.units[&id].state == 1 {
+        if !target_ok || self.cannot_act(id) || option & 6 != 0 || self.has_sc(id, SC_AUTOCOUNTER) || self.has_sc(id, SC_DANCING) || self.world.units[&id].state == 1 {
             self.world.units.get_mut(&id).unwrap().player_mut().unwrap().attack = None;
             return;
         }
@@ -598,6 +599,12 @@ impl Game {
         }
         if self.has_sc(id, SC_QUAGMIRE) {
             a = a * 3 / 2;
+        }
+        // Don't Forget Me: 2% a level, with its Dancer's Lessons and AGI parts (scripts/rules/
+        // status_change.lua song_effect, the second number)
+        if let Some(t) = self.sc_get(id, SC_DONTFORGETME) {
+            let slower = (2 * t.val1 + t.val3 + (t.val4 & 0xffff)).max(0) as u32;
+            a = a * (100 + slower) / 100;
         }
         a.clamp(20, 2000) as u16
     }

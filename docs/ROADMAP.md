@@ -106,9 +106,14 @@ Next:
   is sent undrawn (`UNDRAWN` in skill_units.lua). Cast Cancel drafted
   on 2026-11-16 too (test `sage_cast_cancel`), and the Alchemist's
   summons, Bio Cannibalize and Sphere Mine (test `alchemist_summons`; a
-  Flora fighting and a Marine Sphere set off seen in the client). Left:
+  Flora fighting and a Marine Sphere set off seen in the client). The
+  Bard's and Dancer's solo skills drafted the same day from jAthena of
+  2004-05/06 and the guide (test `bard_dancer_songs`): the ten songs
+  walking with their player, Adaptation, Encore, Frost Joke, Scream, the
+  arrow shots; played in the client (Whistle's notes following the Bard,
+  Apple of Idun's heal, Dissonance's strikes, Frost Joke's freeze). Left:
   Free Cast's attack while casting (it walks, as mod0631 `pc.c:1094`),
-  Abracadabra, the Monk's, Bard's and Dancer's skills.
+  Abracadabra, the ensembles, the Monk's skills.
 * **Check the drafted skills against the iRO guide's pages** (THREADS.md
   #22) and the ailments against period guides (#21). The client's skill
   text against the emulators is settled (R6).

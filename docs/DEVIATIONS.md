@@ -30,6 +30,7 @@ questions that could change an entry here are in
 | Chat rooms | Player chat rooms; NPC "waiting rooms" (arena, PvP queues) | NPC rooms are drawn: the bubble with its title over the NPC (817's PvP ushers). Nobody is ever seated, so a room with limit 0 answers "The Room is already full." like Athena, and so does any other (none in our scripts); its event never fires. Player rooms are not offered | Player rooms are pointless. A queue that leads somewhere is reworked by hand (the Wizard test's lounge) |
 | Whisper, friends | — | Whispers get "not online" | — |
 | Announcements | Server-wide broadcasts | Shown to you (`announce` and friends) | — |
+| Bard and Dancer songs (`jobs2_2`) | A song touches everyone in its square but the one playing it (jAthena //1020 skill.c:4528); ensembles need a Bard and a Dancer side by side | **Ours:** the one playing stands in their own song too, so a lone Bard's Whistle or Dancer's Humming does something; Service For You and Apple of Idun, party songs there, reach everyone who is no enemy (with no party, that is the player). rAthena's later Soul Link gives a Bard or Dancer the same. Ensembles are not built | Nobody else to sing for. `battle_config.song_on_self = false` (`scripts/rules/00_const.lua`) gives the period rule |
 | Arena (time attack) | Not open: kRO added the Izlude arena on 2004-10-12 | 817's arena (entered from mid-Prontera, its own placement) is imported but off | `arena = true` to visit it. THREADS.md R5 |
 
 ## Meta and convenience
@@ -1224,6 +1225,48 @@ always fires.
     cells off), and no more than three Floras at once (euRO's text; neither
     the guide nor jAthena sets a limit). Bio Cannibalize costs 15 SP (the
     guide, mod0631; jAthena 20).
+* **The Bard's and Dancer's songs** (behind `jobs2_2`; drafts, test
+  `bard_dancer_songs`; seen in the client on 2026-11-16). mod0631 has the
+  status numbers by level and nothing that plays a song; eAthena 817 lays
+  a fixed 9x9 square. They follow jAthena of 2004-05-27 to 06-11 (//0993
+  to //1020, rebuilt from its "differences from the real server" thread),
+  with the iRO guide's Bard and Dancer pages (2004-03-27):
+  * a song is a 9x9 square around its player, the middle cell reaching it
+    all, that walks with them (a throw leaves it behind, //1015; a Fly Wing
+    takes it along, another map ends it); its time is the guide's and
+    jAthena's (30 s to 180 s); one SP goes every 3 to 10 s by song (both);
+  * while playing: a walk four times slower, no plain blow, no sitting, no
+    SP recovery (HP comes back), and no skill but Adaptation, Musical
+    Strike and Slinging Arrow (jAthena //0998-//1001); Adaptation only after
+    the first 5 s (//0995); a weapon that is no instrument or whip, or no
+    SP, ends it. Encore plays the last song again for half its SP, plus
+    its own 1 (the guide, euRO's May text; mod0631's row: 0 SP);
+  * what a song gives: the guide's level column (mod0631's level numbers
+    are the same) with jAthena //0820's Lessons and stat parts, which the
+    guide names without numbers (`song_effect` in status_change.lua).
+    Assassin Cross of Sunset is jAthena's whole formula, the guide's table
+    at Lessons 10; it does nothing with Two-Hand Quicken, Adrenaline Rush,
+    Spear Quicken or a bow (jAthena; euRO's May text). Fortune's Kiss drops
+    jAthena's extra 10%. Poem of Bragi's delay at level 10 is the guide's
+    50% (jAthena 30%). Don't Forget Me ends Increase AGI and the quickening
+    skills and slows monsters' walk and blows too. Service For You costs the
+    guide's 40 to 85 SP (mod0631 copied Assassin Cross's 38 to 65);
+  * Dissonance strikes at once and every 3 s, 40 to 80 (the guide) plus 3
+    a level of Music Lessons (jAthena, whose level part is 20 a level);
+    Ugly Dance takes 10 to 50 SP a time (the guide; jAthena gives it no
+    effect), from players only, monsters having none. Apple of Idun heals
+    35 to 80 HP every 6 s (the guide; jAthena's healing code never runs).
+    Frost Joke and Scream strike everyone hostile on the screen 3 s later
+    (jAthena): 20% to 40% frozen (the guide and jAthena agree), 30% to 50%
+    stunned (jAthena; the guide has no number). Musical Strike and Slinging
+    Arrow take the worn arrow's element and ATK and spend no arrow, as the
+    bow skills here;
+  * this client draws ten of the solo songs' cells; Assassin Cross of
+    Sunset's and Ugly Dance's ask for `ring_red.tga`, which its GRF lacks,
+    and are sent undrawn as Volcano's (`UNDRAWN`). Not built: the
+    ensembles (they need a partner; jAthena //1003's switch lets one play
+    them alone), and the guide's rule that two songs overlapping make a
+    level-1 Dissonance or Ugly Dance (a lone player plays one song).
 * **Talkie Box** speaks: mod0631 lets it lie silent and 817's attempt is
   marked "not working", so it follows jAthena //0988 (2004-05-25, five
   months after our date): the first one to step on it makes it say the

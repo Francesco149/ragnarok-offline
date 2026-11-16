@@ -810,6 +810,15 @@ end
 -- battle.c:1030: what each weapon skill does to the base damage.
 -- Each gets w = {damage, hitrate, div, blewcount, lv, wflag, src, target, t_size, def1, def2, s_ele, s_ele_}.
 local function pct(w, p) w.damage = floor(w.damage * p / 100); return w end
+local function arrow_shot(w, rate)
+  local st = w.src.kind == "player" and w.src.st or nil
+  if st and st.ammo then
+    if (st.ammo_atk or 0) > 0 then w.damage = w.damage + random(0, st.ammo_atk) end
+    if (st.ammo_ele or 0) > 0 then w.s_ele, w.s_ele_ = st.ammo_ele, st.ammo_ele end
+  end
+  w.long = true
+  return pct(w, rate)
+end
 battle.weapon_skill = {
   [SK.SM_BASH] = function(w) w.hitrate = w.hitrate + (w.lv < 6 and 10 or 20); return pct(w, 100 + 30 * w.lv) end,
   -- mod0631 bug: "5*lv + (wflag)?65:115" always gave 65%; meant: 115%+5%/level at the centre, 65% off it
@@ -884,9 +893,12 @@ battle.weapon_skill = {
   end,
   [SK.MO_CHAINCOMBO] = function(w) w.div = 4; return pct(w, 150 + 50 * w.lv) end,
   [SK.MO_COMBOFINISH] = function(w) w.blewcount = 3; return pct(w, 240 + 60 * w.lv) end,
-  [SK.BA_MUSICALSTRIKE] = function(w) return pct(w, 100 + 50 * w.lv) end,
-  [SK.BA_DISSONANCE] = function(w) w.damage = w.lv * 20 + 30; return w end,
-  [SK.DC_THROWARROW] = function(w) return pct(w, 100 + 50 * w.lv) end,
+  -- Musical Strike and Slinging Arrow: an arrow shot from an instrument or a whip, 150% to 250%
+  -- (the iRO guide's Bard and Dancer pages, mod0631's numbers), from afar, of the arrow's
+  -- element and with its ATK, 0 to all of it, before the multiplier (jAthena //1020
+  -- battle.c:3346). Ours as mod0631's bow skills: no arrow is spent (THREADS.md #22)
+  [SK.BA_MUSICALSTRIKE] = function(w) return arrow_shot(w, 100 + 50 * w.lv) end,
+  [SK.DC_THROWARROW] = function(w) return arrow_shot(w, 100 + 50 * w.lv) end,
 }
 -- the monsters' element attacks: 100% + 25% per level ("for now", battle.c:1092)
 for _, name in ipairs({ "NPC_WATERATTACK", "NPC_GROUNDATTACK", "NPC_FIREATTACK", "NPC_WINDATTACK", "NPC_POISONATTACK",
@@ -1010,12 +1022,19 @@ function battle.calc_misc_attack(bl, target, skill_num, skill_lv, flag)
   elseif skill_num == SK.TF_THROWSTONE then damage, damagefix = 30, false
   elseif skill_num == SK.NPC_SELFDESTRUCTION then damage, damagefix = battle.hp(bl) - (bl.id == target.id and 1 or 0), false
   elseif skill_num == SK.NPC_SMOKING then damage, damagefix = 3, false
+  elseif skill_num == SK.BA_DISSONANCE then
+    -- 40 to 80 a strike: the iRO guide's Bard page (2004-03-27); with 3 a level of Music Lessons
+    -- (jAthena //1020 battle.c:4150, whose level part is 20 a level). mod0631's weapon formula,
+    -- 20 a level + 30, is jAthena's at Lessons 10
+    damage = 30 + 10 * skill_lv + 3 * battle.pc_checkskill(bl, SK.BA_MUSICALLESSON)
   end
   if damagefix then
     if damage < 1 then damage = 1 end
     damage = battle.attr_fix(damage, skill_get_pl(skill_num), battle.element(target))
   end
   div = skill_get_num(skill_num, skill_lv)
+  -- (mod0631's skill_db counts Dissonance's eleven strikes as one blow's hits: each is one here)
+  if skill_num == SK.BA_DISSONANCE then div = 1 end
   if div > 1 then damage = damage * div end
   damage = battle.calc_damage(target, damage, aflag, bl, skill_get_pl(skill_num))
   if (damage > 0 and damage < div) or (battle.def(target) >= 10000 and battle.mdef(target) >= 10000 and damage > 0) then
@@ -1059,6 +1078,9 @@ function rules.weapon_attack(a)
     adelay = src.db.attack_delay
     if sc(src, SC.ADRENALINE) then adelay = floor(adelay * 70 / 100) end
     if sc(src, SC.TWOHANDQUICKEN) then adelay = floor(adelay * 70 / 100) end
+    -- Don't Forget Me slows a monster's blows too (jAthena //1020 battle.c:1010)
+    local t = sc(src, SC.DONTFORGETME)
+    if t then adelay = floor(adelay * (100 + song_effect(SC.DONTFORGETME, t)) / 100) end
   end
   -- Auto Counter (not in mod0631; eAthena 817 battle.c:1698, 3403): a blow
   -- from the front does nothing and is answered, ignoring DEF, with twice

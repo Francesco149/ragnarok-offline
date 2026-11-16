@@ -34,6 +34,8 @@ SC = {
   -- ours: mod0631 has no number for them (jAthena 149, 155; 817 181, 182). Above 63 and not in
   -- battle.rs sc_icon, so no icon is sent: this client has none for them
   MAGICROD = 108, VIOLENTGALE = 109,
+  -- ours too: a Bard or Dancer playing (jAthena's 144)
+  DANCING = 110,
 }
 -- the Sage's fields and the element each strengthens
 FIELD_ELEMENT = { [SC.VOLCANO] = 3, [SC.DELUGE] = 1, [SC.VIOLENTGALE] = 4 }
@@ -71,7 +73,13 @@ local PL_FIX = { [SK.CR_GRANDCROSS] = 6, [SK.AM_DEMONSTRATION] = 3 }
 PL_FIX[-1] = nil
 function skill_get_pl(id) return PL_FIX[id] or skill_get(id).pl end
 function skill_get_nk(id) return skill_get(id).nk end
-function skill_get_sp(id, lv) return per_level(skill_get(id).sp, lv, 0) end
+-- Service For You costs 40 to 85 SP: the iRO guide's Dancer page (2004-03-27) and jAthena's
+-- skill_require_db (2004-05); mod0631's skill_db has Assassin Cross of Sunset's 38 to 65 on it.
+-- Adaptation and Encore cost 1 SP (the guide; jAthena's skill_require_db): mod0631's row says 0
+local SP_FIX = { [SK.DC_SERVICEFORYOU] = { 40, 45, 50, 55, 60, 65, 70, 75, 80, 85 },
+                 [SK.BD_ADAPTATION] = { 1 }, [SK.BD_ENCORE] = { 1 } }
+SP_FIX[-1] = nil
+function skill_get_sp(id, lv) return per_level(SP_FIX[id] or skill_get(id).sp, lv, 0) end
 function skill_get_num(id, lv) return per_level(skill_get(id).num, lv, 1) end
 function skill_get_cast(id, lv) return per_level(skill_get(id).cast, lv, 0) end
 function skill_get_delay(id, lv) return per_level(skill_get(id).delay, lv, 0) end
@@ -101,4 +109,8 @@ battle_config = {
   skill_min_damage = false,
   sanctuary_type = 0,
   heal_exp = 0,
+  -- Ours, for one player: a Bard's or Dancer's song touches the one playing it too. On the
+  -- period servers it did not (jAthena skill.c:4528 `sg->src_id == bl->id`), so a lone Bard
+  -- sang for nobody; rAthena's later Soul Link gave the singer the same (docs/DEVIATIONS.md)
+  song_on_self = true,
 }

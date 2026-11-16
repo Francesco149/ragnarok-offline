@@ -20,6 +20,40 @@
 local floor, random = math.floor, math.random
 local function rnd(n) if n <= 0 then return 0 end return random(0, n - 1) end
 
+-- The status changes a Bard's or Dancer's song gives those standing in it
+SONG_SC = {}
+for _, t in ipairs({ SC.WHISTLE, SC.ASSNCROS, SC.POEMBRAGI, SC.APPLEIDUN, SC.HUMMING, SC.DONTFORGETME, SC.FORTUNE,
+                     SC.SERVICE4U }) do SONG_SC[t] = true end
+-- how many seconds each song plays for one SP (jAthena //1003 skill.c:6962)
+DANCE_SP_EVERY = {
+  [SK.BA_DISSONANCE] = 3, [SK.BA_ASSASSINCROSS] = 3, [SK.DC_UGLYDANCE] = 3, [SK.DC_FORTUNEKISS] = 4,
+  [SK.BA_WHISTLE] = 5, [SK.DC_HUMMING] = 5, [SK.BA_POEMBRAGI] = 5, [SK.DC_SERVICEFORYOU] = 5,
+  [SK.BA_APPLEIDUN] = 6, [SK.DC_DONTFORGETME] = 10,
+}
+
+-- What a song gives, from its status change (val1 the level, val3 the singer's Lessons part,
+-- val4 the singer's stat parts, two packed as a * 65536 + b: skill_units.lua song_values).
+-- The level part is the iRO guide's tables (Bard and Dancer pages, 2004-03-27), which mod0631's
+-- level-only numbers already match; the Lessons and stat parts, which the guide names without
+-- numbers ("affected by AGI and Music Lessons"), are jAthena //0820's (2004-02-19, "the Bard's
+-- songs lacked the Music Lessons and his own stats"; //1020 pc.c:1579-1651, skill.c:5498-5527).
+-- Assassin Cross of Sunset is jAthena's whole, which is the guide's table at Lessons 10.
+-- Returns one or two percentages (Whistle's second is perfect dodge in points).
+function song_effect(type, t)
+  local lv, les = t.val1, t.val3
+  local a, b = t.val4 >> 16, t.val4 & 0xffff
+  if type == SC.WHISTLE then return lv + les + a, floor((lv + 1) / 2) + les + b -- FLEE %, perfect dodge
+  elseif type == SC.ASSNCROS then return 5 + lv + les + a                        -- attack delay -%
+  elseif type == SC.POEMBRAGI then return 3 * lv + les + a, (lv >= 10 and 50 or 3 * lv) + les + b -- cast, delay -%
+  elseif type == SC.APPLEIDUN then return 5 + 2 * lv + floor((les + 1) / 2) + a -- max HP +%
+  elseif type == SC.HUMMING then return 2 * lv + les + a                         -- HIT +%
+  elseif type == SC.DONTFORGETME then return 3 * lv + les + a, 2 * lv + les + b  -- attack delay, walk +%
+  elseif type == SC.FORTUNE then return lv + les + a                             -- critical +% (jAthena adds 10 more)
+  elseif type == SC.SERVICE4U then return 10 + lv + les + a, 10 + 3 * lv + les + a -- max SP +%, SP cost -%
+  end
+  return 0
+end
+
 local ELEMENT_ENCHANTS = { SC.ENCPOISON, SC.ASPERSIO, SC.FLAMELAUNCHER, SC.FROSTWEAPON, SC.LIGHTNINGLOADER, SC.SEISMICWEAPON }
 
 function skill_status_change_end(id, type)
@@ -160,13 +194,22 @@ function skill_status_change_start(id, type, val1, val2, opt)
     tick = 300000
     val2 = 10 + val1 * 3
   elseif type == SC.SPEARSQUICKEN then tick = 300000; val2 = 80 - val1
-  elseif type == SC.ASSNCROS then tick = 120000; val2 = 90 - val1
-  elseif type == SC.WHISTLE then tick = 60000
-  elseif type == SC.APPLEIDUN then tick = 180000; val2 = val1 * 2 + 5
-  elseif type == SC.SERVICE4U then tick = 180000; val2 = val1 + 10
-  elseif type == SC.HUMMING then tick = 60000; val2 = val1 * 2
-  elseif type == SC.DONTFORGETME then tick = 180000; val2 = 100 + val1 * 3; val3 = 100 + val1 * 2
-  elseif type == SC.FORTUNE then tick = 120000
+  elseif SONG_SC[type] then
+    -- standing in a Bard's or Dancer's song, as long as one stands in it (val2 = the cell; the
+    -- song ends it when one walks out, jAthena //1020 skill.c:4698). val1 the song's level, val3
+    -- the singer's Lessons part, val4 the singer's stat parts (skill_units.lua song_values);
+    -- what each does is in status.lua and battle.lua
+    tick = opt.tick or 180000
+    if type == SC.DONTFORGETME then
+      -- it ends what makes one quicker (jAthena //1020 skill.c:7386; euRO's text of May 2004:
+      -- "If they were in condition of fast movement and attack speed, it'll be released")
+      for _, t in ipairs({ SC.INCREASEAGI, SC.TWOHANDQUICKEN, SC.SPEARSQUICKEN, SC.ADRENALINE, SC.ASSNCROS }) do stop(t) end
+    end
+  elseif type == SC.DANCING then
+    -- a Bard or Dancer playing: val1 the song, val2 its group, val3 the seconds left, counted
+    -- one at a time for the SP it uses (jAthena //1003 skill.c:6962)
+    val3 = floor((opt.tick or 60000) / 1000)
+    tick = 1000
   elseif type == SC.DRUMBATTLE then tick = 60000; val2 = (val1 + 1) * 25; val3 = (val1 + 1) * 2
   elseif type == SC.ETERNALCHAOS then tick = 60000
   elseif type == SC.NIBELUNGEN then tick = 60000; val2 = (val1 + 2) * 50
@@ -356,6 +399,18 @@ function skill_status_change_timer(id, type)
       _rt("sc_touch", id, type, nil, nil, t.val3 - 1, 1000, n)
       return
     end
+  elseif type == SC.DANCING then
+    -- one SP every 3 to 10 seconds by song (jAthena //1003, 2004-05-31; the iRO guide's Bard and
+    -- Dancer pages, 2004-03-27, give the same intervals); out of SP, the song stops
+    -- (a song that is gone, as after a logout, leaves nothing to play)
+    if sd and sd.char.sp > 0 and t.val3 - 1 > 0 and skill_dance_elapsed(id) then
+      local left = t.val3 - 1
+      local every = DANCE_SP_EVERY[t.val1] or 5
+      if left % every == 0 then _rt("bl_set", id, "sp", sd.char.sp - 1) end
+      return again(1000, nil, nil, left)
+    end
+    skill_stop_dancing(id)
+    return
   elseif type == SC.SPLASHER then
     -- not hit while it ran: it bursts (skill_effects.lua)
     skill_status_change_end(id, type)

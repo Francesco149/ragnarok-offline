@@ -943,6 +943,10 @@ impl Game {
     }
 
     fn set_sit(&mut self, unit: u32, sit: bool) {
+        // no sitting down while playing a song (jAthena //0998, 2004-05-29)
+        if sit && self.has_sc(unit, crate::battle::SC_DANCING) {
+            return;
+        }
         let Some(u) = self.world.units.get_mut(&unit) else { return };
         if u.state == 1 || u.walk.is_some() {
             return;

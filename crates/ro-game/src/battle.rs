@@ -46,6 +46,10 @@ pub const SC_ENDURE: u16 = 1;
 pub const SC_AUTOCOUNTER: u16 = 77;
 /// jAthena //0850 (scripts/rules/00_const.lua)
 pub const SC_HALLUCINATION: u16 = 34;
+/// A Bard or Dancer playing (ours: scripts/rules/00_const.lua)
+pub const SC_DANCING: u16 = 110;
+/// Standing in Don't Forget Me (mod0631's number)
+pub const SC_DONTFORGETME: u16 = 106;
 /// The Sage's Cast Cancel, the one skill asked for during a cast.
 const SA_CASTCANCEL: u16 = 275;
 
@@ -236,6 +240,10 @@ impl Game {
 
     pub(crate) fn has_sc(&self, unit: u32, kind: u16) -> bool {
         self.sc_map(unit).is_some_and(|m| m.contains_key(&kind))
+    }
+
+    pub(crate) fn sc_get(&self, unit: u32, kind: u16) -> Option<StatusChange> {
+        self.sc_map(unit).and_then(|m| m.get(&kind)).cloned()
     }
 
     /// (opt1, opt2, option) as the client draws them.
@@ -754,6 +762,31 @@ impl Game {
         id
     }
 
+    /// A ground skill cell moves (a song walking with its Bard or Dancer: jAthena //1020
+    /// skill_unit_move_unit_group, which sends the cell again where it now is). Those who saw
+    /// it are told it went and shown it anew; the watchers then catch up with the new place.
+    fn su_move(&mut self, id: u32, x: u16, y: u16) {
+        let Some(u) = self.world.units.get_mut(&id) else { return };
+        if u.skill().is_none() {
+            return;
+        }
+        u.x = x;
+        u.y = y;
+        let map = u.map.clone();
+        for pid in self.world.players_on(&map) {
+            let (sees, sid) = {
+                let p = self.world.units[&pid].player().unwrap();
+                (p.visible.contains(&id), p.sid)
+            };
+            if sees {
+                self.send(sid, packets::skill_unit_gone(id));
+                let pkt = self.appear_packet(&self.world.units[&id], false);
+                self.send(sid, pkt);
+            }
+        }
+        self.update_watchers(id, false);
+    }
+
     /// Make a cell (un)walkable for an Ice Wall and tell the clients (0x0192).
     fn set_cell(&mut self, map: &str, x: u16, y: u16, walkable: bool) {
         let Some(m) = self.world.maps.get_mut(map) else { return };
@@ -1149,6 +1182,10 @@ impl Game {
                 Value::Null
             }
             "su_new" => json!(self.su_new(&text(a, 0), int(a, 1) as u16, int(a, 2) as u16, int(a, 3) as u8, id(4), id(5))),
+            "su_move" => {
+                self.su_move(id(0), int(a, 1) as u16, int(a, 2) as u16);
+                Value::Null
+            }
             "su_reveal" => {
                 if self.world.units.get(&id(0)).and_then(|u| u.skill()).is_some_and(|s| s.is_trap()) {
                     self.area_send(id(0), packets::skill_unit_reveal(id(0)), false);

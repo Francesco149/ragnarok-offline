@@ -2995,3 +2995,149 @@ fn frost_diver_freezes_three_seconds_a_level() {
     let want = 30000 * (100 - mdef) / 100;
     assert!((left - want).abs() <= 200, "{left} ms, not {want}");
 }
+
+/// The Bard's and Dancer's songs (jAthena //1020 with the iRO guide's tables; behind jobs2_2):
+/// played with an instrument or a whip, a 9x9 square that walks with its player, on them too
+/// (battle_config.song_on_self, ours), a slow walk and no plain blow while playing, only
+/// Adaptation and the arrow shots to use, SP spent as it plays, Encore at half, Dissonance
+/// striking every 3 s, Don't Forget Me on a monster.
+#[test]
+fn bard_dancer_songs() {
+    let mut t = T::new();
+    t.lua("job_change(19); player.base_level = 80; player.agi = 50; player.luk = 30; player.dex = 60; heal(30000, 30000)");
+    for (s, lv) in [("BA_MUSICALLESSON", 10), ("BA_WHISTLE", 10), ("BA_DISSONANCE", 5), ("BD_ADAPTATION", 1), ("BD_ENCORE", 1),
+                    ("BA_FROSTJOKE", 5), ("BA_MUSICALSTRIKE", 5)] {
+        t.learn(s, lv);
+    }
+    let me = t.me;
+    let num = |t: &mut T, code: &str| -> i64 { t.lua(code).trim().parse::<f64>().unwrap() as i64 };
+    let song_cells = |t: &T, uid: u8| -> Vec<(u16, u16)> {
+        let mut v: Vec<(u16, u16)> = t.g.world.units.values()
+            .filter(|u| matches!(&u.kind, ro_game::world::UnitKind::Skill(c) if c.unit_id == uid))
+            .map(|u| (u.x, u.y)).collect();
+        v.sort();
+        v
+    };
+
+    // no instrument, no song
+    t.cast("BA_WHISTLE", me);
+    t.run(200);
+    assert!(!t.has_sc(me, "DANCING"));
+    t.wear(1901); // Violin
+    let (flee0, speed0) = (t.st("flee"), t.st("speed"));
+
+    // Whistle 10: 81 cells around the Bard, who stands in the song (here) and plays
+    let sp0 = t.sp() as i64;
+    t.cast("BA_WHISTLE", me);
+    t.run(200);
+    assert!(t.has_sc(me, "DANCING"));
+    assert_eq!(sp0 - t.sp() as i64, 60, "Whistle 10's SP");
+    let cells = song_cells(&t, 0xa7);
+    assert_eq!(cells.len(), 81);
+    assert_eq!((cells[0], cells[80]), ((21, 21), (29, 29)));
+    assert!(t.has_sc(me, "WHISTLE"));
+    // FLEE + (10 + Lessons 5 + AGI 50/10)% , walking four times slower
+    assert_eq!(t.st("flee"), flee0 + flee0 * 20 / 100);
+    assert_eq!(t.st("speed"), speed0 * 4);
+
+    // the song walks with the Bard
+    let mut w = Writer::new(0x0085);
+    w.pos3(25, 22, 0);
+    t.send(w);
+    t.run(3 * 4 * speed0 as u64 + 600);
+    assert_eq!(t.pos(me), (25, 22));
+    let cells = song_cells(&t, 0xa7);
+    assert_eq!((cells.len(), cells[0], cells[80]), (81, (21, 18), (29, 26)));
+    assert!(t.has_sc(me, "WHISTLE"));
+
+    // no plain blow, no other skill; Adaptation not in the first 5 s
+    let pupa = t.spawn(27, 22, 1008);
+    let full = t.mob_hp(pupa);
+    let mut w = Writer::new(0x0089);
+    w.u32(pupa).u8(7);
+    t.send(w);
+    t.run(1500);
+    assert_eq!(t.mob_hp(pupa), full, "no plain blow while playing");
+    t.packets(0);
+    t.cast("BA_FROSTJOKE", me);
+    t.run(200);
+    assert!(!t.packets(0x0110).is_empty(), "Frost Joke refused while playing");
+    // ... but Musical Strike, yes
+    t.cast("BA_MUSICALSTRIKE", pupa);
+    t.run(2500);
+    assert!(t.mob_hp(pupa) < full, "Musical Strike while playing");
+
+    // one SP every 5 s while it plays (none comes back)
+    t.lua("heal(0, 30000)");
+    let sp1 = t.sp() as i64;
+    t.run(10_000);
+    assert!((1..=3).contains(&(sp1 - t.sp() as i64)), "SP spent: {}", sp1 - t.sp() as i64);
+
+    // Adaptation stops it: the cells go, and the Whistle with them
+    t.cast("BD_ADAPTATION", me);
+    t.run(200);
+    assert!(!t.has_sc(me, "DANCING"));
+    assert!(song_cells(&t, 0xa7).is_empty());
+    assert!(!t.has_sc(me, "WHISTLE"));
+    assert_eq!(t.st("speed"), speed0);
+
+    // Encore: Whistle again, for its half (30) and Encore's own 1
+    t.lua("heal(0, 30000)");
+    let sp2 = t.sp() as i64;
+    t.cast("BD_ENCORE", me);
+    t.run(200);
+    assert!(t.has_sc(me, "DANCING"));
+    assert_eq!(sp2 - t.sp() as i64, 31);
+    // a weapon that is no instrument stops the song
+    t.lua("unequip_all()");
+    t.run(200);
+    assert!(!t.has_sc(me, "DANCING"));
+    assert!(song_cells(&t, 0xa7).is_empty());
+
+    // Dissonance 5 with Lessons 10: 30 + 50 + 30 a strike, at once and every 3 s, on the Pupa
+    t.wear(1901);
+    t.kill(pupa);
+    let pupa = t.spawn(27, 22, 1008); // a fresh Pupa, 427 HP
+    t.lua("heal(30000, 30000)");
+    let h0 = t.mob_hp(pupa).unwrap();
+    t.cast("BA_DISSONANCE", me);
+    t.run(300);
+    assert_eq!(t.mob_hp(pupa), Some(h0 - 110));
+    t.run(3000);
+    assert_eq!(t.mob_hp(pupa), Some(h0 - 220));
+    assert_eq!(t.hp(), num(&mut t, "battle.get(player.id).st.max_hp") as u32, "not on its Bard");
+    t.cast("BD_ADAPTATION", me);
+    t.run(3000);
+    t.cast("BD_ADAPTATION", me);
+    t.run(200);
+    assert!(!t.has_sc(me, "DANCING"));
+
+    // the period rule: the singer is not in his own song
+    t.lua("battle_config.song_on_self = false; heal(30000, 30000)");
+    t.cast("BA_WHISTLE", me);
+    t.run(300);
+    assert!(t.has_sc(me, "DANCING") && !t.has_sc(me, "WHISTLE"));
+    t.lua("battle_config.song_on_self = true");
+    t.run(5000);
+    t.cast("BD_ADAPTATION", me);
+    t.run(200);
+
+    // a Dancer's Don't Forget Me 10 slows a monster's walk and blows; Inc AGI does nothing under it
+    t.lua("job_change(20); unequip_all(); heal(30000, 30000); player.str = 40; player.agi = 50");
+    for (s, lv) in [("DC_DANCINGLESSON", 10), ("DC_DONTFORGETME", 10)] {
+        t.learn(s, lv);
+    }
+    t.wear(1950); // Rope
+    let mob = t.spawn(26, 24, 1008);
+    let (lv, les) = (10, 5);
+    t.cast("DC_DONTFORGETME", me);
+    t.run(300);
+    assert!(t.has_sc(mob, "DONTFORGETME"));
+    let (slower, walk) = (3 * lv + les + 40 / 20, 2 * lv + les + 50 / 10);
+    assert_eq!(num(&mut t, &format!("song_effect(SC.DONTFORGETME, battle.sc(battle.get({mob}), SC.DONTFORGETME))")), slower);
+    assert_eq!(num(&mut t, &format!("select(2, song_effect(SC.DONTFORGETME, battle.sc(battle.get({mob}), SC.DONTFORGETME)))")), walk);
+    assert!(!t.has_sc(me, "DONTFORGETME"), "on enemies only");
+    let adelay = num(&mut t, &format!("rules.weapon_attack{{src={mob}, target={me}}}.adelay"));
+    let base = num(&mut t, &format!("battle.get({mob}).db.attack_delay"));
+    assert_eq!(adelay, base * (100 + slower) / 100);
+}

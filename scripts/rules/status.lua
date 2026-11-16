@@ -218,6 +218,11 @@ function rules.status(c)
       s.ammo = it.id
       s.ammo_atk = it.atk or 0
       if weapon == 11 then run_script(s, it.script, false) end
+      -- the arrow's element, for Musical Strike and Slinging Arrow ("the attack property is
+      -- affected by settle arrow", euRO's text of May 2004; jAthena //1020 battle.c:3346 arrow_ele)
+      for _, st in ipairs(parse_script(it.script or "")) do
+        if st[1] == "bonus" and st[2][1] == "bAtkEle" then s.ammo_ele = st[2][2] end
+      end
     end
   end
   s.attackrange = s.attackrange + s.range_bonus
@@ -240,7 +245,11 @@ function rules.status(c)
   -- pc.c:880 status changes on the six stats and the walk speed
   local t
   t = has(SC.INCREASEAGI)
-  if t then s.paramb.agi = s.paramb.agi + 2 + t.val1; s.speed = s.speed - floor(s.speed * 25 / 100) end
+  if t then
+    s.paramb.agi = s.paramb.agi + 2 + t.val1
+    -- (no quicker walk under Don't Forget Me: jAthena //1020 pc.c:1291)
+    if not has(SC.DONTFORGETME) then s.speed = s.speed - floor(s.speed * 25 / 100) end
+  end
   if has(SC.DECREASEAGI) then s.speed = floor(s.speed * 125 / 100) end
   t = has(SC.BLESSING)
   if t then
@@ -345,12 +354,20 @@ function rules.status(c)
   if has(SC.POISON) then s.def = floor(s.def * 75 / 100); s.def2 = floor(s.def2 * 75 / 100) end
   if has(SC.CURSE) then s.speed = s.speed + 450 end
 
-  if has(SC.TWOHANDQUICKEN) then aspd = floor(aspd * 70 / 100) end
-  if has(SC.ADRENALINE) then aspd = floor(aspd * 70 / 100) end
+  -- (under Don't Forget Me nothing makes one quicker: jAthena //1020 pc.c:1567-1582)
+  local dfm = has(SC.DONTFORGETME)
+  if has(SC.TWOHANDQUICKEN) and not dfm then aspd = floor(aspd * 70 / 100) end
+  if has(SC.ADRENALINE) and not dfm then aspd = floor(aspd * 70 / 100) end
   t = has(SC.SPEARSQUICKEN)
-  if t then aspd = floor(aspd * t.val2 / 100) end
+  if t and not dfm then aspd = floor(aspd * t.val2 / 100) end
+  -- Assassin Cross of Sunset: not with Two-Hand Quicken, Adrenaline Rush or Spear Quicken
+  -- (jAthena //1020 pc.c:1579), nor for a bow ("it'll be not worked players in condition of Two
+  -- Hand Quicken and Adrenalin or use long-distance attack", euRO's text of May 2004)
   t = has(SC.ASSNCROS)
-  if t then aspd = floor(aspd * t.val2 / 100) end
+  if t and not dfm and not has(SC.TWOHANDQUICKEN) and not has(SC.ADRENALINE) and not has(SC.SPEARSQUICKEN)
+    and weapon ~= 11 then
+    aspd = floor(aspd * (100 - song_effect(SC.ASSNCROS, t)) / 100)
+  end
   -- Defender (eAthena 817 pc.c:1403: aspd_rate += 35 - 5 x level, speed x (155 - 5 x level) / 100;
   -- mod0631 has the skill behind #if 0). The iRO guide: "causes movement and attack speed to be slower"
   t = has(SC.DEFENDER)
@@ -358,19 +375,23 @@ function rules.status(c)
     aspd = floor(aspd * (135 - t.val1 * 5) / 100)
     s.speed = floor(s.speed * (155 - t.val1 * 5) / 100)
   end
-  t = has(SC.DONTFORGETME)
-  if t then aspd = floor(aspd * t.val2 / 100); s.speed = floor(s.speed * t.val3 / 100) end
+  if dfm then
+    local slower, slower_walk = song_effect(SC.DONTFORGETME, dfm)
+    aspd = floor(aspd * (100 + slower) / 100)
+    s.speed = floor(s.speed * (100 + slower_walk) / 100)
+  end
   -- pc.c:1027 speed potions, strongest first
   t = has(SC.SPEEDPOTION2) or has(SC.SPEEDPOTION1) or has(SC.SPEEDPOTION0)
   if t then aspd = floor(aspd * t.val2 / 100) end
 
   t = has(SC.WHISTLE)
   if t then
-    s.flee = s.flee + floor(t.val2 * s.flee / 100)
-    s.flee2 = s.flee2 + floor(t.val2 * s.flee2 / 100)
+    local flee, dodge = song_effect(SC.WHISTLE, t)
+    s.flee = s.flee + floor(flee * s.flee / 100)
+    s.flee2 = s.flee2 + dodge * 10
   end
   t = has(SC.HUMMING)
-  if t then s.hit = s.hit + floor(t.val2 * s.hit / 100) end
+  if t then s.hit = s.hit + floor(song_effect(SC.HUMMING, t) * s.hit / 100) end
   if has(SC.BLIND) then
     s.hit = s.hit - floor(s.hit * 25 / 100)
     s.flee = s.flee - floor(s.flee * 25 / 100)
@@ -390,11 +411,15 @@ function rules.status(c)
   t = has(SC.DELUGE)
   if t and s.def_ele == 1 then s.max_hp = math.min(32000, s.max_hp + floor(t.val3 * s.max_hp / 100)) end
   t = has(SC.APPLEIDUN)
-  if t then s.max_hp = math.min(32000, s.max_hp + floor(t.val2 * s.max_hp / 100)) end
+  if t then s.max_hp = math.min(32000, s.max_hp + floor(song_effect(SC.APPLEIDUN, t) * s.max_hp / 100)) end
   t = has(SC.SERVICE4U)
-  if t then s.max_sp = s.max_sp + floor(t.val2 * s.max_sp / 100) end
+  if t then
+    local more_sp, less_cost = song_effect(SC.SERVICE4U, t)
+    s.max_sp = s.max_sp + floor(more_sp * s.max_sp / 100)
+    s.dsprate = s.dsprate - less_cost
+  end
   t = has(SC.FORTUNE)
-  if t then s.critical = s.critical + floor(t.val1 * s.critical / 100) end
+  if t then s.critical = s.critical + song_effect(SC.FORTUNE, t) * 10 end
   t = has(SC.EXPLOSIONSPIRITS)
   if t then s.critical = s.critical + floor(t.val2 * s.critical / 1000) end
   if has(SC.STEELBODY) then
@@ -402,6 +427,8 @@ function rules.status(c)
     aspd = floor(aspd * 125 / 100)
     s.speed = floor(s.speed * 125 / 100)
   end
+  -- playing a song, one walks four times slower (jAthena //1020 pc.c:1669)
+  if has(SC.DANCING) then s.speed = s.speed * 4 end
   -- pc.c:1094 a Sage walking while casting
   if c.casting and skill(SK.SA_FREECAST) > 0 then
     s.speed = floor(s.speed * (175 - skill(SK.SA_FREECAST) * 5) / 100)

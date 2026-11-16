@@ -94,6 +94,9 @@ function rules.regen(t)
     lv = skill(SK.MG_SRECOVERY)
     if lv > 0 then r.inc_sp = lv * 3 + floor(t.max_sp * lv / 500) end
     r.inc_interval = 10000
+    -- no SP comes back while playing a song; HP does (jAthena //1001, 2004-05-29, which first
+    -- stopped both, //0998, from the real-server differences thread)
+    if sc[tostring(SC.DANCING)] then r.sp_clock, r.inc_sp = 0, nil end
   end
   -- pc.c:3976 Spiritual Cadence: sitting, every 10 s (20 s at half weight)
   local lv = skill(SK.MO_SPIRITSRECOVERY)

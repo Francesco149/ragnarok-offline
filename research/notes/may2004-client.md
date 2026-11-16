@@ -150,3 +150,12 @@ lacks (a ResourceError box stops the game); ours therefore sends Volcano's
 cells as type 0 (`UNDRAWN` in `scripts/rules/skill_units.lua`). The May-2004
 `data.grf` adds the file (`datagrf-diff-dec2003-may2004.txt`): that version
 can drop the entry and draw it.
+
+**The songs' textures (2026-11-16).** Each song unit (0x9e-0xaf) placed alone
+in a Dec-2003 client that had reported nothing yet (a client names a missing
+file once a run): Assassin Cross of Sunset (0xa8) and Ugly Dance (0xab) ask
+for the same `ring_red.tga`, Lullaby (0x9e) for `effect\zz.bmp`, Eternal
+Chaos (0xa0), Ring of Nibelungen (0xa2) and Siegfried (0xa5) for
+`effect\twirl.bmp`. The May-2004 `data.grf` adds all three (`ADDED 16428
+...ring_red.tga`, `21816 ...zz.bmp`, `12344 ...twirl.bmp`): that version
+can draw every song, so `UNDRAWN` empties.

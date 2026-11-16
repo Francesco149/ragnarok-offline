@@ -1407,6 +1407,21 @@ Grand Cross: Tangowr's Crusader guide (2004-07-01, server not said) has
 half; SoulEclipse (2005) only restates the guide. Still open, with the
 guide's "decreases by 2/3" (by or to?).
 
+**2026-11-16: the Bard's and Dancer's solo skills drafted** (DEVIATIONS.md,
+test `bard_dancer_songs`), from jAthena //0993-//1020 (2004-05-27 to 06-11,
+its "differences from the real server" thread) and the guide's tables. In
+the client (rig): every song unit tried alone in a fresh client; ten of the
+solo ones draw (notes, apples, a glow), 0xa8 and 0xab want `ring_red.tga`
+and go undrawn, and the moving square leaves no cells behind (each cell is
+sent gone and again where it now stands). **Open:** the Lessons and stat
+parts are jAthena //0820's own (2004-02-19), the guide names them without
+numbers; whether a singer stood in their own song on iRO (we say yes, for
+one player: DEVIATIONS.md); how much slower a dancer walked (jAthena: four
+times); Scream's chance; Ugly Dance's SP and whether Dissonance had a
+Lessons part (the guide's 40-80 has none); how the official client drew a
+song (81 cells, as jAthena sends, or fewer); the ensembles alone (jAthena
+//1003's switch).
+
 ### 26. What `check` still lists
 The world audit (`ragnarok-offline check`, 2026-11-11) walks the client's
 cells from the start point through every warp and every destination a

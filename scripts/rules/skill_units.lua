@@ -13,6 +13,7 @@
 -- removes the cells with the old scripts).
 
 local floor, random = math.floor, math.random
+local checkskill = battle.pc_checkskill
 local function rnd(n) if n <= 0 then return 0 end return random(0, n - 1) end
 local get = battle.get
 local sc = battle.sc
@@ -35,11 +36,19 @@ local UNIT_ID = {
   [SK.AM_DEMONSTRATION] = 0xb1, -- jAthena //0969 skill.c:314
   [SK.CR_GRANDCROSS] = 0x86, -- eAthena 817 skill.c:254, Lord of Vermilion's
   [SK.SA_VOLCANO] = 0x9a, [SK.SA_DELUGE] = 0x9b, [SK.SA_VIOLENTGALE] = 0x9c, [SK.SA_LANDPROTECTOR] = 0x9d, -- 817 skill.c:272
+  -- the Bard's and Dancer's songs (817 skill.c:284, jAthena //1020 skill.c:347 the same)
+  [SK.BA_DISSONANCE] = 0xa6, [SK.BA_WHISTLE] = 0xa7, [SK.BA_ASSASSINCROSS] = 0xa8, [SK.BA_POEMBRAGI] = 0xa9,
+  [SK.BA_APPLEIDUN] = 0xaa, [SK.DC_UGLYDANCE] = 0xab, [SK.DC_HUMMING] = 0xac, [SK.DC_DONTFORGETME] = 0xad,
+  [SK.DC_FORTUNEKISS] = 0xae, [SK.DC_SERVICEFORYOU] = 0xaf,
 }
 -- Units this client cannot draw: sent as type 0, which it ignores (docs/PROTOCOL.md 0x01c9).
 -- Volcano's 0x9a asks for effect\ring_red.tga, missing from its GRF (Deluge's ring_blue and Violent
 -- Gale's ring_yellow are there), and stops the game with a ResourceError box (rig, 2026-11-16)
-local UNDRAWN = { [0x9a] = true }
+-- Of the songs (0x9e-0xaf, each tried alone in a client that had reported nothing yet, 2026-11-16):
+-- Assassin Cross of Sunset (0xa8) and Ugly Dance (0xab) ask for the same ring_red.tga; of the
+-- ensembles Lullaby (0x9e) asks for effect\zz.bmp, Eternal Chaos (0xa0), Ring of Nibelungen (0xa2)
+-- and Siegfried (0xa5) for effect\twirl.bmp. The other twelve are drawn (a note, an apple...)
+local UNDRAWN = { [0x9a] = true, [0xa8] = true, [0xab] = true, [0x9e] = true, [0xa0] = true, [0xa2] = true, [0xa5] = true }
 local FIELD_UNIT = { [0x9a] = SC.VOLCANO, [0x9b] = SC.DELUGE, [0x9c] = SC.VIOLENTGALE }
 local FIELD_SKILL = {}
 for _, n in ipairs({ "SA_VOLCANO", "SA_DELUGE", "SA_VIOLENTGALE", "SA_LANDPROTECTOR" }) do FIELD_SKILL[SK[n]] = true end
@@ -57,6 +66,42 @@ local function covered_by(map, x, y, uids)
   return nil
 end
 local LAND_PROTECTOR = { [0x9d] = true }
+
+-- A Bard's or Dancer's song: a 9x9 square around the one playing it, which walks with them; the
+-- middle cell reaches the square, the rest are for show (jAthena //1020 skill.c:4216). What it
+-- gives those in it: SONG_UNIT's status change (status_change.lua song_effect); Dissonance hurts
+-- and Ugly Dance drains SP every 3 s.
+local SONG_UNIT = { [0xa7] = SC.WHISTLE, [0xa8] = SC.ASSNCROS, [0xa9] = SC.POEMBRAGI, [0xaa] = SC.APPLEIDUN,
+                    [0xac] = SC.HUMMING, [0xad] = SC.DONTFORGETME, [0xae] = SC.FORTUNE, [0xaf] = SC.SERVICE4U }
+DANCE_SKILL = {}
+for _, n in ipairs({ "BA_DISSONANCE", "BA_WHISTLE", "BA_ASSASSINCROSS", "BA_POEMBRAGI", "BA_APPLEIDUN",
+                     "DC_UGLYDANCE", "DC_HUMMING", "DC_DONTFORGETME", "DC_FORTUNEKISS", "DC_SERVICEFORYOU" }) do
+  DANCE_SKILL[SK[n]] = true
+end
+DANCE_SKILL[-1] = nil
+local function is_song_unit(uid) return uid >= 0xa6 and uid <= 0xaf end
+
+-- The singer's part of a song, taken when it starts (jAthena //1020 skill.c:3930-4015): the
+-- Lessons part (val1) and the stat parts packed a * 65536 + b (val2). status_change.lua
+-- song_effect says what they add up to.
+local function song_values(src, skillid)
+  local function lesson(id) return src.kind == "player" and checkskill(src, id) or 0 end
+  local half_ml, half_dl = floor((lesson(SK.BA_MUSICALLESSON) + 1) / 2), floor((lesson(SK.DC_DANCINGLESSON) + 1) / 2)
+  local function pack(a, b) return (math.max(0, a) << 16) | math.max(0, b or 0) end
+  local str, agi, vit, int, dex, luk = battle.str(src), battle.agi(src), battle.vit(src), battle.int(src),
+                                       battle.dex(src), battle.luk(src)
+  if skillid == SK.BA_WHISTLE then return half_ml, pack(floor(agi / 10), floor(luk / 10))
+  elseif skillid == SK.BA_ASSASSINCROSS then return half_ml, pack(floor(agi / 20))
+  elseif skillid == SK.BA_POEMBRAGI then return lesson(SK.BA_MUSICALLESSON), pack(floor(dex / 10), floor(int / 5))
+  elseif skillid == SK.BA_APPLEIDUN then return lesson(SK.BA_MUSICALLESSON), pack(floor(vit / 10))
+  elseif skillid == SK.DC_HUMMING then return half_dl, pack(floor(dex / 10))
+  elseif skillid == SK.DC_DONTFORGETME then return half_dl, pack(floor(str / 20), floor(agi / 10))
+  elseif skillid == SK.DC_FORTUNEKISS then return half_dl, pack(floor(luk / 10))
+  elseif skillid == SK.DC_SERVICEFORYOU then return half_dl, pack(floor(int / 10))
+  elseif skillid == SK.BA_DISSONANCE then return lesson(SK.BA_MUSICALLESSON), 0
+  end
+  return 0, 0
+end
 UNIT_ID[-1] = nil
 local function unit_id(skill, flag)
   if skill == SK.AL_WARP then return flag == 0 and 0x81 or 0x80 end        -- opening, open
@@ -69,6 +114,12 @@ local map_calc_dir = battle.calc_dir
 
 local function del_cell(cell) end -- forward
 
+-- The song is over: its player stops playing (jAthena //1020 skill.c:8041)
+local function dance_over(g)
+  local t = g.dance and sc(get(g.src), SC.DANCING)
+  if t and t.val2 == g.id then skill_status_change_end(g.src, SC.DANCING) end
+end
+
 -- skill.c:4297 skill_delunitgroup
 function skill_delunitgroup(g)
   if not groups[g.id] then return end
@@ -77,6 +128,25 @@ function skill_delunitgroup(g)
     if c and c.alive then del_cell(c, true) end
   end
   groups[g.id] = nil
+  dance_over(g)
+end
+
+-- Stop playing (jAthena //1020 skill.c:7805 skill_stop_dancing): Adaptation, no SP left, a
+-- weapon that is no instrument or whip, death, another map
+function skill_stop_dancing(id)
+  local t = sc(get(id), SC.DANCING)
+  if not t then return end
+  skill_status_change_end(id, SC.DANCING)
+  local g = groups[t.val2]
+  if g then skill_delunitgroup(g) end
+end
+
+-- How long the song `id` plays has run (ms), or nil if it plays none
+function skill_dance_elapsed(id)
+  local t = sc(get(id), SC.DANCING)
+  local g = t and groups[t.val2]
+  if not g then return nil end
+  return _rt("now") - g.tick
 end
 
 -- skill.c:1988. Returns the group.
@@ -176,6 +246,20 @@ function skill_unitsetting(src_id, skillid, skilllv, x, y, flag)
     -- Bomb: jAthena //0969 skill.c:3589 and its cast_db, 40 s to 60 s; a blow a second
     -- ("every 1 second", the iRO guide's Alchemist page, 2004-03-27)
     count, limit, interval, range = 9, 35000 + 5000 * skilllv, 1000, 1
+  elseif DANCE_SKILL[skillid] then
+    -- jAthena //1020 skill.c:3930-4015: 81 cells for the song's time (its cast_db, which the iRO
+    -- guide's pages repeat: Dissonance and Ugly Dance 30 s, Whistle and Humming 60 s, Assassin
+    -- Cross and Fortune's Kiss 120 s, the rest 180 s); on enemies (Dissonance, Ugly Dance, Don't
+    -- Forget Me) or on everyone else. Service For You and Apple of Idun are for the party there:
+    -- here, with no party, everyone who is no enemy
+    count, limit = 81, skill_get_time(skillid, skilllv)
+    local enemy = skillid == SK.BA_DISSONANCE or skillid == SK.DC_UGLYDANCE or skillid == SK.DC_DONTFORGETME
+    target = enemy and BCT.ENEMY or BCT.NOENEMY
+    -- Dissonance and Ugly Dance strike at once and then every 3 s, eleven times in 30 s; Apple of
+    -- Idun heals every 6 s, 31 times in 180 s (the guide's pages)
+    if skillid == SK.BA_DISSONANCE or skillid == SK.DC_UGLYDANCE then interval = 3000
+    elseif skillid == SK.BA_APPLEIDUN then interval = 6000 end
+    val1, val2 = song_values(src, skillid)
   end
 
   -- skill.c:4223: a player keeps 32 groups, a monster 4; the oldest makes room
@@ -248,6 +332,9 @@ function skill_unitsetting(src_id, skillid, skilllv, x, y, flag)
       -- which puts the square a cell up and left of the spot: ours centres it)
       ux, uy = ux + (i % 3 - 1), uy + (i // 3 - 1)
       if i ~= 4 then crange = -1 end
+    elseif DANCE_SKILL[skillid] then
+      ux, uy = ux + (i % 9 - 4), uy + (i // 9 - 4)
+      crange = i == 40 and 4 or -1
     elseif skillid == SK.AS_VENOMDUST then
       local dx = { -1, 0, 0, 0, 1 }
       local dy = { 0, -1, 0, 1, 0 }
@@ -278,7 +365,13 @@ function skill_unitsetting(src_id, skillid, skilllv, x, y, flag)
       g.alive = g.alive + 1
     end
   end
-  if g.alive == 0 then groups[g.id] = nil end
+  if g.alive == 0 then groups[g.id] = nil; return g end
+  if DANCE_SKILL[skillid] then
+    -- the one playing it walks with it: where it stands from them (a throw moves the one and not
+    -- the other, jAthena //1015 of 2004-06-09: "the effect does not move when one is knocked back")
+    g.dance, g.ox, g.oy = true, x - src.x, y - src.y
+    g.mapname = src.map
+  end
   return g
 end
 
@@ -424,6 +517,28 @@ local function onplace(c, bl, now)
     local type = FIELD_UNIT[uid]
     local t = sc(bl, type)
     if not t or t.val2 ~= c.id then skill_status_change_start(bl.id, type, g.lv, c.id, { tick = g.limit }) end
+  elseif is_song_unit(uid) then
+    -- jAthena //1020 skill.c:4510: never on the one playing it; ours, for one player, on them
+    -- too (battle_config.song_on_self)
+    if bl.id == g.src and not battle_config.song_on_self then return end
+    if uid == 0xa6 then -- Dissonance
+      skill_attack(BF.MISC, g.src, cell_src, bl.id, g.skill, g.lv, 0)
+    elseif uid == 0xab then -- Ugly Dance: SP, so only on a player (monsters have none)
+      -- 10 to 50 SP a time: the iRO guide's Dancer page. jAthena gives the status and nothing else
+      if bl.kind == "player" and bl.char.sp > 0 then _rt("bl_set", bl.id, "sp", math.max(0, bl.char.sp - 10 * g.lv)) end
+    else
+      local type = SONG_UNIT[uid]
+      local t = sc(bl, type)
+      if not t or t.val2 ~= c.id then
+        skill_status_change_start(bl.id, type, g.lv, c.id, { tick = g.limit, val3 = g.val1, val4 = g.val2 })
+      end
+      if uid == 0xaa and bl.kind == "player" then
+        -- Apple of Idun heals 35 to 80 HP every 6 s (the guide's table). jAthena's healing
+        -- (pc.c:6262) sits after a return and never runs
+        local got = battle.heal(bl.id, 30 + 5 * g.lv, 0)
+        if (got or 0) > 0 then _rt("clif_heal", bl.id, 5, got) end
+      end
+    end
   elseif uid == 0xb1 then -- Bomb (jAthena //0969 skill.c:4095)
     skill_attack(BF.WEAPON, g.src, cell_src, bl.id, g.skill, g.lv, 0)
     skill_break_mob(bl.id, SC.BROKENWEAPON, g.lv) -- skill_effects.lua
@@ -500,6 +615,9 @@ local function onout(c, bl, now)
   elseif FIELD_UNIT[uid] then
     local t = sc(bl, FIELD_UNIT[uid])
     if t and t.val2 == c.id then skill_status_change_end(bl.id, FIELD_UNIT[uid]) end
+  elseif SONG_UNIT[uid] then
+    local t = sc(bl, SONG_UNIT[uid])
+    if t and t.val2 == c.id then skill_status_change_end(bl.id, SONG_UNIT[uid]) end
   elseif uid == 0x7e or uid == 0x85 or uid == 0x8e then
     local type = uid == 0x85 and SC.PNEUMA or (uid == 0x7e and SC.SAFETYWALL or SC.QUAGMIRE)
     local t = sc(bl, type)
@@ -531,6 +649,48 @@ local function onlimit(c, now)
   elseif g.unit_id == 0x8d then
     _rt("set_cell", c.map, c.x, c.y, true)
   end
+end
+
+-- The song walks with its player: move its cells where they now stand, and let those around
+-- the middle cell walk in or out of it (jAthena //1020 skill.c:8444 skill_unit_move_unit_group,
+-- pc.c:3458). Fly Wing on the same map takes it along (jAthena //1012); another map ends it.
+local function dance_follow(bl)
+  local t = sc(bl, SC.DANCING)
+  local g = t and groups[t.val2]
+  if not g then return end
+  if bl.map ~= g.mapname then skill_stop_dancing(bl.id); return end
+  local mid
+  for _, id in ipairs(g.cells) do
+    local c = cells[id]
+    if c and c.alive and c.range > 0 then mid = c end
+  end
+  if not mid then return end
+  local dx, dy = bl.x + g.ox - mid.x, bl.y + g.oy - mid.y
+  if dx == 0 and dy == 0 then return end
+  for _, id in ipairs(g.cells) do
+    local c = cells[id]
+    if c and c.alive then
+      c.x, c.y = c.x + dx, c.y + dy
+      _rt("su_move", c.id, c.x, c.y)
+    end
+  end
+  local owner = owner_of(g)
+  if not owner then return end
+  local now = _rt("now")
+  local reach = mid.range + math.max(math.abs(dx), math.abs(dy))
+  for _, id in ipairs(_rt("in_area", mid.map, mid.x - reach, mid.y - reach, mid.x + reach, mid.y + reach)) do
+    local o = get(id)
+    if o and not o.dead and battle.check_target(owner, o, g.target) then
+      if in_cell_range(mid, g, o) then onplace(mid, o, now) else onout(mid, o, now) end
+    end
+  end
+end
+
+-- A dancer thrown back leaves the song where it was (jAthena //1015, 2004-06-09)
+function skill_dance_thrown(id, dx, dy)
+  local t = sc(get(id), SC.DANCING)
+  local g = t and groups[t.val2]
+  if g then g.ox, g.oy = g.ox - dx, g.oy - dy end
 end
 
 -- ------------------------------------------------------------ Ice Wall as a target
@@ -591,7 +751,7 @@ del_cell = function(c, from_group)
   if g then
     -- those standing in it lose what it gave (skill.c:2676)
     local uid = g.unit_id
-    if uid == 0x85 or uid == 0x7e or uid == 0x8e or FIELD_UNIT[uid] then
+    if uid == 0x85 or uid == 0x7e or uid == 0x8e or FIELD_UNIT[uid] or SONG_UNIT[uid] then
       local range = c.range ~= 0 and c.range or g.range
       for _, id in ipairs(_rt("in_area", c.map, c.x - range, c.y - range, c.x + range, c.y + range)) do
         local bl = get(id)
@@ -604,7 +764,7 @@ del_cell = function(c, from_group)
   _rt("su_del", c.id)
   if g and not from_group then
     g.alive = g.alive - 1
-    if g.alive <= 0 then groups[g.id] = nil end
+    if g.alive <= 0 then groups[g.id] = nil; dance_over(g) end
   end
 end
 
@@ -645,8 +805,13 @@ function skill_unit_timer(now)
     local g = groups[c.group]
     if c.alive and g then
       local owner = owner_of(g)
+      if g.dance and owner and (owner.dead or not sc(owner, SC.DANCING)) then owner = nil end
+      if owner and g.dance then
+        dance_follow(owner) -- a Fly Wing, or another map
+        if not groups[g.id] or not c.alive then owner = nil end
+      end
       if not owner then
-        skill_delunitgroup(g)
+        if groups[g.id] then skill_delunitgroup(g) end
       else
         local range = c.range ~= 0 and c.range or g.range
         if range >= 0 then
@@ -676,6 +841,7 @@ function skill_unit_move(bl_id)
   if empty(cells) then return end
   local bl = get(bl_id)
   if not bl or bl.dead then return end
+  dance_follow(bl)
   local now = _rt("now")
   local near = {}
   for _, c in pairs(cells) do

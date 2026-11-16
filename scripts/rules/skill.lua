@@ -174,6 +174,13 @@ function skill_additional_effect(src_id, bl_id, skillid, skilllv, attack_type)
   elseif skillid == SK.RG_RAID then
     if rnd(100) < floor((10 + 3 * skilllv) * sc_def_vit / 100) then start(SC.STAN, skilllv, time2()) end
     if rnd(100) < floor((10 + 3 * skilllv) * sc_def_int / 100) then start(SC.BLIND, skilllv, time2()) end
+  elseif skillid == SK.BA_FROSTJOKE then
+    -- 20% to 40%: the iRO guide's Bard page (2004-03-27), jAthena //1020 skill.c:565 the same;
+    -- frozen for jAthena's cast_db time2, 10 to 14 s, less MDEF
+    if not undead and rnd(100) < floor((15 + 5 * skilllv) * sc_def_mdef / 100) then start(SC.FREEZE, skilllv, time2()) end
+  elseif skillid == SK.DC_SCREAM then
+    -- 30% to 50% (jAthena //1020 skill.c:570; the guide's Dancer page names no number)
+    if rnd(100) < floor((25 + 5 * skilllv) * sc_def_vit / 100) then start(SC.STAN, skilllv, time2()) end
   elseif skillid == SK.NPC_PETRIFYATTACK then
     if rnd(100) < sc_def_mdef then start(SC.STONE, skilllv, time2()) end
   elseif skillid == SK.NPC_POISON then
@@ -236,7 +243,10 @@ function skill_blown(from, target_id, count, fixed)
     local diry = { [0] = 1, 1, 0, -1, -1, -1, 0, 1 }
     dx, dy = -dirx[target.dir & 7], -diry[target.dir & 7]
   end
+  local x0, y0 = target.x, target.y
   _rt("blow", target_id, dx, dy, count)
+  local after = get(target_id)
+  if after and sc(after, SC.DANCING) then skill_dance_thrown(target_id, after.x - x0, after.y - y0) end
   skill_unit_move(target_id) -- ground skills notice (skill.c:495)
 end
 
@@ -401,6 +411,9 @@ function skill_castfix(bl, time)
     time = floor(time * (100 - t.val1 * 15) / 100)
     skill_status_change_end(bl.id, SC.SUFFRAGIUM)
   end
+  -- the Poem of Bragi (jAthena //1020 skill.c:5498)
+  t = sc(bl, SC.POEMBRAGI)
+  if t then time = floor(time * (100 - song_effect(SC.POEMBRAGI, t)) / 100) end
   return math.max(0, time)
 end
 
@@ -408,7 +421,14 @@ end
 function skill_delayfix(bl, time)
   if time <= 0 then return 0 end
   if battle_config.delay_dependon_dex then time = floor(time * (150 - battle.dex(bl)) / 150) end
-  return math.max(0, floor(time * battle_config.delay_rate / 100))
+  time = floor(time * battle_config.delay_rate / 100)
+  -- the Poem of Bragi (jAthena //1020 skill.c:5525)
+  local t = sc(bl, SC.POEMBRAGI)
+  if t then
+    local _, less = song_effect(SC.POEMBRAGI, t)
+    time = floor(time * (100 - less) / 100)
+  end
+  return math.max(0, time)
 end
 
 -- Skills usable while hidden / cloaked (skill.c:3225)
@@ -478,6 +498,12 @@ function rules.skill_use(a)
     _rt("clif_skill_fail", sd.id, skill, 0, 0)
     return nil
   end
+  -- playing a song, only Adaptation, Musical Strike and Slinging Arrow (jAthena //1020
+  -- skill.c:5592; the guide: "This skill is also usable while playing music")
+  if sc(sd, SC.DANCING) and skill ~= SK.BD_ADAPTATION and skill ~= SK.BA_MUSICALSTRIKE and skill ~= SK.DC_THROWARROW then
+    _rt("clif_skill_fail", sd.id, skill, 0, 0)
+    return nil
+  end
 
   -- range
   local tx, ty = a.x, a.y
@@ -538,6 +564,18 @@ end
 -- ------------------------------------------------------------ what a skill costs
 
 local GEMS = { [715] = true, [716] = true, [717] = true }
+
+-- the weapon each Bard and Dancer skill is played with: 13 an instrument, 14 a whip
+BARD_WEAPON = {}
+for _, n in ipairs({ "BA_MUSICALSTRIKE", "BA_DISSONANCE", "BA_WHISTLE", "BA_ASSASSINCROSS", "BA_POEMBRAGI", "BA_APPLEIDUN" }) do
+  BARD_WEAPON[SK[n]] = 13
+end
+for _, n in ipairs({ "DC_THROWARROW", "DC_UGLYDANCE", "DC_HUMMING", "DC_DONTFORGETME", "DC_FORTUNEKISS", "DC_SERVICEFORYOU" }) do
+  BARD_WEAPON[SK[n]] = 14
+end
+BARD_WEAPON[-1] = nil
+-- the last song each player played, for Encore (jAthena's sd->skillid_dance; not kept over a logout)
+last_dance = last_dance or {}
 
 -- skill.c:2825 skill_check_condition. Takes the SP, items and zeny when the
 -- skill may be used; otherwise tells the client why not. Returns true/false.
@@ -650,6 +688,21 @@ function skill_check_condition(sd, skill, lv, a)
   elseif skill == SK.MC_CARTREVOLUTION then
     -- ours: no cart, no Cart Revolution ("Hit a target hard using cart", the client's skill text); mod0631 does not check
     if not sd.st.cart then return fail() end
+  elseif BARD_WEAPON[skill] then
+    -- an instrument for the Bard's, a whip for the Dancer's (jAthena //1020 skill_require_db,
+    -- euRO's text of May 2004: "only when you putting on musical instrument")
+    if w ~= BARD_WEAPON[skill] then return fail(6) end
+    -- Encore plays the last song again for half its SP (the guide, euRO's text); here, as its
+    -- own cast, it pays the song's half and its own 1 SP
+    if a.encore then sp = floor(sp / 2) end
+  elseif skill == SK.BD_ENCORE then
+    local last = last_dance[sd.id]
+    if not last or (w ~= 13 and w ~= 14) then return fail() end
+  elseif skill == SK.BD_ADAPTATION then
+    -- only while playing, and not in a song's first 5 s (jAthena //0995 and //0996, upkeep_time2
+    -- of its cast_db)
+    local played = skill_dance_elapsed(id)
+    if not played or played < 5000 then return fail() end
   end
 
   if sp > 0 and sd.char.sp < sp then return fail(1) end
@@ -778,6 +831,8 @@ function rules.equip_changed(a)
   local sd = get(a.bl)
   if not sd then return end
   local w = sd.st.weapon
+  -- a song needs the instrument or the whip it is played with (jAthena //1020 pc.c:5817)
+  if sc(sd, SC.DANCING) and w ~= 13 and w ~= 14 then skill_stop_dancing(sd.id) end
   if sc(sd, SC.TWOHANDQUICKEN) and w ~= 3 then skill_status_change_end(sd.id, SC.TWOHANDQUICKEN) end
   if sc(sd, SC.SPEARSQUICKEN) and w ~= 4 and w ~= 5 then skill_status_change_end(sd.id, SC.SPEARSQUICKEN) end
   if sc(sd, SC.ADRENALINE) and w ~= 6 and w ~= 7 and w ~= 8 then skill_status_change_end(sd.id, SC.ADRENALINE) end

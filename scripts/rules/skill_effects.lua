@@ -36,6 +36,7 @@ for _, n in ipairs({
   "TF_SPRINKLESAND", "AC_CHARGEARROW", "KN_SPEARSTAB", "RG_BACKSTAP", "RG_INTIMIDATE",
   "CR_HOLYCROSS", "CR_SHIELDCHARGE", "CR_SHIELDBOOMERANG", -- eAthena 817 skill.c:1201
   "AM_ACIDTERROR", -- jAthena //0969 skill.c:1406; its armour damage: skill_break_mob below
+  "BA_MUSICALSTRIKE", "DC_THROWARROW", -- jAthena //1020 skill.c:1539
   "NPC_PIERCINGATT", "NPC_MENTALBREAKER", "NPC_RANGEATTACK", "NPC_CRITICALSLASH", "NPC_COMBOATTACK",
   "NPC_GUIDEDATTACK", "NPC_POISON", "NPC_BLINDATTACK", "NPC_SILENCEATTACK", "NPC_STUNATTACK",
   "NPC_PETRIFYATTACK", "NPC_CURSEATTACK", "NPC_SLEEPATTACK", "NPC_RANDOMATTACK",
@@ -736,6 +737,51 @@ function skill_castend_nodamage_id(src_id, bl_id, skillid, skilllv, opt)
 
   elseif skillid == SK.NPC_EMOTION then
     if md then _rt("clif_emotion", src_id, opt.val or 0) end
+
+  elseif DANCE_SKILL[skillid] then
+    -- jAthena //1020 skill.c:2620: the song is laid around its player, who plays it until it
+    -- ends (skill_units.lua; one song at a time: a playing Bard can start none, skill.lua)
+    nodamage(src_id, bl_id, skillid, skilllv)
+    local g = skill_unitsetting(src_id, skillid, skilllv, src.x, src.y, 0)
+    if g and g.alive > 0 then
+      skill_status_change_start(src_id, SC.DANCING, skillid, g.id, { tick = skill_get_time(skillid, skilllv) + 1000 })
+      if sd then last_dance[src_id] = { skill = skillid, lv = skilllv } end
+    end
+
+  elseif skillid == SK.BD_ADAPTATION then
+    -- stop playing (jAthena //1020 skill.c:2645; the 5 s it waits for: skill.lua)
+    if sc(src, SC.DANCING) then
+      nodamage(src_id, bl_id, skillid, skilllv)
+      skill_stop_dancing(src_id)
+    end
+
+  elseif skillid == SK.BD_ENCORE then
+    -- the last song again, for half its SP (jAthena //0993 skill.c:3315 uses it through the
+    -- whole skill path again; here the song's own condition, at half, then the song)
+    local last = sd and last_dance[src_id]
+    if last then
+      nodamage(src_id, bl_id, skillid, skilllv)
+      local fresh = get(src_id)
+      if fresh and skill_check_condition(fresh, last.skill, last.lv, { encore = true }) then
+        skill_castend_nodamage_id(src_id, src_id, last.skill, last.lv, {})
+      end
+    end
+
+  elseif skillid == SK.BA_FROSTJOKE or skillid == SK.DC_SCREAM then
+    -- three seconds later, everyone on the screen but the joker (jAthena //1020 skill.c:2655,
+    -- 1374, 6305; "All enemy in screen", euRO's text of May 2004). A party member there has a
+    -- 10% chance of it too, jAthena's guess at the text's "at low rate": no party here
+    nodamage(src_id, bl_id, skillid, skilllv)
+    battle.after(3000, function()
+      local s2 = get(src_id)
+      if not s2 or s2.dead then return end
+      for _, id in ipairs(_rt("in_area", s2.map, s2.x - 14, s2.y - 14, s2.x + 14, s2.y + 14)) do
+        local t = get(id)
+        if t and id ~= src_id and not t.dead and battle.is_enemy(s2, t) then
+          skill_additional_effect(src_id, id, skillid, skilllv, BF.MISC)
+        end
+      end
+    end)
 
   elseif skillid == SK.NPC_METAMORPHOSIS then
     -- eAthena 817 skill.c:2421: `val` of the skill line is the monster it becomes
