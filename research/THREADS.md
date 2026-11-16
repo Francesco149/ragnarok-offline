@@ -572,6 +572,16 @@ Heim's "Castle Level 1" as Baphomet Jr., Joker, Khalitzburg, Marduk,
 Mysteltainn, Pest, Rideword, Tirfing, where mod0631's `gl_cas01` (Ragu
 Memo's jRO counts) has Carat, Sageworm, Alice, Owl Duke, Dark Frame and
 Whisper besides. An iRO/jRO split, or another map? Not changed.
+**Round 26:** Weggy's World Map section (GameFAQs 20092, rewritten in
+v6.7, 2004-07-09, iRO) has Geffen Dungeon Level 3 exactly as our
+`gef_dun02` (no Joker), and Glast Heim Castle Level 1 as Joker, Baphomet
+Jr., Rideword, Evil Druid, Tirfing, Mysteltainn. Two English iRO lists now
+share Joker, Baphomet Jr., Rideword, Tirfing and Mysteltainn for the
+castle's first floor, and neither names Carat, Sage Worm, Alice, Owl Duke
+or Dark Frame anywhere in Glast Heim (Weggy's "Interior" is Marionette,
+Rideword, Wanderman; ours `gl_in01` adds those five). Name lists only,
+incomplete (Weggy's lacks round 25's Khalitzburg): not built. An English
+list with counts, or a map of 2004, would settle it.
 
 ### 11. Shop NPC names and stock
 Done in part: shops are named from 817 by cell. Two of 817's lines have a
@@ -910,6 +920,10 @@ RODataZone's status page (2004-02-10) has "BaseDuration*(1-MDEF/100)" and
 no per-skill base; the iRO guide's Wizard page (2004-03-27) gives none.
 Kept 817's. jAthena //0738 (2004-01-24) also has Storm Gust pass over the
 frozen, as 817 does: built (DEVIATIONS.md).
+*Round 26:* "Level 10 Frost Diver lasts around 20-30 seconds" (lvlika's
+Agility Wizard FAQ, GameFAQs 25510, iRO Loki, v2.0 of 2003-09-29); ours
+(817's `cast_db`) is 15 s at level 10, less MDEF. One player's estimate:
+not changed.
 **Impact:** `skill_additional_effect` and the ailment part of
 `skill_status_change_start` in `scripts/rules/`.
 **Look:** period player guides on stun and freeze resistance ("VIT 97
@@ -1925,7 +1939,9 @@ Doppelganger 9 Nightmares, Moonlight Flower 4, Orc Hero 6 Orc Warriors
 (ours summons High Orcs), Phreeoni Hode. Ours call 4 or 5 at a time. The
 two lists agree with neither ours nor each other; they may count the
 escort a boss spawns with (which no period emulator gives) rather than
-its summons.
+its summons. *Round 26:* "encounter an MVP without its minions" (mangdiws's
+Spear Knight FAQ, GameFAQs 28554, pRO, 2004-02-09): a boss did not always
+stand among an escort.
 **Look:** the kRO patch notice //0785 cites (2004-01/02), and when euRO
 took it; period accounts of MVP summons; whether bosses of 2004 spawned
 with an escort.
@@ -2031,6 +2047,12 @@ says +4 for the masteries too. So the text is an older state of the game
 mod0631's numbers. The guide says nothing on how many Traps Shockwave Trap
 takes (client text: 2; mod0631: 1; we use 1). Tier: athena2003, confirmed
 for the international servers three months after our date.
+*Round 26 (2026-11-16):* an iRO beta 2 Hunter FAQ (GameFAQs 20075, the
+Hunter skills of 2003-02-22) has "(Uses 2 traps)" for both the Shockwave
+and the Claymore Trap. Shockwave: 2 by this text and that player, 1 by
+mod0631 and 817. Claymore: 1 by this client's text and mod0631, 2 by that
+player, 817 (`skill_require_db`, 2004-01-28) and euRO's May-2004 text.
+Witnesses on both sides of each: both kept at 1.
 **Items, the same way (2026-11-14):** `research/item_desc_check.py` reads the
 client's `idnum2itemdesctable.txt` against `data/db/items.toml` (mod0631's
 numbers). 81 disagreements: 48 weights (nearly all consumables and

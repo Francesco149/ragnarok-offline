@@ -98,7 +98,11 @@ random warps (`c_tower1`, `c_tower2`, `c_tower4`), Turtle Island
 **Claymore Trap** (round 25 review, 2026-11-16): this client's
 `skilldesctable.txt` says "1 Trap Needed", the May one's (yuno_lang)
 "2 Trap Needed". euRO raised the cost between the two; the May version
-should spend two.
+should spend two. *Round 26 (2026-11-16):* iRO's beta 2 took two already
+(Giga Bahamut's Hunter FAQ, GameFAQs 20075, section of 2003-02-22: "(Uses
+2 traps)", for the Shockwave Trap too), and 817's `skill_require_db`
+(2004-01-28) has two. So this client's "1" may be a slip in the text, not
+a cost euRO had (THREADS.md #22).
 
 ## What that version would switch on
 
