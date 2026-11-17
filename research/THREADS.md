@@ -1051,10 +1051,11 @@ poisonous (ours: neutral, as Athena)?
 * *Still a draft:* the guide says Venom Splasher marks the target with a
   timer, bursts when it is under a third of its HP, and splashes a quarter
   of the damage on 3x3 cells; that Ice Wall loses durability by the damage
-  it takes; that Sandman also puts those near the victim to sleep. The
-  first two are not built; Sandman's is (2026-11-11), on the cells around
-  the victim, a reach nothing gives. Venom Splasher's burst stays out: no
-  period source says how long the timer runs. It gives no chance for Flasher and says nothing
+  it takes; that Sandman also puts those near the victim to sleep. All
+  three are built: Sandman's on 2026-11-11, on the cells around the victim,
+  a reach nothing gives; Venom Splasher's mark and burst and Ice Wall's
+  wear on 2026-11-15 (DEVIATIONS.md; the mark's time from jAthena //1046,
+  tier later). It gives no chance for Flasher and says nothing
   on arrows or on what counts as a poisonous attack.
 **Found by playing the Hunter and the Wizard in the client (2026-11-13):**
 * *Sightrasher* did nothing (mod0631 has no code; 817 lays out its cells
@@ -2212,9 +2213,20 @@ already by level). Left at mod0631's, no period witness yet:
   this is only how close the target must be); Enchant Poison 0 against 8
   (on another player); the Alchemist's Chemical Protections 8 against 1;
   Finger Offensive 8 against 10; the Sage's fields 8 against 2.
+**2026-11-17, later: built from rAthena** (owner's rule of 2026-11-14:
+a later source breaks the tie; DEVIATIONS.md "Skill reach where mod0631 and
+817 part"). rAthena's pre-renewal skill_db reads a negative reach as fixed
+(`skillrange_from_weapon` off) and adds Vulture's Eye to the three bow
+skills: Double Strafe, Arrow Shower, Charge Arrow 9 + Vulture's Eye;
+Mammonite 1; Pierce, Bowling Bash, Brandish Spear, Holy Cross,
+Investigate, Asura, the combos 2; Finger Offensive 9; Bash, Sonic Blow,
+Back Stab, Intimidate 1 as mod0631; the Chemical Protections 1 and the
+fields 2 as 817; the by-level four as 817. Enchant Poison left at 0 (on
+another player: nobody here). The iRO guide's Crusader page gives Smite
+"Range is 3 cells" (not one of these).
 **Look:** a period player account of how far Double Strafe or a spear
-Bash reaches; the earliest capture of RODataZone's skill pages, if any
-give a range.
+Bash reaches, to sharpen it; the earliest capture of RODataZone's skill
+pages, if any give a range.
 *Aside:* `mvp_summons_as_jathena_0743` failed once in a full
 `cargo test --workspace` (no five Leib Olmai within 15 s) and passed 45
 times alone: a rare random flake, not chased.
