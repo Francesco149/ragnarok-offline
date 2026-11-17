@@ -2163,3 +2163,28 @@ marks about 45 items' effects "Not Implemented yet"
 Where they part: RODataZone shows the Bloody Axe's "Increased Movement",
 the Eddga Card's endure, the Ghostring Card's ghost armour and Light
 Epsilon's Heal working (ours: mod0631, which has the last two only).
+
+### R7. Skill reach: mod0631 against 817 (2026-11-17)
+`skill_db.txt`'s range column differs between mod0631 (and jAthena until
+//0749, 2004-01-27) and 817 for 31 skills. Built from it (DEVIATIONS.md):
+Spear Boomerang 3 to 11 and Grimtooth 3 to 7 by level, each with the iRO
+guide's page beside 817 (Spring Trap, Detect and Shield Boomerang were
+already by level). Left at mod0631's, no period witness yet:
+* **Given as the weapon's reach in 817** (negative: weapon reach + |n| - 1),
+  a fixed number in mod0631: Bash, Magnum Break, Pierce, Bowling Bash,
+  Sonic Blow, Back Stab, Intimidate, Investigate (1 against weapon reach);
+  Mammonite 3 against reach + 1; Holy Cross 3 against reach + 1; Double
+  Strafe, Arrow Shower, Charge Arrow 13/13/8 against bow reach + 2. With a
+  spear, 817's Bash reaches as far as the spear does; with a bow, Double
+  Strafe is the bow's reach + 2 (817 bows: item_db range 5). The iRO guide
+  gives no reach for any of these.
+* Brandish Spear 4 against 1 (it hits around the knight either way, so
+  this is only how close the target must be); Enchant Poison 0 against 8
+  (on another player); the Alchemist's Chemical Protections 8 against 1;
+  Finger Offensive 8 against 10; the Sage's fields 8 against 2.
+**Look:** a period player account of how far Double Strafe or a spear
+Bash reaches; the earliest capture of RODataZone's skill pages, if any
+give a range.
+*Aside:* `mvp_summons_as_jathena_0743` failed once in a full
+`cargo test --workspace` (no five Leib Olmai within 15 s) and passed 45
+times alone: a rare random flake, not chased.
