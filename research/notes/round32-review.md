@@ -69,7 +69,8 @@ tasks marked "partly".
   Bomb, Aid Potion, the protections) or the 2-2 quest (the dye-making
   quest as a prerequisite: noted for the 2-2 version, THREADS #25).
 * **Sanctuary heals the Emperium** (Anthwerp, pRO, v2.0's WoE update):
-  for the castle rework; not checked against ours this round.
+  ours heals whatever stands in it that is not Undead or Demon
+  (`skill_units.lua`, as mod0631), the Emperium too. Nothing to do.
 
 ## Trick
 
