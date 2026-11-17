@@ -1471,6 +1471,12 @@ seven from //1046 (`6332410`, 2004-09-12, the commit our Knight test came
 from): the Sage's (2611 lines), Alchemist's (1619) and Dancer's (932) look
 whole; the Crusader's (140), Monk's (192), Bard's (99) and Rogue's (29)
 not. Queue T1 asks for players' walkthroughs.
+**2026-11-17: the Alchemist's built** from jAthena //1046 with eAthena
+1.0's names (`scripts/npc/alchemist_test.lua`, DEVIATIONS.md, test
+`alchemist_test`); the guild hall had no warps in, now jAthena //0966's.
+Open: an iRO or euRO walkthrough of 2004 to date it and settle the
+brothers' list (jAthena's two readings differ). Next: the Sage's (2611
+lines, `job_sage`, Juno) and the Dancer's (932, `job_duncer`).
 
 **2026-11-16: the Bard's and Dancer's solo skills drafted** (DEVIATIONS.md,
 test `bard_dancer_songs`), from jAthena //0993-//1020 (2004-05-27 to 06-11,

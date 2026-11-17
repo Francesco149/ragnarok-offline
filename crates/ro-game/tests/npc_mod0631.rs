@@ -108,6 +108,8 @@ struct T {
     said: Vec<String>,
     /// What `talk` types into a number box.
     number: u32,
+    /// If set, what `talk` types instead, given the last page shown.
+    number_by: Option<fn(&str) -> u32>,
     /// Dropped last, after the game.
     _slot: Slot,
 }
@@ -168,8 +170,11 @@ impl T {
                         send(&mut self.g, 3, w);
                     }
                     0x0142 => {
+                        // the last page: the lines after the last speaker's name
+                        let from = self.said.iter().rposition(|l| l.starts_with('[')).map_or(0, |i| i + 1);
+                        let n = self.number_by.map_or(self.number, |f| f(&self.said[from..].join(" ")));
                         let mut w = Writer::new(0x0143);
-                        w.u32(npc).u32(self.number);
+                        w.u32(npc).u32(n);
                         send(&mut self.g, 3, w);
                     }
                     _ => continue,
@@ -197,9 +202,14 @@ const MAPS: [&str; 33] = [
 ];
 /// Maps no script reaches beyond 260,260: smaller stand-ins, so that the
 /// eighteen tests side by side stay under the workbench's 2 GiB.
-const SMALL_MAPS: [&str; 5] = ["in_hunter", "job_hunte", "pay_fild10", "job_knt", "in_moc_16"];
+const SMALL_MAPS: [&str; 8] = ["in_hunter", "job_hunte", "pay_fild10", "job_knt", "in_moc_16", "alde_alche", "yuno_in01", "aldebaran"];
 
 fn setup(tag: &str) -> T {
+    setup_with(tag, &[])
+}
+
+/// As `setup`, with these content switches on (`[game.content]`).
+fn setup_with(tag: &str, on: &[&str]) -> T {
     let slot = Slot::take();
     let root = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../..");
     let saves = std::env::temp_dir().join(format!("ro-offline-m631-{tag}-{}", std::process::id()));
@@ -213,6 +223,10 @@ fn setup(tag: &str) -> T {
         start_point: Point::new("testmap", 25, 25),
         ..Default::default()
     };
+    let mut cfg = cfg;
+    for k in on {
+        cfg.content.insert(k.to_string(), true);
+    }
     let cap = Cap::default();
     let mut g = Game::new(cfg, Resources::new(vfs), Box::new(cap.clone())).expect("game");
     for (m, size) in MAPS.iter().map(|m| (m, 400)).chain(SMALL_MAPS.iter().map(|m| (m, 260))) {
@@ -224,7 +238,7 @@ fn setup(tag: &str) -> T {
         g.ensure_map(m);
     }
     g.notices.clear();
-    T { g, cap, me, said: Vec::new(), number: 1, _slot: slot }
+    T { g, cap, me, said: Vec::new(), number: 1, number_by: None, _slot: slot }
 }
 
 #[test]
@@ -1525,4 +1539,148 @@ fn assassin_test() {
     t.eval("player.skill_point = 0");
     t.talk(m, huey.0, huey.1, &[]);
     assert_eq!(t.eval("return player.class .. ' ' .. count_item(1008) .. ' ' .. v.assin_q"), "12 1 0", "an Assassin, who keeps the necklace (eAthena takes none)");
+}
+
+/// Gregory's answers, by what his question names (scripts/npc/alchemist_test.lua).
+fn gregory_answer(q: &str) -> u32 {
+    // first match wins: "8 Fly Wing" before "6 Red Potion", which both 798 and 438 name
+    const KEYS: &[(&str, u32)] = &[
+        ("12 + 23", 114), ("13 + 25", 123), ("1000 - 36", 389), ("1000 - 58", 312), ("14 x 17", 714), ("12 x 24", 864),
+        ("9765", 93), ("10530", 351), ("(47 x 28)", 972), ("(35 x 19)", 409), ("(2646", 742), ("(2368", 704),
+        ("12 Red Potion", 909), ("8 Fly Wing", 798), ("15 Green Potion", 934), ("6 Red Potion", 438),
+        ("2 Ring Pommel", 480), ("3 Ring Pommel", 550), ("Scimiter", 450),
+        ("Mirror Shield", 12), ("Biretta", 20), ("Buckler", 15),
+        ("5 Helm", 8800), ("Padded Armor", 7680), ("Tights", 8520),
+    ];
+    KEYS.iter().find(|(k, _)| q.contains(k)).map_or_else(|| panic!("which question? {q:?}"), |k| k.1)
+}
+
+#[test]
+fn alchemist_test() {
+    // Gregory's sums, from our own item db: Discount takes rate% off each
+    // item, rounding down (mod0631 pc.c, pc_modifybuyvalue)
+    let db = ro_data::db::Database::load(&PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../../data/db")).expect("db");
+    let it = |id: u32| db.item(id).unwrap_or_else(|| panic!("item {id}"));
+    let cost = |rate: u32, list: &[(u32, u32)]| -> u32 { list.iter().map(|&(id, n)| it(id).buy * (100 - rate) / 100 * n).sum() };
+    let weight = |list: &[(u32, u32)]| -> u32 { list.iter().map(|&(id, n)| it(id).weight / 10 * n).sum() };
+    let def = |list: &[u32]| -> u32 { list.iter().map(|&id| it(id).def).sum() };
+    assert_eq!(cost(24, &[(501, 12), (601, 5), (602, 1)]), 909);
+    assert_eq!(cost(24, &[(501, 6), (506, 7), (601, 8)]), 798);
+    assert_eq!(cost(24, &[(506, 15), (611, 6), (1065, 4)]), 934);
+    assert_eq!(cost(24, &[(501, 6), (506, 7)]), 438);
+    assert_eq!(weight(&[(1122, 2), (2226, 3), (2405, 3)]), 480);
+    assert_eq!(weight(&[(1122, 3), (2226, 4), (2405, 2)]), 550);
+    assert_eq!(weight(&[(1113, 3), (2228, 2), (2309, 1)]), 450);
+    assert_eq!(def(&[2107, 2303, 2278, 2321, 2206, 2503, 2212]), 12);
+    assert_eq!(def(&[2216, 2307, 2281, 2208, 2503, 2405, 2283]), 20);
+    assert_eq!(def(&[2103, 2309, 2218, 2244, 2250, 2280, 2203]), 15);
+    for (id, n, diff) in [(2228, 5, 8800), (2312, 4, 7680), (2330, 3, 8520)] {
+        assert_eq!(cost(20, &[(id, n)]) - cost(24, &[(id, n)]), diff, "item {id}");
+    }
+
+    let mut t = setup_with("alchemist_test", &["jobs2_2"]);
+    let m = "alde_alche";
+    let parmy = (27, 185);
+    let gregory = (175, 107);
+    let darwin = (13, 15);
+    let helmont = (79, 19);
+    let nicholas = (145, 19);
+    let vincent = (101, 184);
+    let bain = ("yuno_in01", 103, 157);
+    let q = |t: &mut T| t.eval("return v.change_alchemist");
+    // the way in from Al De Baran
+    t.eval("warp('aldebaran', 50, 50)");
+    t.step(54, 66);
+    let at = t.eval("return player.map .. ' ' .. player.x .. ' ' .. player.y");
+    assert_eq!(at, "alde_alche 41 174", "the guild's door");
+
+    t.eval("job_change(5); player.job_level = 39; player.zeny = 60000");
+    t.talk(m, parmy.0, parmy.1, &[2, 1]);
+    assert_eq!(q(&mut t), "0", "Job Level 39");
+    t.eval("player.job_level = 40");
+    t.talk(m, parmy.0, parmy.1, &[2, 1, 1]);
+    assert_eq!(t.eval("return player.zeny"), "10000", "the fee");
+    let errand = q(&mut t);
+    assert!(errand == "1" || errand == "2", "{errand}");
+    t.talk(m, parmy.0, parmy.1, &[]);
+    assert_eq!(q(&mut t), errand, "nothing brought");
+    t.eval("give_item(612, 100); give_item(657, 7)");
+    t.talk(m, parmy.0, parmy.1, &[]);
+    assert_eq!(t.eval("return v.change_alchemist .. ' ' .. (count_item(612) + count_item(657))"), if errand == "1" { "3 7" } else { "3 100" });
+
+    // Gregory: every answer wrong, then every answer right
+    t.talk(m, gregory.0, gregory.1, &[]);
+    assert_eq!(q(&mut t), "4");
+    t.number_by = Some(gregory_answer);
+    t.talk(m, gregory.0, gregory.1, &[]);
+    assert_eq!(q(&mut t), "5");
+    t.number_by = None;
+
+    // Darwin: the list, the lesson botched, then done right
+    t.talk(m, darwin.0, darwin.1, &[1]);
+    assert_eq!(q(&mut t), "6");
+    t.talk(m, darwin.0, darwin.1, &[]);
+    assert_eq!(q(&mut t), "6", "nothing brought");
+    let darwin_kit = "give_item(7134, 3); give_item(713, 3); give_item(507, 1); give_item(508, 1); give_item(509, 1)";
+    t.eval(darwin_kit);
+    t.talk(m, darwin.0, darwin.1, &[1, 2, 2, 3, 1, 2]);
+    assert_eq!(t.eval("return v.change_alchemist .. ' ' .. count_item(7134)"), "6 0", "materials gone");
+    t.eval(darwin_kit);
+    t.talk(m, darwin.0, darwin.1, &[1, 2, 1, 3, 1, 2]);
+    assert_eq!(t.eval("return v.change_alchemist .. ' ' .. count_item(501) .. count_item(503) .. count_item(504)"), "7 111");
+
+    // Van Helmont: without Morgenshtein's lesson no answer counts
+    t.talk(m, helmont.0, helmont.1, &[1, 1, 2]);
+    assert_eq!(q(&mut t), "8");
+    t.eval("v.MOLGENSTAIN = 3");
+    t.talk(m, helmont.0, helmont.1, &[1, 1, 1]);
+    assert_eq!(q(&mut t), "8", "a wrong answer");
+    t.talk(m, helmont.0, helmont.1, &[1, 1, 2]);
+    assert_eq!(q(&mut t), "9");
+
+    // Nicholas: a wrong square, a right one, then Juno
+    t.number = 123456789;
+    t.talk(m, nicholas.0, nicholas.1, &[]);
+    assert_eq!(q(&mut t), "10");
+    t.number = 294753618;
+    t.talk(m, nicholas.0, nicholas.1, &[]);
+    assert_eq!(q(&mut t), "11");
+    t.talk(m, nicholas.0, nicholas.1, &[]);
+    assert_eq!(t.eval("return v.change_alchemist .. ' ' .. count_item(974) .. ' ' .. count_item(756)"), "12 1 3");
+    t.talk(m, nicholas.0, nicholas.1, &[]);
+    assert_eq!(q(&mut t), "12", "Juno first");
+
+    // the brothers: the list, then everything but the money, then all of it
+    t.talk(bain.0, bain.1, bain.2, &[1]);
+    assert_eq!(t.eval("return v.npc_yunoalc"), "1");
+    t.eval("give_item(612, 5); give_item(1003, 5); player.zeny = 1999");
+    t.talk(bain.0, bain.1, bain.2, &[]);
+    assert_eq!(t.eval("return v.npc_yunoalc"), "1", "2000 Zeny short of one");
+    t.eval("player.zeny = 2000");
+    t.talk(bain.0, bain.1, bain.2, &[]);
+    assert_eq!(t.eval("return v.npc_yunoalc .. ' ' .. count_item(1002) .. ' ' .. player.zeny .. ' ' .. count_item(974)"), "2 5 0 0");
+    t.talk(m, nicholas.0, nicholas.1, &[]);
+    assert_eq!(q(&mut t), "13");
+
+    // the guild master, once the skill points are spent
+    t.eval("player.skill_point = 1");
+    t.talk(m, vincent.0, vincent.1, &[]);
+    assert_eq!(t.eval("return player.class"), "5");
+    t.eval("player.skill_point = 0");
+    t.talk(m, vincent.0, vincent.1, &[]);
+    assert_eq!(t.eval("return player.class .. ' ' .. count_item(7127) .. ' ' .. v.change_alchemist"), "18 1 0", "an Alchemist");
+
+    // the short way: an Illusion Flower for Darwin, right after Gregory
+    t.eval("job_change(5); player.job_level = 50; v.change_alchemist = 5; give_item(710, 1)");
+    t.talk(m, darwin.0, darwin.1, &[2]);
+    assert_eq!(t.eval("return v.change_alchemist .. ' ' .. count_item(710)"), "15 0");
+    t.talk(m, vincent.0, vincent.1, &[]);
+    assert_eq!(t.eval("return player.class"), "18");
+
+    // the dealer: 3 bowls, and a book
+    t.eval("player.zeny = 100024");
+    t.number = 3;
+    t.talk(m, 24, 188, &[1, 1]);
+    t.talk(m, 24, 188, &[2, 1]);
+    assert_eq!(t.eval("return count_item(7134) .. ' ' .. count_item(7144) .. ' ' .. player.zeny"), "3 1 0");
 }

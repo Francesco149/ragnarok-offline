@@ -391,6 +391,32 @@ eAthena 817 (2004-02-19), bugs included. The translator is
   serving anyone); the Nameless One's tip to a fan web site goes; three of
   the guild members called to the Guild Master stand on the nearest floor
   (eAthena's cells are walls here); dialogue cut to the window.
+* **The Alchemist test** (`scripts/npc/alchemist_test.lua`, behind
+  `jobs2_2`; test `alchemist_test`). 817 changes a Merchant into an
+  Alchemist at job level 40 with no test, and no warp leads into the
+  guild hall (`alde_alche`) in any period source of ours. The test here is
+  jAthena's of 2004-09-12 (`npc_job_18alchemist.txt`, whole), with the
+  hall's eighteen warps from jAthena //0966 (2004-05-07) and eAthena 1.0's
+  iRO names: Parmy Gianino's application (job level 40, 50,000 Zeny, then
+  100 Portable Furnaces or 7 Berserk Potions, or an Old Magic Book and a
+  Hammer of Blacksmith instead), Raspuchin Gregory's ten sums (nine right,
+  eight on a second try; all thirty agree with our item prices, weights
+  and DEF), Darwin's first potion, Van Helmont's two questions on what
+  Morgenshtein taught (`dyes.lua`: no lesson, no pass), Nicholas Flamel's
+  magic square, the brothers Bain and Bajin in Juno, and Vincent
+  Carsciallo's welcome with an Alcohol Making Book; an Illusion Flower
+  given to Darwin skips from Gregory to the end; job level 50 skips the
+  fee and Gregory (jAthena marks both, and the flower's last line, as its
+  author's guesses). Gever Al Sharp sells Medicine Bowls and the making
+  books at jAthena's prices. Ours: the brothers take the 5 Portable
+  Furnaces and 2,000 Zeny they ask for (jAthena reads out 5, checks for 3
+  and takes no Zeny; eAthena 1.0 takes 5 and the Zeny), and they replace
+  817's Bain and Bajin (another errand: a Pair of Sandals for 200,000
+  Zeny) while `jobs2_2` is on, standing in Juno even with `juno` off; Van
+  Helmont says Morgenshtein is in Geffen; Nicholas's "do not take too
+  long" has no timer (jAthena has none); dialogue in our English of
+  jAthena's Japanese, cut to the window. No account dates the test before
+  September 2004: for the 2-2 version, like the rest of `jobs2_2`.
 * **Alberta's sailor** (`scripts/npc/alberta_sailor.lua`) no longer sells
   passage to Amatsu and Gonryun: the client has neither map (they are later
   additions 817 took from jAthena), so the fare went and the ship did not.

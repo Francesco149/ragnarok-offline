@@ -126,8 +126,9 @@ Not yet, or only in part:
   opened them in June 2004 with a later client, which turns out to survive on a
   magazine DVD of July 2004). Every 2-2 skill is drafted (since
   2026-11-17), from the period emulators and iRO's guide, but on this
-  client they can only be used through a GM command, and the 2-2 job
-  changes are still the emulator's bare trainers
+  client they can only be used through a GM command. Of the 2-2 job
+  changes, the Alchemist's test is in (from a period emulator of September
+  2004); the others are still the emulator's bare trainers
   ([research/THREADS.md](research/THREADS.md) #25);
 - how the 2-1 job tests went on euRO in early 2004. Their scripts are the
   emulators' of 2004 (the Assassin's, the Blacksmith's and the Knight's of
