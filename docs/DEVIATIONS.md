@@ -861,6 +861,20 @@ always fires.
   Spear Boomerang a pRO guide of 2004-08 (research round 30). The skill
   window tells the client the learned level's reach, so it walks close
   enough before it asks (Spring Trap and Shield Boomerang too).
+* **Skill reach where mod0631 and 817 part, from rAthena** (2026-11-17,
+  tier later; test `bow_skill_reach`). No period source gives these reaches
+  (the iRO guide and this client's text are silent); mod0631 has a fixed
+  number, 817 the weapon's reach plus something (jAthena too from //0749,
+  2004-01-27). rAthena's pre-renewal table (2026-10) decides: Double
+  Strafe, Arrow Shower and Charge Arrow 9 cells and one more a level of
+  Vulture's Eye (mod0631 13 and 8 whatever the Vulture's Eye; 817 the
+  bow's reach + 2, 7 and Vulture's Eye), Mammonite 1 (mod0631 3), Pierce
+  and Bowling Bash 2 (mod0631 1, 817 the spear's 3), Brandish Spear 2
+  (mod0631 4, 817 1). For the 2-2 skills: Holy Cross, Investigate, Asura
+  Strike, Chain Combo and Combo Finish 2, Finger Offensive 9, the Chemical
+  Protections 1 and the Sage's fields 2 (the last two 817's too). Bash,
+  Sonic Blow, Back Stab and Intimidate stay 1 (mod0631 and rAthena).
+  rAthena also agrees with the by-level reaches above.
 * **A third off the caster's DEF while Brandish Spear, Bowling Bash or Grand
   Cross is cast** (2026-11-17): 817's `cast_def_rate` 33 (`battle.c:505`,
   players and monsters); round 24's preview of kRO's Comodo notes and a pRO

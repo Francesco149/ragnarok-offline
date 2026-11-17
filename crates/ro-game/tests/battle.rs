@@ -1383,6 +1383,43 @@ fn bowling_bash_cast_lowers_def() {
     assert_eq!(def(&mut t), full, "back once the cast is over");
 }
 
+/// Double Strafe reaches 9 cells and Vulture's Eye's levels more (rAthena, where
+/// mod0631 gave 13 and 817 the bow's reach + 2); the skill list says so. Mammonite 1.
+#[test]
+fn bow_skill_reach() {
+    let mut t = T::new();
+    t.lua("job_change(3); player.base_level = 40; player.dex = 60; heal(9999, 9999); give_item(1750, 50)");
+    t.wear(1701); // Bow
+    let idx = t.inv(1750);
+    let mut w = Writer::new(0x00a9);
+    w.u16(idx).u16(0);
+    t.send(w);
+    t.learn("AC_OWL", 5);
+    t.learn("AC_DOUBLE", 1);
+    let id = t.skill_id("AC_DOUBLE");
+    let reach = |t: &mut T, id: u16| -> u16 {
+        let list = t.packets(0x010f).pop().expect("skill list");
+        let at = (4..list.len()).step_by(37).find(|&o| u16_at(&list, o) == id).expect("skill listed");
+        u16_at(&list, at + 10)
+    };
+    assert_eq!(reach(&mut t, id), 9, "Double Strafe without Vulture's Eye");
+    let m = t.spawn(36, 25, 1008); // eleven cells off (a request from reach + 1 is let through)
+    t.cast("AC_DOUBLE", m);
+    t.run(1500);
+    assert_eq!(t.mob_hp(m), Some(427), "too far without Vulture's Eye");
+    t.learn("AC_VULTURE", 3);
+    assert_eq!(reach(&mut t, id), 12, "Vulture's Eye 3 adds 3");
+    t.cast("AC_DOUBLE", m);
+    t.run(1500);
+    assert!(t.mob_hp(m).unwrap_or(0) < 427, "within reach with Vulture's Eye");
+
+    t.lua("job_change(5)");
+    t.learn("MC_DISCOUNT", 3);
+    t.learn("MC_MAMMONITE", 1);
+    let id = t.skill_id("MC_MAMMONITE");
+    assert_eq!(reach(&mut t, id), 1, "Mammonite");
+}
+
 /// Swordman, Knight, Merchant: Magnum Break around the swordman, Endure,
 /// Auto Berserk, Pierce by size, Mammonite's zeny.
 #[test]
@@ -2839,20 +2876,21 @@ fn sage_rod_breaker_fields() {
 
     // Volcano 5 (9x9) on the Pupa: it stands in the field, and Fire hits it 20% harder
     t.lua("give_item(715, 3); give_item(717, 1)");
-    t.cast_at("SA_VOLCANO", 29, 25);
+    // the fields reach 2 cells (817, rAthena), and a request from one more is let through
+    t.cast_at("SA_VOLCANO", 27, 25);
     t.run(6500);
     assert!(t.has_sc(pupa, "VOLCANO"));
-    assert!(t.has_sc(me, "VOLCANO"), "the Sage at 25,25 is inside 29 +- 4");
+    assert!(t.has_sc(me, "VOLCANO"), "the Sage at 25,25 is inside 27 +- 4");
     assert_eq!(num(&mut t, &format!("battle.calc_damage(battle.get({pupa}), 100, BF.MAGIC, battle.get({me}), 3)")), 120);
     assert_eq!(num(&mut t, &format!("battle.calc_damage(battle.get({pupa}), 100, BF.MAGIC, battle.get({me}), 1)")), 100);
     // Deluge 1 (5x5) away from both: the Sage's Volcano goes, and with it the Pupa's
-    t.cast_at("SA_DELUGE", 20, 20);
+    t.cast_at("SA_DELUGE", 22, 26);
     t.run(6500);
     assert!(!t.has_sc(pupa, "VOLCANO"), "one field a Sage");
     assert!(!t.has_sc(me, "VOLCANO"));
 
     // Land Protector 1 (7x7) over a Safety Wall wipes it; a new Safety Wall is not laid on it
-    t.lua("give_item(717, 4)");
+    t.lua("give_item(717, 4); warp(player.map, 29, 29)");
     t.cast_at("MG_SAFETYWALL", 30, 30);
     t.run(5000);
     let walls = |t: &mut T| num(t, "(function() local n = 0 for _, id in ipairs(_rt('in_area', player.map, 30, 30, 49, 49)) do end return #(skill_traps_in(player.map, 0, 0, 49, 49)) + n end)()");

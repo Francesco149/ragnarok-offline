@@ -478,8 +478,45 @@ local CAST_817 = {
   -- jAthena's cast_db (2004-06-11, as since //0821 of 2004-02-20); 817's has no row
   [SK.SA_AUTOSPELL] = 3000,
 }
+-- Fixed reach where mod0631 and eAthena 817 part (THREADS.md R7) and no period
+-- source gives one (the iRO guide, the client's text: none). rAthena's pre-renewal
+-- skill_db (tier later, 2026-10) decides: where it agrees with 817 that witness
+-- stands, where it agrees with neither its own number is taken. mod0631 gave a
+-- fixed number, 817 the weapon's reach plus something; rAthena reads its negative
+-- numbers as fixed (`skillrange_from_weapon` off by default).
+local FIXED_RANGE = {
+  [SK.MC_MAMMONITE] = 1,        -- mod0631 3, 817 reach + 1, rAthena 1
+  [SK.AC_DOUBLE] = 9,           -- mod0631 13, 817 bow reach + 2 (7), rAthena 9; + Vulture's Eye
+  [SK.AC_SHOWER] = 9,           -- the same
+  [SK.AC_CHARGEARROW] = 9,      -- mod0631 8, 817 bow reach + 2, rAthena 9; + Vulture's Eye
+  [SK.KN_PIERCE] = 2,           -- mod0631 1, 817 the spear's reach (3), rAthena 2
+  [SK.KN_BOWLINGBASH] = 2,      -- the same
+  [SK.KN_BRANDISHSPEAR] = 2,    -- mod0631 4, 817 1, rAthena 2
+  [SK.CR_HOLYCROSS] = 2,        -- mod0631 3, 817 reach + 1, rAthena 2
+  [SK.MO_INVESTIGATE] = 2,      -- mod0631 1, 817 reach (1), rAthena 2
+  [SK.MO_FINGEROFFENSIVE] = 9,  -- mod0631 8, 817 10, rAthena 9
+  [SK.MO_EXTREMITYFIST] = 2,    -- mod0631 1, 817 reach + 2, rAthena 2
+  [SK.MO_CHAINCOMBO] = 2,       -- mod0631 1, 817 reach + 1 (2 with knuckles), rAthena 2
+  [SK.MO_COMBOFINISH] = 2,      -- the same
+  [SK.AM_CP_WEAPON] = 1, [SK.AM_CP_SHIELD] = 1, [SK.AM_CP_ARMOR] = 1, [SK.AM_CP_HELM] = 1, -- mod0631 8, 817 and rAthena 1
+  [SK.SA_VOLCANO] = 2, [SK.SA_DELUGE] = 2, [SK.SA_VIOLENTGALE] = 2, [SK.SA_LANDPROTECTOR] = 2, -- mod0631 8, 817 and rAthena 2
+}
+-- The bow skills Vulture's Eye lengthens (this client's text: "Increase Bow Range";
+-- rAthena's AlterRangeVulture). 817 gets the same through the bow's reach.
+local VULTURE_RANGE = { [SK.AC_DOUBLE] = true, [SK.AC_SHOWER] = true, [SK.AC_CHARGEARROW] = true }
+local function fixed_range(sd, skill, vulture)
+  local r = FIXED_RANGE[skill]
+  if r and VULTURE_RANGE[skill] then
+    if vulture then r = r + vulture
+    elseif sd and sd.kind == "player" then r = r + checkskill(sd, SK.AC_VULTURE) end
+  end
+  return r
+end
+
 local function skill_range(sd, skill, lv)
   if lv and LEVEL_RANGE[skill] then return LEVEL_RANGE[skill](lv) end
+  local fr = fixed_range(sd, skill)
+  if fr then return fr end
   local r = skill_get_range(skill)
   if r < 0 then return math.max(1, sd.st and sd.st.attackrange or 1) - (r + 1) end
   return r
@@ -490,6 +527,9 @@ end
 function rules.skill_reach(a)
   local f = LEVEL_RANGE[a.skill]
   if f and a.lv and a.lv > 0 then return f(a.lv) end
+  -- a.vulture: the player's Vulture's Eye, from the host (the skill list); a.src: the
+  -- player, from a rule (item_skill)
+  if FIXED_RANGE[a.skill] then return fixed_range(not a.vulture and a.src and get(a.src) or nil, a.skill, a.vulture) end
 end
 
 -- The client asks to use a skill (skill_use_id / skill_use_pos). Returns
@@ -914,7 +954,7 @@ end
 -- `unit`: the player, when a rule lends it (Abracadabra) rather than an item script.
 function item_skill(id, lv, unit)
   _rt("item_skill", id, lv or 1, skill_get(id).name, skill_get_inf(id), skill_get_sp(id, lv or 1),
-    math.max(1, rules.skill_reach({ skill = id, lv = lv or 1 }) or skill_get_range(id)), unit)
+    math.max(1, rules.skill_reach({ skill = id, lv = lv or 1, src = unit }) or skill_get_range(id)), unit)
 end
 
 -- ------------------------------------------------------------ hooks from the server
