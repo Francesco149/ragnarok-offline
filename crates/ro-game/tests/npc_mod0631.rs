@@ -202,7 +202,7 @@ const MAPS: [&str; 33] = [
 ];
 /// Maps no script reaches beyond 260,260: smaller stand-ins, so that the
 /// eighteen tests side by side stay under the workbench's 2 GiB.
-const SMALL_MAPS: [&str; 8] = ["in_hunter", "job_hunte", "pay_fild10", "job_knt", "in_moc_16", "alde_alche", "yuno_in01", "aldebaran"];
+const SMALL_MAPS: [&str; 9] = ["in_hunter", "job_hunte", "pay_fild10", "job_knt", "in_moc_16", "alde_alche", "yuno_in01", "aldebaran", "job_duncer"];
 
 fn setup(tag: &str) -> T {
     setup_with(tag, &[])
@@ -1683,4 +1683,140 @@ fn alchemist_test() {
     t.talk(m, 24, 188, &[1, 1]);
     t.talk(m, 24, 188, &[2, 1]);
     assert_eq!(t.eval("return count_item(7134) .. ' ' .. count_item(7144) .. ' ' .. player.zeny"), "3 1 0");
+}
+
+/// Bijou's right answer, by the choices offered (scripts/npc/dancer_test.lua).
+fn bijou_answer(menu: &str) -> u8 {
+    const KEYS: [(&str, u8); 20] = [
+        ("Raises Level 4 weapons", 3),
+        ("Thank your partner", 4),
+        ("Keep smiling and dancing", 2),
+        ("Cocomo", 4),
+        ("1:2:3:4", 3),
+        ("Isis:Argiope", 2),
+        ("Tester:Madam Bijou:Isis:Mercy", 2),
+        ("Kafra Headquarters", 4),
+        ("Bonsoir", 3),
+        ("Blinds those around", 2),
+        ("Raises INT", 2),
+        ("Tap dance", 1),
+        ("Mastering dance skills", 4),
+        ("Al De Baran:Juno", 4),
+        ("Tester:Madam Bijou:Isis:Emeral", 2),
+        ("Stamina", 3),
+        ("Roo:Moo", 3),
+        ("Kitty Band", 2),
+        ("Yes:No", 2),
+        ("1:2:3", 1),
+    ];
+    KEYS.iter().find(|(k, _)| menu.starts_with(k)).map_or_else(|| panic!("which question? {menu:?}"), |k| k.1)
+}
+
+impl T {
+    /// Walk from where the player stands, without the warp `step` makes first.
+    fn walk_to(&mut self, x: u16, y: u16) {
+        self.cap.take(3);
+        let mut w = Writer::new(0x0085);
+        w.pos3(x, y, 0);
+        send(&mut self.g, 3, w);
+        self.run(1500);
+    }
+
+    fn at(&mut self) -> String {
+        self.eval("return player.map .. ' ' .. player.x .. ' ' .. player.y")
+    }
+}
+
+/// The Dancer test (scripts/npc/dancer_test.lua): Aile's application and
+/// fee, Bijou's interview, the audition (a wrong step too late puts you out,
+/// standing still lasts the minute, the Poring shot passes), the job.
+#[test]
+fn dancer_test() {
+    let mut t = setup_with("dancer_test", &["jobs2_2"]);
+    let m = "job_duncer";
+    let (aile, bijou, usher) = ((43, 93), (95, 93), (32, 152));
+    let q = |t: &mut T| t.eval("return v.change_dancer");
+
+    // 817's Performance Master still makes a man a Bard at once, not a woman a Dancer
+    t.eval("job_change(3); player.job_level = 40");
+    t.talk("comodo", 189, 166, &[1]);
+    assert_eq!(t.eval("return player.class"), "19");
+    t.g.world.units.get_mut(&t.me).and_then(|u| u.player_mut()).expect("player").sex = 0;
+    t.eval("job_change(3); player.job_level = 39; player.zeny = 12000");
+    t.talk("comodo", 189, 166, &[]);
+    assert_eq!(t.eval("return player.class"), "3");
+
+    // Bor Robin's way in, and the way out
+    t.talk("comodo", 193, 151, &[1]);
+    assert_eq!(t.at(), "job_duncer 70 49");
+    t.step(69, 43);
+    assert_eq!(t.at(), "comodo 185 156");
+
+    // Aile: Job Level 40, then the fee, the peelings and the boots
+    t.talk(m, aile.0, aile.1, &[1]);
+    assert_eq!(q(&mut t), "0", "Job Level 39");
+    t.eval("player.job_level = 40");
+    t.talk(m, aile.0, aile.1, &[1]);
+    assert_eq!(q(&mut t), "1");
+    t.talk(m, aile.0, aile.1, &[]);
+    assert_eq!(q(&mut t), "2");
+    t.talk(m, aile.0, aile.1, &[]);
+    assert_eq!(q(&mut t), "2", "nothing brought");
+    t.eval("give_item(1055, 5); give_item(2405, 1)");
+    t.talk(m, aile.0, aile.1, &[]);
+    assert_eq!(t.eval("return v.change_dancer .. ' ' .. player.zeny .. ' ' .. count_item(1055) .. ' ' .. count_item(2405)"), "5 2000 5 1", "the fee only");
+
+    // Bijou: skill points first; every first choice (her own name among them), then every right one
+    t.eval("player.skill_point = 1");
+    t.talk(m, bijou.0, bijou.1, &[]);
+    assert_eq!(q(&mut t), "5");
+    t.eval("player.skill_point = 0");
+    t.talk_by(m, bijou.0, bijou.1, |_| 1);
+    assert_eq!(q(&mut t), "6");
+    t.talk_by(m, bijou.0, bijou.1, bijou_answer);
+    assert_eq!(q(&mut t), "7");
+    assert!(t.said.iter().any(|l| l == "100 points..."), "{:?}", t.said);
+
+    // the points to mind, then off to the waiting room and its usher
+    t.talk(m, bijou.0, bijou.1, &[1]);
+    assert_eq!(q(&mut t), "7");
+    t.talk(m, bijou.0, bijou.1, &[2]);
+    assert_eq!(t.eval("return v.change_dancer .. ' ' .. player.map .. ' ' .. player.x .. ' ' .. player.y"), "8 job_duncer 104 109");
+    t.talk(m, usher.0, usher.1, &[2]);
+    assert_eq!(t.at(), "job_duncer 32 153", "lounging");
+
+    // "Back to the middle" at 19 s, the others open at 21 s and stay open
+    // through the pose: a step within the middle is fine, out of it puts you out
+    t.talk(m, usher.0, usher.1, &[1]);
+    assert_eq!(t.at(), "job_duncer 70 112");
+    t.run(19_500);
+    t.walk_to(69, 110);
+    t.run(1500);
+    t.walk_to(68, 110);
+    assert_eq!(t.at(), "job_duncer 68 110", "still in the middle");
+    t.walk_to(67, 110);
+    assert_eq!(t.eval("return player.map .. ' ' .. v.change_dancer"), "comodo 8", "to the left, too late");
+    // that ended the audition: nothing more of it later
+    t.run(90_000);
+    assert_eq!(t.at(), "comodo 188 162");
+
+    // standing still lasts the minute, then the stage is cleared
+    t.talk(m, bijou.0, bijou.1, &[]);
+    t.talk(m, usher.0, usher.1, &[1]);
+    t.run(79_000);
+    assert_eq!(t.at(), "job_duncer 70 112");
+    t.run(2000);
+    assert_eq!(t.eval("return player.map .. ' ' .. v.change_dancer"), "comodo 8", "out of time");
+
+    // the Dance Poring at the end
+    t.talk(m, usher.0, usher.1, &[1]);
+    t.run(72_000);
+    t.slay_by("dance_poring::OnKilled", 1);
+    assert_eq!(t.eval("return player.map .. ' ' .. v.change_dancer"), "comodo 10");
+    t.run(10_000);
+    assert_eq!(t.at(), "comodo 188 162");
+
+    // the job, and a Rope below Job Level 50
+    t.talk(m, bijou.0, bijou.1, &[]);
+    assert_eq!(t.eval("return player.class .. ' ' .. count_item(1950) .. ' ' .. v.change_dancer"), "20 1 0");
 }

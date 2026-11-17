@@ -417,6 +417,33 @@ eAthena 817 (2004-02-19), bugs included. The translator is
   long" has no timer (jAthena has none); dialogue in our English of
   jAthena's Japanese, cut to the window. No account dates the test before
   September 2004: for the 2-2 version, like the rest of `jobs2_2`.
+* **The Dancer test** (`scripts/npc/dancer_test.lua`, behind `jobs2_2`;
+  test `dancer_test`). 817's Performance Master makes a female Archer a
+  Dancer at job level 40 at once; now he sends her to Comodo's dance
+  school and keeps the Bards (jAthena's Bard test is a stub). The test is
+  jAthena's of 2004-09-12 (`npc_job_20dancer.txt`, whole) with rAthena's
+  iRO names (Bor Robin, Aile, Bijou, Pyorgin; tier later) and jAthena's
+  way out of `job_duncer` (2004-03-02): Aile's application (job level 40),
+  the 10,000 Zeny fee with 5 Earthworm Peelings and Boots shown and kept
+  (jAthena and iRO's script take only the Zeny), Bijou's interview (one of
+  two sets of ten questions; 80 points, 70 on a retry; naming yourself the
+  best dancer costs 100), and a one-minute audition on the stage: Bijou
+  calls the steps; a few seconds after each call the step sensors other
+  than the called one open, and stepping on one before the next call puts
+  you out; the Dance Poring of the last call, shot (any kill), passes you;
+  then the job and a Rope (a Line at job level 50). Ours: no waiting room
+  (jAthena's chat room for a queue): the usher sends you to the stage
+  when you say you are ready, or lets you lounge first, as the Wizard
+  test's Helper; a wrong step ends the audition at once, so you can try
+  again (jAthena lets the minute run on for the next in line); the first
+  set's third question asks which response is *not* right, as iRO's script
+  has it (jAthena's "what do you do?" makes "point out the mistake" the one
+  right answer); the "middle" step's sensors, opened in the same second as
+  the "hold the pose" call that would close them, stay open until the next
+  step (jAthena leaves it to its timers' order); the casino manager is
+  Martine as in jAthena (iRO's script says Moo; 817's casino has both, with
+  no lines); dialogue in our English of jAthena's Japanese. The client
+  needs `effect\ring_red.tga` for the stage lights (next section).
 * **Alberta's sailor** (`scripts/npc/alberta_sailor.lua`) no longer sells
   passage to Amatsu and Gonryun: the client has neither map (they are later
   additions 817 took from jAthena), so the fare went and the ship did not.

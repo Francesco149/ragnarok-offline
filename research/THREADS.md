@@ -1477,6 +1477,22 @@ not. Queue T1 asks for players' walkthroughs.
 Open: an iRO or euRO walkthrough of 2004 to date it and settle the
 brothers' list (jAthena's two readings differ). Next: the Sage's (2611
 lines, `job_sage`, Juno) and the Dancer's (932, `job_duncer`).
+**2026-11-17: the Dancer's built** from jAthena //1046 with rAthena's iRO
+names (`scripts/npc/dancer_test.lua`, DEVIATIONS.md, test `dancer_test`)
+and played to the job change in the client (interview, the audition
+standing still, the Dance Poring shot with Arrow Shower). Playing found
+that `job_duncer`'s stage lights want `effect\ring_red.tga`, which this
+GRF lacks: a ResourceError box at every load of the map, the audition's
+minute running behind it. `setup` now makes the file from the client's
+yellow ring, as the May-2004 data has it; Volcano, Assassin Cross of
+Sunset and Ugly Dance are drawn since. **Open:** an iRO or euRO account of
+the audition from 2004: how strict the steps were (jAthena only punishes a
+wrong step after the sensors open; standing still passes the minute),
+whether the Poring had to die to Arrow Shower, and which of jAthena's and
+iRO's question sets euRO asked (Martine or Moo for the casino). Still
+missing from this GRF: `effect\zz.bmp` and `effect\twirl.bmp` (four
+ensembles, sent undrawn); the May-2004 files could show whether they too
+are derived from files this client has. Next 2-2 test: the Sage's.
 
 **2026-11-16: the Bard's and Dancer's solo skills drafted** (DEVIATIONS.md,
 test `bard_dancer_songs`), from jAthena //0993-//1020 (2004-05-27 to 06-11,
