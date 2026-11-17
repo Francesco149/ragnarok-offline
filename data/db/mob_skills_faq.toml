@@ -2376,6 +2376,38 @@ source = "jAthena //0953 (2004-04-27) db/mob_skill_db.txt"
 faq = "Earth Spike / Phreeoni"
 
 [[skill]]
+mob = 1219
+state = "chase"
+skill = 148
+lv = 1
+rate = 300
+cast = 0
+delay = 10000
+cancel = false
+target = "target"
+cond = "myhpltmaxrate"
+cond_val = 30
+tier = "athena2003"
+source = "jAthena //0953 (2004-04-27) db/mob_skill_db.txt"
+faq = "Charge Arrow / Abyssal Knight (RODataZone 2004-02-11)"
+
+[[skill]]
+mob = 1219
+state = "chase"
+skill = 148
+lv = 1
+rate = 100
+cast = 0
+delay = 10000
+cancel = false
+target = "target"
+cond = "always"
+cond_val = 0
+tier = "athena2003"
+source = "jAthena //0953 (2004-04-27) db/mob_skill_db.txt"
+faq = "Charge Arrow / Abyssal Knight (RODataZone 2004-02-11)"
+
+[[skill]]
 mob = 1297
 state = "attack"
 skill = 181
@@ -2568,6 +2600,54 @@ cond_val = 0
 tier = "later"
 source = "rAthena pre-renewal db/mob_skill_db.txt"
 faq = "Water Element Attack / Crab (RODataZone 2004-02-11)"
+
+[[skill]]
+mob = 1293
+state = "attack"
+skill = 26
+lv = 1
+rate = 100
+cast = 0
+delay = 5000
+cancel = true
+target = "self"
+cond = "always"
+cond_val = 0
+tier = "later"
+source = "rAthena pre-renewal db/mob_skill_db.txt"
+faq = "Teleport / Creamy Fire* (RODataZone 2004-02-11)"
+
+[[skill]]
+mob = 1293
+state = "idle"
+skill = 26
+lv = 1
+rate = 2000
+cast = 0
+delay = 0
+cancel = true
+target = "self"
+cond = "rudeattacked"
+cond_val = 0
+tier = "later"
+source = "rAthena pre-renewal db/mob_skill_db.txt"
+faq = "Teleport / Creamy Fire* (RODataZone 2004-02-11)"
+
+[[skill]]
+mob = 1293
+state = "idle"
+skill = 26
+lv = 1
+rate = 100
+cast = 0
+delay = 5000
+cancel = true
+target = "self"
+cond = "always"
+cond_val = 0
+tier = "later"
+source = "rAthena pre-renewal db/mob_skill_db.txt"
+faq = "Teleport / Creamy Fire* (RODataZone 2004-02-11)"
 
 [[skill]]
 mob = 1248
@@ -2764,6 +2844,86 @@ source = "the commonest of 17 TF_POISON rows in jAthena //0953 (2004-04-27) db/m
 faq = "Envenom / Giant Spider (RODataZone 2004-02-11)"
 
 [[skill]]
+mob = 1124
+state = "chase"
+skill = 197
+lv = 1
+rate = 15
+cast = 0
+delay = 10000
+cancel = true
+target = "self"
+cond = "always"
+cond_val = 0
+tier = "athena2003"
+source = "jAthena //0953 (2004-04-27) db/mob_skill_db.txt"
+faq = "Emotion / Goblin (Axe) (RODataZone 2004-02-11)"
+
+[[skill]]
+mob = 1123
+state = "chase"
+skill = 197
+lv = 1
+rate = 15
+cast = 0
+delay = 10000
+cancel = true
+target = "self"
+cond = "always"
+cond_val = 0
+tier = "athena2003"
+source = "jAthena //0953 (2004-04-27) db/mob_skill_db.txt"
+faq = "Emotion / Goblin (Chain) (RODataZone 2004-02-11)"
+
+[[skill]]
+mob = 1122
+state = "chase"
+skill = 197
+lv = 1
+rate = 15
+cast = 0
+delay = 10000
+cancel = true
+target = "self"
+cond = "always"
+cond_val = 0
+tier = "athena2003"
+source = "jAthena //0953 (2004-04-27) db/mob_skill_db.txt"
+faq = "Emotion / Goblin (Dagger) (RODataZone 2004-02-11)"
+
+[[skill]]
+mob = 1125
+state = "chase"
+skill = 197
+lv = 1
+rate = 15
+cast = 0
+delay = 10000
+cancel = true
+target = "self"
+cond = "always"
+cond_val = 0
+tier = "athena2003"
+source = "jAthena //0953 (2004-04-27) db/mob_skill_db.txt"
+faq = "Emotion / Goblin (Hammer) (RODataZone 2004-02-11)"
+
+[[skill]]
+mob = 1126
+state = "chase"
+skill = 197
+lv = 1
+rate = 15
+cast = 0
+delay = 10000
+cancel = true
+target = "self"
+cond = "always"
+cond_val = 0
+tier = "athena2003"
+source = "jAthena //0953 (2004-04-27) db/mob_skill_db.txt"
+faq = "Emotion / Goblin (Morningstar) (RODataZone 2004-02-11)"
+
+[[skill]]
 mob = 1277
 state = "attack"
 skill = 90
@@ -2826,6 +2986,23 @@ cond_val = 18
 tier = "athena2003"
 source = "jAthena //0953 (2004-04-27) db/mob_skill_db.txt"
 faq = "Endure / Gullinbursti* (RODataZone 2004-02-11)"
+
+[[skill]]
+mob = 1318
+state = "chase"
+skill = 197
+lv = 1
+rate = 15
+cast = 0
+delay = 10000
+cancel = true
+target = "self"
+cond = "always"
+cond_val = 0
+val = 6
+tier = "athena2003"
+source = "jAthena //0953 (2004-04-27) db/mob_skill_db.txt"
+faq = "Emotion / Heater (RODataZone 2004-02-11)"
 
 [[skill]]
 mob = 1213
@@ -2941,6 +3118,38 @@ source = "the commonest of 24 AL_INCAGI rows in jAthena //0953 (2004-04-27) db/m
 faq = "Increase AGI / Khalitzburg (RODataZone 2004-02-11)"
 
 [[skill]]
+mob = 1306
+state = "chase"
+skill = 8
+lv = 1
+rate = 1000
+cast = 0
+delay = 0
+cancel = true
+target = "self"
+cond = "longrangeattacked"
+cond_val = 0
+tier = "athena2003"
+source = "jAthena //0953 (2004-04-27) db/mob_skill_db.txt"
+faq = "Endure / Leid Olmai (RODataZone 2004-02-11)"
+
+[[skill]]
+mob = 1306
+state = "chase"
+skill = 8
+lv = 1
+rate = 1000
+cast = 0
+delay = 0
+cancel = true
+target = "self"
+cond = "skillused"
+cond_val = 18
+tier = "athena2003"
+source = "jAthena //0953 (2004-04-27) db/mob_skill_db.txt"
+faq = "Endure / Leid Olmai (RODataZone 2004-02-11)"
+
+[[skill]]
 mob = 1138
 state = "attack"
 skill = 179
@@ -3035,6 +3244,22 @@ cond_val = 0
 tier = "later"
 source = "rAthena pre-renewal db/mob_skill_db.txt"
 faq = "Spear Boomerang / Mobster (RODataZone 2004-02-11)"
+
+[[skill]]
+mob = 1150
+state = "chase"
+skill = 8
+lv = 7
+rate = 1000
+cast = 0
+delay = 30000
+cancel = true
+target = "self"
+cond = "skillused"
+cond_val = 18
+tier = "athena2003"
+source = "jAthena //0953 (2004-04-27) db/mob_skill_db.txt"
+faq = "Endure / Moonlight Flower (RODataZone 2004-02-11)"
 
 [[skill]]
 mob = 1249
@@ -3149,6 +3374,38 @@ source = "rAthena pre-renewal db/mob_skill_db.txt"
 faq = "Cloaking / Pest (RODataZone 2004-02-11)"
 
 [[skill]]
+mob = 1155
+state = "attack"
+skill = 185
+lv = 3
+rate = 100
+cast = 500
+delay = 5000
+cancel = false
+target = "target"
+cond = "always"
+cond_val = 0
+tier = "later"
+source = "rAthena pre-renewal db/mob_skill_db.txt"
+faq = "Earth Element Attack / Petite (Ground) (RODataZone 2004-02-11)"
+
+[[skill]]
+mob = 1156
+state = "attack"
+skill = 187
+lv = 3
+rate = 100
+cast = 500
+delay = 5000
+cancel = false
+target = "target"
+cond = "always"
+cond_val = 0
+tier = "later"
+source = "rAthena pre-renewal db/mob_skill_db.txt"
+faq = "Wind Element Attack / Petite (Sky) (RODataZone 2004-02-11)"
+
+[[skill]]
 mob = 1159
 state = "attack"
 skill = 206
@@ -3179,6 +3436,22 @@ cond_val = 70
 tier = "guess"
 source = "the commonest of 19 NPC_ENERGYDRAIN rows in jAthena //0953 (2004-04-27) db/mob_skill_db.txt"
 faq = "SP Decrease Attack / Phreeoni (RODataZone 2004-02-11)"
+
+[[skill]]
+mob = 1163
+state = "chase"
+skill = 197
+lv = 1
+rate = 15
+cast = 0
+delay = 10000
+cancel = true
+target = "self"
+cond = "always"
+cond_val = 0
+tier = "athena2003"
+source = "jAthena //0953 (2004-04-27) db/mob_skill_db.txt"
+faq = "Emotion / Reydric (RODataZone 2004-02-11)"
 
 [[skill]]
 mob = 1165
@@ -3243,6 +3516,22 @@ cond_val = 0
 tier = "later"
 source = "rAthena pre-renewal db/mob_skill_db.txt"
 faq = "Heal (L2 / Smokie (RODataZone 2004-02-11)"
+
+[[skill]]
+mob = 1028
+state = "chase"
+skill = 197
+lv = 1
+rate = 15
+cast = 0
+delay = 10000
+cancel = true
+target = "self"
+cond = "always"
+cond_val = 0
+tier = "athena2003"
+source = "jAthena //0953 (2004-04-27) db/mob_skill_db.txt"
+faq = "Emotion / Soldier Skeleton (RODataZone 2004-02-11)"
 
 [[skill]]
 mob = 1322
@@ -3323,6 +3612,39 @@ cond_val = 0
 tier = "guess"
 source = "the commonest of 44 NPC_DARKNESSATTACK rows in jAthena //0953 (2004-04-27) db/mob_skill_db.txt"
 faq = "Dark Element Attack / Thief Bug (Male) (RODataZone 2004-02-11)"
+
+[[skill]]
+mob = 1204
+state = "chase"
+skill = 197
+lv = 1
+rate = 15
+cast = 0
+delay = 10000
+cancel = true
+target = "self"
+cond = "always"
+cond_val = 0
+val = 29
+tier = "athena2003"
+source = "jAthena //0953 (2004-04-27) db/mob_skill_db.txt"
+faq = "Emotion / Tirfing (RODataZone 2004-02-11)"
+
+[[skill]]
+mob = 1204
+state = "attack"
+skill = 158
+lv = 3
+rate = 100
+cast = 0
+delay = 5000
+cancel = true
+target = "target"
+cond = "always"
+cond_val = 0
+tier = "later"
+source = "rAthena pre-renewal db/mob_skill_db.txt"
+faq = "Piercing Attack / Tirfing (RODataZone 2004-02-11)"
 
 [[skill]]
 mob = 1312
@@ -3436,6 +3758,39 @@ cond_val = 0
 tier = "athena2003"
 source = "jAthena //0953 (2004-04-27) db/mob_skill_db.txt"
 faq = "Grimtooth / Wraith Dead (RODataZone 2004-02-11)"
+
+[[skill]]
+mob = 1200
+state = "chase"
+skill = 197
+lv = 1
+rate = 15
+cast = 0
+delay = 10000
+cancel = true
+target = "self"
+cond = "always"
+cond_val = 0
+val = 30
+tier = "athena2003"
+source = "jAthena //0953 (2004-04-27) db/mob_skill_db.txt"
+faq = "Emotion (/kis) / Zealotus (RODataZone 2004-02-11)"
+
+[[skill]]
+mob = 1200
+state = "attack"
+skill = 206
+lv = 3
+rate = 100
+cast = 0
+delay = 5000
+cancel = true
+target = "target"
+cond = "always"
+cond_val = 0
+tier = "later"
+source = "rAthena pre-renewal db/mob_skill_db.txt"
+faq = "Lick / Zealotus (RODataZone 2004-02-11)"
 
 [[skill]]
 mob = 1157

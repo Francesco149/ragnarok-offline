@@ -81,6 +81,22 @@ mobs = {}
 for m in tomllib.load(open(ROOT / 'data/db/mobs.toml', 'rb'))['mob']:
     if m.get('base_exp'):
         mobs.setdefault(re.sub(r'[^a-z]', '', m['display'].lower()), m['id'])
+for m in tomllib.load(open(ROOT / 'data/db/mobs.toml', 'rb'))['mob']:
+    if m.get('base_exp'):  # Athena's own names: ASSULTER, TIRFING, PERMETER, SOLIDER...
+        mobs.setdefault(re.sub(r'[^a-z]', '', m['name'].lower()), m['id'])
+# RODataZone's names for the rest. Goblins and Kobolds by weapon as tools/import/mob_skills_faq.tsv
+# reads them from the client's sprites (goblin_1 knife, _2 flail, _3 axe, _4 hammer, _5 morning
+# star; kobold_1 axe, _2 hammer, _3 morning star); the Tower Keeper is the Clock Tower Manager
+# (THREADS.md #32). Its training-ground Fabre is not a monster of ours.
+ALIAS = {'Abyssal Knight': 1219, 'Bloody Knight': 1268, 'Creamy Fire*': 1293, 'Desert Wolf (Baby)': 1107,
+         'General Skeleton': 1290, 'Goblin (Dagger)': 1122, 'Goblin (Chain)': 1123, 'Goblin (Axe)': 1124,
+         'Goblin (Hammer)': 1125, 'Goblin (Morningstar)': 1126, 'Goblin (Xmas)': 1245, 'Kobold (Axe)': 1133,
+         'Kobold (Hammer)': 1134, 'Kobold (Morningstar)': 1135, 'Hatii': 1252, 'Leid Olmai': 1306,
+         'Moonlight Flower': 1150, 'Mutant Dragonoid': 1262, 'Petite (Ground)': 1155, 'Petite (Sky)': 1156,
+         'Picky (Egg)': 1050, 'Pierre': 1160, 'Reydric': 1163, 'Reydric Archer': 1276, 'Savage Bebe': 1167,
+         'Seal': 1317, 'Tower Keeper': 1270, 'Zealotus': 1200, 'Arclouze': 1194}
+for k, v in ALIAS.items():
+    mobs[re.sub(r'[^a-z]', '', k.lower())] = v
 unmapped, unmatched, n_have, missing = collections.Counter(), [], 0, []
 for r in rows:
     mid = mobs.get(re.sub(r'[^a-z]', '', r[0].lower()))

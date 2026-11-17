@@ -1257,10 +1257,12 @@ pairs wait on names not mapped yet (the elemental attacks, "Summon
 Followers", "Multi Attack", "Life Drain"...). Next: map those, then add
 what is missing as the FAQ pairs were (`tools/import/mob_skills_faq.py`).
 **Mapped and added (2026-11-17).** With the elemental attacks and the rest
-mapped (`research/rdz_mob_skills.py`), RODataZone and our tables share 682
-pairs and it has 65 we lacked: `tools/import/mob_skills_rdz.tsv`, taken by
-`tools/import/mob_skills_faq.py` as the FAQ's pairs are (61 pairs, 66 rows; 13 are
-emotions, 26 tier guess: the commonest row of that skill). Its level where it
+mapped (`research/rdz_mob_skills.py`; its monsters by our display name, Athena's
+name, or an alias list: Reydric, Tirfing, Goblins and Kobolds by weapon...),
+RODataZone and our tables share 801 pairs and it has 83 we lacked:
+`tools/import/mob_skills_rdz.tsv`, taken by `tools/import/mob_skills_faq.py` as
+the FAQ's pairs are (79 pairs, 88 rows; 23 are emotions, 26 tier guess: the
+commonest row of that skill). Its level where it
 gives one (Hode's, Sandman's, Smokie's Heal); left out: the Gullinbursti's
 "2 Sidewinder" (the only row, rAthena's, brings Savages), the Peco Peco's egg
 (no row), Detoxify (no table). The Greatest General's Earth Spike, which
