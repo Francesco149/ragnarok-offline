@@ -1322,6 +1322,49 @@ fn acolyte_skills() {
     assert!(t.hp() < hp);
 }
 
+/// Spear Boomerang reaches 3, 5, 7, 9, 11 cells by level (the iRO guide, 2004-04),
+/// and the skill list tells the client the learned level's reach.
+#[test]
+fn spear_boomerang_reach() {
+    let mut t = T::new();
+    t.lua("job_change(7); player.base_level = 70; player.str = 80; player.dex = 80; heal(9999, 9999)");
+    t.wear(1401); // Javelin
+    t.learn("KN_PIERCE", 3);
+    t.learn("KN_SPEARBOOMERANG", 1);
+    let id = t.skill_id("KN_SPEARBOOMERANG");
+    // give_skill sends the skill list again
+    let reach = |t: &mut T| -> u16 {
+        let list = t.packets(0x010f).pop().expect("skill list");
+        let at = (4..list.len()).step_by(37).find(|&o| u16_at(&list, o) == id).expect("Spear Boomerang listed");
+        u16_at(&list, at + 10)
+    };
+    assert_eq!(reach(&mut t), 3, "level 1 is shown as 3 cells");
+    let m = t.spawn(30, 25, 1008); // five cells off
+    t.cast("KN_SPEARBOOMERANG", m);
+    t.run(1500);
+    assert_eq!(t.mob_hp(m), Some(427), "too far at level 1");
+    t.learn("KN_SPEARBOOMERANG", 2);
+    assert_eq!(reach(&mut t), 5);
+    t.cast("KN_SPEARBOOMERANG", m);
+    t.run(1500);
+    assert!(t.mob_hp(m).unwrap_or(0) < 427, "within reach at level 2");
+    t.learn("KN_SPEARBOOMERANG", 5);
+    assert_eq!(reach(&mut t), 11);
+
+    // Grimtooth: 3 cells at level 1, 7 at level 5 (the iRO guide's Assassin page)
+    t.lua("job_change(12)");
+    t.wear(1250); // Jur
+    t.learn("TF_HIDING", 1);
+    t.learn("AS_GRIMTOOTH", 1);
+    let id = t.skill_id("AS_GRIMTOOTH");
+    let list = t.packets(0x010f).pop().expect("skill list");
+    let at = (4..list.len()).step_by(37).find(|&o| u16_at(&list, o) == id).expect("Grimtooth listed");
+    assert_eq!(u16_at(&list, at + 10), 3);
+    t.learn("AS_GRIMTOOTH", 5);
+    let list = t.packets(0x010f).pop().expect("skill list");
+    assert_eq!(u16_at(&list, at + 10), 7);
+}
+
 /// Swordman, Knight, Merchant: Magnum Break around the swordman, Endure,
 /// Auto Berserk, Pierce by size, Mammonite's zeny.
 #[test]

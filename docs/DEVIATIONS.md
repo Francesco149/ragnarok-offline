@@ -854,6 +854,13 @@ always fires.
   same RODataZone page says "a maximum of 10 items", and jAthena set 10 on
   2004-02-01 (//0764, research round 22). A full bag still lets its oldest
   item go, as both emulators do.
+* **Spear Boomerang reaches 3, 5, 7, 9, 11 cells and Grimtooth 3 to 7 by
+  level** (2026-11-17), where mod0631 (and jAthena until //0749 of
+  2004-01-27) gives 11 and 7 at every level: 817's skill_db, the iRO
+  guide's Knight page (2004-04-13) and Assassin page (2004-03-27), and for
+  Spear Boomerang a pRO guide of 2004-08 (research round 30). The skill
+  window tells the client the learned level's reach, so it walks close
+  enough before it asks (Spring Trap and Shield Boomerang too).
 * **The Deleters' Fire Wall and Meteor Storm change places** (2026-11-15):
   the Sky Deleter casts Meteor Storm, the Earth Deleter Fire Wall, as
   jAthena //0743 (2004-01-26) and 817 have them; mod0631 had them the wrong

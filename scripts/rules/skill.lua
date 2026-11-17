@@ -453,6 +453,13 @@ local LEVEL_RANGE = {
   [SK.HT_SPRINGTRAP] = function(lv) return 3 + lv end,
   -- 3, 5, 7, 9, 11 cells: eAthena 817's skill_db and the iRO guide (2004-04-11). mod0631's: 6 at every level
   [SK.CR_SHIELDBOOMERANG] = function(lv) return 1 + 2 * lv end,
+  -- 3, 5, 7, 9, 11 cells: the iRO guide's Knight page (2004-04-13: "Attack Range + 3 ... + 11"), a
+  -- pRO guide of 2004-08 (GameFAQs 31808: "1 + 2 X Skill Level tiles"), 817's skill_db (-3:-5:...:-11,
+  -- the weapon's reach plus 2 a level). mod0631's and jAthena's of 2003-11: 11 at every level
+  [SK.KN_SPEARBOOMERANG] = function(lv) return 1 + 2 * lv end,
+  -- 3 to 7 cells: the iRO guide's Assassin page (2004-03-27) and 817's skill_db (3:4:5:6:7);
+  -- mod0631's: 7 at every level. The client's text gives no reach
+  [SK.AS_GRIMTOOTH] = function(lv) return 2 + lv end,
 }
 -- Cast times mod0631's cast_db lacks, from eAthena 817's (2004-02-19). Providence's three
 -- seconds are also the iRO guide's (2004-04-11: "3 second casting delay")
@@ -474,6 +481,13 @@ local function skill_range(sd, skill, lv)
   local r = skill_get_range(skill)
   if r < 0 then return math.max(1, sd.st and sd.st.attackrange or 1) - (r + 1) end
   return r
+end
+
+-- The reach the client is told for a skill at a level (skill list, 0x010f; item
+-- skills, 0x0147): the client walks this close before it asks. nil = the table's.
+function rules.skill_reach(a)
+  local f = LEVEL_RANGE[a.skill]
+  if f and a.lv and a.lv > 0 then return f(a.lv) end
 end
 
 -- The client asks to use a skill (skill_use_id / skill_use_pos). Returns
@@ -890,7 +904,8 @@ end
 
 -- A skill an item lets the player use once (clif_item_skill, 0x0147).
 function item_skill(id, lv)
-  _rt("item_skill", id, lv or 1, skill_get(id).name, skill_get_inf(id), skill_get_sp(id, lv or 1), math.max(1, skill_get_range(id)))
+  _rt("item_skill", id, lv or 1, skill_get(id).name, skill_get_inf(id), skill_get_sp(id, lv or 1),
+    math.max(1, rules.skill_reach({ skill = id, lv = lv or 1 }) or skill_get_range(id)))
 end
 
 -- ------------------------------------------------------------ hooks from the server

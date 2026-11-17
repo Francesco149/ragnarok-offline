@@ -79,13 +79,20 @@ impl Game {
                     inf: sk.inf,
                     level: lv as u16,
                     sp: if lv > 0 { self.skill_sp(id, lv) } else { 0 },
-                    range: self.skill_range(sk.range),
+                    range: self.shown_range(id, lv, sk.range),
                     name: sk.name.clone(),
                     upgradable: points > 0 && lv < max && !sk.quest,
                 })
             })
             .collect();
         self.send(sid, packets::skill_list(&entries));
+    }
+
+    /// The reach the client is told: rules.skill_reach for skills whose reach
+    /// grows with the level (Spear Boomerang 3 to 11), else the table's.
+    fn shown_range(&self, id: u16, lv: u8, r: i32) -> u16 {
+        let by_level = self.scripts.as_ref().and_then(|e| e.rule("skill_reach", &serde_json::json!({"skill": id, "lv": lv})).ok().flatten());
+        by_level.and_then(|v| v.as_f64()).map(|v| v as u16).unwrap_or_else(|| self.skill_range(r))
     }
 
     fn skill_range(&self, r: i32) -> u16 {
@@ -105,7 +112,7 @@ impl Game {
         c.skill_point -= 1;
         c.skills.insert(skill, lv + 1);
         let sp = self.skill_sp(skill, lv + 1);
-        let range = self.db.skill(skill).map(|s| self.skill_range(s.range)).unwrap_or(0);
+        let range = self.db.skill(skill).map(|s| self.shown_range(skill, lv + 1, s.range)).unwrap_or(0);
         if let Some(sid) = self.sid_of(unit) {
             self.send(sid, packets::skill_update(skill, (lv + 1) as u16, sp, range, lv + 1 < max));
         }
