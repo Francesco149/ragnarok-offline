@@ -3444,3 +3444,42 @@ fn monk_skills() {
     assert_eq!(t.pos(me), (10, 10));
     assert_eq!(balls(&mut t), n - 1);
 }
+
+/// Free Cast (mod0631 pc.c:2419, 2455, clif.c:4965; 817 and jAthena //0727 the same): a Sage who
+/// has it may start and keep up a plain attack while he casts, the skill delay unchecked, each
+/// blow (150 - 5 x level)% as slow; without it the attack is refused for the skill delay.
+#[test]
+fn sage_free_cast_attacks_while_casting() {
+    let attack = |t: &mut T, mob: u32| {
+        let mut w = Writer::new(0x0089);
+        w.u32(mob).u8(7);
+        t.send(w);
+    };
+    for free_cast in [0u8, 4] {
+        let mut t = T::new();
+        t.lua("job_change(16); player.base_level = 80; player.str = 50; player.int = 50; heal(30000, 30000)");
+        t.learn("MG_FIREBOLT", 10);
+        if free_cast > 0 {
+            t.learn("SA_FREECAST", free_cast);
+        }
+        let me = t.me;
+        let pupa = t.spawn(26, 25, 1008);
+        let full = t.mob_hp(pupa).unwrap();
+        t.cast("MG_FIREBOLT", pupa);
+        t.run(100);
+        assert_ne!(t.lua(&format!("tostring(battle.get({me}).casting)")).trim(), "nil", "casting");
+        t.packets(0);
+        attack(&mut t, pupa);
+        t.run(2000);
+        assert_ne!(t.lua(&format!("tostring(battle.get({me}).casting)")).trim(), "nil", "still casting");
+        if free_cast == 0 {
+            assert_eq!(t.mob_hp(pupa), Some(full), "no blow during the cast");
+            assert!(!t.packets(0x0110).is_empty(), "told: skill delay");
+        } else {
+            assert!(t.mob_hp(pupa).is_none_or(|hp| hp < full), "blows during the cast");
+            let got = t.lua(&format!("rules.weapon_attack({{src = {me}, target = {pupa}}}).adelay")).trim().parse::<f64>().unwrap() as i64;
+            let aspd = t.st("aspd");
+            assert_eq!(got, aspd * 2 * (150 - 5 * free_cast as i64) / 100, "slower blows");
+        }
+    }
+}

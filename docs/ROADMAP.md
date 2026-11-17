@@ -117,8 +117,13 @@ Next:
   Blade Stop, Snap; this client draws none of the spheres, windows or
   holds. The ensembles drafted the same day (test `ensembles`), each
   played by one Bard or Dancer alone; War Drum and Loki's Veil played in
-  the client. Left: Free Cast's attack while
-  casting (it walks, as mod0631 `pc.c:1094`), Abracadabra, Devotion and
+  the client. Free Cast's attack while casting, which the port had
+  dropped, mended on 2026-11-17 from mod0631 itself (`pc.c:2419, 2455`,
+  `clif.c:4965`; 817 and jAthena //0727 the same; test
+  `sage_free_cast_attacks_while_casting`): the skill delay unchecked while
+  the cast runs, each blow (150 - 5 x level)% as slow. Played in the
+  client: it sends the attack under its own cast bar, and the blows' numbers
+  show over the casting pose. Left: Abracadabra, Devotion and
   Auto Spell (THREADS.md #25: no packets for their lines and window).
 * **Check the drafted skills against the iRO guide's pages** (THREADS.md
   #22) and the ailments against period guides (#21). The client's skill

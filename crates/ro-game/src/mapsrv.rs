@@ -82,7 +82,8 @@ impl Game {
                     0 | 7 => {
                         // clif_parse_ActionRequest: no attack during a skill's delay
                         let now = self.now();
-                        if self.world.units.get(&unit).and_then(|u| u.player()).is_some_and(|p| p.canact > now) {
+                        // (but a Sage with Free Cast, while he casts)
+                        if !self.free_casting(unit) && self.world.units.get(&unit).and_then(|u| u.player()).is_some_and(|p| p.canact > now) {
                             self.send(sid, packets::skill_fail(1, 0, 4));
                             return Ok(());
                         }

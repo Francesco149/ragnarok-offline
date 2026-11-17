@@ -46,7 +46,7 @@ const SC_QUAGMIRE: u16 = 8;
 const SC_SILENCE: u16 = 70;
 /// jAthena //0850's number (scripts/rules/00_const.lua)
 const SC_KEEPING: u16 = 145;
-use crate::battle::{SC_AUTOCOUNTER, SC_DANCING, SC_DONTFORGETME};
+use crate::battle::{SA_FREECAST, SC_AUTOCOUNTER, SC_DANCING, SC_DONTFORGETME};
 
 impl Game {
     /// Instantiate the monster spawns of a map (first time a player enters).
@@ -189,6 +189,12 @@ impl Game {
         }
     }
 
+    /// Casting with Free Cast learnt: a Sage may then attack, the skill delay
+    /// unchecked (mod0631 pc.c:2419, clif.c:4965; 817 and jAthena //0727 the same).
+    pub(crate) fn free_casting(&self, unit: u32) -> bool {
+        self.world.units.get(&unit).and_then(|u| u.player()).is_some_and(|p| p.cast.is_some()) && self.skill_level(unit, SA_FREECAST) > 0
+    }
+
     /// Walk to a cell within `range` of (tx, ty) (the target's own cell is taken).
     fn walk_toward(&mut self, unit: u32, tx: u16, ty: u16, range: i32) {
         let Some(u) = self.world.units.get(&unit) else { return };
@@ -254,9 +260,11 @@ impl Game {
             return;
         }
         // pc.c:2419 pc_attack_timer: no attack during a skill's delay; the
-        // client is told and the attack is dropped
+        // client is told and the attack is dropped. A Sage with Free Cast
+        // fights on while he casts (the check is skipped while his skill timer runs)
+        let free_cast = self.free_casting(id);
         let p = self.world.units[&id].player().unwrap();
-        if p.canact > now || p.cast.is_some() {
+        if !free_cast && (p.canact > now || p.cast.is_some()) {
             let sid = p.sid;
             self.world.units.get_mut(&id).unwrap().player_mut().unwrap().attack = None;
             self.send(sid, packets::skill_fail(1, 0, 4));

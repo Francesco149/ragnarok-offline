@@ -1095,6 +1095,10 @@ function rules.weapon_attack(a)
   local adelay
   if src.kind == "player" then
     adelay = src.st.aspd * 2 -- pc.c:2458
+    -- a Sage attacking while he casts, with Free Cast: slower (mod0631 pc.c:2455, 817
+    -- pc.c:3252, jAthena //0727)
+    local fc = checkskill(src, SK.SA_FREECAST)
+    if src.casting and fc > 0 then adelay = floor(adelay * (150 - fc * 5) / 100) end
     -- a bow needs an arrow for every shot (battle.c:1687)
     if src.st.weapontype1 == 11 then
       if not src.st.ammo then

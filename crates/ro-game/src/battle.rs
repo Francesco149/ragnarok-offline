@@ -58,6 +58,7 @@ pub const SC_ROKISWEIL: u16 = 116;
 pub const SC_DONTFORGETME: u16 = 106;
 /// The Sage's Cast Cancel, the one skill asked for during a cast.
 const SA_CASTCANCEL: u16 = 275;
+pub(crate) const SA_FREECAST: u16 = 278;
 
 /// How often `rules.battle_tick` runs (Athena skill_unit_timer: 100 ms).
 const BATTLE_TICK_MS: u64 = 100;
@@ -443,7 +444,7 @@ impl Game {
             UnitKind::Player(p) => {
                 // SA_FREECAST (278) lets a Sage walk while casting; RG_TUNNELDRIVE (213) while hidden
                 let skill = |id: u16| self.store.chars.get(&p.char_id).and_then(|c| c.skills.get(&id)).copied().unwrap_or(0);
-                if p.cast.is_some() && skill(278) == 0 {
+                if p.cast.is_some() && skill(SA_FREECAST) == 0 {
                     return false;
                 }
                 if p.canmove > now {
@@ -641,7 +642,7 @@ impl Game {
         }
         let cast = Cast { skill, lv, target, x, y, end_at: now + cast_ms, cancelable: cancelable && cast_ms > 0, val, line };
         // a player stops to cast (but a Sage with Free Cast); a monster's walk runs on
-        if self.world.units.get(&unit).is_some_and(|u| u.is_player()) && self.skill_level(unit, 278) == 0 {
+        if self.world.units.get(&unit).is_some_and(|u| u.is_player()) && self.skill_level(unit, SA_FREECAST) == 0 {
             self.stop_walking(unit);
         }
         if let Some(u) = self.world.units.get_mut(&unit) {
