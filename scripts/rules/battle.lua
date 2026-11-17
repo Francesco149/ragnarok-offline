@@ -149,7 +149,18 @@ end
 -- frozen or stone: DEF halved for players too, MDEF a quarter up (817 battle_get_def,
 -- battle_get_mdef; Ragu Memo: "DEF - 50%, MDEF + 25%")
 local function hard(bl) return sc(bl, SC.FREEZE) or sc(bl, SC.STONE) end
-local function player_def(bl) local d = bl.st.def; if hard(bl) then d = d >> 1 end; return d end
+-- A third off the DEF of whoever is casting Brandish Spear, Bowling Bash or Grand Cross:
+-- eAthena 817's skill_db cast_def_rate 33 (battle.c:505, players and monsters alike); the
+-- iRO guide's Knight page (2004-04-13) has Bowling Bash "cannot be interrupted", and pRO's
+-- Maruko (2004-08, GameFAQs 31808) "During the cast time, character's DEF is reduced to
+-- 2/3" for both Knight skills. mod0631 has no such column
+local CAST_DEF = { [SK.KN_BRANDISHSPEAR] = 33, [SK.KN_BOWLINGBASH] = 33, [SK.CR_GRANDCROSS] = 33 }
+local function cast_def(bl, def)
+  local r = bl.casting and CAST_DEF[bl.casting]
+  if r and def < 10000 then def = floor(def * (100 - r) / 100) end
+  return def
+end
+local function player_def(bl) local d = bl.st.def; if hard(bl) then d = d >> 1 end; return cast_def(bl, d) end
 function battle.def(bl)
   if bl.kind ~= "mob" then return player_def(bl) end
   local def = bl.db.def
@@ -173,7 +184,7 @@ function battle.def(bl)
     if sc(bl, SC.POISON) then def = floor(def * 75 / 100) end
     if sc(bl, SC.FREEZE) or sc(bl, SC.STONE) then def = def >> 1 end
   end
-  return def
+  return cast_def(bl, def)
 end
 function battle.mdef(bl)
   local m = bl.kind == "mob" and bl.db.mdef or bl.st.mdef

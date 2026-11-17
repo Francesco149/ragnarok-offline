@@ -861,6 +861,10 @@ always fires.
   Spear Boomerang a pRO guide of 2004-08 (research round 30). The skill
   window tells the client the learned level's reach, so it walks close
   enough before it asks (Spring Trap and Shield Boomerang too).
+* **A third off the caster's DEF while Brandish Spear, Bowling Bash or Grand
+  Cross is cast** (2026-11-17): 817's `cast_def_rate` 33 (`battle.c:505`,
+  players and monsters); round 24's preview of kRO's Comodo notes and a pRO
+  guide of 2004-08 say "reduced to 2/3". mod0631 has no such rule.
 * **The Deleters' Fire Wall and Meteor Storm change places** (2026-11-15):
   the Sky Deleter casts Meteor Storm, the Earth Deleter Fire Wall, as
   jAthena //0743 (2004-01-26) and 817 have them; mod0631 had them the wrong

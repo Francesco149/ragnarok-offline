@@ -1365,6 +1365,24 @@ fn spear_boomerang_reach() {
     assert_eq!(u16_at(&list, at + 10), 7);
 }
 
+/// Bowling Bash's second of casting costs the Knight a third of the DEF (817 cast_def_rate 33).
+#[test]
+fn bowling_bash_cast_lowers_def() {
+    let mut t = T::new();
+    t.lua("job_change(7); player.base_level = 70; player.str = 80; player.dex = 1; heal(9999, 9999)");
+    t.wear(2307); // Mantle: DEF 4
+    t.learn("KN_BOWLINGBASH", 5);
+    let def = |t: &mut T| -> i64 { t.lua("battle.def(battle.get(player.id))").trim().parse::<f64>().unwrap() as i64 };
+    let full = def(&mut t);
+    assert!(full >= 3, "some DEF to cut: {full}");
+    let m = t.spawn(26, 25, 1008);
+    t.cast("KN_BOWLINGBASH", m);
+    assert!(t.lua("battle.get(player.id).casting").contains("62"), "casting");
+    assert_eq!(def(&mut t), full * 67 / 100);
+    t.run(3000);
+    assert_eq!(def(&mut t), full, "back once the cast is over");
+}
+
 /// Swordman, Knight, Merchant: Magnum Break around the swordman, Endure,
 /// Auto Berserk, Pierce by size, Mammonite's zeny.
 #[test]
