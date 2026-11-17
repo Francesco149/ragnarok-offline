@@ -453,14 +453,15 @@ EXTRA_EQUIP.update({
 # yet]" / "Chance of causing Stun effect (NYI)"; the Poison and Freeze Arrows keep their
 # element), the Sharp Arrow's critical, the Great Axe's stun ("Stun + 10% (Not Implemented
 # yet)" / "Stun +10% (NYI)") and the Requiem Card's chaos ("Success Chance 5% Not implemented
-# yet" / "(Not Yet Implemented)"). The Crescent Scythe's critical is 20 in both, 30 in mod0631.
+# yet" / "(Not Yet Implemented)"). The Crescent Scythe's critical is 20 in both, 30 in mod0631
+# (and its HIT + 10 is jAthena //0556's, below).
 EXTRA_EQUIP.update({
     1758: "", 1760: "", 1761: "", 1764: "", 1768: "", 1769: "",
     1759: "bonus bAtkEle,1;",
     1763: "bonus bAtkEle,5;",
     1364: "",
     4104: "",
-    1466: "bonus bCritical,20; bonus bHit,10;",
+    1466: "bonus bCritical,20;",
 })
 # Stats where the client's text and RODataZone's iRO tables give the same, against mod0631's
 # script (the rule of THREADS.md R6; found by comparing every stat RODataZone names):
@@ -476,6 +477,48 @@ EXTRA_EQUIP.update({
     2337: "bonus bAgi,1; bonus bMdef,3;",
     2277: "bonus bInt,1;",
 })
+# jAthena //0556 (8ec48b3, 2003-11-21, no message) rewrote 56 rare weapons: new bonuses on 48,
+# ATK on 23, weight on 5 (Light Epsilon's Heal 1 -> 3, Muramasa 170 -> 155, the Assassin
+# Dagger's SP +30 -> HP +20% SP +15%, ...). mod0631 carries most of it. No period witness has
+# it: the client's text gives the earlier ATK on all 23 and the earlier weight on all 5;
+# RODataZone's iRO weapons.js (2004-02-11) the earlier ATK on all 8 it lists; Ragu Memo's jRO
+# weapon pages (2003-12-18, a month after the commit, mod0631's own server) the earlier row on
+# all 21 it lists (ATK, "CRI + 20", "MSP + 30", "コールドボルトLv1", "サンダーストームLv1",
+# "ヒールLv1"). So every row the commit changed takes its row from before it (weight, ATK, script),
+# read from jAthena's git (weapon_rows_before_0556). Where the period sources name an effect the
+# earlier row lacks, EXTRA_EQUIP below gives it: the Katzbalger's DEF + 10 (client, Ragu Memo:
+# the one addition of //0556 they show), Gungnir's "Accuracy + 30" with no property (client,
+# RODataZone; the earlier row has Wind and HIT 20), the Cutlas's Bash 5 (client, RODataZone,
+# Ragu Memo), the Ice Falchion's Cold Bolt 1 (RODataZone, Ragu Memo), the Fire Brand's Fire
+# Bolt 1 (RODataZone), the Schweizersabel's Lightning Bolt (the client's text, no level: 1,
+# as every other weapon "enchanted with" a bolt). research/notes/round35-review.md.
+J0556 = "8ec48b358c02d4c9d7524d1d39775b5c853f9f0e"
+EXTRA_EQUIP.update({
+    1170: "bonus bVit,5; bonus bDef,10;",
+    1413: "bonus bHit,30;",
+    1135: "skill 5,5;",
+    1131: "bonus bAtkEle,1; skill 14,1;",
+    1133: "bonus bAtkEle,3; skill 19,1;",
+    1167: "bonus bAtkEle,4; skill 20,1;",
+})
+
+
+def weapon_rows_before_0556():
+    """{id: (weight, atk, equip)} from jAthena's item_db before //0556, for the rows it changed."""
+    import subprocess
+
+    def rows(rev):
+        text = subprocess.run(["git", "-C", str(JATHENA), "show", f"{rev}:db/item_db.txt"],
+                              capture_output=True, check=True).stdout.decode("cp932", "replace")
+        out = {}
+        for line in text.splitlines():
+            r = split_item(line.strip().rstrip(","))
+            if r and r[0][0].strip().isdigit():
+                out[int(r[0][0])] = r
+        return out
+    before, after = rows(J0556 + "^"), rows(J0556)
+    return {iid: (num(before[iid][0][6]), num(before[iid][0][7]), before[iid][2])
+            for iid in after if iid in before and before[iid] != after[iid]}
 
 
 def import_items():
@@ -501,9 +544,13 @@ def import_items():
         'note = "weight is in tenths; type: 0 healing 2 usable 3 etc 4 weapon 5 armor 6 card 7 egg 8 pet-equip 10 ammo"',
         "",
     ]
+    before_0556 = weapon_rows_before_0556()
     for iid in sorted(rows):
         (cols, use, equip), src = rows[iid]
         cols += [""] * (17 - len(cols))
+        if iid in before_0556:
+            w, a, equip = before_0556[iid]
+            cols[6], cols[7] = str(w), str(a)
         lua = translate_use(use) if use else ""
         rec = {
             "id": iid,

@@ -4060,7 +4060,6 @@ loc = 2
 weapon_level = 4
 equip_level = 40
 view = 2
-athena_equip = "bonus2 bAddRace,7,5;"
 
 [[item]]
 id = 1131
@@ -4077,7 +4076,7 @@ loc = 2
 weapon_level = 4
 equip_level = 40
 view = 2
-athena_equip = "bonus bAtkEle,1; skill 14,3; bonus2 bAddEff,Eff_Freeze,5;"
+athena_equip = "bonus bAtkEle,1; skill 14,1;"
 
 [[item]]
 id = 1132
@@ -4094,7 +4093,6 @@ loc = 2
 weapon_level = 4
 equip_level = 40
 view = 2
-athena_equip = "bonus2 bAddEff,Eff_Curse,3;"
 
 [[item]]
 id = 1133
@@ -4111,7 +4109,7 @@ loc = 2
 weapon_level = 4
 equip_level = 40
 view = 2
-athena_equip = "bonus bAtkEle,3; skill 19,3;"
+athena_equip = "bonus bAtkEle,3; skill 19,1;"
 
 [[item]]
 id = 1134
@@ -4128,7 +4126,6 @@ loc = 2
 weapon_level = 4
 equip_level = 40
 view = 2
-athena_equip = "bonus2 bAddRace,3,25;"
 
 [[item]]
 id = 1135
@@ -4145,7 +4142,7 @@ loc = 2
 weapon_level = 4
 equip_level = 40
 view = 2
-athena_equip = "skill 5,5; bonus bStr,2; bonus bDef,1;"
+athena_equip = "skill 5,5;"
 
 [[item]]
 id = 1136
@@ -4154,7 +4151,7 @@ display = "Solar Sword"
 type = 4
 buy = 20
 weight = 1200
-atk = 85
+atk = 70
 range = 1
 jobs = 414946
 gender = 2
@@ -4179,7 +4176,7 @@ loc = 2
 weapon_level = 4
 equip_level = 40
 view = 2
-athena_equip = "bonus bInt,5; bonus bLuk,10; bonus bDex,-1; bonus bAtkEle,6;"
+athena_equip = "bonus bInt,5; bonus bAtkEle,6;"
 
 [[item]]
 id = 1138
@@ -4188,7 +4185,7 @@ display = "Mysteltainn"
 type = 4
 buy = 20
 weight = 1000
-atk = 170
+atk = 160
 range = 1
 jobs = 414946
 gender = 2
@@ -4196,7 +4193,7 @@ loc = 2
 weapon_level = 4
 equip_level = 40
 view = 2
-athena_equip = "bonus bAtkEle,7; bonus2 bAddEle,8,15; bonus2 bAddEff,Eff_Stone,1;bonus bDex,3;"
+athena_equip = "bonus bAtkEle,7;"
 
 [[item]]
 id = 1139
@@ -4205,7 +4202,7 @@ display = "Talefing"
 type = 4
 buy = 20
 weight = 1000
-atk = 200
+atk = 185
 range = 1
 jobs = 414946
 gender = 2
@@ -4230,7 +4227,6 @@ loc = 2
 weapon_level = 4
 equip_level = 40
 view = 2
-athena_equip = "bonus bStr,2; bonus bAgi,2; bonus bVit,2; bonus bInt,2; bonus bDex,2; bonus bLuk,2;"
 
 [[item]]
 id = 1141
@@ -4541,7 +4537,7 @@ display = "Muramasa"
 type = 4
 buy = 20
 weight = 1000
-atk = 155
+atk = 170
 range = 1
 jobs = 16514
 gender = 2
@@ -4566,7 +4562,7 @@ loc = 34
 weapon_level = 4
 equip_level = 48
 view = 3
-athena_equip = "bonus bFlee,30; bonus bStr,-5;"
+athena_equip = "bonus bFlee,30;"
 
 [[item]]
 id = 1166
@@ -4583,7 +4579,6 @@ loc = 34
 weapon_level = 4
 equip_level = 48
 view = 3
-athena_equip = "bonus2 bAddRace,9,15;"
 
 [[item]]
 id = 1167
@@ -4600,7 +4595,7 @@ loc = 34
 weapon_level = 4
 equip_level = 48
 view = 3
-athena_equip = "bonus bAtkEle,4; skill 20,3; bonus bDef,1;"
+athena_equip = "bonus bAtkEle,4; skill 20,1;"
 
 [[item]]
 id = 1168
@@ -4633,7 +4628,7 @@ loc = 34
 weapon_level = 4
 equip_level = 48
 view = 3
-athena_equip = "bonus2 bAddEle,7,20; bonus2 bSubEle,7,10;"
+athena_equip = "bonus bAtkEle,7;"
 
 [[item]]
 id = 1170
@@ -5043,7 +5038,7 @@ display = "Swordbreaker"
 type = 4
 buy = 20
 weight = 1000
-atk = 70
+atk = 40
 range = 1
 jobs = 2055918
 gender = 2
@@ -5059,7 +5054,7 @@ display = "Mailbreaker"
 type = 4
 buy = 20
 weight = 1000
-atk = 70
+atk = 40
 range = 1
 jobs = 2055918
 gender = 2
@@ -5100,7 +5095,6 @@ loc = 2
 weapon_level = 4
 equip_level = 36
 view = 1
-athena_equip = "bonus2 bAddRace,3,15; bonus2 bSubRace,3,15;"
 
 [[item]]
 id = 1228
@@ -5117,7 +5111,6 @@ loc = 2
 weapon_level = 4
 equip_level = 36
 view = 1
-athena_equip = "bonus2 bSubRace,7,10; bonus2 bSubRace,6,-10;"
 
 [[item]]
 id = 1229
@@ -5134,7 +5127,7 @@ loc = 2
 weapon_level = 4
 equip_level = 36
 view = 1
-athena_equip = "bonus bCritical,30; bonus2 bAddRace,7,3;"
+athena_equip = "bonus bCritical,30;"
 
 [[item]]
 id = 1230
@@ -5167,7 +5160,7 @@ loc = 2
 weapon_level = 4
 equip_level = 36
 view = 1
-athena_equip = "bonus bAtkEle,3; bonus bInt,5; bonus bMatk,10;"
+athena_equip = "bonus bAtkEle,3;"
 
 [[item]]
 id = 1232
@@ -5176,7 +5169,7 @@ display = "Assasin Dagger"
 type = 4
 buy = 20
 weight = 600
-atk = 140
+atk = 125
 range = 1
 jobs = 4096
 gender = 2
@@ -5184,7 +5177,7 @@ loc = 2
 weapon_level = 4
 equip_level = 36
 view = 1
-athena_equip = "bonus bMaxHPrate,20; bonus bMaxSPrate,15;"
+athena_equip = "bonus bAtkEle,7; bonus bMaxSP,30;"
 
 [[item]]
 id = 1233
@@ -5201,7 +5194,6 @@ loc = 2
 weapon_level = 4
 equip_level = 36
 view = 1
-athena_equip = "bonus2 bSubRace,6,5; bonus2 bSubRace,7,-10;"
 
 [[item]]
 id = 1234
@@ -5218,7 +5210,7 @@ loc = 2
 weapon_level = 4
 equip_level = 36
 view = 1
-athena_equip = "bonus bMaxSPrate,20;"
+athena_equip = "bonus bHit,-30;"
 
 [[item]]
 id = 1235
@@ -5251,7 +5243,6 @@ loc = 2
 weapon_level = 4
 equip_level = 36
 view = 1
-athena_equip = "bonus2 bAddEle,2,10; bonus2 bAddEle,4,10;"
 
 [[item]]
 id = 1237
@@ -5268,7 +5259,6 @@ loc = 2
 weapon_level = 4
 equip_level = 36
 view = 1
-athena_equip = "bonus bFlee,10; bonus bFlee2,5;"
 
 [[item]]
 id = 1238
@@ -5554,7 +5544,7 @@ display = "Infiltrator"
 type = 4
 buy = 57000
 weight = 1500
-atk = 140
+atk = 100
 range = 1
 jobs = 4096
 gender = 2
@@ -5562,7 +5552,7 @@ loc = 34
 weapon_level = 4
 equip_level = 75
 view = 16
-athena_equip = "bonus2 bAddRace,7,50; bonus bDef,3; bonus bFlee,5; bonus bFlee2,2;"
+athena_equip = "bonus2 bAddRace,7,50;"
 
 [[item]]
 id = 1301
@@ -5645,7 +5635,6 @@ loc = 2
 weapon_level = 4
 equip_level = 44
 view = 6
-athena_equip = "bonus2 bAddRace,7,5;"
 
 [[item]]
 id = 1306
@@ -5913,6 +5902,7 @@ loc = 34
 weapon_level = 4
 equip_level = 44
 view = 7
+athena_equip = "bonus bAtkEle,7;"
 
 [[item]]
 id = 1366
@@ -5929,7 +5919,7 @@ loc = 34
 weapon_level = 4
 equip_level = 44
 view = 7
-athena_equip = "bonus bAtkEle,6; skill 28,3;"
+athena_equip = "bonus bAtkEle,6; skill 28,1;"
 
 [[item]]
 id = 1367
@@ -6186,7 +6176,7 @@ display = "Gungnir"
 type = 4
 buy = 20
 weight = 500
-atk = 120
+atk = 95
 range = 3
 jobs = 16514
 gender = 2
@@ -6211,7 +6201,7 @@ loc = 2
 weapon_level = 4
 equip_level = 48
 view = 4
-athena_equip = "bonus bAtkEle,2; bonus bMaxHP,500; bonus bMaxSP,-80;"
+athena_equip = "bonus bAtkEle,2; bonus bMaxHP,500;"
 
 [[item]]
 id = 1415
@@ -6220,7 +6210,7 @@ display = "Brocca"
 type = 4
 buy = 20
 weight = 850
-atk = 100
+atk = 85
 range = 3
 jobs = 16514
 gender = 2
@@ -6228,7 +6218,6 @@ loc = 2
 weapon_level = 4
 equip_level = 48
 view = 4
-athena_equip = "bonus2 bAddEle,0,25;"
 
 [[item]]
 id = 1416
@@ -6237,7 +6226,7 @@ display = "Tjungkuletti"
 type = 4
 buy = 20
 weight = 1000
-atk = 95
+atk = 100
 range = 3
 jobs = 16514
 gender = 2
@@ -6529,7 +6518,7 @@ loc = 34
 weapon_level = 4
 equip_level = 48
 view = 5
-athena_equip = "bonus bCritical,20; bonus bHit,10;"
+athena_equip = "bonus bCritical,20;"
 
 [[item]]
 id = 1467
@@ -6538,7 +6527,7 @@ display = "Bill Guisarme"
 type = 4
 buy = 20
 weight = 1000
-atk = 183
+atk = 180
 range = 3
 jobs = 16514
 gender = 2
@@ -6546,7 +6535,6 @@ loc = 34
 weapon_level = 4
 equip_level = 48
 view = 5
-athena_equip = "bonus2 bAddRace,2,10; bonus2 bAddRace,7,5;"
 
 [[item]]
 id = 1468
@@ -6563,7 +6551,7 @@ loc = 34
 weapon_level = 4
 equip_level = 48
 view = 5
-athena_equip = "bonus bAtkEle,4; skill 21,3; bonus2 bAddEff,Eff_Silence,2;"
+athena_equip = "bonus bAtkEle,4; skill 21,1;"
 
 [[item]]
 id = 1469
@@ -6571,7 +6559,7 @@ name = "Longinus's_Spear"
 display = "Longinus's Spear"
 type = 4
 buy = 20
-weight = 2500
+weight = 2000
 atk = 180
 range = 3
 jobs = 16514
@@ -6580,7 +6568,7 @@ loc = 34
 weapon_level = 4
 equip_level = 48
 view = 5
-athena_equip = "bonus bAtkEle,7; bonus2 bAddRace,7,10; bonus2 bAddRace,8,10;"
+athena_equip = "bonus bAtkEle,7;"
 
 [[item]]
 id = 1470
@@ -6588,7 +6576,7 @@ name = "Brionac"
 display = "Brionac"
 type = 4
 buy = 20
-weight = 3000
+weight = 1200
 atk = 190
 range = 3
 jobs = 16514
@@ -6597,7 +6585,7 @@ loc = 34
 weapon_level = 4
 equip_level = 48
 view = 5
-athena_equip = "bonus bAtkEle,6; skill 28,5; skill 13,3;"
+athena_equip = "bonus bAtkEle,6;"
 
 [[item]]
 id = 1471
@@ -6605,8 +6593,8 @@ name = "Hell_fire"
 display = "Hellfire"
 type = 4
 buy = 20
-weight = 3500
-atk = 200
+weight = 2500
+atk = 195
 range = 3
 jobs = 16514
 gender = 2
@@ -6614,7 +6602,7 @@ loc = 34
 weapon_level = 4
 equip_level = 48
 view = 5
-athena_equip = "bonus bAtkEle,3; skill 17,3; bonus bStr,3;"
+athena_equip = "bonus bAtkEle,3; skill 17,1;"
 
 [[item]]
 id = 1472
@@ -7028,7 +7016,7 @@ display = "Spike"
 type = 4
 buy = 20
 weight = 700
-atk = 85
+atk = 70
 range = 1
 jobs = 33040
 gender = 2
@@ -7054,7 +7042,6 @@ loc = 2
 weapon_level = 4
 equip_level = 40
 view = 8
-athena_equip = "bonus2 bAddEle,9,10;"
 
 [[item]]
 id = 1525
@@ -7087,7 +7074,6 @@ loc = 2
 weapon_level = 4
 equip_level = 40
 view = 8
-athena_equip = "bonus2 bAddEle,9,15;"
 
 [[item]]
 id = 1527
@@ -7104,7 +7090,6 @@ loc = 2
 weapon_level = 4
 equip_level = 40
 view = 8
-athena_equip = "bonus2 bAddEle,9,10; bonus2 bAddRace,7,10; bonus2 bAddEle,2,10;"
 
 [[item]]
 id = 1528
@@ -7121,7 +7106,7 @@ loc = 2
 weapon_level = 4
 equip_level = 40
 view = 8
-athena_equip = "bonus bAtkEle,6; skill 77,3;"
+athena_equip = "bonus bAtkEle,6;"
 
 [[item]]
 id = 1529
@@ -7299,7 +7284,7 @@ display = "Book of the Apocalypse"
 type = 4
 buy = 35000
 weight = 800
-atk = 120
+atk = 90
 range = 1
 jobs = 65792
 gender = 2
@@ -7307,7 +7292,7 @@ loc = 2
 weapon_level = 4
 equip_level = 40
 view = 15
-athena_equip = "bonus bAtkEle,7; bonus2 bAddEle,1,7; bonus2 bAddEle,2,7; bonus2 bAddEle,3,7; bonus2 bAddEle,4,7; bonus2 bSubEle,6,5;"
+athena_equip = "bonus bAtkEle,7;"
 
 [[item]]
 id = 1558
@@ -7903,7 +7888,7 @@ name = "Bow_of_Rudra"
 display = "Rudra's Bow"
 type = 4
 buy = 20
-weight = 1200
+weight = 1000
 atk = 130
 range = 5
 jobs = 1705992
@@ -7912,7 +7897,7 @@ loc = 34
 weapon_level = 4
 equip_level = 48
 view = 11
-athena_equip = "bonus bInt,5; skill 35,1; skill 28,1; bonus2 bResEff,Eff_Poison,50; bonus2 bResEff,Eff_Curse,50; bonus2 bResEff,Eff_Silence,50; bonus2 bResEff,Eff_Confusion,50; bonus2 bResEff,Eff_Blind,50;"
+athena_equip = "bonus bAtkEle,6; skill 35,1;"
 
 [[item]]
 id = 1721
@@ -8443,7 +8428,7 @@ display = "Kaiser Knuckle"
 type = 4
 buy = 20
 weight = 450
-atk = 110
+atk = 100
 range = 1
 jobs = 33024
 gender = 2
@@ -8451,7 +8436,7 @@ loc = 2
 weapon_level = 4
 equip_level = 36
 view = 12
-athena_equip = "bonus bAtkEle,4; bonus2 bAddEle,9,5; bonus2 bAddEle,1,10; bonus2 bAddEle,2,10; bonus2 bAddEle,3,10; bonus2 bAddEle,4,10;"
+athena_equip = "bonus bAtkEle,4;"
 
 [[item]]
 id = 1814
@@ -8894,7 +8879,6 @@ loc = 2
 weapon_level = 4
 equip_level = 44
 view = 14
-athena_equip = "bonus bDex,5; bonus bAgi,1;"
 
 [[item]]
 id = 1963
@@ -8911,7 +8895,7 @@ loc = 2
 weapon_level = 4
 equip_level = 44
 view = 14
-athena_equip = "bonus bAtkEle,5; bonus2 bAddEff,Eff_Poison,50;"
+athena_equip = "bonus bAtkEle,5;"
 
 [[item]]
 id = 1964
@@ -8920,7 +8904,7 @@ display = "Chemeti"
 type = 4
 buy = 20
 weight = 700
-atk = 135
+atk = 150
 range = 2
 jobs = 1048576
 gender = 2
@@ -8928,7 +8912,6 @@ loc = 2
 weapon_level = 4
 equip_level = 44
 view = 14
-athena_equip = "bonus bCritical,5; bonus bFlee,10; bonus bFlee2,2;"
 
 [[item]]
 id = 2101

@@ -184,3 +184,14 @@ rather than a plain triple blow. That version should send all four: the
 hooks are `pc_addspiritball` / `pc_delspiritball`, `monk_combo_after` and
 `blade_stop_catch` / `blade_stop_release`. Without 0x01d2 a player cannot
 time a combo by hand.
+
+**Rare weapons (2026-11-17).** The 2003 game takes jAthena's rare weapons
+from before //0556 (2003-11-21, a rework no period witness shows; round 35
+review). The May-2004 item text (`yuno_lang/data/idnum2itemdesctable.txt`,
+reworded throughout) still gives the earlier numbers on every one checked:
+Muramasa 170, the Assassin Dagger 125 with "Max SP + 30", Infiltrator 100,
+Gungnir 95, Spike 70, Chemeti 150, the Book of the Apocalypse 90, the Kaiser
+Knuckle 100, Hellfire 195. So nothing to change for that version, with one
+exception: Light Epsilon's "Enchanted with Lv 1 [Heal]" has lost its "(Not
+Implemented yet)" (the Dec-2003 text has it; the 2003 game gives the Heal
+anyway, as mod0631 and RODataZone do).

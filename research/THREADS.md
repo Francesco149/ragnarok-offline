@@ -2244,6 +2244,13 @@ marks about 45 items' effects "Not Implemented yet"
 Where they part: RODataZone shows the Bloody Axe's "Increased Movement",
 the Eddga Card's endure, the Ghostring Card's ghost armour and Light
 Epsilon's Heal working (ours: mod0631, which has the last two only).
+**jAthena //0556's rare weapons (2026-11-17, round 35):** that commit
+(2003-11-21) rewrote 56 rare weapons (bonuses, ATK, weight); the client's
+text, RODataZone's iRO table and Ragu Memo's jRO pages of 2003-12-18 all
+show the rows from before it, so those are ours now, with five effects
+the witnesses name added (`research/notes/round35-review.md`). Open: when
+kRO or jRO did take the rework (a jRO page of 2004 with Muramasa at 155
+would date it), and whether euRO had it by May 2004.
 
 ### R7. Skill reach: mod0631 against 817 (2026-11-17)
 `skill_db.txt`'s range column differs between mod0631 (and jAthena until
