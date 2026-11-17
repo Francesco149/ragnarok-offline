@@ -1099,6 +1099,17 @@ the monster is aggresive" (jAthena //1020 has nothing of it), and Snap
 guide's 10 to 50 (kept). A song stopping on a blow over a quarter of max
 HP or on an ailment: built from jAthena (there by //0693) with two late
 player guides.
+**Round 32 (2026-11-17, `research/notes/round32-review.md`): B.S.
+Sacramenti's targets.** Skygor's iRO guide (GameFAQs 28518, 5.A; v1.00
+2004-02-03, formula corrected 2004-07-11, Undead confirmed 2004-08) tested
+it: the Undead *element*, the Demon race and the Ghost element (an Eggyra
+struck, an Injustice, Undead race and Shadow element, not), as Holy. The
+iRO guide's Priest page (2004-03-27): "undead or demon ... damaged by holy
+property". mod0631, 817 and jAthena: Undead or Demon *race*, Neutral (their
+skill_db). Built as Skygor tested it (test `benedictio_targets`). Open: a
+witness of 2003-12/2004-01 for the Ghost element (his only test is one
+Eggyra); his hunch that a Holy armour stops Frost Diver's freeze (4.D) is
+not built.
 **Impact:** Hunter, Assassin, Blacksmith and Wizard play.
 **Look:** jAthena's history (`refs/jathena`, `git log -S` on each skill
 name gives the date and often a source note), 817 and eathena-v0.5.2, the

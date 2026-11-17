@@ -167,8 +167,15 @@ function skill_castend_damage_id(src_id, bl_id, skillid, skilllv, opt)
     if skilllv > 1 then skill_status_change_start(src_id, SC.WATERBALL, skilllv, bl_id) end
 
   elseif skillid == SK.PR_BENEDICTIO then
-    local race = battle.race(bl)
-    if race == 1 or race == 6 then skill_attack(BF.MAGIC, src_id, src_id, bl_id, skillid, skilllv, 0) end
+    -- mod0631 (skill.c:988), 817 and jAthena strike the Undead and Demon races. Skygor's iRO
+    -- guide (GameFAQs 28518, 5.A, v1.00 2004-02-03 to v1.05 2004-08) tested it: the Undead
+    -- *element*, the Demon race and the Ghost element ("works on Sohees who are Demon/Water 1 ...
+    -- works on Eggra that are Normal/Ghost 2 ... does not work on Injustice which is
+    -- Undead/Shadow 2"). Taken from him (THREADS.md #22).
+    local ele = battle.elem_type(bl)
+    if ele == 9 or ele == 8 or battle.race(bl) == 6 then
+      skill_attack(BF.MAGIC, src_id, src_id, bl_id, skillid, skilllv, 0)
+    end
 
   elseif skillid == SK.MG_NAPALMBEAT or skillid == SK.MG_FIREBALL or skillid == SK.MG_THUNDERSTORM
     or skillid == SK.WZ_HEAVENDRIVE then

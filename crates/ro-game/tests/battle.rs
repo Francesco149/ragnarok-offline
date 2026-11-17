@@ -3695,3 +3695,44 @@ fn sage_autospell_abracadabra_devotion() {
     t.lua(&format!("abra_special({me}, 301)"));
     assert_eq!(t.hp(), 0, "Instant Death");
 }
+
+/// B.S. Sacramenti strikes as Holy what Skygor's iRO guide tested: the Undead element, the Demon
+/// race, the Ghost element; not an Undead-race monster of another element (Injustice), and not
+/// an Insect. mod0631, 817 and jAthena struck the Undead and Demon races, as Neutral.
+#[test]
+fn benedictio_targets() {
+    let mut t = T::new();
+    t.lua("job_change(8); player.base_level = 80; player.int = 80; player.vit = 80; heal(30000, 30000)");
+    t.learn("PR_BENEDICTIO", 5);
+    // HP enough that no strike kills
+    fn tough(t: &mut T, id: u32) {
+        let m = t.g.world.units.get_mut(&id).and_then(|u| u.mob_mut()).unwrap();
+        m.max_hp = 30000;
+        m.hp = 30000;
+    }
+    let struck = |t: &mut T, mob: u32| -> bool {
+        let id = t.spawn(26, 25, mob);
+        tough(t, id);
+        let hp0 = t.mob_hp(id).unwrap();
+        t.lua("heal(30000, 30000)");
+        t.cast_at("PR_BENEDICTIO", 26, 25);
+        t.run(1500);
+        let hit = t.mob_hp(id).map_or(true, |hp| hp < hp0);
+        t.kill(id);
+        t.run(2000);
+        hit
+    };
+    assert!(struck(&mut t, 1015), "Zombie: Undead race and element");
+    assert!(struck(&mut t, 1170), "Sohee: Demon race, Water");
+    assert!(struck(&mut t, 1116), "Eggyra: Ghost element");
+    assert!(!struck(&mut t, 1257), "Injustice: Undead race, Shadow element");
+    assert!(!struck(&mut t, 1008), "Pupa: Insect, Earth");
+    // Holy: a Zombie (Undead 1) takes more than Heal's half as Neutral would give
+    let id = t.spawn(26, 25, 1015);
+    tough(&mut t, id);
+    let half_heal: u32 = t.lua("math.floor(battle.calc_heal(battle.get(player.id), 5) / 2)").trim().parse().unwrap();
+    t.cast_at("PR_BENEDICTIO", 26, 25);
+    t.run(1500);
+    let took = 30000 - t.mob_hp(id).unwrap();
+    assert!(took > half_heal, "Holy against Undead: {took} against {half_heal} as Neutral");
+}

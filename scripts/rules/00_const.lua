@@ -76,8 +76,11 @@ INF_FIX[-1] = nil
 function skill_get_inf(id) return INF_FIX[id] or skill_get(id).inf end
 -- Elements mod0631's skill_db leaves Neutral for skills it never built: Grand Cross is Holy
 -- (eAthena 817's and jAthena's skill_db, the iRO guide's "holy attack"), Bomb Fire (jAthena's
--- skill_db, euRO's skill text of May 2004)
-local PL_FIX = { [SK.CR_GRANDCROSS] = 6, [SK.AM_DEMONSTRATION] = 3 }
+-- skill_db, euRO's skill text of May 2004). B.S. Sacramenti is Neutral in every emulator's
+-- skill_db (mod0631, 817, jAthena) but strikes as Holy in the iRO guide's Priest page
+-- (2004-03-27: "damaged by holy property") and in Skygor's iRO guide (GameFAQs 28518, 5.A:
+-- "BSS does holy damage, so the final result is multiplied by the appropriate elemental modifier")
+local PL_FIX = { [SK.CR_GRANDCROSS] = 6, [SK.AM_DEMONSTRATION] = 3, [SK.PR_BENEDICTIO] = 6 }
 PL_FIX[-1] = nil
 function skill_get_pl(id) return PL_FIX[id] or skill_get(id).pl end
 function skill_get_nk(id) return skill_get(id).nk end
