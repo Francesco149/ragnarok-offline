@@ -2258,9 +2258,21 @@ Back Stab, Intimidate 1 as mod0631; the Chemical Protections 1 and the
 fields 2 as 817; the by-level four as 817. Enchant Poison left at 0 (on
 another player: nobody here). The iRO guide's Crusader page gives Smite
 "Range is 3 cells" (not one of these).
+**2026-11-17, round 33:** RODataZone's first-job and Priest pages
+(captures 2003-12-04 to 2004-05-02; the Archer's and Swordman's earliest
+with skill details are 2004-04-23 and 2004-05-02) give "Bow Range" for
+Double Strafe and Arrow Shower, "Bow Attack Range" for Charge Arrow,
+"Melee Range" for Bash, Magnum Break, Mammonite, Envenom and Steal,
+"Melee" for Sand Attack and Cart Revolution: built (DEVIATIONS.md). Open:
+it gives "9 tiles" for every spell (Heal, the bolts, Fire Wall, Safety
+Wall, Provoke...), 7 for Stone Fling, 9 for Detoxify and 2 for Stone
+Curse; mod0631 and 817 agree on 8, 8, 10 and 2, rAthena on RODataZone's
+numbers. The server lets a request through from one cell beyond (jAthena
+//1082), so a spell already lands from 9; what the client is told (8)
+decides where it walks to. Whether RODataZone counted cells as the server
+did is not known: left.
 **Look:** a period player account of how far Double Strafe or a spear
-Bash reaches, to sharpen it; the earliest capture of RODataZone's skill
-pages, if any give a range.
+Bash reaches, to sharpen it.
 *Aside:* `mvp_summons_as_jathena_0743` failed once in a full
 `cargo test --workspace` (no five Leib Olmai within 15 s) and passed 45
 times alone: a rare random flake, not chased.

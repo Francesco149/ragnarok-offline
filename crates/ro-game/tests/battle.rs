@@ -401,6 +401,28 @@ fn elements_and_magic() {
     assert!(t.hp() > 10, "Heal heals");
 }
 
+/// Aspersio on an Undead monster: 40 Holy damage, no MDEF, the element table as for any
+/// spell (RODataZone's Priest page, iRO 2003-12; jAthena //1003). Others are blessed instead.
+#[test]
+fn aspersio_strikes_the_undead() {
+    let mut t = T::new();
+    t.lua("job_change(8); player.base_level = 60; player.int = 90; heal(9999, 9999); give_item(523, 5)");
+    t.learn("PR_ASPERSIO", 1);
+    let z = t.spawn(27, 25, 1015); // Zombie, Undead 1
+    let hp = t.mob_hp(z).unwrap();
+    let want: i64 = t.lua(&format!("return battle.attr_fix(40, 6, battle.element(battle.get({z})))")).parse().unwrap();
+    assert!(want > 40, "Holy against Undead counts more: {want}");
+    t.skill(68, 1, z);
+    t.run(3000);
+    assert_eq!(hp as i64 - t.mob_hp(z).unwrap() as i64, want, "40, element table, no MDEF");
+    assert_eq!(t.lua("return count_item(523)"), "4", "the Holy Water spent");
+    // a Pupa is no Undead: no damage
+    let p = t.spawn(27, 26, 1008);
+    t.skill(68, 1, p);
+    t.run(3000);
+    assert_eq!(t.mob_hp(p), Some(427), "not the living");
+}
+
 /// Using a skill: SP is spent, the delay holds the next one back, a cast can
 /// be interrupted by damage, and silence stops it.
 #[test]
@@ -1383,8 +1405,9 @@ fn bowling_bash_cast_lowers_def() {
     assert_eq!(def(&mut t), full, "back once the cast is over");
 }
 
-/// Double Strafe reaches 9 cells and Vulture's Eye's levels more (rAthena, where
-/// mod0631 gave 13 and 817 the bow's reach + 2); the skill list says so. Mammonite 1.
+/// Double Strafe reaches as far as the bow, 5 cells, and Vulture's Eye's levels more
+/// (RODataZone's Archer page, iRO 2004: "Bow Range"; mod0631 gave 13, 817 the bow's
+/// reach + 2, rAthena 9); the skill list says so. Mammonite, Envenom, Sand Attack 1.
 #[test]
 fn bow_skill_reach() {
     let mut t = T::new();
@@ -1402,13 +1425,13 @@ fn bow_skill_reach() {
         let at = (4..list.len()).step_by(37).find(|&o| u16_at(&list, o) == id).expect("skill listed");
         u16_at(&list, at + 10)
     };
-    assert_eq!(reach(&mut t, id), 9, "Double Strafe without Vulture's Eye");
-    let m = t.spawn(36, 25, 1008); // eleven cells off (a request from reach + 1 is let through)
+    assert_eq!(reach(&mut t, id), 5, "Double Strafe without Vulture's Eye");
+    let m = t.spawn(32, 25, 1008); // seven cells off (a request from reach + 1 is let through)
     t.cast("AC_DOUBLE", m);
     t.run(1500);
     assert_eq!(t.mob_hp(m), Some(427), "too far without Vulture's Eye");
     t.learn("AC_VULTURE", 3);
-    assert_eq!(reach(&mut t, id), 12, "Vulture's Eye 3 adds 3");
+    assert_eq!(reach(&mut t, id), 8, "Vulture's Eye 3 adds 3");
     t.cast("AC_DOUBLE", m);
     t.run(1500);
     assert!(t.mob_hp(m).unwrap_or(0) < 427, "within reach with Vulture's Eye");
@@ -1418,6 +1441,13 @@ fn bow_skill_reach() {
     t.learn("MC_MAMMONITE", 1);
     let id = t.skill_id("MC_MAMMONITE");
     assert_eq!(reach(&mut t, id), 1, "Mammonite");
+
+    t.lua("job_change(6)");
+    for s in ["TF_POISON", "TF_SPRINKLESAND"] {
+        t.learn(s, 1);
+        let id = t.skill_id(s);
+        assert_eq!(reach(&mut t, id), 1, "{s}");
+    }
 }
 
 /// Swordman, Knight, Merchant: Magnum Break around the swordman, Endure,

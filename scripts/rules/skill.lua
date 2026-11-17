@@ -484,11 +484,22 @@ local CAST_817 = {
 -- stands, where it agrees with neither its own number is taken. mod0631 gave a
 -- fixed number, 817 the weapon's reach plus something; rAthena reads its negative
 -- numbers as fixed (`skillrange_from_weapon` off by default).
+--
+-- RODataZone's skill pages (iRO; captures 2003-12-04 to 2004-05-02, round 33) give a reach
+-- for the first jobs' skills and the Priest's. Where it differs in kind from the period
+-- emulators it is taken (tier period): the Archer's three at the bow's reach, Envenom and
+-- Sand Attack melee. Its "9 tiles" for every spell, Stone Fling's 7 and Detoxify's 9 (one
+-- cell from mod0631's and 817's 8, 8 and 10) are left: THREADS.md R7.
+local BOW_RANGE = 5 -- every bow in items.toml (mod0631's item_db)
 local FIXED_RANGE = {
-  [SK.MC_MAMMONITE] = 1,        -- mod0631 3, 817 reach + 1, rAthena 1
-  [SK.AC_DOUBLE] = 9,           -- mod0631 13, 817 bow reach + 2 (7), rAthena 9; + Vulture's Eye
-  [SK.AC_SHOWER] = 9,           -- the same
-  [SK.AC_CHARGEARROW] = 9,      -- mod0631 8, 817 bow reach + 2, rAthena 9; + Vulture's Eye
+  [SK.MC_MAMMONITE] = 1,        -- mod0631 3, 817 reach + 1, rAthena 1; RODataZone "Melee Range"
+  -- RODataZone "Bow Range" (Double Strafe, Arrow Shower), "Bow Attack Range" (Charge Arrow): as far
+  -- as the bow shoots, Vulture's Eye included. mod0631 13/13/8, 817 bow reach + 2, rAthena 9
+  [SK.AC_DOUBLE] = BOW_RANGE,
+  [SK.AC_SHOWER] = BOW_RANGE,
+  [SK.AC_CHARGEARROW] = BOW_RANGE,
+  [SK.TF_POISON] = 1,           -- RODataZone "Melee Range"; mod0631 and 817 3, rAthena 2
+  [SK.TF_SPRINKLESAND] = 1,     -- RODataZone "Melee"; mod0631 and 817 8, rAthena 1
   [SK.KN_PIERCE] = 2,           -- mod0631 1, 817 the spear's reach (3), rAthena 2
   [SK.KN_BOWLINGBASH] = 2,      -- the same
   [SK.KN_BRANDISHSPEAR] = 2,    -- mod0631 4, 817 1, rAthena 2
@@ -938,8 +949,10 @@ function rules.skill_castend(a)
   -- Abracadabra: nk 0 in mod0631's and 817's skill_db (neither built it), 1 in jAthena's
   if skill == SK.SA_ABRACADABRA then nk = 1 end
   if nk == 1 then
-    -- Heal and Resurrection hurt whatever is of the Undead element (friend or not: skill.c:1780)
-    if (skill == SK.AL_HEAL or skill == SK.ALL_RESURRECTION) and battle.elem_type(bl) == 9 then
+    -- Heal and Resurrection hurt whatever is of the Undead element (friend or not: skill.c:1780);
+    -- Aspersio too (RODataZone's Priest page, iRO 2003-12-16; jAthena //1003 skill.c, 2004-05-31)
+    if (skill == SK.AL_HEAL or skill == SK.ALL_RESURRECTION or skill == SK.PR_ASPERSIO)
+        and battle.elem_type(bl) == 9 then
       skill_castend_damage_id(a.src, a.target, skill, lv, a)
     else
       skill_castend_nodamage_id(a.src, a.target, skill, lv, a)

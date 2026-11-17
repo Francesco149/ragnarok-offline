@@ -80,7 +80,9 @@ function skill_get_inf(id) return INF_FIX[id] or skill_get(id).inf end
 -- skill_db (mod0631, 817, jAthena) but strikes as Holy in the iRO guide's Priest page
 -- (2004-03-27: "damaged by holy property") and in Skygor's iRO guide (GameFAQs 28518, 5.A:
 -- "BSS does holy damage, so the final result is multiplied by the appropriate elemental modifier")
-local PL_FIX = { [SK.CR_GRANDCROSS] = 6, [SK.AM_DEMONSTRATION] = 3, [SK.PR_BENEDICTIO] = 6 }
+-- Aspersio is Holy: RODataZone's Priest page (iRO, capture 2003-12-16: "40 points of Holy property
+-- damage") and jAthena //1020's skill_db; mod0631's row says Neutral (it never let Aspersio strike)
+local PL_FIX = { [SK.CR_GRANDCROSS] = 6, [SK.AM_DEMONSTRATION] = 3, [SK.PR_BENEDICTIO] = 6, [SK.PR_ASPERSIO] = 6 }
 PL_FIX[-1] = nil
 function skill_get_pl(id) return PL_FIX[id] or skill_get(id).pl end
 function skill_get_nk(id) return skill_get(id).nk end

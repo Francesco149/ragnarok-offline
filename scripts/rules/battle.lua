@@ -973,6 +973,13 @@ function battle.calc_magic_attack(bl, target, skill_num, skill_lv, flag)
   if skill_num == SK.AL_HEAL or skill_num == SK.PR_BENEDICTIO then
     damage = floor(battle.calc_heal(bl, skill_lv) / 2)
     normal = false
+  elseif skill_num == SK.PR_ASPERSIO then
+    -- "Using shift-click, you can target an Undead property monster and inflict 40 points of
+    -- Holy property damage that ignores all defenses" (RODataZone's Priest page, iRO, capture
+    -- 2003-12-16). jAthena //1003 (2004-05-31) battle.c the same: 40, no MDEF, then the
+    -- element table as for every spell. mod0631 and 817 have no such attack
+    damage = 40
+    normal = false
   elseif skill_num == SK.PR_SANCTUARY then
     damage = skill_lv > 6 and 388 or skill_lv * 50
     normal = false

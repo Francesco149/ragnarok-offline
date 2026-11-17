@@ -48,6 +48,7 @@ local MAGIC_SINGLE = {}
 for _, n in ipairs({
   "MG_SOULSTRIKE", "MG_COLDBOLT", "MG_FIREBOLT", "MG_LIGHTNINGBOLT", "WZ_EARTHSPIKE", "AL_HEAL", "AL_HOLYLIGHT",
   "ALL_RESURRECTION", "PR_TURNUNDEAD", "MG_FROSTDIVER", "WZ_JUPITEL", "NPC_MAGICALATTACK",
+  "PR_ASPERSIO", -- on the Undead: skill.lua, rules.skill_castend
 }) do MAGIC_SINGLE[SK[n]] = true end
 
 -- Acid Terror breaks armour at 3% to 13% a throw, each burn of Bomb a weapon at 1% to 5%

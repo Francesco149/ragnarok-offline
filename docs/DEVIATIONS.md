@@ -902,6 +902,24 @@ always fires.
   Protections 1 and the Sage's fields 2 (the last two 817's too). Bash,
   Sonic Blow, Back Stab and Intimidate stay 1 (mod0631 and rAthena).
   rAthena also agrees with the by-level reaches above.
+  **Later the same day, from RODataZone's skill pages** (iRO, captures
+  2003-12-04 to 2004-05-02, round 33; tier period, so it takes over from
+  rAthena): Double Strafe and Arrow Shower reach "Bow Range" and Charge
+  Arrow "Bow Attack Range", so all three reach as far as the bow shoots,
+  5 cells and Vulture's Eye's levels (rAthena's 9 was the tie-breaker);
+  Envenom ("Melee Range") and Sand Attack ("Melee") 1, where mod0631 and
+  817 both give 3 and 8. Its Mammonite "Melee Range" agrees with the 1
+  above. Left at the emulators': its "9 tiles" for every spell and Stone
+  Fling's 7 and Detoxify's 9 (mod0631 and 817: 8, 8, 10), one cell apart
+  (THREADS.md R7).
+* **Aspersio strikes Undead monsters** (2026-11-17, test
+  `aspersio_strikes_the_undead`): cast on a monster of the Undead element
+  it does 40 Holy damage that no MDEF lessens, then the element table as
+  any spell ("Using shift-click, you can target an Undead property monster
+  and inflict 40 points of Holy property damage that ignores all
+  defenses": RODataZone's Priest page, iRO, capture 2003-12-16). jAthena
+  added the same on 2004-05-31 (//1002-//1003, `battle.c` "damage = 40",
+  skill_db Holy); mod0631 and 817 only bless the target's weapon.
 * **A third off the caster's DEF while Brandish Spear, Bowling Bash or Grand
   Cross is cast** (2026-11-17): 817's `cast_def_rate` 33 (`battle.c:505`,
   players and monsters); round 24's preview of kRO's Comodo notes and a pRO
