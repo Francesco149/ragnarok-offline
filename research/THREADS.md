@@ -1437,7 +1437,11 @@ Crusader's quest in four parts: Edge (29457 v1.2, 2004-03-16, a server with
 Halig in Prontera Castle, a Rosary worn; items, or a Hand of God and a
 Chivalry Emblem instead; Murnak Mijoul's corridor crossed without killing;
 Gabriel Valentine's ten questions from a pool. Both after our date: for the
-2-2 version, with the other six jobs' quests.
+2-2 version, with the other six jobs' quests. jAthena has scripts for all
+seven from //1046 (`6332410`, 2004-09-12, the commit our Knight test came
+from): the Sage's (2611 lines), Alchemist's (1619) and Dancer's (932) look
+whole; the Crusader's (140), Monk's (192), Bard's (99) and Rogue's (29)
+not. Queue T1 asks for players' walkthroughs.
 
 **2026-11-16: the Bard's and Dancer's solo skills drafted** (DEVIATIONS.md,
 test `bard_dancer_songs`), from jAthena //0993-//1020 (2004-05-27 to 06-11,

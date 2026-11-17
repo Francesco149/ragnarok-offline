@@ -261,6 +261,16 @@ server):
   eAthena 0.5.2 against 817); whether dying or logging out in a room cost anything; more
   of the examiner's questions quoted by a player (round 5 found one, in a
   guide of 2004-07-30).
+* **(new 2026-11-17, low: for the 2-2 version) The 2-2 job quests.** Ours
+  are 817's bare trainers (job level 40, at once). jAthena's scripts of
+  all seven arrive in //1046 (2004-09-12, `script/npc/job/npc_job_14` to
+  `_20`); the Crusader's is 140 lines, the Sage's 2611. The Crusader's is
+  told twice already (Edge 29457, Tangowr 28552: do not save either
+  again). Wanted, for the **Monk, Sage, Rogue, Alchemist, Bard and
+  Dancer**: a player's walkthrough dated before 2004-10, any server (say
+  which, from the author's own line): who, where, what items, what
+  questions, what test. kRO or jRO accounts of 2003 count (the 2-2 jobs
+  opened there first); a Japanese walkthrough is welcome.
 
 Sets: the details of the Knight, Assassin, Blacksmith and Hunter tests,
 and whether each belongs in the default world of early 2004.
