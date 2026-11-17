@@ -659,6 +659,19 @@ there is, marked as ours where it is ours, and listed here.
   again.
   Gravity's table is never in the repository: setup appends to the copy in
   your data.grf.
+* **A red ring for the textures the client lacks.** `job_duncer` (the
+  Dancer test's school, from the Juno patch on the CD) has stage lights
+  that load `effect\ring_red.tga`, and so do Volcano's, Assassin Cross of
+  Sunset's and Ugly Dance's ground units; this client's data has the blue
+  and the yellow ring but not the red one, and stops on a ResourceError box
+  at each load of the map (the audition's minute passed behind it). euRO's
+  May-2004 data adds the file, and it is the yellow ring turned red: every
+  alpha the same (checked against the MICO07 DVD's data.grf). `setup` (and
+  the launcher) makes ours from your own yellow ring, its green set to its
+  blue, so every pixel's hue is red and its brightness kept (mean error
+  about 20 of 255 on blue and green against the May-2004 file, whose own
+  colours are noisier; `crates/ro-server/src/setup.rs`); a client already
+  set up is set up again. Nothing of Gravity's is in the repository.
 * **Kafra free tickets** (`scripts/npc/kafra.lua`). The client describes
   three tickets, "to use Kafra Storage for free at a time", "Kafra
   transportation", "to rent a cart for free" (7059-7061), and no period
@@ -1338,7 +1351,8 @@ always fires.
     bow skills here;
   * this client draws ten of the solo songs' cells; Assassin Cross of
     Sunset's and Ugly Dance's ask for `ring_red.tga`, which its GRF lacks,
-    and are sent undrawn as Volcano's (`UNDRAWN`). Not built: the guide's
+    and were sent undrawn as Volcano's until setup made the file
+    (2026-11-17, "A red ring" above): all three are drawn now. Not built: the guide's
     rule that two songs overlapping make a level-1 Dissonance or Ugly Dance
     (a lone player plays one song);
   * **the ensembles** (2026-11-16, test `ensembles`), played **alone**: in

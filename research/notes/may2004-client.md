@@ -155,6 +155,14 @@ lacks (a ResourceError box stops the game); ours therefore sends Volcano's
 cells as type 0 (`UNDRAWN` in `scripts/rules/skill_units.lua`). The May-2004
 `data.grf` adds the file (`datagrf-diff-dec2003-may2004.txt`): that version
 can drop the entry and draw it.
+**Later (2026-11-17):** the May-2004 `ring_red.tga` is the Dec-2003
+`ring_yellow.tga` with its hue turned to red (all 4096 alphas the same), and
+`job_duncer`'s stage lights (RSW effects 231, 247, 259, 260 around the
+stage) load it too: this client stops on a ResourceError box at each load
+of the map. Ours: `setup` makes the file from the player's yellow ring
+(green set to blue), so Volcano, Assassin Cross of Sunset and Ugly Dance
+are drawn here too. For the May-2004 version: its own file is there, and
+setup's `--if-needed` leaves an existing one alone.
 
 **The songs' textures (2026-11-16).** Each song unit (0x9e-0xaf) placed alone
 in a Dec-2003 client that had reported nothing yet (a client names a missing

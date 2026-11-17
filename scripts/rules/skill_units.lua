@@ -44,13 +44,14 @@ local UNIT_ID = {
   [SK.BD_RINGNIBELUNGEN] = 0xa2, [SK.BD_ROKISWEIL] = 0xa3, [SK.BD_INTOABYSS] = 0xa4, [SK.BD_SIEGFRIED] = 0xa5,
 }
 -- Units this client cannot draw: sent as type 0, which it ignores (docs/PROTOCOL.md 0x01c9).
--- Volcano's 0x9a asks for effect\ring_red.tga, missing from its GRF (Deluge's ring_blue and Violent
--- Gale's ring_yellow are there), and stops the game with a ResourceError box (rig, 2026-11-16)
 -- Of the songs (0x9e-0xaf, each tried alone in a client that had reported nothing yet, 2026-11-16):
--- Assassin Cross of Sunset (0xa8) and Ugly Dance (0xab) ask for the same ring_red.tga; of the
--- ensembles Lullaby (0x9e) asks for effect\zz.bmp, Eternal Chaos (0xa0), Ring of Nibelungen (0xa2)
--- and Siegfried (0xa5) for effect\twirl.bmp. The other twelve are drawn (a note, an apple...)
-local UNDRAWN = { [0x9a] = true, [0xa8] = true, [0xab] = true, [0x9e] = true, [0xa0] = true, [0xa2] = true, [0xa5] = true }
+-- of the ensembles Lullaby (0x9e) asks for effect\zz.bmp, Eternal Chaos (0xa0), Ring of
+-- Nibelungen (0xa2) and Siegfried (0xa5) for effect\twirl.bmp, missing from its GRF, and each
+-- stops the game with a ResourceError box. The others are drawn (a note, an apple...).
+-- Volcano's 0x9a, Assassin Cross of Sunset's 0xa8 and Ugly Dance's 0xab ask for
+-- effect\ring_red.tga, missing too: `setup` now makes it from the client's own yellow ring, as
+-- euRO's May-2004 data has it (crates/ro-server/src/setup.rs, 2026-11-17), so they are drawn
+local UNDRAWN = { [0x9e] = true, [0xa0] = true, [0xa2] = true, [0xa5] = true }
 local FIELD_UNIT = { [0x9a] = SC.VOLCANO, [0x9b] = SC.DELUGE, [0x9c] = SC.VIOLENTGALE }
 local FIELD_SKILL = {}
 for _, n in ipairs({ "SA_VOLCANO", "SA_DELUGE", "SA_VIOLENTGALE", "SA_LANDPROTECTOR" }) do FIELD_SKILL[SK[n]] = true end

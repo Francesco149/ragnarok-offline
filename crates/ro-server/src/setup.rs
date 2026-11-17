@@ -95,6 +95,36 @@ fn names_all(table: &[u8]) -> bool {
     extra_item_names().iter().all(|(id, _)| named.contains(id))
 }
 
+/// A texture this client's own maps ask for but its data lacks
+/// (docs/DEVIATIONS.md). job_duncer, which the Juno patch brings, has stage
+/// lights that load `effect\ring_red.tga`; without it the client stops on a
+/// ResourceError box at every load of the map (seen in the rig, 2026-11-17).
+/// euRO's May-2004 data adds the file: it is the yellow ring of this data
+/// turned red (every alpha the same). Ours is made the same way from the
+/// player's own yellow ring: its green set to its blue, which puts every
+/// pixel's hue at red and keeps its brightness.
+pub const RING_RED: &str = "data\\texture\\effect\\ring_red.tga";
+const RING_YELLOW: &str = "data\\texture\\effect\\ring_yellow.tga";
+
+/// A 32-bit uncompressed TGA with each pixel's green set to its blue. The
+/// alpha, the size and the rest of the file are kept.
+pub fn yellow_to_red(tga: &[u8]) -> Option<Vec<u8>> {
+    if tga.len() < 18 || tga[2] != 2 || tga[16] != 32 {
+        return None;
+    }
+    let (w, h) = (u16::from_le_bytes([tga[12], tga[13]]) as usize, u16::from_le_bytes([tga[14], tga[15]]) as usize);
+    let start = 18 + tga[0] as usize;
+    let end = start + w * h * 4;
+    if tga.len() < end {
+        return None;
+    }
+    let mut out = tga.to_vec();
+    for px in out[start..end].chunks_exact_mut(4) {
+        px[1] = px[0]; // BGRA: green <- blue
+    }
+    Some(out)
+}
+
 /// The layers a client dir provides, in patch order.
 pub fn client_vfs(dir: &Path) -> Result<Vfs> {
     let mut vfs = Vfs::new();
@@ -136,6 +166,7 @@ pub fn is_prepared(dir: &Path, address: &str, port: u16, name: &str) -> bool {
     let Ok(g) = Grf::open(dir.join("data.grf")) else { return false };
     g.read(CLIENTINFO).is_ok_and(|xml| xml == clientinfo_xml(address, port, name).as_bytes())
         && g.read(ITEM_NAMES_TABLE).map_or(true, |t| names_all(&t))
+        && (g.read(RING_RED).is_ok() || g.read(RING_YELLOW).is_err())
 }
 
 /// What [`prepare`] did.
@@ -166,6 +197,11 @@ pub fn prepare(dir: &Path, address: &str, port: u16, name: &str, progress: &mut 
     vfs.add_memory_file(CLIENTINFO, clientinfo_xml(address, port, name).into_bytes());
     if let Ok(t) = vfs.read(ITEM_NAMES_TABLE) {
         vfs.add_memory_file(ITEM_NAMES_TABLE, with_extra_item_names(&t));
+    }
+    if !vfs.exists(RING_RED) {
+        if let Some(red) = vfs.read(RING_YELLOW).ok().and_then(|t| yellow_to_red(&t)) {
+            vfs.add_memory_file(RING_RED, red);
+        }
     }
     let tmp = dir.join("data.grf.tmp");
     let entries = ro_grf::write_grf_0x200_with_progress(&vfs, &tmp, progress)
@@ -221,4 +257,27 @@ pub fn run(dir: &Path, address: &str, port: u16, name: &str) -> Result<()> {
 
 pub fn hex(b: &[u8]) -> String {
     b.iter().map(|x| format!("{x:02x}")).collect()
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn yellow_ring_turns_red() {
+        // a 2x1 TGA (BGRA): a yellow pixel, half see-through, and a pale one
+        let mut tga = vec![0u8; 18];
+        tga[2] = 2;
+        tga[12] = 2;
+        tga[14] = 1;
+        tga[16] = 32;
+        tga[17] = 8;
+        tga.extend_from_slice(&[21, 148, 253, 64, 176, 240, 251, 184]);
+        tga.extend_from_slice(b"TRUEVISION-XFILE.\0");
+        let red = yellow_to_red(&tga).unwrap();
+        assert_eq!(red[18..26], [21, 21, 253, 64, 176, 176, 251, 184]);
+        assert_eq!(red[..18], tga[..18]);
+        assert_eq!(red[26..], tga[26..]);
+        assert!(yellow_to_red(&tga[..20]).is_none(), "cut short");
+    }
 }
