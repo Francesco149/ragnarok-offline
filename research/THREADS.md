@@ -1427,6 +1427,16 @@ Grand Cross: Tangowr's Crusader guide (2004-07-01, server not said) has
 "total damage 2/3 would be reflect toward you" against the iRO guide's
 half; SoulEclipse (2005) only restates the guide. Still open, with the
 guide's "decreases by 2/3" (by or to?).
+**2026-11-17, round 31:** nothing new (`research/notes/round31-review.md`).
+Tangowr names twRO only for his quiz ("The following question are
+translated from twRO"), not for the skills. **The 2-2 job changes** are
+still 817's trainers (job level 40, at once). Two players give the
+Crusader's quest in four parts: Edge (29457 v1.2, 2004-03-16, a server with
+2-2, round 30) and Tangowr (28552 v1.1, 2004-07-01, round 31): Michael
+Halig in Prontera Castle, a Rosary worn; items, or a Hand of God and a
+Chivalry Emblem instead; Murnak Mijoul's corridor crossed without killing;
+Gabriel Valentine's ten questions from a pool. Both after our date: for the
+2-2 version, with the other six jobs' quests.
 
 **2026-11-16: the Bard's and Dancer's solo skills drafted** (DEVIATIONS.md,
 test `bard_dancer_songs`), from jAthena //0993-//1020 (2004-05-27 to 06-11,
