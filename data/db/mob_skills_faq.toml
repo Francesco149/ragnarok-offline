@@ -3,7 +3,7 @@
 [meta]
 tier = "athena2003"
 source = "unknown13's Monster Skill FAQ (GameFAQs 29608, 2004-04) for which monster has which skill; rows from jAthena //0953 (2004-04-27) db/mob_skill_db.txt, else jAthena //1046 (2004-09-12) db/mob_skill_db.txt, else rAthena pre-renewal db/mob_skill_db.txt (rate divided by 5)"
-note = "monster skills iRO had in April 2004 that mod0631 lacks; read after mob_skills.toml, same fields; each row says its own tier and source"
+note = "monster skills iRO had in April 2004 (the FAQ) and in February 2004 (RODataZone's monster table, rows whose faq names it) that mod0631 lacks; read after mob_skills.toml, same fields; each row says its own tier and source"
 
 [[skill]]
 mob = 1132
@@ -2376,6 +2376,1068 @@ source = "jAthena //0953 (2004-04-27) db/mob_skill_db.txt"
 faq = "Earth Spike / Phreeoni"
 
 [[skill]]
+mob = 1297
+state = "attack"
+skill = 181
+lv = 5
+rate = 50
+cast = 0
+delay = 10000
+cancel = false
+target = "target"
+cond = "always"
+cond_val = 0
+tier = "guess"
+source = "the commonest of 24 NPC_CURSEATTACK rows in jAthena //0953 (2004-04-27) db/mob_skill_db.txt"
+faq = "Curse Attack / Ancient Mummy (RODataZone 2004-02-11)"
+
+[[skill]]
+mob = 1101
+state = "chase"
+skill = 111
+lv = 1
+rate = 10
+cast = 3000
+delay = 30000
+cancel = true
+target = "self"
+cond = "always"
+cond_val = 0
+tier = "athena2003"
+source = "jAthena //0953 (2004-04-27) db/mob_skill_db.txt"
+faq = "Adrenaline Rush / Baphomet Jr. (RODataZone 2004-02-11)"
+
+[[skill]]
+mob = 1102
+state = "chase"
+skill = 197
+lv = 1
+rate = 15
+cast = 0
+delay = 10000
+cancel = true
+target = "self"
+cond = "always"
+cond_val = 0
+val = 30
+tier = "athena2003"
+source = "jAthena //0953 (2004-04-27) db/mob_skill_db.txt"
+faq = "Emotion (sometimes does /lv as she approaches to attack) / Bathory (RODataZone 2004-02-11)"
+
+[[skill]]
+mob = 1102
+state = "attack"
+skill = 199
+lv = 1
+rate = 100
+cast = 0
+delay = 0
+cancel = true
+target = "target"
+cond = "myhpltmaxrate"
+cond_val = 70
+tier = "guess"
+source = "the commonest of 24 NPC_BLOODDRAIN rows in jAthena //0953 (2004-04-27) db/mob_skill_db.txt"
+faq = "HP Absorption / Bathory (RODataZone 2004-02-11)"
+
+[[skill]]
+mob = 1060
+state = "chase"
+skill = 197
+lv = 1
+rate = 15
+cast = 0
+delay = 10000
+cancel = true
+target = "self"
+cond = "always"
+cond_val = 0
+tier = "athena2003"
+source = "jAthena //0953 (2004-04-27) db/mob_skill_db.txt"
+faq = "Emotion (snore with bubble coming out nose) / Bigfoot (RODataZone 2004-02-11)"
+
+[[skill]]
+mob = 1267
+state = "chase"
+skill = 197
+lv = 1
+rate = 15
+cast = 0
+delay = 10000
+cancel = true
+target = "self"
+cond = "always"
+cond_val = 0
+val = 29
+tier = "athena2003"
+source = "jAthena //0953 (2004-04-27) db/mob_skill_db.txt"
+faq = "Emotion / Carat (RODataZone 2004-02-11)"
+
+[[skill]]
+mob = 1307
+state = "attack"
+skill = 158
+lv = 3
+rate = 100
+cast = 0
+delay = 5000
+cancel = true
+target = "target"
+cond = "always"
+cond_val = 0
+tier = "guess"
+source = "the commonest of 31 NPC_PIERCINGATT rows in rAthena pre-renewal db/mob_skill_db.txt"
+faq = "Piercing Attack / Cat O'Nine Tails (RODataZone 2004-02-11)"
+
+[[skill]]
+mob = 1307
+state = "chase"
+skill = 8
+lv = 7
+rate = 100
+cast = 1000
+delay = 10000
+cancel = true
+target = "self"
+cond = "skillused"
+cond_val = 18
+tier = "athena2003"
+source = "jAthena //0953 (2004-04-27) db/mob_skill_db.txt"
+faq = "Endure / Cat O'Nine Tails (RODataZone 2004-02-11)"
+
+[[skill]]
+mob = 1250
+state = "attack"
+skill = 72
+lv = 1
+rate = 400
+cast = 700
+delay = 5000
+cancel = true
+target = "friend"
+cond = "friendstatuson"
+cond_val = 0
+tier = "later"
+source = "rAthena pre-renewal db/mob_skill_db.txt"
+faq = "Recovery / Chepet (RODataZone 2004-02-11)"
+
+[[skill]]
+mob = 1250
+state = "chase"
+skill = 72
+lv = 1
+rate = 400
+cast = 700
+delay = 5000
+cancel = true
+target = "friend"
+cond = "friendstatuson"
+cond_val = 0
+tier = "later"
+source = "rAthena pre-renewal db/mob_skill_db.txt"
+faq = "Recovery / Chepet (RODataZone 2004-02-11)"
+
+[[skill]]
+mob = 1269
+state = "attack"
+skill = 200
+lv = 1
+rate = 1000
+cast = 2000
+delay = 10000
+cancel = true
+target = "target"
+cond = "myhpltmaxrate"
+cond_val = 70
+tier = "guess"
+source = "the commonest of 19 NPC_ENERGYDRAIN rows in jAthena //0953 (2004-04-27) db/mob_skill_db.txt"
+faq = "SP Decrease Attack / Clock (RODataZone 2004-02-11)"
+
+[[skill]]
+mob = 1073
+state = "attack"
+skill = 184
+lv = 1
+rate = 400
+cast = 0
+delay = 5000
+cancel = true
+target = "target"
+cond = "always"
+cond_val = 0
+tier = "later"
+source = "rAthena pre-renewal db/mob_skill_db.txt"
+faq = "Water Element Attack / Crab (RODataZone 2004-02-11)"
+
+[[skill]]
+mob = 1248
+state = "chase"
+skill = 197
+lv = 1
+rate = 15
+cast = 0
+delay = 10000
+cancel = true
+target = "self"
+cond = "always"
+cond_val = 0
+val = 27
+tier = "athena2003"
+source = "jAthena //0953 (2004-04-27) db/mob_skill_db.txt"
+faq = "Emotion / Cruiser (RODataZone 2004-02-11)"
+
+[[skill]]
+mob = 1302
+state = "attack"
+skill = 158
+lv = 3
+rate = 100
+cast = 0
+delay = 5000
+cancel = true
+target = "target"
+cond = "always"
+cond_val = 0
+tier = "guess"
+source = "the commonest of 31 NPC_PIERCINGATT rows in rAthena pre-renewal db/mob_skill_db.txt"
+faq = "Piercing Attack / Dark Illusion (RODataZone 2004-02-11)"
+
+[[skill]]
+mob = 1272
+state = "attack"
+skill = 199
+lv = 1
+rate = 100
+cast = 0
+delay = 0
+cancel = true
+target = "target"
+cond = "myhpltmaxrate"
+cond_val = 70
+tier = "guess"
+source = "the commonest of 24 NPC_BLOODDRAIN rows in jAthena //0953 (2004-04-27) db/mob_skill_db.txt"
+faq = "HP Absorption / Dark Lord (RODataZone 2004-02-11)"
+
+[[skill]]
+mob = 1106
+state = "chase"
+skill = 197
+lv = 1
+rate = 15
+cast = 0
+delay = 10000
+cancel = true
+target = "self"
+cond = "always"
+cond_val = 0
+val = 6
+tier = "athena2003"
+source = "jAthena //0953 (2004-04-27) db/mob_skill_db.txt"
+faq = "Emotion (/an) / Desert Wolf (RODataZone 2004-02-11)"
+
+[[skill]]
+mob = 1109
+state = "attack"
+skill = 199
+lv = 1
+rate = 100
+cast = 0
+delay = 0
+cancel = true
+target = "target"
+cond = "myhpltmaxrate"
+cond_val = 70
+tier = "guess"
+source = "the commonest of 24 NPC_BLOODDRAIN rows in jAthena //0953 (2004-04-27) db/mob_skill_db.txt"
+faq = "HP Absorption / Deviruchi (RODataZone 2004-02-11)"
+
+[[skill]]
+mob = 1109
+state = "chase"
+skill = 59
+lv = 7
+rate = 300
+cast = 3000
+delay = 5000
+cancel = false
+target = "target"
+cond = "myhpltmaxrate"
+cond_val = 30
+tier = "guess"
+source = "the commonest of 7 KN_SPEARBOOMERANG rows in jAthena //0953 (2004-04-27) db/mob_skill_db.txt"
+faq = "Spear Boomerang / Deviruchi (RODataZone 2004-02-11)"
+
+[[skill]]
+mob = 1112
+state = "chase"
+skill = 30
+lv = 1
+rate = 100
+cast = 0
+delay = 10000
+cancel = true
+target = "target"
+cond = "always"
+cond_val = 0
+tier = "athena2003"
+source = "jAthena //0953 (2004-04-27) db/mob_skill_db.txt"
+faq = "Decrease AGI / Drake (RODataZone 2004-02-11)"
+
+[[skill]]
+mob = 1117
+state = "attack"
+skill = 199
+lv = 1
+rate = 100
+cast = 0
+delay = 0
+cancel = true
+target = "target"
+cond = "myhpltmaxrate"
+cond_val = 70
+tier = "guess"
+source = "the commonest of 24 NPC_BLOODDRAIN rows in jAthena //0953 (2004-04-27) db/mob_skill_db.txt"
+faq = "HP Absorption / Evil Druid (RODataZone 2004-02-11)"
+
+[[skill]]
+mob = 1303
+state = "attack"
+skill = 158
+lv = 3
+rate = 100
+cast = 0
+delay = 5000
+cancel = true
+target = "target"
+cond = "always"
+cond_val = 0
+tier = "later"
+source = "rAthena pre-renewal db/mob_skill_db.txt"
+faq = "Pierce Attack / Giant Hornet (RODataZone 2004-02-11)"
+
+[[skill]]
+mob = 1303
+state = "attack"
+skill = 5
+lv = 10
+rate = 500
+cast = 0
+delay = 5000
+cancel = true
+target = "target"
+cond = "always"
+cond_val = 0
+tier = "guess"
+source = "the commonest of 15 SM_BASH rows in jAthena //0953 (2004-04-27) db/mob_skill_db.txt"
+faq = "Bash / Giant Hornet (RODataZone 2004-02-11)"
+
+[[skill]]
+mob = 1304
+state = "chase"
+skill = 137
+lv = 5
+rate = 200
+cast = 0
+delay = 0
+cancel = false
+target = "target"
+cond = "always"
+cond_val = 0
+tier = "athena2003"
+source = "jAthena //0953 (2004-04-27) db/mob_skill_db.txt"
+faq = "Grimtooth / Giant Spider (RODataZone 2004-02-11)"
+
+[[skill]]
+mob = 1304
+state = "attack"
+skill = 52
+lv = 5
+rate = 100
+cast = 1500
+delay = 10000
+cancel = false
+target = "target"
+cond = "always"
+cond_val = 0
+tier = "guess"
+source = "the commonest of 17 TF_POISON rows in jAthena //0953 (2004-04-27) db/mob_skill_db.txt"
+faq = "Envenom / Giant Spider (RODataZone 2004-02-11)"
+
+[[skill]]
+mob = 1277
+state = "attack"
+skill = 90
+lv = 3
+rate = 1000
+cast = 0
+delay = 20000
+cancel = true
+target = "target"
+cond = "longrangeattacked"
+cond_val = 0
+tier = "athena2003"
+source = "jAthena //0953 (2004-04-27) db/mob_skill_db.txt"
+faq = "Earth Spike / Greatest General (RODataZone 2004-02-11)"
+
+[[skill]]
+mob = 1311
+state = "chase"
+skill = 29
+lv = 1
+rate = 100
+cast = 1000
+delay = 0
+cancel = true
+target = "self"
+cond = "always"
+cond_val = 0
+tier = "athena2003"
+source = "jAthena //0953 (2004-04-27) db/mob_skill_db.txt"
+faq = "Increase AGI / Gullinbursti* (RODataZone 2004-02-11)"
+
+[[skill]]
+mob = 1311
+state = "chase"
+skill = 8
+lv = 1
+rate = 1000
+cast = 0
+delay = 30000
+cancel = true
+target = "self"
+cond = "longrangeattacked"
+cond_val = 0
+tier = "athena2003"
+source = "jAthena //0953 (2004-04-27) db/mob_skill_db.txt"
+faq = "Endure / Gullinbursti* (RODataZone 2004-02-11)"
+
+[[skill]]
+mob = 1311
+state = "chase"
+skill = 8
+lv = 1
+rate = 1000
+cast = 0
+delay = 30000
+cancel = true
+target = "self"
+cond = "skillused"
+cond_val = 18
+tier = "athena2003"
+source = "jAthena //0953 (2004-04-27) db/mob_skill_db.txt"
+faq = "Endure / Gullinbursti* (RODataZone 2004-02-11)"
+
+[[skill]]
+mob = 1213
+state = "chase"
+skill = 197
+lv = 1
+rate = 15
+cast = 0
+delay = 10000
+cancel = true
+target = "self"
+cond = "always"
+cond_val = 0
+val = 6
+tier = "athena2003"
+source = "jAthena //0953 (2004-04-27) db/mob_skill_db.txt"
+faq = "Emotion (/an) / High Orc (RODataZone 2004-02-11)"
+
+[[skill]]
+mob = 1127
+state = "attack"
+skill = 28
+lv = 3
+rate = 1000
+cast = 0
+delay = 2000
+cancel = true
+target = "self"
+cond = "myhpltmaxrate"
+cond_val = 30
+tier = "guess"
+source = "the commonest of 74 AL_HEAL rows in jAthena //0953 (2004-04-27) db/mob_skill_db.txt"
+faq = "Heal (L3 / Hode (RODataZone 2004-02-11)"
+
+[[skill]]
+mob = 1035
+state = "idle"
+skill = 26
+lv = 1
+rate = 100
+cast = 0
+delay = 5000
+cancel = true
+target = "self"
+cond = "always"
+cond_val = 0
+tier = "later"
+source = "rAthena pre-renewal db/mob_skill_db.txt"
+faq = "Teleport / Hunter Fly (RODataZone 2004-02-11)"
+
+[[skill]]
+mob = 1068
+state = "attack"
+skill = 184
+lv = 2
+rate = 100
+cast = 500
+delay = 5000
+cancel = false
+target = "target"
+cond = "always"
+cond_val = 0
+tier = "later"
+source = "rAthena pre-renewal db/mob_skill_db.txt"
+faq = "Water Element Attack / Hydra (RODataZone 2004-02-11)"
+
+[[skill]]
+mob = 1130
+state = "chase"
+skill = 197
+lv = 1
+rate = 15
+cast = 0
+delay = 10000
+cancel = true
+target = "self"
+cond = "always"
+cond_val = 0
+tier = "athena2003"
+source = "jAthena //0953 (2004-04-27) db/mob_skill_db.txt"
+faq = "Emotion / Jakk (RODataZone 2004-02-11)"
+
+[[skill]]
+mob = 1131
+state = "attack"
+skill = 199
+lv = 1
+rate = 100
+cast = 0
+delay = 0
+cancel = true
+target = "target"
+cond = "myhpltmaxrate"
+cond_val = 70
+tier = "guess"
+source = "the commonest of 24 NPC_BLOODDRAIN rows in jAthena //0953 (2004-04-27) db/mob_skill_db.txt"
+faq = "HP Absorption / Joker (RODataZone 2004-02-11)"
+
+[[skill]]
+mob = 1132
+state = "chase"
+skill = 29
+lv = 1
+rate = 500
+cast = 3000
+delay = 120000
+cancel = false
+target = "self"
+cond = "myhpltmaxrate"
+cond_val = 50
+tier = "guess"
+source = "the commonest of 24 AL_INCAGI rows in jAthena //0953 (2004-04-27) db/mob_skill_db.txt"
+faq = "Increase AGI / Khalitzburg (RODataZone 2004-02-11)"
+
+[[skill]]
+mob = 1138
+state = "attack"
+skill = 179
+lv = 3
+rate = 100
+cast = 1500
+delay = 5000
+cancel = false
+target = "target"
+cond = "always"
+cond_val = 0
+tier = "later"
+source = "rAthena pre-renewal db/mob_skill_db.txt"
+faq = "Stun Attack / Magnolia (RODataZone 2004-02-11)"
+
+[[skill]]
+mob = 1145
+state = "attack"
+skill = 28
+lv = 10
+rate = 1000
+cast = 0
+delay = 2000
+cancel = true
+target = "self"
+cond = "myhpltmaxrate"
+cond_val = 30
+tier = "guess"
+source = "the commonest of 74 AL_HEAL rows in jAthena //0953 (2004-04-27) db/mob_skill_db.txt"
+faq = "Heal / Martin (RODataZone 2004-02-11)"
+
+[[skill]]
+mob = 1289
+state = "attack"
+skill = 158
+lv = 3
+rate = 100
+cast = 0
+delay = 5000
+cancel = true
+target = "target"
+cond = "always"
+cond_val = 0
+tier = "guess"
+source = "the commonest of 31 NPC_PIERCINGATT rows in rAthena pre-renewal db/mob_skill_db.txt"
+faq = "Piercing Attack / Maya Purple* (RODataZone 2004-02-11)"
+
+[[skill]]
+mob = 1264
+state = "chase"
+skill = 59
+lv = 7
+rate = 300
+cast = 3000
+delay = 5000
+cancel = false
+target = "target"
+cond = "myhpltmaxrate"
+cond_val = 30
+tier = "guess"
+source = "the commonest of 7 KN_SPEARBOOMERANG rows in jAthena //0953 (2004-04-27) db/mob_skill_db.txt"
+faq = "Spear Boomerang / Merman (RODataZone 2004-02-11)"
+
+[[skill]]
+mob = 1292
+state = "chase"
+skill = 59
+lv = 7
+rate = 300
+cast = 3000
+delay = 5000
+cancel = false
+target = "target"
+cond = "myhpltmaxrate"
+cond_val = 30
+tier = "guess"
+source = "the commonest of 7 KN_SPEARBOOMERANG rows in jAthena //0953 (2004-04-27) db/mob_skill_db.txt"
+faq = "Spear Boomerang / Mini Demon (RODataZone 2004-02-11)"
+
+[[skill]]
+mob = 1313
+state = "chase"
+skill = 59
+lv = 5
+rate = 100
+cast = 0
+delay = 5000
+cancel = true
+target = "target"
+cond = "always"
+cond_val = 0
+tier = "later"
+source = "rAthena pre-renewal db/mob_skill_db.txt"
+faq = "Spear Boomerang / Mobster (RODataZone 2004-02-11)"
+
+[[skill]]
+mob = 1249
+state = "chase"
+skill = 197
+lv = 1
+rate = 15
+cast = 0
+delay = 10000
+cancel = true
+target = "self"
+cond = "always"
+cond_val = 0
+tier = "athena2003"
+source = "jAthena //0953 (2004-04-27) db/mob_skill_db.txt"
+faq = "Emotion / Mystcase (RODataZone 2004-02-11)"
+
+[[skill]]
+mob = 1061
+state = "attack"
+skill = 200
+lv = 1
+rate = 1000
+cast = 2000
+delay = 10000
+cancel = true
+target = "target"
+cond = "myhpltmaxrate"
+cond_val = 70
+tier = "guess"
+source = "the commonest of 19 NPC_ENERGYDRAIN rows in jAthena //0953 (2004-04-27) db/mob_skill_db.txt"
+faq = "SP Decrease Attack / Nightmare (RODataZone 2004-02-11)"
+
+[[skill]]
+mob = 1044
+state = "chase"
+skill = 197
+lv = 1
+rate = 15
+cast = 0
+delay = 10000
+cancel = true
+target = "self"
+cond = "always"
+cond_val = 0
+tier = "athena2003"
+source = "jAthena //0953 (2004-04-27) db/mob_skill_db.txt"
+faq = "Emotion / Obeaune (RODataZone 2004-02-11)"
+
+[[skill]]
+mob = 1044
+state = "chase"
+skill = 76
+lv = 5
+rate = 100
+cast = 3500
+delay = 10000
+cancel = true
+target = "target"
+cond = "always"
+cond_val = 0
+tier = "athena2003"
+source = "jAthena //0953 (2004-04-27) db/mob_skill_db.txt"
+faq = "Lex Divina / Obeaune (RODataZone 2004-02-11)"
+
+[[skill]]
+mob = 1256
+state = "attack"
+skill = 135
+lv = 1
+rate = 400
+cast = 200
+delay = 5000
+cancel = true
+target = "self"
+cond = "always"
+cond_val = 0
+tier = "later"
+source = "rAthena pre-renewal db/mob_skill_db.txt"
+faq = "Cloaking / Pest (RODataZone 2004-02-11)"
+
+[[skill]]
+mob = 1256
+state = "idle"
+skill = 135
+lv = 1
+rate = 400
+cast = 200
+delay = 5000
+cancel = true
+target = "self"
+cond = "always"
+cond_val = 0
+tier = "later"
+source = "rAthena pre-renewal db/mob_skill_db.txt"
+faq = "Cloaking / Pest (RODataZone 2004-02-11)"
+
+[[skill]]
+mob = 1256
+state = "chase"
+skill = 135
+lv = 1
+rate = 400
+cast = 200
+delay = 5000
+cancel = true
+target = "self"
+cond = "always"
+cond_val = 0
+tier = "later"
+source = "rAthena pre-renewal db/mob_skill_db.txt"
+faq = "Cloaking / Pest (RODataZone 2004-02-11)"
+
+[[skill]]
+mob = 1159
+state = "attack"
+skill = 206
+lv = 5
+rate = 400
+cast = 0
+delay = 5000
+cancel = true
+target = "target"
+cond = "always"
+cond_val = 0
+tier = "later"
+source = "rAthena pre-renewal db/mob_skill_db.txt"
+faq = "Lick / Phreeoni (RODataZone 2004-02-11)"
+
+[[skill]]
+mob = 1159
+state = "attack"
+skill = 200
+lv = 1
+rate = 1000
+cast = 2000
+delay = 10000
+cancel = true
+target = "target"
+cond = "myhpltmaxrate"
+cond_val = 70
+tier = "guess"
+source = "the commonest of 19 NPC_ENERGYDRAIN rows in jAthena //0953 (2004-04-27) db/mob_skill_db.txt"
+faq = "SP Decrease Attack / Phreeoni (RODataZone 2004-02-11)"
+
+[[skill]]
+mob = 1165
+state = "attack"
+skill = 28
+lv = 4
+rate = 1000
+cast = 0
+delay = 2000
+cancel = true
+target = "self"
+cond = "myhpltmaxrate"
+cond_val = 30
+tier = "guess"
+source = "the commonest of 74 AL_HEAL rows in jAthena //0953 (2004-04-27) db/mob_skill_db.txt"
+faq = "Heal (L4 / Sandman (RODataZone 2004-02-11)"
+
+[[skill]]
+mob = 1243
+state = "chase"
+skill = 197
+lv = 1
+rate = 15
+cast = 0
+delay = 10000
+cancel = true
+target = "self"
+cond = "always"
+cond_val = 0
+tier = "athena2003"
+source = "jAthena //0953 (2004-04-27) db/mob_skill_db.txt"
+faq = "Emotion / Sasquatch (RODataZone 2004-02-11)"
+
+[[skill]]
+mob = 1076
+state = "chase"
+skill = 197
+lv = 1
+rate = 15
+cast = 0
+delay = 10000
+cancel = true
+target = "self"
+cond = "always"
+cond_val = 0
+tier = "athena2003"
+source = "jAthena //0953 (2004-04-27) db/mob_skill_db.txt"
+faq = "Emotion / Skeleton* (RODataZone 2004-02-11)"
+
+[[skill]]
+mob = 1056
+state = "idle"
+skill = 28
+lv = 2
+rate = 2000
+cast = 0
+delay = 5000
+cancel = true
+target = "self"
+cond = "mystatuson"
+cond_val = 0
+tier = "later"
+source = "rAthena pre-renewal db/mob_skill_db.txt"
+faq = "Heal (L2 / Smokie (RODataZone 2004-02-11)"
+
+[[skill]]
+mob = 1322
+state = "chase"
+skill = 152
+lv = 1
+rate = 100
+cast = 0
+delay = 10000
+cancel = true
+target = "target"
+cond = "always"
+cond_val = 0
+tier = "athena2003"
+source = "jAthena //0953 (2004-04-27) db/mob_skill_db.txt"
+faq = "Stone Throw / Spring Rabbit (RODataZone 2004-02-11)"
+
+[[skill]]
+mob = 1207
+state = "attack"
+skill = 28
+lv = 10
+rate = 1000
+cast = 0
+delay = 2000
+cancel = true
+target = "self"
+cond = "myhpltmaxrate"
+cond_val = 30
+tier = "guess"
+source = "the commonest of 74 AL_HEAL rows in jAthena //0953 (2004-04-27) db/mob_skill_db.txt"
+faq = "Heal (after hiding) / Sting (RODataZone 2004-02-11)"
+
+[[skill]]
+mob = 1175
+state = "attack"
+skill = 188
+lv = 1
+rate = 100
+cast = 0
+delay = 15000
+cancel = true
+target = "target"
+cond = "always"
+cond_val = 0
+tier = "guess"
+source = "the commonest of 25 NPC_POISONATTACK rows in jAthena //0953 (2004-04-27) db/mob_skill_db.txt"
+faq = "Poison Element Attack / Tarou (RODataZone 2004-02-11)"
+
+[[skill]]
+mob = 1017
+state = "attack"
+skill = 190
+lv = 2
+rate = 100
+cast = 0
+delay = 15000
+cancel = true
+target = "target"
+cond = "always"
+cond_val = 0
+tier = "guess"
+source = "the commonest of 44 NPC_DARKNESSATTACK rows in jAthena //0953 (2004-04-27) db/mob_skill_db.txt"
+faq = "Dark Element Attack / Thief Bug (Female) (RODataZone 2004-02-11)"
+
+[[skill]]
+mob = 1021
+state = "attack"
+skill = 190
+lv = 2
+rate = 100
+cast = 0
+delay = 15000
+cancel = true
+target = "target"
+cond = "always"
+cond_val = 0
+tier = "guess"
+source = "the commonest of 44 NPC_DARKNESSATTACK rows in jAthena //0953 (2004-04-27) db/mob_skill_db.txt"
+faq = "Dark Element Attack / Thief Bug (Male) (RODataZone 2004-02-11)"
+
+[[skill]]
+mob = 1312
+state = "chase"
+skill = 8
+lv = 7
+rate = 1000
+cast = 0
+delay = 30000
+cancel = true
+target = "self"
+cond = "longrangeattacked"
+cond_val = 0
+tier = "athena2003"
+source = "jAthena //0953 (2004-04-27) db/mob_skill_db.txt"
+faq = "Endure / Turtle General (RODataZone 2004-02-11)"
+
+[[skill]]
+mob = 1312
+state = "chase"
+skill = 8
+lv = 7
+rate = 1000
+cast = 0
+delay = 30000
+cancel = true
+target = "self"
+cond = "skillused"
+cond_val = 18
+tier = "athena2003"
+source = "jAthena //0953 (2004-04-27) db/mob_skill_db.txt"
+faq = "Endure / Turtle General (RODataZone 2004-02-11)"
+
+[[skill]]
+mob = 1092
+state = "chase"
+skill = 197
+lv = 1
+rate = 15
+cast = 0
+delay = 10000
+cancel = true
+target = "self"
+cond = "always"
+cond_val = 0
+val = 27
+tier = "athena2003"
+source = "jAthena //0953 (2004-04-27) db/mob_skill_db.txt"
+faq = "Emotion (/an) / Vagabond Wolf (RODataZone 2004-02-11)"
+
+[[skill]]
+mob = 1179
+state = "chase"
+skill = 197
+lv = 1
+rate = 15
+cast = 0
+delay = 10000
+cancel = true
+target = "self"
+cond = "always"
+cond_val = 0
+tier = "athena2003"
+source = "jAthena //0953 (2004-04-27) db/mob_skill_db.txt"
+faq = "Emotion / Whisper (RODataZone 2004-02-11)"
+
+[[skill]]
+mob = 1192
+state = "attack"
+skill = 199
+lv = 1
+rate = 100
+cast = 0
+delay = 0
+cancel = true
+target = "target"
+cond = "myhpltmaxrate"
+cond_val = 70
+tier = "guess"
+source = "the commonest of 24 NPC_BLOODDRAIN rows in jAthena //0953 (2004-04-27) db/mob_skill_db.txt"
+faq = "HP Absorption / Wraith (RODataZone 2004-02-11)"
+
+[[skill]]
+mob = 1291
+state = "chase"
+skill = 30
+lv = 1
+rate = 50
+cast = 3000
+delay = 0
+cancel = true
+target = "target"
+cond = "always"
+cond_val = 0
+tier = "athena2003"
+source = "jAthena //0953 (2004-04-27) db/mob_skill_db.txt"
+faq = "Decrease AGI / Wraith Dead (RODataZone 2004-02-11)"
+
+[[skill]]
+mob = 1291
+state = "chase"
+skill = 137
+lv = 5
+rate = 200
+cast = 0
+delay = 0
+cancel = false
+target = "target"
+cond = "always"
+cond_val = 0
+tier = "athena2003"
+source = "jAthena //0953 (2004-04-27) db/mob_skill_db.txt"
+faq = "Grimtooth / Wraith Dead (RODataZone 2004-02-11)"
+
+[[skill]]
 mob = 1157
 state = "attack"
 skill = 60
@@ -3788,3 +4850,7 @@ faq = "Teleport / INCANTATION_SAMURAI (every boss)"
 #   Detoxify / Obeaune: no table has the skill
 #   Piercing Attack / Grimtooth: no monster or skill of that name
 #   Lazy Attack / Merman: no monster or skill of that name
+#   Summon Followers (2 Sidewinder) / Gullinbursti* (RODataZone 2004-02-11): the table's row brings savage
+#   Detoxify / Merman (RODataZone 2004-02-11): no table has the skill
+#   Detoxify / Obeaune (RODataZone 2004-02-11): no table has the skill
+#   Summon Monster (Peco Peco Egg) / PecoPeco (RODataZone 2004-02-11): no table has the pair, and another monster's row would summon, become or show what that monster does

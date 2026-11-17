@@ -1256,6 +1256,21 @@ and Decrease AGI, Heal, Detoxify... on a few monsters each), and 317
 pairs wait on names not mapped yet (the elemental attacks, "Summon
 Followers", "Multi Attack", "Life Drain"...). Next: map those, then add
 what is missing as the FAQ pairs were (`tools/import/mob_skills_faq.py`).
+**Mapped and added (2026-11-17).** With the elemental attacks and the rest
+mapped (`research/rdz_mob_skills.py`), RODataZone and our tables share 682
+pairs and it has 65 we lacked: `tools/import/mob_skills_rdz.tsv`, taken by
+`tools/import/mob_skills_faq.py` as the FAQ's pairs are (61 pairs, 66 rows; 13 are
+emotions, 26 tier guess: the commonest row of that skill). Its level where it
+gives one (Hode's, Sandman's, Smokie's Heal); left out: the Gullinbursti's
+"2 Sidewinder" (the only row, rAthena's, brings Savages), the Peco Peco's egg
+(no row), Detoxify (no table). The Greatest General's Earth Spike, which
+jAthena aims at himself, is aimed at a target as rAthena does. **Monsters'
+elemental attacks:** Skygor's iRO guide (round 32; GameFAQs 28518, 4.C, in
+v1.00 of 2004-02-03) says "ALL MONSTERS CAN USE A GENERIC ELEMENTAL ATTACK OF
+THEIR OWN ATTRIBUTE_. (The only excpetion are Undead.)"; our tables give one
+to 196 of 410 such monsters. RODataZone's table of the same month lists them
+on the same monsters ours does (five pairs missing, now added), so not built:
+one player's generalisation against a period table.
 **The client's own monster action table (2026-11-14).** The Turtle Island
 patch file ships `data\monsterskillinfo.xml` (Atbash-encoded: a<->z;
 decoded copy in `target/re/`): for 41 monster sprites, the skills that play

@@ -12,6 +12,11 @@ of the pair's candidate monsters:
   2. jAthena //1046 (2004-09-12). Tier later.
   3. rAthena's pre-renewal table (refs/rathena HEAD). Tier later.
 
+RODataZone's iRO monster table (2004-02-11) gives more pairs the same way:
+tools/import/mob_skills_rdz.tsv, written by research/rdz_mob_skills.py. Where it names the level
+("Heal (L3") that level is used; where it names what a summon brings, a row that brings another
+monster is not taken.
+
 Rates: mod0631 rolls rand()%1000 against a row's rate (map/mob.c:2168); from //0822 on
 jAthena rolls rand()%10000 with the same numbers (THREADS.md #23). The game keeps mod0631's
 roll, so jAthena's numbers go in unchanged, on the scale of the rows they sit beside.
@@ -37,6 +42,7 @@ fires.
   python3 tools/import/mob_skills_faq.py REFS REPO_ROOT
 writes data/db/mob_skills_faq.toml.
 """
+import re
 import statistics
 from collections import Counter
 import subprocess
@@ -54,6 +60,9 @@ SOURCES = [
     ("rathena", "HEAD", "db/pre-re/mob_skill_db.txt", "later",
      "rAthena pre-renewal db/mob_skill_db.txt", None),  # scale worked out below
 ]
+# jAthena aims the Greatest General's Earth Spike at himself, where it strikes nothing (//0953 and
+# //1046 alike); rAthena aims it at a target, as every other monster's Earth Spike row does
+TARGET_FIX = {(1277, 90, "self"): "target"}
 # rAthena's states and targets that mod0631's AI has under another name
 STATE = {"follow": "chase", "angry": "attack", "anytarget": "any"}
 TARGET = {"randomtarget": "target"}
@@ -89,6 +98,7 @@ mod_rate = {(r["mob"], r["state"], r["skill"]): r["rate"] for r in ours}
 sid = {s["name"]: s["id"] for s in tomllib.load(open(ROOT / "data/db/skills.toml", "rb"))["skill"]}
 mobdb = tomllib.load(open(ROOT / "data/db/mobs.toml", "rb"))["mob"]
 mobs = {m["id"] for m in mobdb}
+display = {m["id"]: re.sub(r"[^a-z]", "", m.get("display", m["name"]).lower()) for m in mobdb}
 mvps = sorted((m["id"], m["name"]) for m in mobdb if m.get("mvp_exp", 0) > 0)
 BOSS_SKILLS = [("Two-Hand Quicken", "KN_TWOHANDQUICKEN"), ("Increase Agility", "AL_INCAGI"),
                ("Guided Attack", "NPC_GUIDEDATTACK"), ("Piercing Attack", "NPC_PIERCINGATT")]
@@ -106,6 +116,10 @@ for repo, rev, path, tier, src, scale in SOURCES:
         scale = statistics.median(ratios)
     tables.append((rows, tier, src, scale))
 
+# skills whose row names a monster or an emotion in `val`: never taken from another monster's row
+VAL_SKILLS = {sid[n] for n in ("NPC_SUMMONSLAVE", "NPC_SUMMONMONSTER", "NPC_METAMORPHOSIS",
+                               "NPC_TRANSFORMATION", "NPC_EMOTION")}
+
 pairs = []
 for line in open(ROOT / "tools/import/mob_skills_faq.tsv", encoding="utf-8"):
     if line.startswith("#") or not line.strip():
@@ -115,6 +129,15 @@ for line in open(ROOT / "tools/import/mob_skills_faq.tsv", encoding="utf-8"):
     skills = [sid[n] for n in names.split("|") if n in sid]
     cands = [int(i) for i in ids.split(",") if i and int(i) in mobs]
     pairs.append((faq_skill, faq_mob, skills, cands))
+# RODataZone's iRO monster table of 2004-02-11 (tools/import/mob_skills_rdz.tsv, written by
+# research/rdz_mob_skills.py): the pairs it has that mod0631 and the FAQ lack. Its other 682 pairs
+# are in our tables already, the elemental attacks among them (THREADS.md #23).
+for line in open(ROOT / "tools/import/mob_skills_rdz.tsv", encoding="utf-8"):
+    if line.startswith("#") or not line.strip():
+        continue
+    f = line.rstrip("\n").split("\t")
+    pairs.append((f[0], f"{f[1]} (RODataZone 2004-02-11)", [sid[n] for n in f[2].split("|") if n in sid],
+                  [int(f[3])]))
 for faq_skill, name in BOSS_SKILLS:
     for mid, mname in mvps:
         pairs.append((faq_skill, f"{mname} (every boss)", [sid[name]], [mid]))
@@ -141,6 +164,10 @@ for faq_skill, faq_mob, skills, cands in pairs:
             break
     else:
         got = []
+        if any(s in VAL_SKILLS for s in skills):
+            missing.append(f"{faq_skill} / {faq_mob}: no table has the pair, and another monster's row "
+                           "would summon, become or show what that monster does")
+            continue
         for rows, tier, src, scale in tables:
             same = [tuple(c[2:12]) for c in rows if num(c[3]) in skills]
             if same:
@@ -151,12 +178,27 @@ for faq_skill, faq_mob, skills, cands in pairs:
         if not got:
             missing.append(f"{faq_skill} / {faq_mob}: no table has the skill")
             continue
+    # RODataZone names the monster a summon or a metamorphosis brings ("Summon Followers (2
+    # Sidewinder)"): a table's row for that monster that brings another is not taken
+    named = re.search(r"\((.*)", faq_skill)
+    if "(RODataZone" in faq_mob and named and any(s in VAL_SKILLS - {sid["NPC_EMOTION"]} for s in skills):
+        text = re.sub(r"[^a-z]", "", named.group(1).lower())
+        if not all(display.get(num(c[12]) if len(c) > 12 else 0, "?") in text for c in got):
+            missing.append(f"{faq_skill} / {faq_mob}: the table's row brings "
+                           f"{', '.join(display.get(num(c[12]), '?') for c in got if len(c) > 12)}")
+            continue
+    # and gives the level where it knows it ("Heal (L3"): that level, over the table's
+    lv_named = re.search(r"\(L(\d+)", faq_skill) if "(RODataZone" in faq_mob else None
     nfound += 1
     for c in got:
+        if lv_named:
+            c = c[:4] + [lv_named.group(1)] + c[5:]
         key = (num(c[0]), c[2], num(c[3]), c[5], c[10], c[11])
         if key in seen:
             continue
         seen.add(key)
+        if (num(c[0]), num(c[3]), c[9]) in TARGET_FIX:
+            c = c[:9] + [TARGET_FIX[num(c[0]), num(c[3]), c[9]]] + c[10:]
         rate = round(num(c[5]) / scale)
         rec = [f"mob = {num(c[0])}", f'state = "{STATE.get(c[2], c[2])}"', f"skill = {num(c[3])}",
                f"lv = {num(c[4])}", f"rate = {max(rate, 1)}", f"cast = {num(c[6])}", f"delay = {num(c[7])}",
@@ -216,7 +258,7 @@ hdr = f'''# Generated by tools/import/mob_skills_faq.py: do not edit; change the
 [meta]
 tier = "athena2003"
 source = "unknown13's Monster Skill FAQ (GameFAQs 29608, 2004-04) for which monster has which skill; rows from {SOURCES[0][4]}, else {SOURCES[1][4]}, else {SOURCES[2][4]} (rate divided by {tables[2][3]:g})"
-note = "monster skills iRO had in April 2004 that mod0631 lacks; read after mob_skills.toml, same fields; each row says its own tier and source"
+note = "monster skills iRO had in April 2004 (the FAQ) and in February 2004 (RODataZone's monster table, rows whose faq names it) that mod0631 lacks; read after mob_skills.toml, same fields; each row says its own tier and source"
 
 '''
 foot = "\n# FAQ pairs left out:\n" + "".join(f"#   {m}\n" for m in missing)

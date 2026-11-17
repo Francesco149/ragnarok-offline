@@ -2,6 +2,9 @@
 """RODataZone's iRO monster table (monsters.js, captured 2004-02-11) against our monster skills.
 
   rdz_mob_skills.py MONSTERS.js > out.tsv
+  rdz_mob_skills.py --tsv MONSTERS.js > tools/import/mob_skills_rdz.tsv
+
+--tsv writes the missing pairs in mob_skills_faq.tsv's columns, for tools/import/mob_skills_faq.py.
 
 Maps RODataZone's skill names to ours with tools/import/mob_skills_faq.tsv (the FAQ's names,
 which RODataZone mostly shares) and a few more below, matches monsters by display name, and
@@ -12,7 +15,8 @@ import collections, re, sys, tomllib
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-js = open(sys.argv[1], encoding='latin-1').read()
+TSV = sys.argv[1] == '--tsv'
+js = open(sys.argv[-1], encoding='latin-1').read()
 rows = [[x.replace("\\'", "'") for x in re.findall(r"'((?:[^'\\]|\\.)*)'", m.group(2))]
         for m in re.finditer(r"MONSTERS\[(\d+)\] = new Array\((.*)\);", js) if m.group(1) != '0']
 sk = {s['name']: s['id'] for s in tomllib.load(open(ROOT / 'data/db/skills.toml', 'rb'))['skill']}
@@ -37,13 +41,42 @@ MORE = {'emotion': ['NPC_EMOTION'], 'summon minions': ['NPC_SUMMONSLAVE'], 'heal
         'double strafe': ['AC_DOUBLE'], 'venom dust': ['AS_VENOMDUST'], 'provoke': ['SM_PROVOKE'],
         'mammonite': ['MC_MAMMONITE'], 'counter attack': ['KN_AUTOCOUNTER'], 'back slide': ['TF_BACKSLIDING'],
         'stone throw': ['TF_THROWSTONE'], 'sand attack': ['TF_SPRINKLESAND'], 'recovery': ['PR_STRECOVERY'],
-        'endure': ['SM_ENDURE']}
+        'endure': ['SM_ENDURE'],
+        # the elemental attacks (184-191: their elements checked in skills.toml, 190 Shadow, 191 Ghost)
+        'water element attack': ['NPC_WATERATTACK'], 'earth element attack': ['NPC_GROUNDATTACK'],
+        'fire element attack': ['NPC_FIREATTACK'], 'wind element attack': ['NPC_WINDATTACK'],
+        'wind attribute attack': ['NPC_WINDATTACK'], 'poison element attack': ['NPC_POISONATTACK'],
+        'holy element attack': ['NPC_HOLYATTACK'], 'dark element attack': ['NPC_DARKNESSATTACK'],
+        'darkness element attack': ['NPC_DARKNESSATTACK'], 'darkness attack': ['NPC_DARKNESSATTACK'],
+        'ghost element attack': ['NPC_TELEKINESISATTACK'], 'random element attack': ['NPC_RANDOMATTACK'],
+        'multi attack': ['NPC_COMBOATTACK'], 'curse attack': ['NPC_CURSEATTACK'], 'curse': ['NPC_CURSEATTACK'],
+        'life drain': ['NPC_BLOODDRAIN'], 'hp absorption': ['NPC_BLOODDRAIN'],
+        'sp decrease attack': ['NPC_ENERGYDRAIN'], 'magic attack': ['NPC_MAGICALATTACK'],
+        'critical attack': ['NPC_CRITICALSLASH'], 'critical slash': ['NPC_CRITICALSLASH'],
+        'self-destruct': ['NPC_SELFDESTRUCTION'], 'suicide': ['NPC_SUICIDE', 'NPC_SELFDESTRUCTION'],
+        'summon followers': ['NPC_SUMMONSLAVE'], 'summon follower': ['NPC_SUMMONSLAVE'],
+        'summon monster': ['NPC_SUMMONMONSTER', 'NPC_SUMMONSLAVE'], 'throw stone': ['TF_THROWSTONE'],
+        'keeping': ['NPC_KEEPING'], 'smoking': ['NPC_SMOKING'], 'hallucination': ['NPC_HALLUCINATION'],
+        'hullucination': ['NPC_HALLUCINATION'], 'metamorphosis': ['NPC_METAMORPHOSIS'], 'lick': ['NPC_LICK'],
+        'mental breaker': ['NPC_MENTALBREAKER'], 'pierce attack': ['NPC_PIERCINGATT'],
+        'fire element change': ['NPC_CHANGEFIRE'], 'water element change': ['NPC_CHANGEWATER'],
+        'random element change': ['NPC_ATTRICHANGE'], 'agi up': ['AL_INCAGI'], 'soul strike': ['MG_SOULSTRIKE'],
+        'sight': ['MG_SIGHT'], 'pneuma': ['AL_PNEUMA'], 'detoxify': ['TF_DETOXIFY'], 'holy light': ['AL_HOLYLIGHT'],
+        'lord of vermillion': ['WZ_VERMILION'], 'storm gust': ['WZ_STORMGUST'], 'frost nova': ['WZ_FROSTNOVA'],
+        'thunder storm': ['MG_THUNDERSTORM'], 'sandman': ['HT_SANDMAN'], 'flasher': ['HT_FLASHER'],
+        'freeze trap': ['HT_FREEZINGTRAP'], 'skid trap': ['HT_SKIDTRAP'], 'claymore trap': ['HT_CLAYMORETRAP'],
+        'shockwave trap': ['HT_SHOCKWAVE'], 'ankle snare': ['HT_ANKLESNARE'], 'arrow shower': ['AC_SHOWER'],
+        'hammerfall': ['BS_HAMMERFALL'], 'hammer': ['BS_HAMMERFALL'], 'firewall': ['MG_FIREWALL'],
+        'firebolt': ['MG_FIREBOLT'], 'lex aeterna': ['PR_LEXAETERNA'], 'grimtooth': ['AS_GRIMTOOTH']}
+# not skills: pet tricks are emotes the client plays, "plantlike" is the monster's mode
+SKIP = {'pet trick', 'pet tricks', 'plantlike', '?', 'etc.', 'etc'}
 for k, v in MORE.items():
     names.setdefault(k, [n for n in v if n in sk])
 have = collections.defaultdict(set)
 for f in ('mob_skills.toml', 'mob_skills_faq.toml'):
     for r in tomllib.load(open(ROOT / 'data/db' / f, 'rb'))['skill']:
-        have[r['mob']].add(r['skill'])
+        if '(RODataZone' not in r.get('faq', ''):  # rows taken from this script's own pairs
+            have[r['mob']].add(r['skill'])
 mobs = {}
 for m in tomllib.load(open(ROOT / 'data/db/mobs.toml', 'rb'))['mob']:
     if m.get('base_exp'):
@@ -55,7 +88,9 @@ for r in rows:
         unmatched.append(r[0])
         continue
     for s in [x.strip() for x in r[22].split(',') if x.strip() and x.strip() != '-']:
-        base = re.sub(r'\s*\(.*\)$', '', s).lower()
+        base = re.sub(r'\s*\(.*$', '', s).lower().rstrip('?')
+        if base in SKIP or not base or base[0] in '0123456789' or ')' in base:
+            continue  # a pet trick, or the tail of a note RODataZone split at its comma
         ids = [sk[n] for n in names.get(base, [])]
         if not ids:
             unmapped[base] += 1
@@ -63,10 +98,18 @@ for r in rows:
         if any(i in have[mid] for i in ids):
             n_have += 1
         else:
-            missing.append((r[0], mid, s))
-print('# RODataZone monster\tour id\tits skill name (pairs our tables lack)')
-for m in missing:
-    print('\t'.join(map(str, m)))
+            missing.append((r[0], mid, s, '|'.join(names[base])))
+if TSV:
+    print("# RODataZone's iRO monster table (monsters/monsters.js, Wayback 20040211150750), the (skill,\n"
+          "# monster) pairs mod0631 and the FAQ lack. Written by research/rdz_mob_skills.py --tsv; read by\n"
+          "# tools/import/mob_skills_faq.py. Columns as mob_skills_faq.tsv: its skill, its monster, our\n"
+          "# skill names, our monster id, note.")
+    for name, mid, s, ours in missing:
+        print(f"{s}\t{name}\t{ours}\t{mid}\tRODataZone")
+else:
+    print('# RODataZone monster\tour id\tits skill name (pairs our tables lack)')
+    for m in missing:
+        print('\t'.join(map(str, m[:3])))
 print(f"# {n_have} pairs present, {len(missing)} missing; {sum(unmapped.values())} unmapped "
       f"({len(unmapped)} names: {', '.join(n for n, _ in unmapped.most_common(25))}); "
       f"{len(unmatched)} monsters unmatched", file=sys.stderr)

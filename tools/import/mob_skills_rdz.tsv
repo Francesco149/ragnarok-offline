@@ -1,0 +1,69 @@
+# RODataZone's iRO monster table (monsters/monsters.js, Wayback 20040211150750), the (skill,
+# monster) pairs mod0631 and the FAQ lack. Written by research/rdz_mob_skills.py --tsv; read by
+# tools/import/mob_skills_faq.py. Columns as mob_skills_faq.tsv: its skill, its monster, our
+# skill names, our monster id, note.
+Curse Attack	Ancient Mummy	NPC_CURSEATTACK	1297	RODataZone
+Adrenaline Rush	Baphomet Jr.	BS_ADRENALINE	1101	RODataZone
+Emotion (sometimes does /lv as she approaches to attack)	Bathory	NPC_EMOTION	1102	RODataZone
+HP Absorption	Bathory	NPC_BLOODDRAIN	1102	RODataZone
+Emotion (snore with bubble coming out nose)	Bigfoot	NPC_EMOTION	1060	RODataZone
+Emotion	Carat	NPC_EMOTION	1267	RODataZone
+Piercing Attack	Cat O'Nine Tails	NPC_PIERCINGATT	1307	RODataZone
+Endure	Cat O'Nine Tails	SM_ENDURE	1307	RODataZone
+Recovery	Chepet	PR_STRECOVERY	1250	RODataZone
+SP Decrease Attack	Clock	NPC_ENERGYDRAIN	1269	RODataZone
+Water Element Attack	Crab	NPC_WATERATTACK	1073	RODataZone
+Emotion	Cruiser	NPC_EMOTION	1248	RODataZone
+Piercing Attack	Dark Illusion	NPC_PIERCINGATT	1302	RODataZone
+HP Absorption	Dark Lord	NPC_BLOODDRAIN	1272	RODataZone
+Emotion (/an)	Desert Wolf	NPC_EMOTION	1106	RODataZone
+HP Absorption	Deviruchi	NPC_BLOODDRAIN	1109	RODataZone
+Spear Boomerang	Deviruchi	KN_SPEARBOOMERANG	1109	RODataZone
+Decrease AGI	Drake	AL_DECAGI	1112	RODataZone
+HP Absorption	Evil Druid	NPC_BLOODDRAIN	1117	RODataZone
+Pierce Attack	Giant Hornet	NPC_PIERCINGATT	1303	RODataZone
+Bash	Giant Hornet	SM_BASH	1303	RODataZone
+Grimtooth	Giant Spider	AS_GRIMTOOTH	1304	RODataZone
+Envenom	Giant Spider	TF_POISON	1304	RODataZone
+Earth Spike	Greatest General	WZ_EARTHSPIKE	1277	RODataZone
+Increase AGI	Gullinbursti*	AL_INCAGI	1311	RODataZone
+Summon Followers (2 Sidewinder)	Gullinbursti*	NPC_SUMMONSLAVE	1311	RODataZone
+Endure	Gullinbursti*	SM_ENDURE	1311	RODataZone
+Emotion (/an)	High Orc	NPC_EMOTION	1213	RODataZone
+Heal (L3	Hode	AL_HEAL	1127	RODataZone
+Teleport	Hunter Fly	AL_TELEPORT	1035	RODataZone
+Water Element Attack	Hydra	NPC_WATERATTACK	1068	RODataZone
+Emotion	Jakk	NPC_EMOTION	1130	RODataZone
+HP Absorption	Joker	NPC_BLOODDRAIN	1131	RODataZone
+Increase AGI	Khalitzburg	AL_INCAGI	1132	RODataZone
+Stun Attack	Magnolia	NPC_STUNATTACK	1138	RODataZone
+Heal	Martin	AL_HEAL	1145	RODataZone
+Piercing Attack	Maya Purple*	NPC_PIERCINGATT	1289	RODataZone
+Spear Boomerang	Merman	KN_SPEARBOOMERANG	1264	RODataZone
+Detoxify	Merman	TF_DETOXIFY	1264	RODataZone
+Spear Boomerang	Mini Demon	KN_SPEARBOOMERANG	1292	RODataZone
+Spear Boomerang	Mobster	KN_SPEARBOOMERANG	1313	RODataZone
+Emotion	Mystcase	NPC_EMOTION	1249	RODataZone
+SP Decrease Attack	Nightmare	NPC_ENERGYDRAIN	1061	RODataZone
+Emotion	Obeaune	NPC_EMOTION	1044	RODataZone
+Lex Divina	Obeaune	PR_LEXDIVINA	1044	RODataZone
+Detoxify	Obeaune	TF_DETOXIFY	1044	RODataZone
+Summon Monster (Peco Peco Egg)	PecoPeco	NPC_SUMMONMONSTER|NPC_SUMMONSLAVE	1019	RODataZone
+Cloaking	Pest	AS_CLOAKING	1256	RODataZone
+Lick	Phreeoni	NPC_LICK	1159	RODataZone
+SP Decrease Attack	Phreeoni	NPC_ENERGYDRAIN	1159	RODataZone
+Heal (L4	Sandman	AL_HEAL	1165	RODataZone
+Emotion	Sasquatch	NPC_EMOTION	1243	RODataZone
+Emotion	Skeleton*	NPC_EMOTION	1076	RODataZone
+Heal (L2	Smokie	AL_HEAL	1056	RODataZone
+Stone Throw	Spring Rabbit	TF_THROWSTONE	1322	RODataZone
+Heal (after hiding)	Sting	AL_HEAL	1207	RODataZone
+Poison Element Attack	Tarou	NPC_POISONATTACK	1175	RODataZone
+Dark Element Attack	Thief Bug (Female)	NPC_DARKNESSATTACK	1017	RODataZone
+Dark Element Attack	Thief Bug (Male)	NPC_DARKNESSATTACK	1021	RODataZone
+Endure	Turtle General	SM_ENDURE	1312	RODataZone
+Emotion (/an)	Vagabond Wolf	NPC_EMOTION	1092	RODataZone
+Emotion	Whisper	NPC_EMOTION	1179	RODataZone
+HP Absorption	Wraith	NPC_BLOODDRAIN	1192	RODataZone
+Decrease AGI	Wraith Dead	AL_DECAGI	1291	RODataZone
+Grimtooth	Wraith Dead	AS_GRIMTOOTH	1291	RODataZone
