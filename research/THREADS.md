@@ -1426,7 +1426,8 @@ Terror ignored DEF and cards before jAthena //1072 (2004-12-06) said so.
 Grand Cross: Tangowr's Crusader guide (2004-07-01, server not said) has
 "total damage 2/3 would be reflect toward you" against the iRO guide's
 half; SoulEclipse (2005) only restates the guide. Still open, with the
-guide's "decreases by 2/3" (by or to?).
+guide's "decreases by 2/3" (by or to? built as *to* 2/3 on 2026-11-17 with
+817's `cast_def_rate` 33 and the Comodo preview's "reduced to 2/3").
 **2026-11-17, round 31:** nothing new (`research/notes/round31-review.md`).
 Tangowr names twRO only for his quiz ("The following question are
 translated from twRO"), not for the skills. **The 2-2 job changes** are

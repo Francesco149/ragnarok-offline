@@ -1179,7 +1179,9 @@ always fires.
   mod0631's row counts 3 a hit), and strikes the caster too, at half
   ("the damage amount the caster takes is half the amount the enemy
   takes"; neither emulator has it). The guide's lower DEF while casting
-  ("decreases by 2/3": by or to?) is left out.
+  ("decreases by 2/3") is read as *to* 2/3, with 817's `cast_def_rate` 33
+  and the Comodo preview's "reduced to 2/3" (see "A third off the caster's
+  DEF" above).
 * **The Alchemist's Acid Terror, Bomb (Demonstration) and Aid Potion
   (Potion Pitcher)** (behind `jobs2_2`; drafts, test
   `alchemist_acid_bomb_aid`). mod0631 never built them; 817's Acid Terror

@@ -512,7 +512,8 @@ account dated before 2004-09, server named from the author's own line
 //1072 (2004-12-06) made it so; its element (ArislanX: Neutral);
 (c) Grand Cross: how much of the damage struck the caster (iRO guide
 half; Tangowr, GameFAQs 28552: 2/3), and the caster's DEF while casting
-("decreases by 2/3": by or to?).
+("decreases by 2/3": by or to? built as *to* 2/3, 817 and the Comodo
+preview; a player's account still wanted).
 Not wanted: SoulEclipse (GameFAQs 30694, 2005), which restates the iRO
 guide. Sets: `alchemist_breaks_monster_gear`, `grand_cross`.
 
