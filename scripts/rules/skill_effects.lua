@@ -506,8 +506,8 @@ function skill_castend_nodamage_id(src_id, bl_id, skillid, skilllv, opt)
     -- level 1). The potion by level and its worth, 110% to 150%: the iRO guide's Alchemist
     -- page (2004-03-27); jAthena reads the same five potions from its skill_db and runs
     -- their scripts. The potion was taken with the skill's other costs (skill.lua). The
-    -- target's VIT (INT for the Blue Potion) and recovery skills count as for a potion
-    -- drunk (combat.lua item_heal; jAthena counts VIT twice). Ours: the guide's 10% a
+    -- target's VIT (INT for the Blue Potion), 2% a point, and recovery skills count as for
+    -- a potion drunk (combat.lua item_heal, as jAthena). Ours: the guide's 10% a
     -- level for the Blue Potion too, where jAthena gives it 1%.
     local p = AID_POTION[skilllv] or AID_POTION[1]
     local bonus = 100 + 10 * skilllv + (sd and checkskill(sd, SK.AM_LEARNINGPOTION) * 5 or 0)
@@ -515,11 +515,11 @@ function skill_castend_nodamage_id(src_id, bl_id, skillid, skilllv, opt)
     if p.hp then
       hp = floor((p.hp[1] + rnd(p.hp[2] - p.hp[1] + 1)) * bonus / 100)
       local rec = bl.kind == "player" and checkskill(bl, SK.SM_RECOVERY) * 10 or 0
-      hp = floor(hp * (100 + battle.vit(bl) + rec) / 100)
+      hp = floor(hp * (100 + battle.vit(bl) * 2 + rec) / 100)
     else
       sp = floor((p.sp[1] + rnd(p.sp[2] - p.sp[1] + 1)) * bonus / 100)
       local rec = bl.kind == "player" and checkskill(bl, SK.MG_SRECOVERY) * 10 or 0
-      sp = floor(sp * (100 + battle.int(bl) + rec) / 100)
+      sp = floor(sp * (100 + battle.int(bl) * 2 + rec) / 100)
     end
     nodamage(src_id, bl_id, skillid, skilllv)
     if hp > 0 then _rt("clif_skill_nodamage", src_id, bl_id, SK.AL_HEAL, hp, 1) end

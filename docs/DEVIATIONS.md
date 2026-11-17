@@ -1305,9 +1305,7 @@ always fires.
     817's and mod0631's rows give it the weapon's element. jAthena's
     //1072 also has it ignore DEF and cards, which no player source of
     2004 says: not built;
-  * Aid Potion's heal grows with the target's VIT (INT for the Blue
-    Potion) and recovery skills as a potion drunk does here (jAthena
-    counts VIT twice), and the Blue Potion takes the guide's 10% a level
+  * the Blue Potion thrown by Aid Potion takes the guide's 10% a level
     (jAthena's 1% looks a slip);
   * Bomb's square is centred on the cell aimed at (jAthena's sits a cell
     up and to the left of it).

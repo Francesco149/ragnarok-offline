@@ -830,14 +830,19 @@ fn trade_potions_and_weight() {
     assert_eq!(t.lua("rules.buy_price{price = 1000, skills = {[tostring(SK.MC_DISCOUNT)] = 1}}").trim(), "930");
     assert_eq!(t.lua("rules.sell_price{price = 1000, skills = {[tostring(SK.MC_OVERCHARGE)] = 10}}").trim(), "1240");
     assert_eq!(t.lua("rules.buy_price{price = 1000, skills = {}}").trim(), "1000");
-    // a Red Potion heals 45..64, more with VIT (1% a point)
+    // a Red Potion heals 45..64, more with VIT: 2% a point (RODataZone 2003-12-04, Ragu Memo)
     t.lua("player.base_level = 50; player.vit = 99; heal(9999, 9999); player.hp = 1; give_item(501, 1)");
     let idx = t.inv(501);
     let mut w = Writer::new(0x00a7);
     w.u16(idx).u32(t.me);
     t.send(w);
     let got = t.hp() - 1;
-    assert!((89..=128).contains(&got), "Red Potion with 99 VIT healed {got}");
+    assert!((134..=190).contains(&got), "Red Potion with 99 VIT healed {got}");
+    // and SP items with INT, 2% a point too (Ragu Memo: INT/50)
+    t.lua("player.int = 50; player.sp = 1");
+    let st_int = t.st("int");
+    t.lua("item_heal(0, 10)");
+    assert_eq!(t.sp() as i64 - 1, 10 * (100 + 2 * st_int) / 100, "10 SP with {st_int} INT");
     // half the weight limit: icon 35; nine tenths: 36
     let c = &t.g.store.chars[&t.cid];
     let _ = c;
@@ -2806,7 +2811,7 @@ fn alchemist_acid_bomb_aid() {
     assert!(t.mob_hp(inside).map_or(true, |h| h < hp_in));
     assert_eq!(t.mob_hp(outside), Some(hp_out), "a cell outside the 3x3");
 
-    // Aid Potion 1 throws a Red Potion: 110% of 45-64, then the target's VIT
+    // Aid Potion 1 throws a Red Potion: 110% of 45-64, then the target's VIT at 2% a point
     t.lua("player.hp = 100");
     t.cast("AM_POTIONPITCHER", me);
     t.run(500);
@@ -2816,7 +2821,7 @@ fn alchemist_acid_bomb_aid() {
     t.run(500);
     let healed = t.hp() as i64 - 100;
     let vit = t.st("vit");
-    let (lo, hi) = (45 * 110 / 100 * (100 + vit) / 100, 64 * 110 / 100 * (100 + vit) / 100);
+    let (lo, hi) = (45 * 110 / 100 * (100 + 2 * vit) / 100, 64 * 110 / 100 * (100 + 2 * vit) / 100);
     assert!(healed >= lo && healed <= hi, "healed {healed}, not {lo}-{hi}");
     assert_eq!(count(&mut t, 501), 0);
     // level 5 throws a Blue Potion: SP

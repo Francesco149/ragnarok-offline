@@ -2291,4 +2291,20 @@ did is not known: left.
 Bash reaches, to sharpen it.
 *Aside:* `mvp_summons_as_jathena_0743` failed once in a full
 `cargo test --workspace` (no five Leib Olmai within 15 s) and passed 45
-times alone: a rare random flake, not chased.
+times alone: a rare random flake, not chased. 2026-11-17, fourth session: failed
+once in a full run and once in 8 alone (no five Leib Olmai within 15 s,
+the summon roll); `bard_dancer_songs` failed once in a loaded full run
+(Whistle's SP cost: a regen tick inside the 200 ms, passes 6 of 6 alone).
+Both flakes, neither touched by that day's work.
+
+### R8. Healing items and VIT / INT (2026-11-17, round 34)
+
+mod0631, 817 and eAthena mod 715 (`pc_itemheal`) raise what a healing item
+gives by 1% a point of VIT (HP) or INT (SP). Ragu Memo's `rec_item.html`
+(jRO, capture 2003-12-05) gives `1 + VIT/50 + HP回復向上Lv/10`, INT/50 for
+SP; RODataZone's iRO stats page (capture 2003-12-04) "+2% per point" of
+VIT; jAthena //0880 (2004-03-10) changed to `paramc<<1`. Built at 2%, Aid
+Potion too (`research/notes/round34-review.md`).
+*Aside:* Ragu Memo's base ranges match our 19 `use_script`s except at the
+top: Orange Potion and Ice Cream 143 (ours 144), White Potion and Royal
+Jelly 402 (ours 404). Could be a measured range missing its top; left.

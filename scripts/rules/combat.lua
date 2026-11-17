@@ -111,19 +111,24 @@ function rules.regen(t)
 end
 
 -- pc.c:2992 pc_itemheal: what a healing item gives grows with VIT (HP) or INT
--- (SP), 1% a point, and with Increase HP / SP Recovery, 10% a level
--- (Alchemists' Potion Research: 5% a level).
+-- (SP) and with Increase HP / SP Recovery, 10% a level (Alchemists' Potion
+-- Research: 5% a level, on top). VIT and INT count 2% a point, not mod0631's 1%:
+-- RODataZone's iRO stats page of 2003-12-04 ("Healing items effect increased by
+-- +2% per point" of VIT) and Ragu Memo's jRO rec_item.html of 2003-12-05
+-- ("基本回復量 * (1 + VIT/50 + HP回復向上Lv/10)", INT/50 for SP); jAthena //0880
+-- (2004-03-10) made the same change (paramc<<1). DEVIATIONS has no entry: this
+-- is the period rule.
 function item_heal(hp, sp)
   local sd = battle.get(player.id)
   if not sd or sd.dead then return end
   hp, sp = hp or 0, sp or 0
   local learn = 100 + battle.pc_checkskill(sd, SK.AM_LEARNINGPOTION) * 5
   if hp > 0 then
-    hp = floor(hp * (sd.st.vit + 100 + battle.pc_checkskill(sd, SK.SM_RECOVERY) * 10) / 100)
+    hp = floor(hp * (sd.st.vit * 2 + 100 + battle.pc_checkskill(sd, SK.SM_RECOVERY) * 10) / 100)
     hp = floor(hp * learn / 100)
   end
   if sp > 0 then
-    sp = floor(sp * (sd.st.int + 100 + battle.pc_checkskill(sd, SK.MG_SRECOVERY) * 10) / 100)
+    sp = floor(sp * (sd.st.int * 2 + 100 + battle.pc_checkskill(sd, SK.MG_SRECOVERY) * 10) / 100)
     sp = floor(sp * learn / 100)
   end
   heal(hp, sp)
