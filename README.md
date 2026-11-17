@@ -110,7 +110,8 @@ Working with the real client:
   players had worked out by December 2003); monsters with their period AI and skills,
   and the 93 skills an iRO player's list of April 2004 gives monsters that
   the December 2003 emulator lacks (Endure, Increase Agility, Piercing
-  Attack...), with its rule that every boss hastens itself, strikes true
+  Attack...) and the 79 more an iRO fan site's monster table of February
+  2004 does (Life Drain, Lick, the Petits' elemental attacks...), with the list's rule that every boss hastens itself, strikes true
   and teleports away from an attacker it cannot reach; every monster skill
   of the period lists is cast by a test, Fabres turning into Pupas and
   Baphomet Jr.'s Hallucination included; EXP, drops (checked
