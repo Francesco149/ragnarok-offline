@@ -19,6 +19,7 @@
 #   * the Windows rig (WIN_HOST): its agents' scheduled tasks and processes,
 #     anything running from WIN_DIR, a mounted disc image. --clean runs
 #     `win.sh down` and dismounts the image; it never deletes files there.
+#     Also reports a drive under win.sh's free-space floor (WIN_MIN_FREE_GB).
 set -uo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 DATA="${WB_DATA:-$HOME/data/ragnarok-cd}"
@@ -80,7 +81,8 @@ done
 # --- the Windows rig ---------------------------------------------------------
 if [ $win = 1 ]; then
   WDIR="${WIN_DIR:-F:\\ro-test}"
-  out=$(WIN_HOST="${WIN_HOST:-win-wifi}" timeout 30 "$ROOT/tools/win-test/win.sh" ps "
+  # read-only, and it must run on a full disk too: past win.sh's disk guard
+  out=$(WIN_DISK_OK=1 WIN_HOST="${WIN_HOST:-win-wifi}" timeout 30 "$ROOT/tools/win-test/win.sh" ps "
     \$d='$WDIR'
     Get-ScheduledTask -TaskName 'ro-agent-*' -ErrorAction SilentlyContinue | % { 'task ' + \$_.TaskName + ' ' + \$_.State }
     Get-CimInstance Win32_Process | ? { \$_.CommandLine -like \"*\$d*\" -or \$_.ExecutablePath -like \"\$d*\" -or \$_.Name -match '^(Ragexe|Sakray|setup|ro-launcher)' } |
@@ -89,7 +91,7 @@ if [ $win = 1 ]; then
       ? Attached | % { 'mounted ' + \$_.ImagePath }" 2>&1)
   rc=$?
   if [ $rc = 124 ] || grep -qiE 'could not resolve|timed out|refused|no route' <<<"$out"; then
-    say "windows: not reachable (${WIN_HOST:-win-wifi}); not checked"
+    say "windows: not reachable (${WIN_HOST:-win-wifi}); not checked"; reach=0
   elif [ -n "$(tr -d '[:space:]' <<<"$out")" ]; then
     found=1; say "windows:"; sed 's/^/    /' <<<"$out"
     if [ $clean = 1 ]; then
@@ -97,6 +99,14 @@ if [ $win = 1 ]; then
       "$ROOT/tools/win-test/win.sh" ps "Get-CimInstance Win32_Process | ? { \$_.ExecutablePath -like '$WDIR*' -or \$_.Name -match '^(Ragexe|Sakray)' } | % { Stop-Process -Id \$_.ProcessId -Force }
         Get-ChildItem '$WDIR\\*.iso' -ErrorAction SilentlyContinue | % { Dismount-DiskImage -ImagePath \$_.FullName -ErrorAction SilentlyContinue | Out-Null }" >/dev/null
       say "  -> agents down, processes stopped, image dismounted"
+    fi
+  fi
+  # low disk wedged the box's sshd once: say so at every session's start and end
+  if [ "${reach:-1}" = 1 ]; then
+    disk=$(WIN_HOST="${WIN_HOST:-win-wifi}" "$ROOT/tools/win-test/win.sh" df 2>&1); drc=$?
+    if [ $drc = 3 ]; then
+      found=1; say "windows: LOW DISK (under ${WIN_MIN_FREE_GB:-20} GB free; win.sh refuses to run until it is freed):"
+      sed 's/^/    /' <<<"$disk"
     fi
   fi
 fi

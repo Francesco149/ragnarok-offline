@@ -52,5 +52,9 @@ rig `win-test/`, all-in-one installer `aio/`, importer, packaging),
 
 - The Windows rig (`tools/win-test`) drives someone's real desktop: no
   native fullscreen mode switches, keep files under its `WIN_DIR`, uninstall
-  what you install. The all-in-one installer output contains Gravity's files:
+  what you install. A full disk there once wedged its sshd: `win.sh` refuses to
+  start below 20 GB free on C: or `WIN_DIR`'s drive. If it refuses, stop the
+  Windows work and tell the orchestrator; never free space yourself to get
+  past it. Delete large files you pushed (ISOs, client copies) once a test is
+  done. The all-in-one installer output contains Gravity's files:
   never commit or publish it.

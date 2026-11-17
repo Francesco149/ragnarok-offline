@@ -106,6 +106,18 @@ elevated, because UIPI stops a medium process from driving elevated windows
 such as msiexec's UI). Everything it creates lives under `WIN_DIR` (default
 `F:\ro-test`); `WIN_HOST` (default `win-wifi`) is the ssh alias.
 
+**Disk guard.** The box once ran out of disk, and its sshd sessions wedged.
+Every `win.sh` command but `down` and `df` first checks that C: and
+`WIN_DIR`'s drive each have `WIN_MIN_FREE_GB` free (default 20; `push` needs
+the pushed size on top; a passing check holds for two minutes) and refuses
+otherwise with exit 5. A box that does not answer within 60 s counts as
+refused too. ssh gives up on a dead connection (`ConnectTimeout`,
+`ServerAlive*`) instead of hanging. An agent that gets the refusal stops its
+Windows work and tells the orchestrator; only the orchestrator frees space
+or sets `WIN_DISK_OK=1` (for this rig's own clean-up). `win.sh df` shows the
+free space and `WIN_DIR`'s size; `tools/strays.sh` reports a low disk at
+every session's start and end.
+
 ```sh
 W=tools/win-test/win.sh
 $W up                                   # copy agent.ps1, start both agents
@@ -114,6 +126,7 @@ $W ps  'Mount-DiskImage F:\ro-test\RAGNAROK.iso'        # ssh session (elevated,
 $W do  'Launch D:\setup.exe'                             # desktop session, like a double-click
 $W doa 'Windows "msiexec"; Click 1055 708'               # elevated desktop agent
 $W shot name [admin]                    # -> ~/data/ragnarok-cd/shots/win11/name.png
+$W df                                   # free space; exit 3 if under the floor
 $W down
 ```
 
