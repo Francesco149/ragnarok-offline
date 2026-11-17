@@ -6,7 +6,7 @@ local function words(s) local t = {} for w in s:gmatch("%S+") do t[#t + 1] = w e
 
 command("help", function()
   return "@warp <map> [x y], @go <town>, @where, @item <id|name> [n], @zeny <n>, @lvup [n], @joblvup [n], " ..
-         "@job <id>, @equip <item id>, @heal, @monster <id|name> [n], @save, @stats, @reload, @allskill, @useskill <id|NAME> [lv]"
+         "@job <id>, @equip <item id>, @heal, @monster <id|name> [n], @save, @stats, @reload, @allskill, @useskill <id|NAME> [lv], @autospell <spell>"
 end)
 
 -- Every skill of the current job at its top level (quest skills too).
@@ -46,6 +46,35 @@ command("useskill", function(args)
   else
     _rt("skill_request", player.id, id, lv, player.id, 0, 0)
   end
+end)
+
+-- The spell Auto Spell casts (sage.lua): this client has no window to choose it in. Changes the
+-- spell of an Auto Spell already on, if its level offers it, and is kept for the next ones.
+command("autospell", function(args)
+  local a = words(args)
+  -- a spell by the start of its name: "fire", "cold", "frostdiver", "MG_SOULSTRIKE"
+  local arg = (a[1] or ""):lower():gsub("^mg_", ""):gsub("[ _]", "")
+  local want
+  local names = {}
+  for _, n in ipairs(AUTOSPELL_LIST) do
+    local short = n:sub(4):lower()
+    names[#names + 1] = short
+    if arg ~= "" and not want and short:sub(1, #arg) == arg then want = SK[n] end
+  end
+  if not want then return "usage: @autospell <" .. table.concat(names, "|") .. ">" end
+  autospell_wanted[player.id] = want
+  local me = battle.get(player.id)
+  local t = me and battle.sc(me, SC.AUTOSPELL)
+  if t then
+    for _, o in ipairs(autospell_offer(me, t.val1)) do
+      if o.skill == want then
+        skill_status_change_start(player.id, SC.AUTOSPELL, t.val1, want, { val3 = o.maxlv, tick = t.left })
+        return "Auto Spell now casts " .. SPELL_NAME[o.name] .. ", up to level " .. o.maxlv
+      end
+    end
+    return "Your Auto Spell level does not offer that spell; kept for the next cast"
+  end
+  return "Kept for your next Auto Spell"
 end)
 
 command("where", function()

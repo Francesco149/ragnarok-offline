@@ -475,6 +475,8 @@ local CAST_817 = {
   -- Mental Strength: "a 5 second casting time which cannot be interrupted" (the iRO guide's
   -- Monk page, 2004-03-27). mod0631, 817 and jAthena //1020 cast it at once
   [SK.MO_STEELBODY] = 5000,
+  -- jAthena's cast_db (2004-06-11, as since //0821 of 2004-02-20); 817's has no row
+  [SK.SA_AUTOSPELL] = 3000,
 }
 local function skill_range(sd, skill, lv)
   if lv and LEVEL_RANGE[skill] then return LEVEL_RANGE[skill](lv) end
@@ -668,6 +670,10 @@ function skill_check_condition(sd, skill, lv, a)
     -- a Blue Gemstone too: the iRO guide's Sage page (2004-03-27), euRO's text of May 2004,
     -- jAthena //0969's skill_require_db (mod0631 the yellow one alone)
     items[715] = 1; items[717] = 1
+  elseif skill == SK.SA_ABRACADABRA then
+    -- two Yellow Gemstones: the iRO guide's Sage page (2004-03-27), euRO's text of May 2004,
+    -- jAthena's skill_require_db
+    items[715] = 2
   elseif skill == SK.SA_DISPELL then
     -- a Yellow and a Red Gemstone: eAthena 817's skill_require_db and the iRO guide's Sage
     -- page (2004-03-27). mod0631 takes the yellow one only (skill.c:2863)
@@ -889,6 +895,8 @@ function rules.skill_castend(a)
   if skill == SK.NPC_METAMORPHOSIS then nk = 1 end
   -- Acid Terror: nk 1 in mod0631's skill_db (it never built the skill), 0 in jAthena //0969's
   if skill == SK.AM_ACIDTERROR then nk = 0 end
+  -- Abracadabra: nk 0 in mod0631's and 817's skill_db (neither built it), 1 in jAthena's
+  if skill == SK.SA_ABRACADABRA then nk = 1 end
   if nk == 1 then
     -- Heal and Resurrection hurt whatever is of the Undead element (friend or not: skill.c:1780)
     if (skill == SK.AL_HEAL or skill == SK.ALL_RESURRECTION) and battle.elem_type(bl) == 9 then
@@ -903,9 +911,10 @@ function rules.skill_castend(a)
 end
 
 -- A skill an item lets the player use once (clif_item_skill, 0x0147).
-function item_skill(id, lv)
+-- `unit`: the player, when a rule lends it (Abracadabra) rather than an item script.
+function item_skill(id, lv, unit)
   _rt("item_skill", id, lv or 1, skill_get(id).name, skill_get_inf(id), skill_get_sp(id, lv or 1),
-    math.max(1, rules.skill_reach({ skill = id, lv = lv or 1 }) or skill_get_range(id)))
+    math.max(1, rules.skill_reach({ skill = id, lv = lv or 1 }) or skill_get_range(id)), unit)
 end
 
 -- ------------------------------------------------------------ hooks from the server

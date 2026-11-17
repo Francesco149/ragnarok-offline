@@ -41,6 +41,9 @@ SC = {
   -- ours too, standing in an ensemble (jAthena //1020's SC_RICHMANKIM, SC_ROKISWEIL, SC_INTOABYSS);
   -- War Drum, Ring of Nibelungen, Eternal Chaos and Siegfried keep mod0631's numbers above
   RICHMANKIM = 115, ROKISWEIL = 116, INTOABYSS = 117,
+  -- ours too (sage.lua): Auto Spell (817's and jAthena's 103 is mod0631's Nibelungen), and the orc's
+  -- face of Abracadabra's Reverse Orcish (battle.rs SC_ORCISH: option 0x0800)
+  AUTOSPELL = 118, ORCISH = 119,
 }
 -- the Sage's fields and the element each strengthens
 FIELD_ELEMENT = { [SC.VOLCANO] = 3, [SC.DELUGE] = 1, [SC.VIOLENTGALE] = 4 }

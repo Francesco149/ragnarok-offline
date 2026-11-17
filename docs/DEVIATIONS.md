@@ -1347,6 +1347,43 @@ always fires.
   and no skill window entry for any of it (THREADS.md #25): the combos
   can be reached only by `@useskill` inside a window shorter than a
   second. euRO's May-2004 client draws them all.
+* **The Sage's Auto Spell and Abracadabra, the Crusader's Devotion**
+  (behind `jobs2_2`; drafts, test `sage_autospell_abracadabra_devotion`;
+  `scripts/rules/sage.lua`). Neither period emulator has them working
+  (817 sends Auto Spell's list and casts nothing); they follow jAthena of
+  2004-06-11 (Auto Spell since //0821 of 2004-02-20, Abracadabra since
+  //0749 of 2004-01-27, its table since //0900 of 2004-03-24), with the iRO
+  guide's Sage page (2004-03-27) and euRO's skill text of May 2004:
+  * Auto Spell: 3 s cast (jAthena), 120 s and 30 s more a level (the
+    guide; jAthena's cast_db has 360 s at level 8). Its levels offer
+    Napalm Beat (3), the three bolts (1 to 3), Soul Strike (1 to 3), Fire
+    Ball (1, 2), Frost Diver (1), as euRO's text lists them, never above the
+    level learned. Each blow, hit or miss, has a 7% to 16% chance (the
+    guide; jAthena 7% to 25%) to cast the spell at once, at its top level
+    15% of the time, one below 35%, two below 50% (both), for two thirds
+    of its SP and only if the Sage has them. **Ours:** this client has no
+    window for the choice (0x01cd, THREADS.md #25), so the server picks
+    the strongest spell offered and says so in the chat; `@autospell
+    <spell>` picks another, for the Auto Spell on and the next ones;
+  * Abracadabra: 50 SP and two Yellow Gemstones (the guide, euRO's text,
+    jAthena). It draws a skill by jAthena's own table (its authors', no
+    period source has one) and lends it for one use at the Abracadabra
+    level learned or the skill's top level, aimed as with a scroll
+    (0x0147). **Ours:** only the skills this client can name are drawn
+    (jAthena's table also has the 2-2 skills), and Abracadabra's own
+    thirteen skills, which this client knows nothing of, go off at once,
+    on the Sage or the nearest enemy monster within 8 cells (none: nothing
+    happens), with a chat line naming them. What they do is jAthena's
+    except where euRO's text says otherwise: Level Up gives a whole base
+    level (the text; jAthena a tenth of one), Full Recovery cures poison
+    too (the text), Reverse Orcish's orc face lasts 20 minutes (rAthena's
+    skill_db, tier later; jAthena sets it for good; this client draws no
+    orc face for it), "?" makes the monster
+    show "?" (the text). Mono Cell (a Poring) and Class Change (one of
+    jAthena's fifteen bosses) are for good, as in jAthena (euRO's text: "for
+    a while");
+  * Devotion always fails: it wants another player of the Crusader's party
+    or guild (jAthena, the guide, euRO's text). Nobody else is here.
 * **Talkie Box** speaks: mod0631 lets it lie silent and 817's attempt is
   marked "not working", so it follows jAthena //0988 (2004-05-25, five
   months after our date): the first one to step on it makes it say the
@@ -1355,7 +1392,7 @@ always fires.
   //0991 of the next day).
   jAthena's change to a used trap is not sent: this client applies 0x00c3
   to characters only (docs/PROTOCOL.md).
-* **Not built yet:** the other 2-2 skills, Repair Weapon
+* **Not built yet:** Repair Weapon
   (nothing breaks in this era's data), monsters'
   "friend" skill targets (mod0631 has none either).
 * **One cast at a time for monsters.** In mod0631 a counter skill could

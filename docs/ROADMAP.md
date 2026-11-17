@@ -123,8 +123,13 @@ Next:
   `sage_free_cast_attacks_while_casting`): the skill delay unchecked while
   the cast runs, each blow (150 - 5 x level)% as slow. Played in the
   client: it sends the attack under its own cast bar, and the blows' numbers
-  show over the casting pose. Left: Abracadabra, Devotion and
-  Auto Spell (THREADS.md #25: no packets for their lines and window).
+  show over the casting pose. The last three drafted on 2026-11-17 from
+  jAthena of 2004-06 with the guide's and euRO's May-2004 numbers (test
+  `sage_autospell_abracadabra_devotion`): Auto Spell (the server picks the
+  spell, `@autospell` another: this client has no list), Abracadabra
+  (lends a skill this client can name; its own thirteen go off at once),
+  Devotion (fails: no one else to protect). Every 2-2 skill now does
+  something.
 * **Check the drafted skills against the iRO guide's pages** (THREADS.md
   #22) and the ailments against period guides (#21). The client's skill
   text against the emulators is settled (R6).

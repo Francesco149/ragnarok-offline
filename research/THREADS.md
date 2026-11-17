@@ -1454,6 +1454,21 @@ square following the one who laid it); Ring of Nibelungen's damage
 (jAthena adds ATK; the guide's "amplifies level 4 weapon damage" with a
 garbled table on the Bard page, "175% ... 250%").
 
+**2026-11-17: Auto Spell, Abracadabra and Devotion drafted** (DEVIATIONS.md,
+`scripts/rules/sage.lua`, test `sage_autospell_abracadabra_devotion`), from
+jAthena of 2004-06-11 (2dd4988) with the iRO guide's Sage page and euRO's
+May-2004 text. Where they part: Auto Spell's chance (guide 7% to 16%,
+jAthena 5% + 2% a level) and length at levels 8 and 9 (guide 330 s and
+360 s, jAthena's cast_db 360 s and 390 s with level 10 missing): the
+guide is taken; Level Up (euRO: a level, jAthena: a tenth of one): the
+text. **Open:** Abracadabra's draw table is jAthena's own (no period source
+lists what it cast or how often); how long Mono Cell and Reverse Orcish
+lasted on the official server ("for a while"). **Seen in the client (rig,
+2026-11-17, `@useskill`):** blows under Auto Spell shout "Cold Bolt !!" and
+the bolts' numbers land; Abracadabra shouts "Unknown Skill !!" (as every 2-2
+skill) and the lent Fire Bolt shows "Select a Target." and fires at level 10;
+option 0x0800 draws no orc face on this client (sent, nothing changes).
+
 ### 26. What `check` still lists
 The world audit (`ragnarok-offline check`, 2026-11-11) walks the client's
 cells from the start point through every warp and every destination a

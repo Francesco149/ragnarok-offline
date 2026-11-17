@@ -1184,5 +1184,7 @@ function rules.weapon_attack(a)
   if wd.div == 255 and src.kind == "player" then monk_combo_after(src.id, SK.MO_TRIPLEATTACK, target.id) end
   -- a Monk waiting with Blade Stop catches the blow's striker (battle.c:4484)
   if sc(target, SC.BLADESTOP_WAIT) then blade_stop_catch(src, target) end
+  -- Auto Spell, hit or miss (sage.lua; jAthena battle.c:4379)
+  if sc(src, SC.AUTOSPELL) then sage_autospell_blow(src.id, target.id) end
   return { adelay = adelay }
 end

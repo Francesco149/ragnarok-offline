@@ -111,6 +111,11 @@ a cost euRO had (THREADS.md #22).
   Blade Stop; the drafts behind `jobs2_2` now (DEVIATIONS.md: the
   Crusader's shield skills, Providence, the endows, Dispell, the Strips,
   the Chemical Protections) checked against its skill text.
+* Auto Spell's list (0x01cd out, 0x01ce back) in place of the server's
+  pick and `@autospell`; Abracadabra lending the 2-2 skills of jAthena's
+  table and its own thirteen (that client names them, skillnametable.txt)
+  instead of setting those off at once (`scripts/rules/sage.lua`,
+  2026-11-17).
 * Juno, if it is in that client's data and on its patch list by then
   (euRO opened Juno with the jobs, 2004-06-09).
 * Whatever else euRO changed between 2003-12 and 2004-05 that the client

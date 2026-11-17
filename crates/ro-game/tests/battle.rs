@@ -3544,3 +3544,116 @@ fn sage_free_cast_attacks_while_casting() {
         }
     }
 }
+
+/// The Sage's Auto Spell and Abracadabra and the Crusader's Devotion (sage.lua; jAthena of
+/// 2004-06-11 with the iRO guide's and euRO's May-2004 numbers; behind jobs2_2). Auto Spell
+/// picks the strongest spell offered, @autospell another, and blows cast it at two thirds of its
+/// SP; Abracadabra takes two Yellow Gemstones and lends a drawn skill (0x0147) or sets off one
+/// of its own; Devotion has no one to protect.
+#[test]
+fn sage_autospell_abracadabra_devotion() {
+    let mut t = T::new();
+    t.lua("job_change(16); player.base_level = 80; player.int = 60; player.dex = 99; heal(30000, 30000)");
+    t.learn("MG_COLDBOLT", 3);
+    t.learn("MG_FIREBOLT", 10);
+    t.learn("SA_AUTOSPELL", 10);
+    let me = t.me;
+    let num = |t: &mut T, code: &str| -> i64 { t.lua(code).trim().parse::<f64>().unwrap() as i64 };
+    let (cold, fire) = (t.skill_id("MG_COLDBOLT") as i64, t.skill_id("MG_FIREBOLT") as i64);
+
+    // the strongest spell offered at level 10 that the Sage has: Fire Bolt (Napalm Beat, Soul
+    // Strike, Fire Ball and Frost Diver unlearned), up to level 3
+    t.cast("SA_AUTOSPELL", me);
+    t.run(3500);
+    assert!(t.sc(118), "Auto Spell on");
+    let val = |t: &mut T, k: &str| -> i64 { t.lua(&format!("battle.sc(battle.get({me}), SC.AUTOSPELL).{k}")).trim().parse::<f64>().unwrap() as i64 };
+    assert_eq!((val(&mut t, "val2"), val(&mut t, "val3")), (fire, 3));
+    let mut w = Writer::new(0x008c);
+    w.str_nul("Fighter : @autospell cold");
+    t.send(w);
+    assert_eq!((val(&mut t, "val2"), val(&mut t, "val3")), (cold, 3), "@autospell");
+
+    // blows cast Cold Bolt at level 1 to 3, paying two thirds of its SP
+    let mob = t.spawn(26, 25, 1008);
+    t.lua(&format!("mob_max_hp({mob}, 1000000)"));
+    t.cap.take();
+    let mut w = Writer::new(0x0089);
+    w.u32(mob).u8(7);
+    t.send(w);
+    t.run(60_000);
+    let bolts: Vec<u16> = t.packets(0x01de).iter().filter(|p| u16_at(p, 2) as i64 == cold).map(|p| u16_at(p, 28)).collect();
+    assert!(!bolts.is_empty(), "no Cold Bolt in a minute of blows");
+    assert!(bolts.iter().all(|lv| (1..=3).contains(lv)), "levels {bolts:?}");
+    // with no SP left, none
+    for _ in 0..40 {
+        t.lua("player.sp = 0");
+        t.run(500);
+    }
+    let more = t.packets(0x01de).iter().filter(|p| u16_at(p, 2) as i64 == cold).count();
+    assert_eq!(more, 0, "bolts without SP");
+
+    // Abracadabra: 50 SP and two Yellow Gemstones; a drawn skill is lent at the learned level
+    t.lua("heal(30000, 30000)");
+    t.learn("SA_ABRACADABRA", 10);
+    t.lua("give_item(715, 2)");
+    t.lua("abra_draw_real = abra_draw; abra_draw = function() return SK.MG_FIREBOLT end");
+    t.cap.take();
+    let sp0 = t.sp();
+    t.cast("SA_ABRACADABRA", me);
+    t.run(500);
+    let spent = sp0 as i64 - t.sp() as i64; // a recovery tick may fall in between
+    assert!((25..=50).contains(&spent), "spent {spent}, not 50");
+    assert_eq!(num(&mut t, "count_item(715)"), 0, "two gemstones");
+    let lent = t.packets(0x0147);
+    assert_eq!(lent.len(), 1);
+    assert_eq!((u16_at(&lent[0], 2) as i64, u16_at(&lent[0], 8)), (fire, 10));
+    // used once, for no SP
+    let sp1 = t.sp();
+    let hp0 = t.mob_hp(mob).unwrap();
+    t.skill(fire as u16, 10, mob);
+    t.run(500);
+    assert!(t.mob_hp(mob).unwrap() < hp0, "the lent bolt hits");
+    assert!(t.sp() >= sp1, "no SP for it");
+    t.lua("abra_draw = abra_draw_real");
+    // no gemstones: refused
+    let sp2 = t.sp();
+    t.cast("SA_ABRACADABRA", me);
+    t.run(500);
+    assert!(t.sp() >= sp2, "refused, nothing paid");
+    // draws stand only at the Abracadabra level they need
+    assert_eq!(t.lua("for _ = 1, 3000 do local id = abra_draw(3); if ABRA_DB[id][1] > 3 then return id end end return 'ok'").trim(), "ok");
+
+    // its own skills
+    let lv0 = num(&mut t, "player.base_level");
+    t.lua(&format!("abra_special({me}, 300)"));
+    assert_eq!(num(&mut t, "player.base_level"), lv0 + 1, "Level Up");
+    let z0 = num(&mut t, "player.zeny");
+    t.lua(&format!("abra_special({me}, 296)"));
+    assert_eq!(num(&mut t, "player.zeny"), z0 + num(&mut t, &format!("battle.get({mob}).db.level")) * 100, "Fortune");
+    t.lua(&format!("abra_special({me}, 291)"));
+    assert_eq!(num(&mut t, &format!("battle.get({mob}).class")), 1002, "Mono Cell: a Poring");
+    t.lua(&format!("abra_special({me}, 295)"));
+    assert!(t.mob_hp(mob).is_none(), "Death");
+    t.lua(&format!("abra_special({me}, 303)"));
+    assert_eq!((t.hp(), t.sp()), (1, 1), "Coma");
+    t.lua(&format!("abra_special({me}, 302)"));
+    assert_eq!(t.hp() as i64, t.st("max_hp"), "Full Recovery");
+    t.lua(&format!("abra_special({me}, 294)"));
+    assert!(t.sc(119), "Reverse Orcish");
+    for id in [292, 293, 297, 298, 299] {
+        t.lua(&format!("abra_special({me}, {id})"));
+    }
+    t.run(200);
+
+    // Devotion: nobody to protect
+    t.lua("job_change(14)");
+    t.learn("CR_DEVOTION", 1);
+    t.cap.take();
+    t.cast("CR_DEVOTION", me);
+    t.run(3500);
+    assert!(!t.packets(0x0110).is_empty(), "Devotion fails");
+
+    // Instant Death: the Sage faints
+    t.lua(&format!("abra_special({me}, 301)"));
+    assert_eq!(t.hp(), 0, "Instant Death");
+}

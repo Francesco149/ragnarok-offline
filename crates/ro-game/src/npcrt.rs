@@ -746,7 +746,8 @@ impl Game {
                     _ => json!(0),
                 }
             }),
-            "dead_branch" => player().and_then(|u| {
+            // the player as an argument when a rule calls it (Abracadabra's Summon Monster)
+            "dead_branch" => (if a.first().is_none_or(|v| v.is_null()) { player() } else { Ok(int(a, 0) as u32) }).and_then(|u| {
                 let here = self.world.units.get(&u).map(|x| x.map.clone()).unwrap_or_default();
                 if self.db.map_flag(&here, "nobranch") {
                     return Ok(json!(false));

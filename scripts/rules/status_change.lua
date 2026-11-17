@@ -329,6 +329,11 @@ function skill_status_change_start(id, type, val1, val2, opt)
     else val3 = val1 * 3 end
     -- one field at a time (817 skill.c:5468)
     for other in pairs(FIELD_ELEMENT) do if other ~= type then stop(other) end end
+  elseif type == SC.AUTOSPELL then
+    -- val2 the spell, val3 its top level (sage.lua). 120 s and 30 s more a level: the iRO guide's
+    -- Sage page (2004-03-27) and 817's clif.c:6435; jAthena's cast_db has 360 s at level 8
+    tick = opt.tick or 1000 * (90 + 30 * val1)
+  elseif type == SC.ORCISH then tick = opt.tick or 1200000
   elseif type == SC.RIDING or type == SC.FALCON or type == SC.WEIGHT50 or type == SC.WEIGHT90 then tick = 600000
   else
     return false -- UnknownStatusChange

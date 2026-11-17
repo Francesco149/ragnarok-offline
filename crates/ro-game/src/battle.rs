@@ -56,6 +56,8 @@ pub const SC_RICHMANKIM: u16 = 115;
 pub const SC_ROKISWEIL: u16 = 116;
 /// Standing in Don't Forget Me (mod0631's number)
 pub const SC_DONTFORGETME: u16 = 106;
+/// An orc's face, from Abracadabra's Reverse Orcish: option 0x0800 (ours: scripts/rules/00_const.lua)
+pub const SC_ORCISH: u16 = 119;
 /// The Sage's Cast Cancel, the one skill asked for during a cast.
 const SA_CASTCANCEL: u16 = 275;
 pub(crate) const SA_FREECAST: u16 = 278;
@@ -277,6 +279,9 @@ impl Game {
         }
         if sc.contains_key(&SC_CLOAKING) {
             option |= 4;
+        }
+        if sc.contains_key(&SC_ORCISH) {
+            option |= 0x0800;
         }
         (opt1, opt2, option)
     }
@@ -1269,10 +1274,26 @@ impl Game {
                 self.gain_exp(id(0), int(a, 1).max(0) as u64, int(a, 2).max(0) as u64);
                 Value::Null
             }
+            "pc_next_base_exp" => {
+                // base EXP still wanting to the next level (0 at the top)
+                json!(self.char_of_unit(id(0)).map_or(0, |c| self.exp_next(c).0.saturating_sub(c.base_exp)))
+            }
+            "pc_catch_try" => {
+                // tame this monster as if a taming item had been used on it (player, monster):
+                // Abracadabra's Taming Monster (jAthena pet_catch_process1 with the target's class)
+                let (unit, target) = (id(0), id(1));
+                let class = self.world.units.get(&target).and_then(|u| u.mob()).map(|m| m.mob_id);
+                if let Some(p) = self.world.units.get_mut(&unit).and_then(|u| u.player_mut()) {
+                    p.catch_class = class;
+                }
+                self.catch_pet_try(unit, target);
+                Value::Null
+            }
             "pc_memo" => json!(self.char_of_unit(id(0)).map(|c| c.memo.iter().map(|p| json!({"map": p.map, "x": p.x, "y": p.y})).collect::<Vec<_>>())),
             "item_skill" => {
-                // an item lends a skill for one use (clif_item_skill): id, lv, name, inf, sp, range
-                let unit = _ctx.player;
+                // an item lends a skill for one use (clif_item_skill): id, lv, name, inf, sp, range,
+                // and the player when a rule lends it (Abracadabra), not an item script
+                let unit = if a.get(6).is_some_and(|v| !v.is_null()) { id(6) } else { _ctx.player };
                 if let Some(p) = self.world.units.get_mut(&unit).and_then(|u| u.player_mut()) {
                     p.skill_item = Some((int(a, 0) as u16, int(a, 1) as u16));
                     let sid = p.sid;
