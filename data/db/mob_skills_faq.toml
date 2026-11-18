@@ -2,8 +2,8 @@
 # tools/import/mob_skills_faq.tsv and run it again.
 [meta]
 tier = "athena2003"
-source = "unknown13's Monster Skill FAQ (GameFAQs 29608, 2004-04) for which monster has which skill; rows from jAthena //0953 (2004-04-27) db/mob_skill_db.txt, else jAthena //1046 (2004-09-12) db/mob_skill_db.txt, else rAthena pre-renewal db/mob_skill_db.txt (rate divided by 5)"
-note = "monster skills iRO had in April 2004 (the FAQ) and in February 2004 (RODataZone's monster table, rows whose faq names it) that mod0631 lacks; read after mob_skills.toml, same fields; each row says its own tier and source"
+source = "Gravity's iRO notice of 2004-02-11 (Monster Skill Update, Sakray), as unknown13's Monster Skill FAQ (GameFAQs 29608, 2004-04) copies it, for which monster has which skill; rows from jAthena //0953 (2004-04-27) db/mob_skill_db.txt, else jAthena //1046 (2004-09-12) db/mob_skill_db.txt, else rAthena pre-renewal db/mob_skill_db.txt (rate divided by 5)"
+note = "monster skills iRO announced in February 2004 (the FAQ's pairs) and had in February 2004 (RODataZone's monster table, rows whose faq names it) that mod0631 lacks; read after mob_skills.toml, same fields; each row says its own tier and source"
 
 [[skill]]
 mob = 1132
@@ -1848,139 +1848,11 @@ source = "the commonest of 16 NPC_SPLASHATTACK rows in jAthena //0953 (2004-04-2
 faq = "Splash Attack / Mutant Dragon"
 
 [[skill]]
-mob = 1128
-state = "attack"
-skill = 158
-lv = 2
-rate = 100
-cast = 0
-delay = 5000
-cancel = true
-target = "target"
-cond = "always"
-cond_val = 0
-tier = "later"
-source = "rAthena pre-renewal db/mob_skill_db.txt"
-faq = "Piercing Attack / Horn"
-
-[[skill]]
-mob = 1103
-state = "attack"
-skill = 158
-lv = 5
-rate = 100
-cast = 0
-delay = 5000
-cancel = true
-target = "target"
-cond = "always"
-cond_val = 0
-tier = "later"
-source = "rAthena pre-renewal db/mob_skill_db.txt"
-faq = "Piercing Attack / Caramel"
-
-[[skill]]
-mob = 1004
-state = "attack"
-skill = 158
-lv = 2
-rate = 100
-cast = 0
-delay = 5000
-cancel = true
-target = "target"
-cond = "always"
-cond_val = 0
-tier = "later"
-source = "rAthena pre-renewal db/mob_skill_db.txt"
-faq = "Piercing Attack / Hornet"
-
-[[skill]]
-mob = 1195
-state = "attack"
-skill = 158
-lv = 3
-rate = 100
-cast = 0
-delay = 5000
-cancel = true
-target = "target"
-cond = "always"
-cond_val = 0
-tier = "later"
-source = "rAthena pre-renewal db/mob_skill_db.txt"
-faq = "Piercing Attack / Riding Word"
-
-[[skill]]
-mob = 1055
-state = "attack"
-skill = 158
-lv = 3
-rate = 100
-cast = 0
-delay = 5000
-cancel = true
-target = "target"
-cond = "always"
-cond_val = 0
-tier = "later"
-source = "rAthena pre-renewal db/mob_skill_db.txt"
-faq = "Piercing Attack / Muka"
-
-[[skill]]
-mob = 1106
-state = "attack"
-skill = 158
-lv = 3
-rate = 100
-cast = 0
-delay = 5000
-cancel = true
-target = "target"
-cond = "always"
-cond_val = 0
-tier = "guess"
-source = "the commonest of 31 NPC_PIERCINGATT rows in rAthena pre-renewal db/mob_skill_db.txt"
-faq = "Piercing Attack / Desert Wolf"
-
-[[skill]]
-mob = 1220
-state = "attack"
-skill = 158
-lv = 3
-rate = 100
-cast = 0
-delay = 5000
-cancel = true
-target = "target"
-cond = "always"
-cond_val = 0
-tier = "guess"
-source = "the commonest of 31 NPC_PIERCINGATT rows in rAthena pre-renewal db/mob_skill_db.txt"
-faq = "Piercing Attack / Desert Wolf"
-
-[[skill]]
-mob = 1432
-state = "attack"
-skill = 158
-lv = 3
-rate = 100
-cast = 0
-delay = 5000
-cancel = true
-target = "target"
-cond = "always"
-cond_val = 0
-tier = "guess"
-source = "the commonest of 31 NPC_PIERCINGATT rows in rAthena pre-renewal db/mob_skill_db.txt"
-faq = "Piercing Attack / Desert Wolf"
-
-[[skill]]
 mob = 1194
 state = "attack"
-skill = 158
-lv = 3
-rate = 100
+skill = 170
+lv = 1
+rate = 200
 cast = 0
 delay = 5000
 cancel = true
@@ -1988,15 +1860,15 @@ target = "target"
 cond = "always"
 cond_val = 0
 tier = "guess"
-source = "the commonest of 31 NPC_PIERCINGATT rows in rAthena pre-renewal db/mob_skill_db.txt"
+source = "the commonest of 49 NPC_CRITICALSLASH rows in jAthena //0953 (2004-04-27) db/mob_skill_db.txt"
 faq = "Piercing Attack / Arclouse"
 
 [[skill]]
 mob = 1477
 state = "attack"
-skill = 158
-lv = 3
-rate = 100
+skill = 170
+lv = 1
+rate = 200
 cast = 0
 delay = 5000
 cancel = true
@@ -2004,7 +1876,7 @@ target = "target"
 cond = "always"
 cond_val = 0
 tier = "guess"
-source = "the commonest of 31 NPC_PIERCINGATT rows in rAthena pre-renewal db/mob_skill_db.txt"
+source = "the commonest of 49 NPC_CRITICALSLASH rows in jAthena //0953 (2004-04-27) db/mob_skill_db.txt"
 faq = "Piercing Attack / Arclouse"
 
 [[skill]]
@@ -2491,22 +2363,6 @@ faq = "Emotion / Carat (RODataZone 2004-02-11)"
 
 [[skill]]
 mob = 1307
-state = "attack"
-skill = 158
-lv = 3
-rate = 100
-cast = 0
-delay = 5000
-cancel = true
-target = "target"
-cond = "always"
-cond_val = 0
-tier = "guess"
-source = "the commonest of 31 NPC_PIERCINGATT rows in rAthena pre-renewal db/mob_skill_db.txt"
-faq = "Piercing Attack / Cat O'Nine Tails (RODataZone 2004-02-11)"
-
-[[skill]]
-mob = 1307
 state = "chase"
 skill = 8
 lv = 7
@@ -2635,22 +2491,6 @@ source = "jAthena //0953 (2004-04-27) db/mob_skill_db.txt"
 faq = "Emotion / Cruiser (RODataZone 2004-02-11)"
 
 [[skill]]
-mob = 1302
-state = "attack"
-skill = 158
-lv = 3
-rate = 100
-cast = 0
-delay = 5000
-cancel = true
-target = "target"
-cond = "always"
-cond_val = 0
-tier = "guess"
-source = "the commonest of 31 NPC_PIERCINGATT rows in rAthena pre-renewal db/mob_skill_db.txt"
-faq = "Piercing Attack / Dark Illusion (RODataZone 2004-02-11)"
-
-[[skill]]
 mob = 1106
 state = "chase"
 skill = 197
@@ -2698,22 +2538,6 @@ cond_val = 0
 tier = "athena2003"
 source = "jAthena //0953 (2004-04-27) db/mob_skill_db.txt"
 faq = "Decrease AGI / Drake (RODataZone 2004-02-11)"
-
-[[skill]]
-mob = 1303
-state = "attack"
-skill = 158
-lv = 3
-rate = 100
-cast = 0
-delay = 5000
-cancel = true
-target = "target"
-cond = "always"
-cond_val = 0
-tier = "later"
-source = "rAthena pre-renewal db/mob_skill_db.txt"
-faq = "Pierce Attack / Giant Hornet (RODataZone 2004-02-11)"
 
 [[skill]]
 mob = 1303
@@ -3084,22 +2908,6 @@ cond_val = 30
 tier = "guess"
 source = "the commonest of 74 AL_HEAL rows in jAthena //0953 (2004-04-27) db/mob_skill_db.txt"
 faq = "Heal / Martin (RODataZone 2004-02-11)"
-
-[[skill]]
-mob = 1289
-state = "attack"
-skill = 158
-lv = 3
-rate = 100
-cast = 0
-delay = 5000
-cancel = true
-target = "target"
-cond = "always"
-cond_val = 0
-tier = "guess"
-source = "the commonest of 31 NPC_PIERCINGATT rows in rAthena pre-renewal db/mob_skill_db.txt"
-faq = "Piercing Attack / Maya Purple* (RODataZone 2004-02-11)"
 
 [[skill]]
 mob = 1264
@@ -3501,22 +3309,6 @@ val = 29
 tier = "athena2003"
 source = "jAthena //0953 (2004-04-27) db/mob_skill_db.txt"
 faq = "Emotion / Tirfing (RODataZone 2004-02-11)"
-
-[[skill]]
-mob = 1204
-state = "attack"
-skill = 158
-lv = 3
-rate = 100
-cast = 0
-delay = 5000
-cancel = true
-target = "target"
-cond = "always"
-cond_val = 0
-tier = "later"
-source = "rAthena pre-renewal db/mob_skill_db.txt"
-faq = "Piercing Attack / Tirfing (RODataZone 2004-02-11)"
 
 [[skill]]
 mob = 1312
@@ -4225,171 +4017,11 @@ source = "rAthena pre-renewal db/mob_skill_db.txt"
 faq = "Guided Attack / INCANTATION_SAMURAI (every boss)"
 
 [[skill]]
-mob = 1038
-state = "attack"
-skill = 158
-lv = 3
-rate = 100
-cast = 0
-delay = 5000
-cancel = true
-target = "target"
-cond = "always"
-cond_val = 0
-tier = "guess"
-source = "the commonest of 31 NPC_PIERCINGATT rows in rAthena pre-renewal db/mob_skill_db.txt"
-faq = "Piercing Attack / OSIRIS (every boss)"
-
-[[skill]]
-mob = 1039
-state = "attack"
-skill = 158
-lv = 3
-rate = 100
-cast = 0
-delay = 5000
-cancel = true
-target = "target"
-cond = "always"
-cond_val = 0
-tier = "guess"
-source = "the commonest of 31 NPC_PIERCINGATT rows in rAthena pre-renewal db/mob_skill_db.txt"
-faq = "Piercing Attack / BAPHOMET (every boss)"
-
-[[skill]]
-mob = 1046
-state = "attack"
-skill = 158
-lv = 3
-rate = 100
-cast = 0
-delay = 5000
-cancel = true
-target = "target"
-cond = "always"
-cond_val = 0
-tier = "guess"
-source = "the commonest of 31 NPC_PIERCINGATT rows in rAthena pre-renewal db/mob_skill_db.txt"
-faq = "Piercing Attack / DOPPELGANGER (every boss)"
-
-[[skill]]
-mob = 1059
-state = "attack"
-skill = 158
-lv = 3
-rate = 100
-cast = 0
-delay = 5000
-cancel = true
-target = "target"
-cond = "always"
-cond_val = 0
-tier = "guess"
-source = "the commonest of 31 NPC_PIERCINGATT rows in rAthena pre-renewal db/mob_skill_db.txt"
-faq = "Piercing Attack / MISTRESS (every boss)"
-
-[[skill]]
-mob = 1086
-state = "attack"
-skill = 158
-lv = 3
-rate = 100
-cast = 0
-delay = 5000
-cancel = true
-target = "target"
-cond = "always"
-cond_val = 0
-tier = "guess"
-source = "the commonest of 31 NPC_PIERCINGATT rows in rAthena pre-renewal db/mob_skill_db.txt"
-faq = "Piercing Attack / GOLDEN_BUG (every boss)"
-
-[[skill]]
-mob = 1087
-state = "attack"
-skill = 158
-lv = 3
-rate = 100
-cast = 0
-delay = 5000
-cancel = true
-target = "target"
-cond = "always"
-cond_val = 0
-tier = "guess"
-source = "the commonest of 31 NPC_PIERCINGATT rows in rAthena pre-renewal db/mob_skill_db.txt"
-faq = "Piercing Attack / ORK_HERO (every boss)"
-
-[[skill]]
-mob = 1112
-state = "attack"
-skill = 158
-lv = 3
-rate = 100
-cast = 0
-delay = 5000
-cancel = true
-target = "target"
-cond = "always"
-cond_val = 0
-tier = "guess"
-source = "the commonest of 31 NPC_PIERCINGATT rows in rAthena pre-renewal db/mob_skill_db.txt"
-faq = "Piercing Attack / DRAKE (every boss)"
-
-[[skill]]
-mob = 1115
-state = "attack"
-skill = 158
-lv = 3
-rate = 100
-cast = 0
-delay = 5000
-cancel = true
-target = "target"
-cond = "always"
-cond_val = 0
-tier = "guess"
-source = "the commonest of 31 NPC_PIERCINGATT rows in rAthena pre-renewal db/mob_skill_db.txt"
-faq = "Piercing Attack / EDDGA (every boss)"
-
-[[skill]]
-mob = 1147
-state = "attack"
-skill = 158
-lv = 3
-rate = 100
-cast = 0
-delay = 5000
-cancel = true
-target = "target"
-cond = "always"
-cond_val = 0
-tier = "guess"
-source = "the commonest of 31 NPC_PIERCINGATT rows in rAthena pre-renewal db/mob_skill_db.txt"
-faq = "Piercing Attack / MAYA (every boss)"
-
-[[skill]]
-mob = 1150
-state = "attack"
-skill = 158
-lv = 3
-rate = 100
-cast = 0
-delay = 5000
-cancel = true
-target = "target"
-cond = "always"
-cond_val = 0
-tier = "guess"
-source = "the commonest of 31 NPC_PIERCINGATT rows in rAthena pre-renewal db/mob_skill_db.txt"
-faq = "Piercing Attack / MOONLIGHT (every boss)"
-
-[[skill]]
 mob = 1157
 state = "attack"
-skill = 158
-lv = 3
-rate = 100
+skill = 170
+lv = 1
+rate = 200
 cast = 0
 delay = 5000
 cancel = true
@@ -4397,111 +4029,15 @@ target = "target"
 cond = "always"
 cond_val = 0
 tier = "guess"
-source = "the commonest of 31 NPC_PIERCINGATT rows in rAthena pre-renewal db/mob_skill_db.txt"
+source = "the commonest of 49 NPC_CRITICALSLASH rows in jAthena //0953 (2004-04-27) db/mob_skill_db.txt"
 faq = "Piercing Attack / PHARAOH (every boss)"
-
-[[skill]]
-mob = 1159
-state = "attack"
-skill = 158
-lv = 3
-rate = 100
-cast = 0
-delay = 5000
-cancel = true
-target = "target"
-cond = "always"
-cond_val = 0
-tier = "guess"
-source = "the commonest of 31 NPC_PIERCINGATT rows in rAthena pre-renewal db/mob_skill_db.txt"
-faq = "Piercing Attack / PHREEONI (every boss)"
-
-[[skill]]
-mob = 1190
-state = "attack"
-skill = 158
-lv = 3
-rate = 100
-cast = 0
-delay = 5000
-cancel = true
-target = "target"
-cond = "always"
-cond_val = 0
-tier = "guess"
-source = "the commonest of 31 NPC_PIERCINGATT rows in rAthena pre-renewal db/mob_skill_db.txt"
-faq = "Piercing Attack / ORC_LORD (every boss)"
-
-[[skill]]
-mob = 1251
-state = "attack"
-skill = 158
-lv = 3
-rate = 100
-cast = 0
-delay = 5000
-cancel = true
-target = "target"
-cond = "always"
-cond_val = 0
-tier = "guess"
-source = "the commonest of 31 NPC_PIERCINGATT rows in rAthena pre-renewal db/mob_skill_db.txt"
-faq = "Piercing Attack / KNIGHT_OF_WINDSTORM (every boss)"
-
-[[skill]]
-mob = 1252
-state = "attack"
-skill = 158
-lv = 3
-rate = 100
-cast = 0
-delay = 5000
-cancel = true
-target = "target"
-cond = "always"
-cond_val = 0
-tier = "guess"
-source = "the commonest of 31 NPC_PIERCINGATT rows in rAthena pre-renewal db/mob_skill_db.txt"
-faq = "Piercing Attack / GARM (every boss)"
-
-[[skill]]
-mob = 1272
-state = "attack"
-skill = 158
-lv = 3
-rate = 100
-cast = 0
-delay = 5000
-cancel = true
-target = "target"
-cond = "always"
-cond_val = 0
-tier = "guess"
-source = "the commonest of 31 NPC_PIERCINGATT rows in rAthena pre-renewal db/mob_skill_db.txt"
-faq = "Piercing Attack / DARK_LORD (every boss)"
-
-[[skill]]
-mob = 1312
-state = "attack"
-skill = 158
-lv = 3
-rate = 100
-cast = 0
-delay = 5000
-cancel = true
-target = "target"
-cond = "always"
-cond_val = 0
-tier = "guess"
-source = "the commonest of 31 NPC_PIERCINGATT rows in rAthena pre-renewal db/mob_skill_db.txt"
-faq = "Piercing Attack / TURTLE_GENERAL (every boss)"
 
 [[skill]]
 mob = 1373
 state = "attack"
-skill = 158
-lv = 3
-rate = 100
+skill = 170
+lv = 1
+rate = 200
 cast = 0
 delay = 5000
 cancel = true
@@ -4509,15 +4045,15 @@ target = "target"
 cond = "always"
 cond_val = 0
 tier = "guess"
-source = "the commonest of 31 NPC_PIERCINGATT rows in rAthena pre-renewal db/mob_skill_db.txt"
+source = "the commonest of 49 NPC_CRITICALSLASH rows in jAthena //0953 (2004-04-27) db/mob_skill_db.txt"
 faq = "Piercing Attack / LORD_OF_DEATH (every boss)"
 
 [[skill]]
 mob = 1389
 state = "attack"
-skill = 158
-lv = 3
-rate = 100
+skill = 170
+lv = 1
+rate = 200
 cast = 0
 delay = 5000
 cancel = true
@@ -4525,31 +4061,31 @@ target = "target"
 cond = "always"
 cond_val = 0
 tier = "guess"
-source = "the commonest of 31 NPC_PIERCINGATT rows in rAthena pre-renewal db/mob_skill_db.txt"
+source = "the commonest of 49 NPC_CRITICALSLASH rows in jAthena //0953 (2004-04-27) db/mob_skill_db.txt"
 faq = "Piercing Attack / DRACULA (every boss)"
 
 [[skill]]
 mob = 1399
 state = "attack"
-skill = 158
-lv = 3
-rate = 100
+skill = 170
+lv = 1
+rate = 200
 cast = 0
 delay = 5000
 cancel = true
 target = "target"
 cond = "always"
 cond_val = 0
-tier = "guess"
-source = "the commonest of 31 NPC_PIERCINGATT rows in rAthena pre-renewal db/mob_skill_db.txt"
+tier = "athena2003"
+source = "jAthena //0953 (2004-04-27) db/mob_skill_db.txt"
 faq = "Piercing Attack / EVENT_BAPHO (every boss)"
 
 [[skill]]
 mob = 1418
 state = "attack"
-skill = 158
-lv = 3
-rate = 100
+skill = 170
+lv = 1
+rate = 200
 cast = 0
 delay = 5000
 cancel = true
@@ -4557,23 +4093,23 @@ target = "target"
 cond = "always"
 cond_val = 0
 tier = "guess"
-source = "the commonest of 31 NPC_PIERCINGATT rows in rAthena pre-renewal db/mob_skill_db.txt"
+source = "the commonest of 49 NPC_CRITICALSLASH rows in jAthena //0953 (2004-04-27) db/mob_skill_db.txt"
 faq = "Piercing Attack / DARK_SNAKE_LORD (every boss)"
 
 [[skill]]
 mob = 1492
 state = "attack"
-skill = 158
-lv = 3
-rate = 100
+skill = 170
+lv = 1
+rate = 400
 cast = 0
 delay = 5000
-cancel = true
+cancel = false
 target = "target"
 cond = "always"
 cond_val = 0
-tier = "guess"
-source = "the commonest of 31 NPC_PIERCINGATT rows in rAthena pre-renewal db/mob_skill_db.txt"
+tier = "later"
+source = "rAthena pre-renewal db/mob_skill_db.txt"
 faq = "Piercing Attack / INCANTATION_SAMURAI (every boss)"
 
 [[skill]]
@@ -4717,7 +4253,7 @@ target = "self"
 cond = "rudeattacked"
 cond_val = 0
 tier = "later"
-source = "unknown13's Monster Skill FAQ (GameFAQs 29608, 2004-04) quoting iRO: All boss monsters will Teleport if they are attacked from beyond their attacking range; the condition as rAthena reads it (src/map/mob.cpp:1936-1976)"
+source = "Gravity's iRO notice of 2004-02-11 (Monster Skill Update), copied by unknown13's FAQ: All boss monsters will Teleport if they are attacked from beyond their attacking range; the condition as rAthena reads it (src/map/mob.cpp:1936-1976)"
 faq = "Teleport / OSIRIS (every boss)"
 
 [[skill]]
@@ -4733,7 +4269,7 @@ target = "self"
 cond = "rudeattacked"
 cond_val = 0
 tier = "later"
-source = "unknown13's Monster Skill FAQ (GameFAQs 29608, 2004-04) quoting iRO: All boss monsters will Teleport if they are attacked from beyond their attacking range; the condition as rAthena reads it (src/map/mob.cpp:1936-1976)"
+source = "Gravity's iRO notice of 2004-02-11 (Monster Skill Update), copied by unknown13's FAQ: All boss monsters will Teleport if they are attacked from beyond their attacking range; the condition as rAthena reads it (src/map/mob.cpp:1936-1976)"
 faq = "Teleport / BAPHOMET (every boss)"
 
 [[skill]]
@@ -4749,7 +4285,7 @@ target = "self"
 cond = "rudeattacked"
 cond_val = 0
 tier = "later"
-source = "unknown13's Monster Skill FAQ (GameFAQs 29608, 2004-04) quoting iRO: All boss monsters will Teleport if they are attacked from beyond their attacking range; the condition as rAthena reads it (src/map/mob.cpp:1936-1976)"
+source = "Gravity's iRO notice of 2004-02-11 (Monster Skill Update), copied by unknown13's FAQ: All boss monsters will Teleport if they are attacked from beyond their attacking range; the condition as rAthena reads it (src/map/mob.cpp:1936-1976)"
 faq = "Teleport / DOPPELGANGER (every boss)"
 
 [[skill]]
@@ -4765,7 +4301,7 @@ target = "self"
 cond = "rudeattacked"
 cond_val = 0
 tier = "later"
-source = "unknown13's Monster Skill FAQ (GameFAQs 29608, 2004-04) quoting iRO: All boss monsters will Teleport if they are attacked from beyond their attacking range; the condition as rAthena reads it (src/map/mob.cpp:1936-1976)"
+source = "Gravity's iRO notice of 2004-02-11 (Monster Skill Update), copied by unknown13's FAQ: All boss monsters will Teleport if they are attacked from beyond their attacking range; the condition as rAthena reads it (src/map/mob.cpp:1936-1976)"
 faq = "Teleport / MISTRESS (every boss)"
 
 [[skill]]
@@ -4781,7 +4317,7 @@ target = "self"
 cond = "rudeattacked"
 cond_val = 0
 tier = "later"
-source = "unknown13's Monster Skill FAQ (GameFAQs 29608, 2004-04) quoting iRO: All boss monsters will Teleport if they are attacked from beyond their attacking range; the condition as rAthena reads it (src/map/mob.cpp:1936-1976)"
+source = "Gravity's iRO notice of 2004-02-11 (Monster Skill Update), copied by unknown13's FAQ: All boss monsters will Teleport if they are attacked from beyond their attacking range; the condition as rAthena reads it (src/map/mob.cpp:1936-1976)"
 faq = "Teleport / GOLDEN_BUG (every boss)"
 
 [[skill]]
@@ -4797,7 +4333,7 @@ target = "self"
 cond = "rudeattacked"
 cond_val = 0
 tier = "later"
-source = "unknown13's Monster Skill FAQ (GameFAQs 29608, 2004-04) quoting iRO: All boss monsters will Teleport if they are attacked from beyond their attacking range; the condition as rAthena reads it (src/map/mob.cpp:1936-1976)"
+source = "Gravity's iRO notice of 2004-02-11 (Monster Skill Update), copied by unknown13's FAQ: All boss monsters will Teleport if they are attacked from beyond their attacking range; the condition as rAthena reads it (src/map/mob.cpp:1936-1976)"
 faq = "Teleport / ORK_HERO (every boss)"
 
 [[skill]]
@@ -4813,7 +4349,7 @@ target = "self"
 cond = "rudeattacked"
 cond_val = 0
 tier = "later"
-source = "unknown13's Monster Skill FAQ (GameFAQs 29608, 2004-04) quoting iRO: All boss monsters will Teleport if they are attacked from beyond their attacking range; the condition as rAthena reads it (src/map/mob.cpp:1936-1976)"
+source = "Gravity's iRO notice of 2004-02-11 (Monster Skill Update), copied by unknown13's FAQ: All boss monsters will Teleport if they are attacked from beyond their attacking range; the condition as rAthena reads it (src/map/mob.cpp:1936-1976)"
 faq = "Teleport / DRAKE (every boss)"
 
 [[skill]]
@@ -4829,7 +4365,7 @@ target = "self"
 cond = "rudeattacked"
 cond_val = 0
 tier = "later"
-source = "unknown13's Monster Skill FAQ (GameFAQs 29608, 2004-04) quoting iRO: All boss monsters will Teleport if they are attacked from beyond their attacking range; the condition as rAthena reads it (src/map/mob.cpp:1936-1976)"
+source = "Gravity's iRO notice of 2004-02-11 (Monster Skill Update), copied by unknown13's FAQ: All boss monsters will Teleport if they are attacked from beyond their attacking range; the condition as rAthena reads it (src/map/mob.cpp:1936-1976)"
 faq = "Teleport / EDDGA (every boss)"
 
 [[skill]]
@@ -4845,7 +4381,7 @@ target = "self"
 cond = "rudeattacked"
 cond_val = 0
 tier = "later"
-source = "unknown13's Monster Skill FAQ (GameFAQs 29608, 2004-04) quoting iRO: All boss monsters will Teleport if they are attacked from beyond their attacking range; the condition as rAthena reads it (src/map/mob.cpp:1936-1976)"
+source = "Gravity's iRO notice of 2004-02-11 (Monster Skill Update), copied by unknown13's FAQ: All boss monsters will Teleport if they are attacked from beyond their attacking range; the condition as rAthena reads it (src/map/mob.cpp:1936-1976)"
 faq = "Teleport / MAYA (every boss)"
 
 [[skill]]
@@ -4861,7 +4397,7 @@ target = "self"
 cond = "rudeattacked"
 cond_val = 0
 tier = "later"
-source = "unknown13's Monster Skill FAQ (GameFAQs 29608, 2004-04) quoting iRO: All boss monsters will Teleport if they are attacked from beyond their attacking range; the condition as rAthena reads it (src/map/mob.cpp:1936-1976)"
+source = "Gravity's iRO notice of 2004-02-11 (Monster Skill Update), copied by unknown13's FAQ: All boss monsters will Teleport if they are attacked from beyond their attacking range; the condition as rAthena reads it (src/map/mob.cpp:1936-1976)"
 faq = "Teleport / MOONLIGHT (every boss)"
 
 [[skill]]
@@ -4877,7 +4413,7 @@ target = "self"
 cond = "rudeattacked"
 cond_val = 0
 tier = "later"
-source = "unknown13's Monster Skill FAQ (GameFAQs 29608, 2004-04) quoting iRO: All boss monsters will Teleport if they are attacked from beyond their attacking range; the condition as rAthena reads it (src/map/mob.cpp:1936-1976)"
+source = "Gravity's iRO notice of 2004-02-11 (Monster Skill Update), copied by unknown13's FAQ: All boss monsters will Teleport if they are attacked from beyond their attacking range; the condition as rAthena reads it (src/map/mob.cpp:1936-1976)"
 faq = "Teleport / PHARAOH (every boss)"
 
 [[skill]]
@@ -4893,7 +4429,7 @@ target = "self"
 cond = "rudeattacked"
 cond_val = 0
 tier = "later"
-source = "unknown13's Monster Skill FAQ (GameFAQs 29608, 2004-04) quoting iRO: All boss monsters will Teleport if they are attacked from beyond their attacking range; the condition as rAthena reads it (src/map/mob.cpp:1936-1976)"
+source = "Gravity's iRO notice of 2004-02-11 (Monster Skill Update), copied by unknown13's FAQ: All boss monsters will Teleport if they are attacked from beyond their attacking range; the condition as rAthena reads it (src/map/mob.cpp:1936-1976)"
 faq = "Teleport / PHREEONI (every boss)"
 
 [[skill]]
@@ -4909,7 +4445,7 @@ target = "self"
 cond = "rudeattacked"
 cond_val = 0
 tier = "later"
-source = "unknown13's Monster Skill FAQ (GameFAQs 29608, 2004-04) quoting iRO: All boss monsters will Teleport if they are attacked from beyond their attacking range; the condition as rAthena reads it (src/map/mob.cpp:1936-1976)"
+source = "Gravity's iRO notice of 2004-02-11 (Monster Skill Update), copied by unknown13's FAQ: All boss monsters will Teleport if they are attacked from beyond their attacking range; the condition as rAthena reads it (src/map/mob.cpp:1936-1976)"
 faq = "Teleport / ORC_LORD (every boss)"
 
 [[skill]]
@@ -4925,7 +4461,7 @@ target = "self"
 cond = "rudeattacked"
 cond_val = 0
 tier = "later"
-source = "unknown13's Monster Skill FAQ (GameFAQs 29608, 2004-04) quoting iRO: All boss monsters will Teleport if they are attacked from beyond their attacking range; the condition as rAthena reads it (src/map/mob.cpp:1936-1976)"
+source = "Gravity's iRO notice of 2004-02-11 (Monster Skill Update), copied by unknown13's FAQ: All boss monsters will Teleport if they are attacked from beyond their attacking range; the condition as rAthena reads it (src/map/mob.cpp:1936-1976)"
 faq = "Teleport / KNIGHT_OF_WINDSTORM (every boss)"
 
 [[skill]]
@@ -4941,7 +4477,7 @@ target = "self"
 cond = "rudeattacked"
 cond_val = 0
 tier = "later"
-source = "unknown13's Monster Skill FAQ (GameFAQs 29608, 2004-04) quoting iRO: All boss monsters will Teleport if they are attacked from beyond their attacking range; the condition as rAthena reads it (src/map/mob.cpp:1936-1976)"
+source = "Gravity's iRO notice of 2004-02-11 (Monster Skill Update), copied by unknown13's FAQ: All boss monsters will Teleport if they are attacked from beyond their attacking range; the condition as rAthena reads it (src/map/mob.cpp:1936-1976)"
 faq = "Teleport / GARM (every boss)"
 
 [[skill]]
@@ -4957,7 +4493,7 @@ target = "self"
 cond = "rudeattacked"
 cond_val = 0
 tier = "later"
-source = "unknown13's Monster Skill FAQ (GameFAQs 29608, 2004-04) quoting iRO: All boss monsters will Teleport if they are attacked from beyond their attacking range; the condition as rAthena reads it (src/map/mob.cpp:1936-1976)"
+source = "Gravity's iRO notice of 2004-02-11 (Monster Skill Update), copied by unknown13's FAQ: All boss monsters will Teleport if they are attacked from beyond their attacking range; the condition as rAthena reads it (src/map/mob.cpp:1936-1976)"
 faq = "Teleport / DARK_LORD (every boss)"
 
 [[skill]]
@@ -4973,7 +4509,7 @@ target = "self"
 cond = "rudeattacked"
 cond_val = 0
 tier = "later"
-source = "unknown13's Monster Skill FAQ (GameFAQs 29608, 2004-04) quoting iRO: All boss monsters will Teleport if they are attacked from beyond their attacking range; the condition as rAthena reads it (src/map/mob.cpp:1936-1976)"
+source = "Gravity's iRO notice of 2004-02-11 (Monster Skill Update), copied by unknown13's FAQ: All boss monsters will Teleport if they are attacked from beyond their attacking range; the condition as rAthena reads it (src/map/mob.cpp:1936-1976)"
 faq = "Teleport / TURTLE_GENERAL (every boss)"
 
 [[skill]]
@@ -4989,7 +4525,7 @@ target = "self"
 cond = "rudeattacked"
 cond_val = 0
 tier = "later"
-source = "unknown13's Monster Skill FAQ (GameFAQs 29608, 2004-04) quoting iRO: All boss monsters will Teleport if they are attacked from beyond their attacking range; the condition as rAthena reads it (src/map/mob.cpp:1936-1976)"
+source = "Gravity's iRO notice of 2004-02-11 (Monster Skill Update), copied by unknown13's FAQ: All boss monsters will Teleport if they are attacked from beyond their attacking range; the condition as rAthena reads it (src/map/mob.cpp:1936-1976)"
 faq = "Teleport / LORD_OF_DEATH (every boss)"
 
 [[skill]]
@@ -5005,7 +4541,7 @@ target = "self"
 cond = "rudeattacked"
 cond_val = 0
 tier = "later"
-source = "unknown13's Monster Skill FAQ (GameFAQs 29608, 2004-04) quoting iRO: All boss monsters will Teleport if they are attacked from beyond their attacking range; the condition as rAthena reads it (src/map/mob.cpp:1936-1976)"
+source = "Gravity's iRO notice of 2004-02-11 (Monster Skill Update), copied by unknown13's FAQ: All boss monsters will Teleport if they are attacked from beyond their attacking range; the condition as rAthena reads it (src/map/mob.cpp:1936-1976)"
 faq = "Teleport / DRACULA (every boss)"
 
 [[skill]]
@@ -5021,7 +4557,7 @@ target = "self"
 cond = "rudeattacked"
 cond_val = 0
 tier = "later"
-source = "unknown13's Monster Skill FAQ (GameFAQs 29608, 2004-04) quoting iRO: All boss monsters will Teleport if they are attacked from beyond their attacking range; the condition as rAthena reads it (src/map/mob.cpp:1936-1976)"
+source = "Gravity's iRO notice of 2004-02-11 (Monster Skill Update), copied by unknown13's FAQ: All boss monsters will Teleport if they are attacked from beyond their attacking range; the condition as rAthena reads it (src/map/mob.cpp:1936-1976)"
 faq = "Teleport / EVENT_BAPHO (every boss)"
 
 [[skill]]
@@ -5037,7 +4573,7 @@ target = "self"
 cond = "rudeattacked"
 cond_val = 0
 tier = "later"
-source = "unknown13's Monster Skill FAQ (GameFAQs 29608, 2004-04) quoting iRO: All boss monsters will Teleport if they are attacked from beyond their attacking range; the condition as rAthena reads it (src/map/mob.cpp:1936-1976)"
+source = "Gravity's iRO notice of 2004-02-11 (Monster Skill Update), copied by unknown13's FAQ: All boss monsters will Teleport if they are attacked from beyond their attacking range; the condition as rAthena reads it (src/map/mob.cpp:1936-1976)"
 faq = "Teleport / DARK_SNAKE_LORD (every boss)"
 
 [[skill]]
@@ -5053,13 +4589,11 @@ target = "self"
 cond = "rudeattacked"
 cond_val = 0
 tier = "later"
-source = "unknown13's Monster Skill FAQ (GameFAQs 29608, 2004-04) quoting iRO: All boss monsters will Teleport if they are attacked from beyond their attacking range; the condition as rAthena reads it (src/map/mob.cpp:1936-1976)"
+source = "Gravity's iRO notice of 2004-02-11 (Monster Skill Update), copied by unknown13's FAQ: All boss monsters will Teleport if they are attacked from beyond their attacking range; the condition as rAthena reads it (src/map/mob.cpp:1936-1976)"
 faq = "Teleport / INCANTATION_SAMURAI (every boss)"
 
 # FAQ pairs left out:
-#   Maximize Power / Grimtooth: no monster or skill of that name
 #   Detoxify / Obeaune: no table has the skill
-#   Piercing Attack / Grimtooth: no monster or skill of that name
 #   Lazy Attack / Merman: no monster or skill of that name
 #   Summon Followers (2 Sidewinder) / Gullinbursti* (RODataZone 2004-02-11): the table's row brings savage
 #   Detoxify / Merman (RODataZone 2004-02-11): no table has the skill

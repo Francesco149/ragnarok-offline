@@ -1,5 +1,6 @@
 # unknown13's "Monster Skill FAQ" (GameFAQs 29608, v1.0, 2004-04; iRO data written up by a pRO
-# player), every (skill, monster) pair it lists. Written by research/mob_skills_faq.py --tsv from
+# player), every (skill, monster) pair it lists: Gravity's iRO notice of 2004-02-11 ("Monster Skill
+# Update", data:refs/web/iro-news-2004/updatedetail_147.html), copied with its spellings mended. Written by research/mob_skills_faq.py --tsv from
 # the page saved by research round 9; names it could not match settled by hand (column 5 says how).
 # Read by tools/import/mob_skills_faq.py. Columns: FAQ skill, FAQ monster, skill names,
 # candidate monster ids (the period table picks among them), note. Goblin and Kobold ids by
@@ -110,7 +111,7 @@ Maximize Power	Abysmal Knight	BS_MAXIMIZE	1219
 Maximize Power	Raydric	BS_MAXIMIZE	1163,1467	
 Maximize Power	Mysteltainn	BS_MAXIMIZE	1203,1485	
 Maximize Power	Executioner	BS_MAXIMIZE	1205,1487	
-Maximize Power	Grimtooth	BS_MAXIMIZE		no monster of that name: left out
+Maximize Power	Grimtooth	BS_MAXIMIZE	1204	Gravity's Grimtooth is the Tirfing (iRO's Ogretooth): mod0631 gives it this and the defence-ignoring attack
 Bash	Mysteltainn	SM_BASH	1203,1485	
 Bash	Pirate Skel	SM_BASH	1071	
 Brandish Spear	Bloody Knight	KN_BRANDISHSPEAR	1268	
@@ -232,14 +233,14 @@ Splash Attack	Mutant Dragon	NPC_SPLASHATTACK	1262
 Magical Attack	Clock Tower Keeper	NPC_DARKNESSATTACK|NPC_TELEKINESISATTACK|NPC_MAGICALATTACK	1270	
 Magical Attack	Marduk	NPC_DARKNESSATTACK|NPC_TELEKINESISATTACK|NPC_MAGICALATTACK	1140,1458	
 Magical Attack	Wind Ghost	NPC_DARKNESSATTACK|NPC_TELEKINESISATTACK|NPC_MAGICALATTACK	1263,1450	
-Piercing Attack	Horn	NPC_PIERCINGATT	1128	
-Piercing Attack	Caramel	NPC_PIERCINGATT	1103	
-Piercing Attack	Hornet	NPC_PIERCINGATT	1004	
-Piercing Attack	Riding Word	NPC_PIERCINGATT	1195	name settled by hand
-Piercing Attack	Muka	NPC_PIERCINGATT	1055	
-Piercing Attack	Grimtooth	NPC_PIERCINGATT		no monster of that name: left out
-Piercing Attack	Desert Wolf	NPC_PIERCINGATT	1106,1220,1432	
-Piercing Attack	Arclouse	NPC_PIERCINGATT	1194,1477	
+Piercing Attack	Horn	NPC_CRITICALSLASH	1128	Athena's number: mod0631 and jAthena give these monsters skill 170, named 防御無視攻撃 (defence-ignoring attack); Aegis numbers it 158
+Piercing Attack	Caramel	NPC_CRITICALSLASH	1103	Athena's number: mod0631 and jAthena give these monsters skill 170, named 防御無視攻撃 (defence-ignoring attack); Aegis numbers it 158
+Piercing Attack	Hornet	NPC_CRITICALSLASH	1004	Athena's number: mod0631 and jAthena give these monsters skill 170, named 防御無視攻撃 (defence-ignoring attack); Aegis numbers it 158
+Piercing Attack	Riding Word	NPC_CRITICALSLASH	1195	name settled by hand; Athena's number: mod0631 and jAthena give these monsters skill 170, named 防御無視攻撃 (defence-ignoring attack); Aegis numbers it 158
+Piercing Attack	Muka	NPC_CRITICALSLASH	1055	Athena's number: mod0631 and jAthena give these monsters skill 170, named 防御無視攻撃 (defence-ignoring attack); Aegis numbers it 158
+Piercing Attack	Grimtooth	NPC_CRITICALSLASH	1204	Gravity's Grimtooth is the Tirfing (iRO's Ogretooth): mod0631 gives it this and Maximize Power; Athena's number: mod0631 and jAthena give these monsters skill 170, named 防御無視攻撃 (defence-ignoring attack); Aegis numbers it 158
+Piercing Attack	Desert Wolf	NPC_CRITICALSLASH	1106,1220,1432	Athena's number: mod0631 and jAthena give these monsters skill 170, named 防御無視攻撃 (defence-ignoring attack); Aegis numbers it 158
+Piercing Attack	Arclouse	NPC_CRITICALSLASH	1194,1477	Athena's number: mod0631 and jAthena give these monsters skill 170, named 防御無視攻撃 (defence-ignoring attack); Aegis numbers it 158
 Mental Breaker	Nightmare	NPC_MENTALBREAKER	1061,1427	
 Mental Breaker	Bathory	NPC_MENTALBREAKER	1102	
 Mental Breaker	Myst	NPC_MENTALBREAKER	1151	

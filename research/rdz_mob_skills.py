@@ -63,7 +63,7 @@ MORE = {'emotion': ['NPC_EMOTION'], 'summon minions': ['NPC_SUMMONSLAVE'], 'heal
         'summon monster': ['NPC_SUMMONMONSTER', 'NPC_SUMMONSLAVE'], 'throw stone': ['TF_THROWSTONE'],
         'keeping': ['NPC_KEEPING'], 'smoking': ['NPC_SMOKING'], 'hallucination': ['NPC_HALLUCINATION'],
         'hullucination': ['NPC_HALLUCINATION'], 'metamorphosis': ['NPC_METAMORPHOSIS'], 'lick': ['NPC_LICK'],
-        'mental breaker': ['NPC_MENTALBREAKER'], 'pierce attack': ['NPC_PIERCINGATT'],
+        'mental breaker': ['NPC_MENTALBREAKER'], 'pierce attack': ['NPC_CRITICALSLASH'],  # Athena's 170: see mob_skills_faq.tsv
         'fire element change': ['NPC_CHANGEFIRE'], 'water element change': ['NPC_CHANGEWATER'],
         'random element change': ['NPC_ATTRICHANGE'], 'agi up': ['AL_INCAGI'], 'soul strike': ['MG_SOULSTRIKE'],
         'sight': ['MG_SIGHT'], 'pneuma': ['AL_PNEUMA'], 'detoxify': ['TF_DETOXIFY'], 'holy light': ['AL_HOLYLIGHT'],

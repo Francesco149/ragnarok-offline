@@ -8,17 +8,14 @@ Adrenaline Rush	Baphomet Jr.	BS_ADRENALINE	1101	RODataZone
 Emotion (sometimes does /lv as she approaches to attack)	Bathory	NPC_EMOTION	1102	RODataZone
 Emotion (snore with bubble coming out nose)	Bigfoot	NPC_EMOTION	1060	RODataZone
 Emotion	Carat	NPC_EMOTION	1267	RODataZone
-Piercing Attack	Cat O'Nine Tails	NPC_PIERCINGATT	1307	RODataZone
 Endure	Cat O'Nine Tails	SM_ENDURE	1307	RODataZone
 Recovery	Chepet	PR_STRECOVERY	1250	RODataZone
 Water Element Attack	Crab	NPC_WATERATTACK	1073	RODataZone
 Teleport	Creamy Fire*	AL_TELEPORT	1293	RODataZone
 Emotion	Cruiser	NPC_EMOTION	1248	RODataZone
-Piercing Attack	Dark Illusion	NPC_PIERCINGATT	1302	RODataZone
 Emotion (/an)	Desert Wolf	NPC_EMOTION	1106	RODataZone
 Spear Boomerang	Deviruchi	KN_SPEARBOOMERANG	1109	RODataZone
 Decrease AGI	Drake	AL_DECAGI	1112	RODataZone
-Pierce Attack	Giant Hornet	NPC_PIERCINGATT	1303	RODataZone
 Bash	Giant Hornet	SM_BASH	1303	RODataZone
 Grimtooth	Giant Spider	AS_GRIMTOOTH	1304	RODataZone
 Envenom	Giant Spider	TF_POISON	1304	RODataZone
@@ -41,7 +38,6 @@ Increase AGI	Khalitzburg	AL_INCAGI	1132	RODataZone
 Endure	Leid Olmai	SM_ENDURE	1306	RODataZone
 Stun Attack	Magnolia	NPC_STUNATTACK	1138	RODataZone
 Heal	Martin	AL_HEAL	1145	RODataZone
-Piercing Attack	Maya Purple*	NPC_PIERCINGATT	1289	RODataZone
 Spear Boomerang	Merman	KN_SPEARBOOMERANG	1264	RODataZone
 Detoxify	Merman	TF_DETOXIFY	1264	RODataZone
 Spear Boomerang	Mini Demon	KN_SPEARBOOMERANG	1292	RODataZone
@@ -68,7 +64,6 @@ Poison Element Attack	Tarou	NPC_POISONATTACK	1175	RODataZone
 Dark Element Attack	Thief Bug (Female)	NPC_DARKNESSATTACK	1017	RODataZone
 Dark Element Attack	Thief Bug (Male)	NPC_DARKNESSATTACK	1021	RODataZone
 Emotion	Tirfing	NPC_EMOTION	1204	RODataZone
-Piercing Attack	Tirfing	NPC_PIERCINGATT	1204	RODataZone
 Endure	Turtle General	SM_ENDURE	1312	RODataZone
 Emotion (/an)	Vagabond Wolf	NPC_EMOTION	1092	RODataZone
 Emotion	Whisper	NPC_EMOTION	1179	RODataZone

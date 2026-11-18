@@ -940,8 +940,10 @@ confirm it (research/THREADS.md #35). `scripts/rules/combat.lua`
   two attacks is twice the "aspd" value (`pc.c:2458`).
 
 **Monster skills iRO had and mod0631 lacks.** mod0631's monster skills
-(December 2003) are jRO's as its authors knew them. unknown13's Monster
-Skill FAQ (GameFAQs 29608, April 2004) lists what iRO's monsters used: of
+(December 2003) are jRO's as its authors knew them. Gravity's iRO notice of
+2004-02-11 ("Monster Skill Update", Sakray) lists which monster uses which
+skill; unknown13's Monster Skill FAQ (GameFAQs 29608, April 2004) copies it
+(round 37). Of
 its 325 pairs, 97 are not in mod0631's table (no monster there uses
 Endure, Increase or Decrease Agility, Piercing Attack, Mental Breaker,
 Napalm Beat, Status Recovery or Pneuma). euRO's "New Comodo" update
@@ -954,6 +956,18 @@ skill on other monsters (guess). Which Goblin and Kobold the FAQ means by
 "Goblin (Hammer)" and the like is read from the client's sprites. The 4
 left out: Lazy Attack (no such skill in the table), Detoxify (no table gives
 it to a monster), and two pairs on a "Grimtooth" monster. THREADS.md #23.
+Since 2026-11-18 the notice's "Grimtooth" is the Tirfing (iRO's Ogretooth;
+mod0631 gives it both skills the notice names), and its **Piercing Attack is
+skill 170**, as mod0631 and jAthena number it: they name 170 防御無視攻撃,
+"defence-ignoring attack", on exactly the notice's Piercing Attack monsters
+and every boss. Aegis numbers that attack 158 (rAthena), which Athena's code
+runs as a plain blow; the import had matched the name to 158 and given 37
+monsters a second, plain attack beside mod0631's. Now only the monsters
+mod0631 left without 170 get one (Arclouse, Pharaoh, Dracula, Lord of Death,
+Dark Snake Lord, Incantation Samurai). Ours: the Athena numbering, so
+mod0631's "critical" rows (170 at level 3, the notice's Critical Slash on
+Marina, Orc Skeleton and Orc Zombie) ignore DEF as its code does, rather
+than land Aegis's always-critical blow.
 
 **Monster magic as Ragu Memo's jRO table gives it.** Ragu Memo's page of
 monster attack magic (`at_monskill.html`, Wayback 2003-12-05) gives rate,

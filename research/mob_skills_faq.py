@@ -41,7 +41,8 @@ SK = {
  'Blind Attack': 'NPC_BLINDATTACK', 'Blind': 'NPC_BLINDATTACK', 'Suicide': 'NPC_SUICIDE', 'Self-destruction': 'NPC_SELFDESTRUCTION',
  'Consecutive Attack': 'NPC_COMBOATTACK', 'Critical Slash': 'NPC_CRITICALSLASH', 'Guided Attack': 'NPC_GUIDEDATTACK',
  'Splash Attack': 'NPC_SPLASHATTACK', 'Magical Attack': 'NPC_DARKNESSATTACK|NPC_TELEKINESISATTACK|NPC_MAGICALATTACK',
- 'Piercing Attack': 'NPC_PIERCINGATT', 'Mental Breaker': 'NPC_MENTALBREAKER', 'Stone Curse': 'NPC_PETRIFYATTACK|MG_STONECURSE',
+ 'Piercing Attack': 'NPC_CRITICALSLASH',  # Athena's 170 (防御無視攻撃), Aegis's 158
+ 'Mental Breaker': 'NPC_MENTALBREAKER', 'Stone Curse': 'NPC_PETRIFYATTACK|MG_STONECURSE',
  'Lazy Attack': 'NPC_SLOWCAST', 'Lord of Vermilion': 'WZ_VERMILION', 'Curse': 'NPC_CURSEATTACK', 'Spear Stab': 'KN_SPEARSTAB',
  'Thunder Storm': 'MG_THUNDERSTORM', 'Storm Gust': 'WZ_STORMGUST',
 }
