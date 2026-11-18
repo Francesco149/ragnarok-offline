@@ -118,7 +118,8 @@ Working with the real client:
   against a Japanese fan site's whole item tables of December 2003), MVP
   rewards;
 - a drop-in Windows launcher that runs the CD's own patcher against a local
-  patch server, and an all-in-one installer built from your own disc.
+  patch server, and an all-in-one installer built from your own disc; both
+  run on real Windows XP too ([docs/WINDOWS-XP.md](docs/WINDOWS-XP.md)).
 
 Not yet, or only in part:
 

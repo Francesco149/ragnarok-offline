@@ -9,6 +9,8 @@ experience as possible:
 2. **The all-in-one installer**: the original CD installer with our files
    added, built from your own disc.
 
+Both also run on Windows XP: see [WINDOWS-XP.md](WINDOWS-XP.md).
+
 Everything below was tested on 2026-11-09 on Windows 11 Pro 25H2 (build
 26200), NVIDIA RTX 5060, 1920×1080 at 100% scaling, unless it says otherwise.
 The test rig is `tools/win-test` (DEVELOPMENT.md).
@@ -307,6 +309,11 @@ unaffected.
   windowed 800×600 is small on a 4K screen; fullscreen scales.
 - Windows 10, AMD/Intel GPUs, and sound output (sound init succeeds, but
   nobody listened on the test box).
-- A side-by-side with real Windows XP.
+- A side-by-side with real Windows XP. The game itself now runs on XP
+  (docs/WINDOWS-XP.md); a comparison of the installer's look is still to do.
+- The all-in-one installer's launcher is now the 32-bit build that also runs
+  on XP (2026-11-18). On Windows 10/11 it uses the system's own functions,
+  but only the x64 build was tested there (above): install the new ISO on
+  the Windows 11 rig before relying on it.
 - Port 21 or 6950 already in use on someone's machine: the launcher then
   skips the patcher, which is tested under Wine but not on Windows.
