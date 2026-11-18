@@ -50,8 +50,12 @@ MORE = {'emotion': ['NPC_EMOTION'], 'summon minions': ['NPC_SUMMONSLAVE'], 'heal
         'darkness element attack': ['NPC_DARKNESSATTACK'], 'darkness attack': ['NPC_DARKNESSATTACK'],
         'ghost element attack': ['NPC_TELEKINESISATTACK'], 'random element attack': ['NPC_RANDOMATTACK'],
         'multi attack': ['NPC_COMBOATTACK'], 'curse attack': ['NPC_CURSEATTACK'], 'curse': ['NPC_CURSEATTACK'],
-        'life drain': ['NPC_BLOODDRAIN'], 'hp absorption': ['NPC_BLOODDRAIN'],
-        'sp decrease attack': ['NPC_ENERGYDRAIN'], 'magic attack': ['NPC_MAGICALATTACK'],
+        'life drain': ['NPC_BLOODDRAIN'],
+        # jRO's HP吸収(魔法打撃) is Energy Drain (mod0631 gives it to exactly RODataZone's six
+        # "HP Absorption" monsters), and the SP drain is Mental Breaker (jAthena //0970, 7189b01,
+        # 2004-05-14, gives it to exactly the three with "SP Decrease Attack"; so does the FAQ)
+        'hp absorption': ['NPC_ENERGYDRAIN'],
+        'sp decrease attack': ['NPC_MENTALBREAKER'], 'magic attack': ['NPC_MAGICALATTACK'],
         'critical attack': ['NPC_CRITICALSLASH'], 'critical slash': ['NPC_CRITICALSLASH'],
         'self-destruct': ['NPC_SELFDESTRUCTION'], 'suicide': ['NPC_SUICIDE', 'NPC_SELFDESTRUCTION'],
         'summon followers': ['NPC_SUMMONSLAVE'], 'summon follower': ['NPC_SUMMONSLAVE'],

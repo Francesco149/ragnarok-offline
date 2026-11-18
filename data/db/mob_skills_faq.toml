@@ -2457,22 +2457,6 @@ source = "jAthena //0953 (2004-04-27) db/mob_skill_db.txt"
 faq = "Emotion (sometimes does /lv as she approaches to attack) / Bathory (RODataZone 2004-02-11)"
 
 [[skill]]
-mob = 1102
-state = "attack"
-skill = 199
-lv = 1
-rate = 100
-cast = 0
-delay = 0
-cancel = true
-target = "target"
-cond = "myhpltmaxrate"
-cond_val = 70
-tier = "guess"
-source = "the commonest of 24 NPC_BLOODDRAIN rows in jAthena //0953 (2004-04-27) db/mob_skill_db.txt"
-faq = "HP Absorption / Bathory (RODataZone 2004-02-11)"
-
-[[skill]]
 mob = 1060
 state = "chase"
 skill = 197
@@ -2568,22 +2552,6 @@ cond_val = 0
 tier = "later"
 source = "rAthena pre-renewal db/mob_skill_db.txt"
 faq = "Recovery / Chepet (RODataZone 2004-02-11)"
-
-[[skill]]
-mob = 1269
-state = "attack"
-skill = 200
-lv = 1
-rate = 1000
-cast = 2000
-delay = 10000
-cancel = true
-target = "target"
-cond = "myhpltmaxrate"
-cond_val = 70
-tier = "guess"
-source = "the commonest of 19 NPC_ENERGYDRAIN rows in jAthena //0953 (2004-04-27) db/mob_skill_db.txt"
-faq = "SP Decrease Attack / Clock (RODataZone 2004-02-11)"
 
 [[skill]]
 mob = 1073
@@ -2683,22 +2651,6 @@ source = "the commonest of 31 NPC_PIERCINGATT rows in rAthena pre-renewal db/mob
 faq = "Piercing Attack / Dark Illusion (RODataZone 2004-02-11)"
 
 [[skill]]
-mob = 1272
-state = "attack"
-skill = 199
-lv = 1
-rate = 100
-cast = 0
-delay = 0
-cancel = true
-target = "target"
-cond = "myhpltmaxrate"
-cond_val = 70
-tier = "guess"
-source = "the commonest of 24 NPC_BLOODDRAIN rows in jAthena //0953 (2004-04-27) db/mob_skill_db.txt"
-faq = "HP Absorption / Dark Lord (RODataZone 2004-02-11)"
-
-[[skill]]
 mob = 1106
 state = "chase"
 skill = 197
@@ -2714,22 +2666,6 @@ val = 6
 tier = "athena2003"
 source = "jAthena //0953 (2004-04-27) db/mob_skill_db.txt"
 faq = "Emotion (/an) / Desert Wolf (RODataZone 2004-02-11)"
-
-[[skill]]
-mob = 1109
-state = "attack"
-skill = 199
-lv = 1
-rate = 100
-cast = 0
-delay = 0
-cancel = true
-target = "target"
-cond = "myhpltmaxrate"
-cond_val = 70
-tier = "guess"
-source = "the commonest of 24 NPC_BLOODDRAIN rows in jAthena //0953 (2004-04-27) db/mob_skill_db.txt"
-faq = "HP Absorption / Deviruchi (RODataZone 2004-02-11)"
 
 [[skill]]
 mob = 1109
@@ -2762,22 +2698,6 @@ cond_val = 0
 tier = "athena2003"
 source = "jAthena //0953 (2004-04-27) db/mob_skill_db.txt"
 faq = "Decrease AGI / Drake (RODataZone 2004-02-11)"
-
-[[skill]]
-mob = 1117
-state = "attack"
-skill = 199
-lv = 1
-rate = 100
-cast = 0
-delay = 0
-cancel = true
-target = "target"
-cond = "myhpltmaxrate"
-cond_val = 70
-tier = "guess"
-source = "the commonest of 24 NPC_BLOODDRAIN rows in jAthena //0953 (2004-04-27) db/mob_skill_db.txt"
-faq = "HP Absorption / Evil Druid (RODataZone 2004-02-11)"
 
 [[skill]]
 mob = 1303
@@ -3086,22 +3006,6 @@ source = "jAthena //0953 (2004-04-27) db/mob_skill_db.txt"
 faq = "Emotion / Jakk (RODataZone 2004-02-11)"
 
 [[skill]]
-mob = 1131
-state = "attack"
-skill = 199
-lv = 1
-rate = 100
-cast = 0
-delay = 0
-cancel = true
-target = "target"
-cond = "myhpltmaxrate"
-cond_val = 70
-tier = "guess"
-source = "the commonest of 24 NPC_BLOODDRAIN rows in jAthena //0953 (2004-04-27) db/mob_skill_db.txt"
-faq = "HP Absorption / Joker (RODataZone 2004-02-11)"
-
-[[skill]]
 mob = 1132
 state = "chase"
 skill = 29
@@ -3278,22 +3182,6 @@ source = "jAthena //0953 (2004-04-27) db/mob_skill_db.txt"
 faq = "Emotion / Mystcase (RODataZone 2004-02-11)"
 
 [[skill]]
-mob = 1061
-state = "attack"
-skill = 200
-lv = 1
-rate = 1000
-cast = 2000
-delay = 10000
-cancel = true
-target = "target"
-cond = "myhpltmaxrate"
-cond_val = 70
-tier = "guess"
-source = "the commonest of 19 NPC_ENERGYDRAIN rows in jAthena //0953 (2004-04-27) db/mob_skill_db.txt"
-faq = "SP Decrease Attack / Nightmare (RODataZone 2004-02-11)"
-
-[[skill]]
 mob = 1044
 state = "chase"
 skill = 197
@@ -3420,22 +3308,6 @@ cond_val = 0
 tier = "later"
 source = "rAthena pre-renewal db/mob_skill_db.txt"
 faq = "Lick / Phreeoni (RODataZone 2004-02-11)"
-
-[[skill]]
-mob = 1159
-state = "attack"
-skill = 200
-lv = 1
-rate = 1000
-cast = 2000
-delay = 10000
-cancel = true
-target = "target"
-cond = "myhpltmaxrate"
-cond_val = 70
-tier = "guess"
-source = "the commonest of 19 NPC_ENERGYDRAIN rows in jAthena //0953 (2004-04-27) db/mob_skill_db.txt"
-faq = "SP Decrease Attack / Phreeoni (RODataZone 2004-02-11)"
 
 [[skill]]
 mob = 1163
@@ -3585,7 +3457,7 @@ faq = "Poison Element Attack / Tarou (RODataZone 2004-02-11)"
 mob = 1017
 state = "attack"
 skill = 190
-lv = 2
+lv = 1
 rate = 100
 cast = 0
 delay = 15000
@@ -3593,15 +3465,15 @@ cancel = true
 target = "target"
 cond = "always"
 cond_val = 0
-tier = "guess"
-source = "the commonest of 44 NPC_DARKNESSATTACK rows in jAthena //0953 (2004-04-27) db/mob_skill_db.txt"
+tier = "athena2003"
+source = "mod0631 db/mob_skill_db.txt, the row of the same monster's other id 1053"
 faq = "Dark Element Attack / Thief Bug (Female) (RODataZone 2004-02-11)"
 
 [[skill]]
 mob = 1021
 state = "attack"
 skill = 190
-lv = 2
+lv = 1
 rate = 100
 cast = 0
 delay = 15000
@@ -3609,8 +3481,8 @@ cancel = true
 target = "target"
 cond = "always"
 cond_val = 0
-tier = "guess"
-source = "the commonest of 44 NPC_DARKNESSATTACK rows in jAthena //0953 (2004-04-27) db/mob_skill_db.txt"
+tier = "athena2003"
+source = "mod0631 db/mob_skill_db.txt, the row of the same monster's other id 1054"
 faq = "Dark Element Attack / Thief Bug (Male) (RODataZone 2004-02-11)"
 
 [[skill]]
@@ -3710,22 +3582,6 @@ cond_val = 0
 tier = "athena2003"
 source = "jAthena //0953 (2004-04-27) db/mob_skill_db.txt"
 faq = "Emotion / Whisper (RODataZone 2004-02-11)"
-
-[[skill]]
-mob = 1192
-state = "attack"
-skill = 199
-lv = 1
-rate = 100
-cast = 0
-delay = 0
-cancel = true
-target = "target"
-cond = "myhpltmaxrate"
-cond_val = 70
-tier = "guess"
-source = "the commonest of 24 NPC_BLOODDRAIN rows in jAthena //0953 (2004-04-27) db/mob_skill_db.txt"
-faq = "HP Absorption / Wraith (RODataZone 2004-02-11)"
 
 [[skill]]
 mob = 1291

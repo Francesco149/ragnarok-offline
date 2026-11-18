@@ -164,11 +164,21 @@ for faq_skill, faq_mob, skills, cands in pairs:
             break
     else:
         got = []
-        if any(s in VAL_SKILLS for s in skills):
+        # the same monster under its other id (the field Thief Bugs 1017/1021 and their
+        # 1053/1054): mod0631's own row for it, before any other monster's
+        twin = [r for r in ours for m in cands if r["mob"] != m and display.get(r["mob"]) == display.get(m)
+                and r["skill"] in skills]
+        if twin:
+            m0 = cands[0]
+            got = [[str(m0), "", r["state"], str(r["skill"]), str(r["lv"]), str(r["rate"]), str(r["cast"]),
+                    str(r["delay"]), "yes" if r["cancel"] else "no", r["target"], r["cond"], str(r["cond_val"])]
+                   + ([str(r["val"])] if r.get("val") else []) for r in twin]
+            tier, src, scale = "athena2003", f"mod0631 db/mob_skill_db.txt, the row of the same monster's other id {twin[0]['mob']}", 1.0
+        elif any(s in VAL_SKILLS for s in skills):
             missing.append(f"{faq_skill} / {faq_mob}: no table has the pair, and another monster's row "
                            "would summon, become or show what that monster does")
             continue
-        for rows, tier, src, scale in tables:
+        for rows, tier, src, scale in ([] if twin else tables):
             same = [tuple(c[2:12]) for c in rows if num(c[3]) in skills]
             if same:
                 shape = Counter(same).most_common(1)[0][0]

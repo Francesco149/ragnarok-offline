@@ -6,23 +6,18 @@ Charge Arrow	Abyssal Knight	AC_CHARGEARROW	1219	RODataZone
 Curse Attack	Ancient Mummy	NPC_CURSEATTACK	1297	RODataZone
 Adrenaline Rush	Baphomet Jr.	BS_ADRENALINE	1101	RODataZone
 Emotion (sometimes does /lv as she approaches to attack)	Bathory	NPC_EMOTION	1102	RODataZone
-HP Absorption	Bathory	NPC_BLOODDRAIN	1102	RODataZone
 Emotion (snore with bubble coming out nose)	Bigfoot	NPC_EMOTION	1060	RODataZone
 Emotion	Carat	NPC_EMOTION	1267	RODataZone
 Piercing Attack	Cat O'Nine Tails	NPC_PIERCINGATT	1307	RODataZone
 Endure	Cat O'Nine Tails	SM_ENDURE	1307	RODataZone
 Recovery	Chepet	PR_STRECOVERY	1250	RODataZone
-SP Decrease Attack	Clock	NPC_ENERGYDRAIN	1269	RODataZone
 Water Element Attack	Crab	NPC_WATERATTACK	1073	RODataZone
 Teleport	Creamy Fire*	AL_TELEPORT	1293	RODataZone
 Emotion	Cruiser	NPC_EMOTION	1248	RODataZone
 Piercing Attack	Dark Illusion	NPC_PIERCINGATT	1302	RODataZone
-HP Absorption	Dark Lord	NPC_BLOODDRAIN	1272	RODataZone
 Emotion (/an)	Desert Wolf	NPC_EMOTION	1106	RODataZone
-HP Absorption	Deviruchi	NPC_BLOODDRAIN	1109	RODataZone
 Spear Boomerang	Deviruchi	KN_SPEARBOOMERANG	1109	RODataZone
 Decrease AGI	Drake	AL_DECAGI	1112	RODataZone
-HP Absorption	Evil Druid	NPC_BLOODDRAIN	1117	RODataZone
 Pierce Attack	Giant Hornet	NPC_PIERCINGATT	1303	RODataZone
 Bash	Giant Hornet	SM_BASH	1303	RODataZone
 Grimtooth	Giant Spider	AS_GRIMTOOTH	1304	RODataZone
@@ -42,7 +37,6 @@ Heal (L3	Hode	AL_HEAL	1127	RODataZone
 Teleport	Hunter Fly	AL_TELEPORT	1035	RODataZone
 Water Element Attack	Hydra	NPC_WATERATTACK	1068	RODataZone
 Emotion	Jakk	NPC_EMOTION	1130	RODataZone
-HP Absorption	Joker	NPC_BLOODDRAIN	1131	RODataZone
 Increase AGI	Khalitzburg	AL_INCAGI	1132	RODataZone
 Endure	Leid Olmai	SM_ENDURE	1306	RODataZone
 Stun Attack	Magnolia	NPC_STUNATTACK	1138	RODataZone
@@ -54,7 +48,6 @@ Spear Boomerang	Mini Demon	KN_SPEARBOOMERANG	1292	RODataZone
 Spear Boomerang	Mobster	KN_SPEARBOOMERANG	1313	RODataZone
 Endure	Moonlight Flower	SM_ENDURE	1150	RODataZone
 Emotion	Mystcase	NPC_EMOTION	1249	RODataZone
-SP Decrease Attack	Nightmare	NPC_ENERGYDRAIN	1061	RODataZone
 Emotion	Obeaune	NPC_EMOTION	1044	RODataZone
 Lex Divina	Obeaune	PR_LEXDIVINA	1044	RODataZone
 Detoxify	Obeaune	TF_DETOXIFY	1044	RODataZone
@@ -63,7 +56,6 @@ Cloaking	Pest	AS_CLOAKING	1256	RODataZone
 Earth Element Attack	Petite (Ground)	NPC_GROUNDATTACK	1155	RODataZone
 Wind Element Attack	Petite (Sky)	NPC_WINDATTACK	1156	RODataZone
 Lick	Phreeoni	NPC_LICK	1159	RODataZone
-SP Decrease Attack	Phreeoni	NPC_ENERGYDRAIN	1159	RODataZone
 Emotion	Reydric	NPC_EMOTION	1163	RODataZone
 Heal (L4	Sandman	AL_HEAL	1165	RODataZone
 Emotion	Sasquatch	NPC_EMOTION	1243	RODataZone
@@ -80,7 +72,6 @@ Piercing Attack	Tirfing	NPC_PIERCINGATT	1204	RODataZone
 Endure	Turtle General	SM_ENDURE	1312	RODataZone
 Emotion (/an)	Vagabond Wolf	NPC_EMOTION	1092	RODataZone
 Emotion	Whisper	NPC_EMOTION	1179	RODataZone
-HP Absorption	Wraith	NPC_BLOODDRAIN	1192	RODataZone
 Decrease AGI	Wraith Dead	AL_DECAGI	1291	RODataZone
 Grimtooth	Wraith Dead	AS_GRIMTOOTH	1291	RODataZone
 Emotion (/kis)	Zealotus	NPC_EMOTION	1200	RODataZone

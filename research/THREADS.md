@@ -1817,6 +1817,11 @@ while a build ran beside them): no failure of either. The loop did catch a
 new flaky test (`thief_skills`, Poison React's miss, fixed). Still to try:
 loop the whole workspace run. **2026-11-15, later:** four whole workspace
 runs in a row in the workbench, all passed.
+**2026-11-18:** again, once, in a full workspace run (`battle.rs:2145`,
+the same assertion), after a data-only change (nine RODataZone drain rows
+dropped, two Thief Bug rows); the panic line was cut off by a `grep`
+again. Seven runs after (six alone, one of the whole battle suite)
+passed. Next time keep the whole output: the message names the skill.
 
 ### 31. Items the client knows that nothing gives (cut content leads)
 `research/unobtainable_items.py` (2026-11-14) lists 107 items with a
