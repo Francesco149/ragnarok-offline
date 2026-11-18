@@ -2408,7 +2408,8 @@ fn mvp_summons_as_jathena_0743() {
     let wait = |t: &mut T, kind: u32| -> u64 {
         let (mut ms, mut cast) = (0, None);
         while slaves(t, kind).len() < 5 {
-            assert!(ms < 15000 && t.hp() > 0, "no five of {kind} after {ms} ms (hp {})", t.hp());
+            // 30 s: the rows before the summon's win the roll now and then (15 s failed ~1 run in 30)
+            assert!(ms < 30000 && t.hp() > 0, "no five of {kind} after {ms} ms (hp {})", t.hp());
             if let Some(c) = t.g.world.units[&eddga].mob().unwrap().cast.as_ref().filter(|c| c.skill == 196) {
                 if cast.is_none() {
                     assert!((2800..=3000).contains(&(c.end_at - t.g.now())), "a 3 s cast");
