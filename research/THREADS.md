@@ -937,6 +937,17 @@ immune to stun" is a later formula: when does it first appear?), the iRO
 guide's status pages (2004), kRO notices.
 
 ### 22. Skills approximated or missing
+**Round 38 (2026-11-18): Gravity's own text of the Comodo balance patch**
+(iRO notice 148, filed 2004-02-11; `research/notes/round38-review.md` reads it
+whole against our game). This client's SP table already carries part of it
+(Flasher, Sandman, Freezing and Skid Trap costs); its skill text is the state
+before (masteries +5, Impositio +2/40 s, Venom Splasher 1/3). mod0631 lags 817
+and the notice on eight rows, **to build**: Charge Arrow 150% + 1.5 s cast,
+Spear Boomerang 1 s delay (importer: take 817's cast_db row where mod0631 has
+none), Steal 10 SP and Envenom 12 SP (817 skill_require_db, checked), Fire Wall
+at most 3, Find Stone refused at 50% weight, no natural recovery while
+poisoned, Stone = Earth element, no Lex Aeterna on the frozen or stoned. Notice
+only, undecided: the review's items 9-14.
 Built from the client's text or by analogy, to be sharpened (DEVIATIONS.md
 has the table): Flasher's chance, Shockwave Trap on monsters, Enchant
 Poison's chance to poison, Brandish Spear's cells, Detect's range, Change
