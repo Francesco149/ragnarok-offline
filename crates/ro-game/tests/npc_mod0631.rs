@@ -202,9 +202,9 @@ const MAPS: [&str; 34] = [
 ];
 /// Maps no script reaches beyond 260,260: smaller stand-ins, so that the
 /// eighteen tests side by side stay under the workbench's 2 GiB.
-const SMALL_MAPS: [&str; 12] = [
+const SMALL_MAPS: [&str; 13] = [
     "in_hunter", "job_hunte", "pay_fild10", "job_knt", "in_moc_16", "alde_alche", "yuno_in01", "aldebaran", "job_duncer", "yuno_in02",
-    "yuno_in03", "job_sage",
+    "yuno_in03", "job_sage", "job_cru",
 ];
 
 fn setup(tag: &str) -> T {
@@ -1943,4 +1943,133 @@ fn sage_test() {
     assert_eq!(t.eval("return v.job2nd_sage .. ' ' .. count_item(1550)"), "11 2");
     t.talk("yuno_in02", 38, 61, &[]);
     assert_eq!(t.eval("return player.class"), "16");
+}
+
+/// The Cathedral Knight's questions (scripts/npc/crusader_test.lua), each
+/// known by its first choice, with the right one.
+const CRUSADER_KEYS: &[(&str, u8)] = &[
+    ("I will help.", 1), ("I'd let him go.", 2), ("I wish it were.", 1), ("I might.", 2), ("Of course.", 2),
+    ("If I must.", 2), ("I hold it.", 1), ("Let them.", 2), ("Furious.", 2), ("I'd take it.", 2),
+    ("Very highly.", 2), ("I am humble.", 1), ("With kindness.", 1), ("When I like.", 2), ("Every night.", 2),
+    ("I believe.", 1), ("Cruelly, yes.", 2), ("Action only.", 2), ("Then I may.", 1), ("I will risk it.", 1),
+    ("Neutral", 4), ("25%", 1), ("Monk Hat", 1), ("Ghoul:", 4), ("Wraith", 3), ("Orc Skeleton Card", 2),
+    ("Sister and brother", 2), ("Whisper", 4), ("Ghostring", 1),
+];
+
+fn crusader_answer(menu: &str) -> u8 {
+    if menu.starts_with("Take the test.") {
+        return 1;
+    }
+    CRUSADER_KEYS.iter().find(|(k, _)| menu.starts_with(k)).map_or_else(|| panic!("which question? {menu:?}"), |k| k.1)
+}
+
+impl T {
+    /// Give an item and put it on (0x00a9).
+    fn wear(&mut self, nameid: u32) {
+        self.eval(&format!("give_item({nameid}, 1)"));
+        let cid = self.g.world.units[&self.me].player().expect("player").char_id;
+        let c = &self.g.store.chars[&cid];
+        let idx = c.inventory.iter().position(|i| i.nameid == nameid && i.equip == 0).expect("the item") as u16 + 2;
+        let mut w = Writer::new(0x00a9);
+        w.u16(idx).u16(0);
+        send(&mut self.g, 3, w);
+        self.g.tick();
+        let c = &self.g.store.chars[&cid];
+        assert!(c.inventory.iter().any(|i| i.nameid == nameid && i.equip != 0), "item {nameid} was not put on");
+    }
+}
+
+/// The Crusader test (scripts/npc/crusader_test.lua): job level 40 and the
+/// items, the corridor failed by a kill and crossed, the questions failed
+/// and passed, the hall lost to the clock and cleared, the job and its Pike.
+#[test]
+fn crusader_test() {
+    let mut t = setup_with("crusader_test", &["jobs2_2"]);
+    let (master, prisoner, knight, harrison) = (("prt_castle", 45, 169), ("prt_castle", 163, 33), ("prt_church", 94, 116), ("prt_in", 83, 97));
+    let q = |t: &mut T| t.eval("return v.crus_q");
+
+    // 817's Crusader Trainer, who changed a Swordman at once, is gone
+    assert!(!t.g.world.units.values().any(|u| u.name == "Crusader Trainer"));
+
+    // Michael Halig: job level 40, then one of the two sets
+    t.eval("job_change(1); player.base_level = 50; player.job_level = 39; player.skill_point = 0");
+    t.talk(master.0, master.1, master.2, &[1, 1]);
+    assert_eq!(q(&mut t), "0", "job level 39");
+    t.eval("player.job_level = 40");
+    t.talk(master.0, master.1, master.2, &[1, 1, 1]);
+    let set = q(&mut t);
+    assert!(set == "3" || set == "4", "{set}");
+    t.talk(master.0, master.1, master.2, &[]);
+    assert_eq!(q(&mut t), set, "nothing brought");
+    let items: &[u32] = if set == "3" { &[957, 901, 959, 1099] } else { &[932, 1043, 1098, 901] };
+    for id in items {
+        t.eval(&format!("give_item({id}, 10)"));
+    }
+    t.talk(master.0, master.1, master.2, &[]);
+    assert_eq!(t.eval(&format!("return v.crus_q .. ' ' .. count_item({})", items[0])), "5 0");
+
+    // Man in Pain sends no one without a Rosary on
+    t.eval("give_item(2608, 1)");
+    t.talk(prisoner.0, prisoner.1, prisoner.2, &[]);
+    assert_eq!(q(&mut t), "5", "a Rosary carried, not worn");
+    t.wear(2608);
+    t.talk(prisoner.0, prisoner.1, prisoner.2, &[1]);
+    assert_eq!(t.eval("return v.crus_q .. ' ' .. player.map .. ' ' .. player.x .. ' ' .. player.y"), "6 job_cru 23 42");
+    assert_eq!(t.eval("return mob_count('job_cru', 'crus_corridor::OnKilled')"), "38");
+
+    // a kill fails it, and clears the corridor
+    t.slay_by("crus_corridor::OnKilled", 1);
+    assert_eq!(t.at(), "prt_castle 162 27");
+    assert_eq!(t.eval("return v.crus_q .. ' ' .. mob_count('job_cru', 'crus_corridor::OnKilled')"), "6 0");
+
+    // again, to the far end
+    t.talk(prisoner.0, prisoner.1, prisoner.2, &[1]);
+    t.step(23, 109);
+    assert_eq!(t.eval("return v.crus_q .. ' ' .. player.map .. ' ' .. mob_count('job_cru', 'crus_corridor::OnKilled')"), "7 prt_castle 0");
+    t.talk(prisoner.0, prisoner.1, prisoner.2, &[]);
+    assert_eq!(q(&mut t), "8");
+    t.talk(master.0, master.1, master.2, &[]);
+    assert_eq!(q(&mut t), "9");
+
+    // the questions: every first choice fails, the right ones pass
+    t.talk_by(knight.0, knight.1, knight.2, |m| if m.starts_with("Take the test.") { 1 } else { 1 + (crusader_answer(m) == 1) as u8 });
+    assert_eq!(q(&mut t), "10");
+    t.talk_by(knight.0, knight.1, knight.2, crusader_answer);
+    assert_eq!(q(&mut t), "11");
+    assert!(t.said.iter().any(|l| l == "You answered 10 of 10"), "{:?}", t.said);
+
+    // Harrison wants a Holy Water each time; the clock runs out
+    t.talk(harrison.0, harrison.1, harrison.2, &[1]);
+    assert_eq!(q(&mut t), "11", "no Holy Water");
+    t.eval("give_item(523, 2)");
+    t.talk(harrison.0, harrison.1, harrison.2, &[1]);
+    // hidden, for the undead do not see through it: five minutes among them would kill
+    t.eval("sc_start(SC.HIDDING, 10, 0); player.sp = 9999");
+    assert_eq!(t.eval("return v.crus_q .. ' ' .. player.map .. ' ' .. count_item(523)"), "12 job_cru 1");
+    assert_eq!(t.eval("return mob_count('job_cru', 'crus_hall::OnKilled')"), "43");
+    t.run(301_000);
+    assert_eq!(t.eval("return v.crus_q .. ' ' .. player.map .. ' ' .. mob_count('job_cru', 'crus_hall::OnKilled')"), "12 prt_in 0");
+
+    // cleared in time
+    t.talk(harrison.0, harrison.1, harrison.2, &[1]);
+    t.eval("sc_start(SC.HIDDING, 10, 0)");
+    // all in one tick: 43 deaths queue 43 events before any runs
+    let mobs: Vec<u32> = t.g.world.units.values().filter(|u| u.mob().is_some_and(|m| m.event.as_deref() == Some("crus_hall::OnKilled"))).map(|u| u.id).collect();
+    assert_eq!(mobs.len(), 43);
+    for id in &mobs {
+        t.eval(&format!("battle.damage(player.id, {id}, 999999)"));
+    }
+    t.run(250);
+    assert_eq!(q(&mut t), "13");
+    t.eval("sc_end(SC.HIDDING)");
+    t.step(167, 17);
+    assert_eq!(t.at(), "prt_in 81 100");
+
+    // the job, unspent skill points first, and a Pike
+    t.eval("player.skill_point = 1");
+    t.talk(master.0, master.1, master.2, &[]);
+    assert_eq!(t.eval("return player.class"), "1");
+    t.eval("player.skill_point = 0");
+    t.talk(master.0, master.1, master.2, &[]);
+    assert_eq!(t.eval("return player.class .. ' ' .. count_item(1409) .. ' ' .. v.crus_q"), "14 1 0");
 }

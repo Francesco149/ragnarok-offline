@@ -1506,6 +1506,27 @@ how Hermes chose the course (jAthena guesses; iRO's later script has three
 courses, the History Professor's among them), and which questions euRO
 asked. The Crusader's, Monk's, Bard's and Rogue's tests are stubs in
 jAthena //1046: no period script to build them from.
+**2026-11-18: that was wrong for two of them.** eAthena 1.0 (`706e78509`,
+2004-11-04, the commit the Assassin's and Blacksmith's tests came from) has
+`npc/jobs/2-2/crusader.txt` (a "temp Job Quest" from RagnaInfo) and
+`rogue.txt`; its `monk.txt` came on 2004-12-30 (`cfd39590d`); the Bard's
+waits until 2006. **The Crusader's built** (`scripts/npc/crusader_test.lua`,
+DEVIATIONS.md, test `crusader_test`) from eAthena's, set right by Edge
+(29457 v1.2, 2004-03-16: the two item sets, the Rosary worn, the Holy Water
+and five minutes), with Tangowr's names and nine questions and jAthena's
+master and guard in the west wing; played to the job change in the client.
+Playing found eAthena's corridor unplayable twice over: its monsters are
+0.5.2's G_ copies (ids 1423-1468), which this client does not know (drawing
+them closed it; its exe names one G_ monster, `G_ASSULTER`), and as plain
+undead up to level 63, all aggressive around the door, they killed a job
+level 40 Swordman before a step. Tangowr's list (Mandragoras, Floras,
+Greatest Generals, Familiars: three that never move) now stands on
+eAthena's cells; the far side of the corridor is out of their reach.
+**Open:** which monsters stood in the corridor in iRO or euRO (Edge names
+none; Tangowr writes in July 2004); whether the item sets had a third (Edge:
+"currently only two"); whether the knight's questions were Tangowr's twRO
+kind, eAthena's yes-or-no kind, or both; what the hall held. Next: the
+Rogue's (eAthena 1.0) and the Monk's (eAthena of 2004-12-30).
 
 **2026-11-16: the Bard's and Dancer's solo skills drafted** (DEVIATIONS.md,
 test `bard_dancer_songs`), from jAthena //0993-//1020 (2004-05-27 to 06-11,

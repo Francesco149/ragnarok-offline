@@ -480,6 +480,35 @@ eAthena 817 (2004-02-19), bugs included. The translator is
   Chemirre). 817's academy staff (behind `juno`) give way to jAthena's;
   dialogue in our English of jAthena's Japanese. No account dates the test
   before September 2004: for the 2-2 version, like the rest of `jobs2_2`.
+* **The Crusader test** (`scripts/npc/crusader_test.lua`, behind
+  `jobs2_2`; test `crusader_test`). 817's Crusader Trainer made a
+  Swordman of job level 40 a Crusader at once. The test is eAthena 1.0's
+  of 2004-11-04 (`npc/jobs/2-2/crusader.txt`, "just a temp Job Quest"
+  from RagnaInfo), set right where the nearest player's account, Edge's
+  of 2004-03-16 (GameFAQs 29457 v1.2), says otherwise, with Tangowr's
+  names (GameFAQs 28552, 2004-07) and jAthena //1046's Master Crusader and
+  guard in the castle's west wing: Michael Halig asks one of Edge's two
+  sets of forty items (job level 50 skips them, as eAthena; the Pike he
+  gives is then the slotted one); Man in Pain (Murnak Mijoul) in the
+  castle prison sends whoever wears a Rosary (Edge; eAthena: carries one)
+  into a corridor of `job_cru` to cross without a kill; Gabriel Valentine
+  in the cathedral asks ten questions, 8 to pass, five of eAthena's
+  twenty on a Crusader's conduct and five of Tangowr's nine on the undead
+  and demons (Edge: "questions about Crusaders and Undead monsters"),
+  with the choices worded as answers; Harrison, the Guardian Knight, takes
+  a Holy Water and gives five minutes to clear a hall of 43 undead (Edge
+  both; eAthena neither). Ours: the corridor holds Tangowr's Mandragoras,
+  Floras, Greatest Generals and Familiars on eAthena's cells, not its
+  undead up to level 63, which killed a job level 40 Swordman at the door
+  in the client, and whose ids (0.5.2's G_ copies) this client cannot draw
+  (it closed); two of Tangowr's answers read against our data (Holy deals
+  25% more than Fire to a level 2 Undead, not 50%; the Whisper for a
+  "Jirtas" this game lacks); eAthena's slips mended (an eleventh question,
+  a monster spawned zero times, the hall's count lost at a death, the
+  rooms left full after a failure); no waiting for others. Dialogue is
+  eAthena's and ours, jAthena's master and guard in our English of their
+  Japanese. Edge's account (March 2004, a server that had the 2-2 jobs)
+  is the earliest; euRO had none before June 2004.
 * **Alberta's sailor** (`scripts/npc/alberta_sailor.lua`) no longer sells
   passage to Amatsu and Gonryun: the client has neither map (they are later
   additions 817 took from jAthena), so the fare went and the ship did not.
