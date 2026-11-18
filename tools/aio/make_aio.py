@@ -23,6 +23,10 @@ so OUT_DIR is for your own use and never goes into git) in which only
 - a new PackageCode (summary info + Setup.ini); ProductCode and UpgradeCode
   stay the CD's: it is the same product, and installing over an existing
   original install goes through Windows Installer's normal maintenance path.
+
+crates/ro-setup-builder/src/aio.rs makes the same changes in Rust, on users'
+machines (the published setup builder): change both together, and check
+that their outputs still agree table by table (docs/DEVELOPMENT.md).
 """
 
 import hashlib
