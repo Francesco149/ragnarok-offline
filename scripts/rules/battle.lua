@@ -436,15 +436,25 @@ function battle.calc_damage(bl, damage, flag, src, ele)
     t = sc(bl, type)
     if t and ele == e and damage > 0 then damage = damage + floor(damage * t.val4 / 100) end
   end
-  if sc(bl, SC.ENERGYCOAT) and damage > 0 and bl.kind == "player" then
-    local sp = bl.char.sp
-    if sp > 0 and (flag & BF.WEAPON) ~= 0 then
-      local per = floor(sp * 5 / (bl.st.max_sp + 1))
-      sp = math.max(0, sp - floor(damage * (per * 5 + 10) / 1000))
-      damage = damage - floor(damage * (per * 6) / 100)
-      _rt("bl_set", bl.id, "sp", sp)
+  -- Energy Coat: no period emulator before jAthena //0966 has it (mod0631 and 817 have
+  -- none). jAthena 7d0b373 (2004-05-07) battle.c:1157-1171: each weapon blow costs
+  -- (5 x per + 10) per mille of the SP you have and takes (per + 1) x 6% off, per being
+  -- your SP in fifths of the most; a monster's takes 6% a level. The port had read the
+  -- SP off the damage and dropped the "+ 1" (found by the Sage test's question on it)
+  t = sc(bl, SC.ENERGYCOAT)
+  if t and damage > 0 and (flag & BF.WEAPON) ~= 0 then
+    if bl.kind == "player" then
+      local sp = bl.char.sp
+      if sp > 0 then
+        local per = floor(sp * 5 / (bl.st.max_sp + 1))
+        sp = math.max(0, sp - floor(sp * (per * 5 + 10) / 1000))
+        damage = damage - floor(damage * ((per + 1) * 6) / 100)
+        _rt("bl_set", bl.id, "sp", sp)
+      end
+      if sp <= 0 then sc_end(bl.id, SC.ENERGYCOAT) end
+    else
+      damage = damage - floor(damage * (t.val1 * 6) / 100)
     end
-    if sp <= 0 then sc_end(bl.id, SC.ENERGYCOAT) end
   end
   t = sc(bl, SC.KYRIE)
   if t then

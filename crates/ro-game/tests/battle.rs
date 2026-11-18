@@ -1349,6 +1349,22 @@ fn acolyte_skills() {
     assert!(t.hp() < hp);
 }
 
+/// Energy Coat at half SP: a weapon blow loses 18% and costs 2% of the SP left
+/// (jAthena 7d0b373 battle.c:1157; the Sage test's written test asks it); magic passes.
+#[test]
+fn energy_coat_at_half_sp() {
+    let mut t = T::new();
+    t.lua("job_change(2); player.base_level = 50; player.int = 80; heal(9999, 9999)");
+    t.run(200);
+    t.lua("sc_start(31, 1, 0); player.sp = math.floor(player.max_sp / 2)");
+    let sp: i64 = t.lua("return player.sp").parse().unwrap();
+    let hit = t.lua("return battle.calc_damage(battle.get(player.id), 1000, BF.WEAPON | BF.SHORT, nil, 0)");
+    assert_eq!(hit, "820");
+    assert_eq!(t.lua("return player.sp"), (sp - sp * 20 / 1000).to_string());
+    let spell = t.lua("return battle.calc_damage(battle.get(player.id), 1000, BF.MAGIC, nil, 0)");
+    assert_eq!(spell, "1000");
+}
+
 /// Spear Boomerang reaches 3, 5, 7, 9, 11 cells by level (the iRO guide, 2004-04),
 /// and the skill list tells the client the learned level's reach.
 #[test]
