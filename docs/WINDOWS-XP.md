@@ -62,12 +62,15 @@ launcher skips it on XP too.
 
 ## Known issues
 
-- **Black squares on the ground** on the GTX 750 Ti with "Use Lightmap" on
-  (windowed and fullscreen, every ground tile). With lightmaps off (the CD's
-  `Setup.exe`, as players did on weak cards) the ground is clean. Not yet
-  known whether this is the card's XP driver or a driver-profile override
-  (forced antialiasing or anisotropic filtering are the usual causes with
-  lightmapped DirectX 7 games). A period card would settle it.
+- **Black squares on the ground** on the GTX 750 Ti (NVIDIA 368.81, XP's
+  last driver) with "Use Lightmap" on and Texture Detail at its top step:
+  one on every ground tile, windowed and fullscreen, with either 3D device
+  ("Direct3D HAL" or "T&L HAL"). The driver's profile is stock (no
+  `nvdrsdb0/1.bin`, and its database has no Ragnarok profile, only one for
+  Ragnarok Online 2). One step down (`TEXTUREMODE` 1) is clean, lightmaps on
+  and still sharp; 0 is clean and softer. So the launcher writes 1 on XP.
+  Probably the newer GPU's texture sampling against a DirectX 7 lightmap
+  atlas; a period card would show whether 2003 hardware drew it right.
 - **First-run settings.** The launcher writes windowed 800×600 on XP. For
   fullscreen, run `Setup.exe` (the "Setup" shortcut): its mode list depends
   on the card (800×600×16 was index 3 here, 1 under Wine and with DDrawCompat),

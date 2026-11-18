@@ -332,6 +332,11 @@ fn default_settings() -> Vec<(&'static str, RegValue)> {
     use RegValue::*;
     const HAL: &[u8] = &[0xe0, 0x3d, 0xe6, 0x84, 0xaa, 0x46, 0xcf, 0x11, 0x81, 0x6f, 0x00, 0x00, 0xc0, 0x20, 0x15, 0x6e];
     let fullscreen = wants_ddrawcompat() as u32;
+    // On XP, the top texture detail draws a black square on every ground tile
+    // with lightmaps on (GTX 750 Ti, NVIDIA 368.81, its stock profile); one
+    // step down is clean and still sharp (docs/WINDOWS-XP.md). Setup.exe can
+    // raise it again.
+    let texture = if plat::is_nt5() { 1 } else { 2 };
     vec![
         ("ISFULLSCREENMODE", Dword(fullscreen)),
         ("WIDTH", Dword(800)),
@@ -350,7 +355,7 @@ fn default_settings() -> Vec<(&'static str, RegValue)> {
         ("DIGITALBITSTYPE", Dword(0)),
         ("PROVIDERNAME", Str("No Provider")),
         ("SPRITEMODE", Dword(2)),
-        ("TEXTUREMODE", Dword(2)),
+        ("TEXTUREMODE", Dword(texture)),
         ("FOG", Dword(1)),
         ("NUMSAMPLETYPE", Dword(2)),
     ]
