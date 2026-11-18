@@ -48,6 +48,14 @@ pub fn is_wine() -> bool {
     }
 }
 
+/// Is this Windows XP or older (NT 5.x)? Its own DirectDraw is the one the
+/// client was made for: no DDrawCompat there. (GetVersion is not lied to for
+/// an unmanifested exe on XP; on 8.1+ it may report 6.2, which is still >= 6.)
+pub fn is_nt5() -> bool {
+    let v = unsafe { windows_sys::Win32::System::SystemInformation::GetVersion() };
+    (v & 0xff) < 6
+}
+
 /// Let the client take the foreground. We got that right from Explorer when
 /// the user double-clicked us, but have no window of our own to pass it on
 /// with, and a fullscreen DirectDraw game that cannot become the foreground

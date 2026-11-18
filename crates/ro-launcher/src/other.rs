@@ -29,6 +29,10 @@ pub fn is_wine() -> bool {
     false
 }
 
+pub fn is_nt5() -> bool {
+    false
+}
+
 pub fn local_appdata() -> PathBuf {
     std::env::var_os("XDG_DATA_HOME")
         .map(PathBuf::from)

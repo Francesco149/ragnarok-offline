@@ -276,7 +276,8 @@ fn dir_writable(dir: &Path) -> bool {
 }
 
 fn wants_ddrawcompat() -> bool {
-    cfg!(windows) && DDRAWCOMPAT.is_some() && !plat::is_wine()
+    // Wine has a working DirectDraw of its own; XP has the original
+    cfg!(windows) && DDRAWCOMPAT.is_some() && !plat::is_wine() && !plat::is_nt5()
 }
 
 fn needs_prepare(dir: &Path) -> bool {
@@ -461,4 +462,10 @@ fn log_to(path: &Path) {
         .with_target(false)
         .with_writer(std::sync::Mutex::new(f))
         .try_init();
+    // A windowed exe has no stderr: put panics in the log before the abort.
+    let default = std::panic::take_hook();
+    std::panic::set_hook(Box::new(move |p| {
+        tracing::error!("panic: {p}");
+        default(p);
+    }));
 }
