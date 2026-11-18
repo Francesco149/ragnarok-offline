@@ -54,6 +54,28 @@ if [ ! -f "$c/x/Arial.TTF" ] && command -v cabextract >/dev/null; then
 fi
 echo "corefonts arial: present"
 
+# --- Windows XP build toolchain (tools/xp/build.sh, docs/WINDOWS-XP.md)
+#   llvm-mingw 20261020, msvcrt flavour (mstorsjo/llvm-mingw; LLVM, mingw-w64:
+#   permissive licences): links against XP's own msvcrt.dll. Build tool only,
+#   nothing of it is shipped but mingw-w64's CRT startup code, as in any MinGW exe.
+#   Rust 1.99.1 with rust-src (std rebuilt for i686-win7-windows-gnu), in its
+#   own RUSTUP_HOME so the workbench image is untouched. Needs rustup: run in
+#   the workbench.
+LM_VER=20261020
+LM_SHA256=ceb8c5acc6f76e143f9c714772d2fa677027802561ce68c396e8dc990a80f0b6
+lm=third_party/llvm-mingw
+if [ ! -x "$lm/llvm-mingw-$LM_VER-msvcrt-ubuntu-22.04-x86_64/bin/i686-w64-mingw32-clang" ]; then
+  mkdir -p "$lm"
+  curl -fsSL -o "$tmp/lm.tar.xz" "https://github.com/mstorsjo/llvm-mingw/releases/download/$LM_VER/llvm-mingw-$LM_VER-msvcrt-ubuntu-22.04-x86_64.tar.xz"
+  echo "$LM_SHA256  $tmp/lm.tar.xz" | sha256sum -c --quiet
+  tar -C "$lm" -xf "$tmp/lm.tar.xz"
+fi
+echo "llvm-mingw $LM_VER: present"
+if command -v rustup >/dev/null && [ ! -d third_party/rustup-xp/toolchains/1.99.1-x86_64-unknown-linux-gnu/lib/rustlib/src ]; then
+  RUSTUP_HOME=$PWD/third_party/rustup-xp rustup toolchain install 1.99.1 --profile minimal -c rust-src
+fi
+[ -d third_party/rustup-xp/toolchains ] && echo "rust 1.99.1 + rust-src (XP build): present"
+
 # --- DDrawCompat
 d=third_party/ddrawcompat
 mkdir -p "$d"
