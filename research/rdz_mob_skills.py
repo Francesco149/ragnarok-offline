@@ -52,8 +52,9 @@ MORE = {'emotion': ['NPC_EMOTION'], 'summon minions': ['NPC_SUMMONSLAVE'], 'heal
         'multi attack': ['NPC_COMBOATTACK'], 'curse attack': ['NPC_CURSEATTACK'], 'curse': ['NPC_CURSEATTACK'],
         'life drain': ['NPC_BLOODDRAIN'],
         # jRO's HP吸収(魔法打撃) is Energy Drain (mod0631 gives it to exactly RODataZone's six
-        # "HP Absorption" monsters), and the SP drain is Mental Breaker (jAthena //0970, 7189b01,
-        # 2004-05-14, gives it to exactly the three with "SP Decrease Attack"; so does the FAQ)
+        # "HP Absorption" monsters), and the SP drain is Mental Breaker: jAthena named skill 159's
+        # rows SP減少攻撃, "SP Decrease Attack", on exactly RODataZone's three monsters until //0970
+        # (7189b01, 2004-05-14) renamed them 精神破壊; the FAQ calls it Mental Breaker on the same
         'hp absorption': ['NPC_ENERGYDRAIN'],
         'sp decrease attack': ['NPC_MENTALBREAKER'], 'magic attack': ['NPC_MAGICALATTACK'],
         'critical attack': ['NPC_CRITICALSLASH'], 'critical slash': ['NPC_CRITICALSLASH'],
