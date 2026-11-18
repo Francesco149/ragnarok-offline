@@ -203,7 +203,8 @@ Next, in order:
   2026-11-17, from jAthena's of 2004-09-12 with the guild hall's warps
   (DEVIATIONS.md), and the Dancer's the same day (jAthena's too, played
   to the job change in the client; its stage needed a texture the client
-  lacks, now made by `setup`). jAthena's Sage test looks whole too; the
+  lacks, now made by `setup`), and the Sage's on 2026-11-18 (jAthena's;
+  its written test read against our data). The
   Crusader's, Monk's, Bard's and Rogue's are stubs (THREADS.md #25);
 * later, once this game is complete: its own version for euRO's May-2004
   client (owner, 2026-11-11), which has the 2-2 jobs' packets and text.

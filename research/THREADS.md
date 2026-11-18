@@ -1493,6 +1493,19 @@ iRO's question sets euRO asked (Martine or Moo for the casino). Still
 missing from this GRF: `effect\zz.bmp` and `effect\twirl.bmp` (four
 ensembles, sent undrawn); the May-2004 files could show whether they too
 are derived from files this client has. Next 2-2 test: the Sage's.
+**2026-11-18: the Sage's built** from jAthena //1046 with //1071's skill
+point check and rAthena's iRO names (`scripts/npc/sage_test.lua`,
+DEVIATIONS.md, test `sage_test`), played to the job change in the client
+(enrolment, set 2 at full marks, the three fights, the elemental thesis,
+the Dean). This client draws `job_sage` with `job_wiz`'s map
+(resnametable); jAthena's ring fits it. The written test's sixty questions were
+read against our data: 52 hold, five were changed to hold (DEVIATIONS.md),
+and one led to Energy Coat, whose port had the wrong formula (now
+jAthena's). **Open:** an iRO or euRO account of the Sage test from 2004:
+how Hermes chose the course (jAthena guesses; iRO's later script has three
+courses, the History Professor's among them), and which questions euRO
+asked. The Crusader's, Monk's, Bard's and Rogue's tests are stubs in
+jAthena //1046: no period script to build them from.
 
 **2026-11-16: the Bard's and Dancer's solo skills drafted** (DEVIATIONS.md,
 test `bard_dancer_songs`), from jAthena //0993-//1020 (2004-05-27 to 06-11,

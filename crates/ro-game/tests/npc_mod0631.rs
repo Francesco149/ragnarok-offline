@@ -193,16 +193,19 @@ impl T {
     }
 }
 
-const MAPS: [&str; 33] = [
+const MAPS: [&str; 34] = [
     "prontera", "izlude", "aldeba_in", "moc_prydb1", "payon", "alberta_in", "morocc", "prt_in", "prt_castle", "geffen",
     "geffen_in", "morocc_in", "alberta", "tur_dun01", "tur_dun02", "izlude_in", "alb2trea", "pay_fild08",
     "gef_tower", "job_wiz", "new_zone02", "new_zone03", "new_zone04", "payon_in02",
     "izlu2dun", "job_prist", "prt_church", "prt_fild03", "moc_fild07", "prt_fild00", "c_tower2", "prt_fild05",
-    "comodo",
+    "comodo", "yuno",
 ];
 /// Maps no script reaches beyond 260,260: smaller stand-ins, so that the
 /// eighteen tests side by side stay under the workbench's 2 GiB.
-const SMALL_MAPS: [&str; 9] = ["in_hunter", "job_hunte", "pay_fild10", "job_knt", "in_moc_16", "alde_alche", "yuno_in01", "aldebaran", "job_duncer"];
+const SMALL_MAPS: [&str; 12] = [
+    "in_hunter", "job_hunte", "pay_fild10", "job_knt", "in_moc_16", "alde_alche", "yuno_in01", "aldebaran", "job_duncer", "yuno_in02",
+    "yuno_in03", "job_sage",
+];
 
 fn setup(tag: &str) -> T {
     setup_with(tag, &[])
@@ -1819,4 +1822,125 @@ fn dancer_test() {
     // the job, and a Rope below Job Level 50
     t.talk(m, bijou.0, bijou.1, &[]);
     assert_eq!(t.eval("return player.class .. ' ' .. count_item(1950) .. ' ' .. v.change_dancer"), "20 1 0");
+}
+
+/// Claytos Verdo's three sets (scripts/npc/sage_test.lua), each known by its
+/// first question's choices, with the right answers in order.
+const SAGE_SETS: &[(&str, &[u8])] = &[
+    ("Topaz:Garnet", &[2, 3, 1, 4, 3, 4, 1, 2, 3, 1, 2, 3, 4, 1, 2, 3, 3, 4, 2, 1]),
+    ("Mantle:Wand", &[1, 3, 2, 4, 2, 1, 2, 3, 2, 4, 3, 2, 4, 3, 1, 2, 4, 3, 2, 2]),
+    ("China:Red Frame", &[3, 1, 2, 4, 2, 1, 3, 2, 2, 3, 2, 4, 2, 2, 1, 3, 4, 3, 2, 1]),
+];
+
+/// The Sage test (scripts/npc/sage_test.lua): the cheaper fee, the written
+/// test failed and passed, the arena lost to the clock and won fast, the
+/// elemental magic course and its thesis, the Dean; then the monster course.
+#[test]
+fn sage_test() {
+    let mut t = setup_with("sage_test", &["jobs2_2"]);
+    let m = "yuno_in03";
+    let (metheus, claytos, hermes, helper) = ((154, 35), (105, 177), (169, 180), (50, 165));
+    let (lucius, aebecee) = ((32, 102), (244, 31));
+    let q = |t: &mut T| t.eval("return v.job2nd_sage .. ' ' .. v.job2nd_sage2 .. ' ' .. v.sagecheck");
+
+    // 817's Cleitos Berdo, who changed a Mage at once, is gone
+    assert!(!t.g.world.units.values().any(|u| u.name == "Cleitos Berdo"));
+
+    // Metheus: too dear, so the cheaper fee; skill points left are refused first
+    t.eval("job_change(2); player.job_level = 40; player.skill_point = 1");
+    t.talk(m, metheus.0, metheus.1, &[2, 2, 1]);
+    assert_eq!(q(&mut t), "2 0 0");
+    t.talk(m, metheus.0, metheus.1, &[]);
+    assert_eq!(q(&mut t), "2 0 0", "skill points left");
+    t.eval("player.skill_point = 0");
+    t.talk(m, metheus.0, metheus.1, &[]);
+    assert_eq!(q(&mut t), "2 0 0", "nothing brought");
+    t.eval("for _, id in ipairs { 916, 914, 705, 949 } do give_item(id, 50) end; player.zeny = 30000");
+    t.talk(m, metheus.0, metheus.1, &[1]);
+    assert_eq!(t.eval("return v.job2nd_sage .. ' ' .. player.zeny .. ' ' .. count_item(916) .. ' ' .. count_item(949)"), "3 0 0 0");
+
+    // Claytos: every first choice fails, the right ones pass with full marks
+    t.talk_by(m, claytos.0, claytos.1, |_| 1);
+    assert_eq!(q(&mut t), "4 0 9");
+    t.talk_by(m, claytos.0, claytos.1, quiz(SAGE_SETS));
+    assert_eq!(q(&mut t), "5 0 10");
+    assert!(t.said.iter().any(|l| l == "Done. You scored 100."), "{:?}", t.said);
+
+    // Hermes sends you to the arena; the Test Helper lets you lounge, then sends you in
+    t.talk(m, hermes.0, hermes.1, &[1]);
+    assert_eq!(t.eval("return v.job2nd_sage .. ' ' .. player.map .. ' ' .. player.x .. ' ' .. player.y"), "6 job_sage 50 154");
+    t.talk("job_sage", helper.0, helper.1, &[2]);
+    assert_eq!(t.at(), "job_sage 50 166", "lounging");
+
+    // the first fight lost to the clock: out to Juno, still to sit it
+    t.talk("job_sage", helper.0, helper.1, &[1]);
+    assert_eq!(t.at(), "job_sage 118 99");
+    assert_eq!(t.eval("return mob_count('job_sage', 'sage_fight1::OnKilled')"), "16");
+    t.run(179_000);
+    assert_eq!(t.at(), "job_sage 118 99");
+    t.run(3000);
+    assert_eq!(t.eval("return player.map .. ' ' .. player.x .. ' ' .. player.y .. ' ' .. v.job2nd_sage"), "yuno 324 258 6");
+    assert_eq!(t.eval("return mob_count('job_sage', 'All')"), "0");
+
+    // all three won fast: a point each; the four other Whispers don't count
+    t.talk(m, hermes.0, hermes.1, &[1]);
+    t.talk("job_sage", helper.0, helper.1, &[1]);
+    t.slay_by("sage_fight1::OnKilled", 16);
+    assert_eq!(t.eval("return mob_count('job_sage', 'sage_fight2::OnKilled')"), "24");
+    t.slay_by("sage_fight2::OnKilled", 24);
+    t.slay_by("sage_ring::OnNone", 4);
+    assert_eq!(q(&mut t), "6 0 12");
+    t.slay_by("sage_fight3::OnKilled", 1);
+    assert_eq!(q(&mut t), "7 0 13");
+    t.run(7000);
+    assert_eq!(t.at(), "yuno_in03 163 180");
+
+    // 12 or more: elemental magic with Aebecee George
+    t.talk(m, hermes.0, hermes.1, &[]);
+    assert_eq!(q(&mut t), "9 0 13");
+    t.talk(m, aebecee.0, aebecee.1, &[]);
+    assert_eq!(q(&mut t), "9 8 13");
+    t.eval("give_item(7049, 30)");
+    t.talk(m, aebecee.0, aebecee.1, &[]);
+    assert_eq!(t.eval("return v.job2nd_sage2 .. ' ' .. count_item(7049) .. ' ' .. count_item(991) .. count_item(992) .. count_item(993)"), "9 0 111");
+    t.eval("give_item(1754, 50); give_item(1755, 50); give_item(1756, 49)");
+    t.talk(m, aebecee.0, aebecee.1, &[]);
+    assert_eq!(q(&mut t), "9 9 13", "one Stone Arrow short");
+    t.eval("give_item(1756, 1)");
+    t.talk(m, aebecee.0, aebecee.1, &[]);
+    t.eval("give_item(523, 1)");
+    t.talk(m, aebecee.0, aebecee.1, &[]);
+    assert_eq!(q(&mut t), "9 11 13");
+    t.eval("for _, id in ipairs { 916, 919, 1019, 1024, 713 } do give_item(id, 1) end");
+    let menus = t.talk_by(m, aebecee.0, aebecee.1, |_| 3);
+    assert_eq!(menus.len(), 10, "{menus:?}");
+    assert_eq!(t.eval("return v.job2nd_sage .. ' ' .. count_item(1550) .. ' ' .. count_item(916)"), "11 1 0");
+
+    // the Dean reads it: a Sage, the Book kept
+    t.talk("yuno_in02", 38, 61, &[]);
+    assert_eq!(t.eval("return player.class .. ' ' .. count_item(1550) .. ' ' .. v.job2nd_sage .. ' ' .. v.job2nd_sage2 .. ' ' .. v.sagecheck"), "16 1 0 0 0");
+
+    // the monster course with Lucius Celsus: under 12 points
+    t.eval("job_change(2); v.job2nd_sage = 7; v.sagecheck = 11");
+    t.talk(m, hermes.0, hermes.1, &[]);
+    assert_eq!(q(&mut t), "8 0 11");
+    t.talk(m, lucius.0, lucius.1, &[1, 1]);
+    let first: u32 = t.eval("return v.job2nd_sage2").parse().unwrap();
+    assert!((1..=3).contains(&first), "{first}");
+    t.talk(m, lucius.0, lucius.1, &[]);
+    assert_eq!(t.eval("return v.job2nd_sage2"), first.to_string(), "nothing brought");
+    let sea = "{ 1050, 960, 963, 966, 950, 1052, 962, 1023 }";
+    t.eval(&format!("for _, id in ipairs {sea} do give_item(id, 5) end"));
+    t.talk(m, lucius.0, lucius.1, &[1, 3]);
+    let second: u32 = t.eval("return v.job2nd_sage2").parse().unwrap();
+    assert!((4..=6).contains(&second), "{second}");
+    t.eval("for _, id in ipairs { 1025, 935, 928, 1057, 946, 947, 1031, 955, 1013 } do give_item(id, 5) end");
+    t.talk(m, lucius.0, lucius.1, &[]);
+    assert_eq!(t.eval("return v.job2nd_sage2"), "7");
+    t.eval("for _, id in ipairs { 916, 919, 1019, 1024, 713 } do give_item(id, 1) end");
+    let menus = t.talk_by(m, lucius.0, lucius.1, |_| 1);
+    assert_eq!(menus.len(), 6, "{menus:?}");
+    assert_eq!(t.eval("return v.job2nd_sage .. ' ' .. count_item(1550)"), "11 2");
+    t.talk("yuno_in02", 38, 61, &[]);
+    assert_eq!(t.eval("return player.class"), "16");
 }

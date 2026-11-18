@@ -444,6 +444,42 @@ eAthena 817 (2004-02-19), bugs included. The translator is
   Martine as in jAthena (iRO's script says Moo; 817's casino has both, with
   no lines); dialogue in our English of jAthena's Japanese. The client
   needs `effect\ring_red.tga` for the stage lights (next section).
+* **The Sage test** (`scripts/npc/sage_test.lua`, behind `jobs2_2`; test
+  `sage_test`). 817's Cleitos Berdo makes a Mage of job level 40 a Sage at
+  once. The test is jAthena's of 2004-09-12 (`npc_job_16sage.txt`, whole)
+  with //1071's refusal of unspent skill points (2004-12-04), its arena's
+  mapflags, and rAthena's iRO names (Kayron Grik, Metheus Sylphe, Claytos
+  Verdo, Hermes Tris, Saphien Layless, Lucius Celsus, Aebecee George; tier
+  later): enrolment with Metheus (job level 40; 70,000 Zeny, or an Old
+  Magic Book and a Necklace of Wisdom, or 30,000 Zeny with fifty each of
+  Feather of Birds, Fluff, Clover and Feather; free at job level 50);
+  Claytos' written test (one of three sets of twenty, 80 to pass); Hermes'
+  practical test in `job_sage` (sixteen Chonchons and Fabres in three
+  minutes, twenty-four Lunatics in three, then the one Whisper of five that
+  is the "Bachelor's Degree" in one); then a course chosen by a score
+  jAthena marks as its own guess (10, +1 for full marks and each fight won
+  fast, -1 or -2 for each won late; 12 sends you to elemental magic): Lucius
+  Celsus' monsters (two errands of fish and insect loot, picked at random,
+  two questions) or Aebecee George's elements (30 Stones for three
+  elemental stones, 50 each of Crystal, Stone and Wind arrows, a Holy
+  Water); either way the thesis' five materials and a Book, which the Dean
+  reads. Ours: no waiting room (the Test Helper sends you in when you are
+  ready, or lets you lounge, and can send you back to the Academy; jAthena
+  says to reconnect); the fee waiver asks for both items it names (jAthena
+  takes either and deletes both); the third fight's "late" mark reads its
+  own clock (jAthena reads the second fight's); the elemental thesis writes
+  the seventh line you chose (jAthena repeats the sixth's); the quest
+  variables cleared at the job change; five of the sixty questions changed
+  to hold in this game: the Cute Ribbon's bonus is MaxSP +10 (jAthena's
+  item db: +20), Safety Wall at level 6 costs 35 SP (40 in jAthena; ours
+  and the client's SP table say 35), Double Attack is asked by its chance
+  alone (ours doubles the blow; jAthena says 140%), Magnus Exorcismus'
+  "not needed" offers Lex Divina for Heal (mod0631's tree needs neither
+  Heal nor Divine Protection), and two people this game lacks give way to
+  their towns' neighbours (Morroc's Sado to Cetsu, Aldebaran's RS125 to
+  Chemirre). 817's academy staff (behind `juno`) give way to jAthena's;
+  dialogue in our English of jAthena's Japanese. No account dates the test
+  before September 2004: for the 2-2 version, like the rest of `jobs2_2`.
 * **Alberta's sailor** (`scripts/npc/alberta_sailor.lua`) no longer sells
   passage to Amatsu and Gonryun: the client has neither map (they are later
   additions 817 took from jAthena), so the fare went and the ship did not.
