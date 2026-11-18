@@ -193,12 +193,12 @@ impl T {
     }
 }
 
-const MAPS: [&str; 34] = [
+const MAPS: [&str; 39] = [
     "prontera", "izlude", "aldeba_in", "moc_prydb1", "payon", "alberta_in", "morocc", "prt_in", "prt_castle", "geffen",
     "geffen_in", "morocc_in", "alberta", "tur_dun01", "tur_dun02", "izlude_in", "alb2trea", "pay_fild08",
     "gef_tower", "job_wiz", "new_zone02", "new_zone03", "new_zone04", "payon_in02",
     "izlu2dun", "job_prist", "prt_church", "prt_fild03", "moc_fild07", "prt_fild00", "c_tower2", "prt_fild05",
-    "comodo", "yuno",
+    "comodo", "yuno", "in_rogue", "cmd_fild07", "cmd_fild09", "cmd_fild04", "moc_fild19",
 ];
 /// Maps no script reaches beyond 260,260: smaller stand-ins, so that the
 /// eighteen tests side by side stay under the workbench's 2 GiB.
@@ -2072,4 +2072,100 @@ fn crusader_test() {
     t.eval("player.skill_point = 0");
     t.talk(master.0, master.1, master.2, &[]);
     assert_eq!(t.eval("return player.class .. ' ' .. count_item(1409) .. ' ' .. v.crus_q"), "14 1 0");
+}
+
+/// Markie's questions (scripts/npc/rogue_test.lua), each known by its first
+/// choices, with a right one.
+const ROGUE_KEYS: &[(&str, u8)] = &[
+    ("30:", 1), ("Worm Tail", 2), ("Comodo:Kokomo", 3), ("Comodo:Lutie", 4), ("Rocker Card", 2), ("Being a bad ass", 4),
+    ("Job level 30", 3), ("Southwest Morroc", 2), ("Orange Gooey", 1), ("Whisper Card", 2),
+    ("Hiding:Steal", 1), ("3%", 3), ("Steal items from players", 3), ("1 Rogue", 4), ("Envenom", 4), ("Hiding:Back Slide", 3),
+    ("Andre Card", 3), ("Vadon", 3), ("15 SP", 2), ("Wind Main-Gauche", 1),
+];
+
+fn rogue_answer(menu: &str) -> u8 {
+    ROGUE_KEYS.iter().find(|(k, _)| menu.starts_with(k)).map_or(1, |k| k.1)
+}
+
+/// The Rogue test (scripts/npc/rogue_test.lua): the way in, Markie's
+/// interview failed and passed, Mr. Smith's errand and fee, a wrong password
+/// and the right one, the run (an ambush springs once, a restart clears it),
+/// its end, the job and its Gladius.
+#[test]
+fn rogue_test() {
+    let mut t = setup_with("rogue_test", &["jobs2_2"]);
+    let m = "in_rogue";
+    let (markie, smith) = ((363, 123), (376, 23));
+    let q = |t: &mut T| t.eval("return v.rogue_q .. ' ' .. v.rogue_q2");
+
+    // 817's Rogue's Lady sends a Thief to the guild
+    t.eval("job_change(6); player.job_level = 39; player.skill_point = 0; player.zeny = 20000");
+    t.talk("moc_fild19", 26, 48, &[]);
+    assert_eq!(t.eval("return player.class"), "6");
+    assert!(t.said.iter().any(|l| l.contains("Pharos")), "{:?}", t.said);
+
+    // the door from the lighthouse field
+    t.eval("warp('cmd_fild07', 193, 113)");
+    t.step(193, 117);
+    assert_eq!(t.at(), "in_rogue 378 46");
+
+    // Markie: job level 40; every first choice fails, the right ones pass
+    t.talk(m, markie.0, markie.1, &[]);
+    assert_eq!(q(&mut t), "0 0", "job level 39");
+    t.eval("player.job_level = 40");
+    t.talk_by(m, markie.0, markie.1, |_| 1);
+    assert_eq!(q(&mut t), "1 0");
+    t.talk_by(m, markie.0, markie.1, rogue_answer);
+    assert_eq!(q(&mut t), "2 0");
+    assert!(t.said.iter().any(|l| l == "You got ^FF3355100^000000/100..."), "{:?}", t.said);
+
+    // Mr. Smith's errand, then the fee with it
+    t.talk(m, smith.0, smith.1, &[]);
+    let errand = t.eval("return v.rogue_q2");
+    let items: &[(u32, u32)] = match errand.as_str() {
+        "1" => &[(510, 6), (932, 10), (957, 10), (958, 10)],
+        "2" => &[(511, 10), (910, 10), (926, 10), (964, 10)],
+        _ => &[(508, 10), (948, 10), (935, 10), (940, 10)],
+    };
+    for (id, n) in items {
+        t.eval(&format!("give_item({id}, {n})"));
+    }
+    t.eval("player.zeny = 9999");
+    t.talk(m, smith.0, smith.1, &[]);
+    assert_eq!(q(&mut t), format!("2 {errand}"), "short of the fee");
+    t.eval("player.zeny = 10000");
+    t.talk(m, smith.0, smith.1, &[]);
+    assert_eq!(t.eval(&format!("return v.rogue_q .. ' ' .. player.zeny .. ' ' .. count_item({})", items[0].0)), "3 0 0");
+
+    // the guildsman, and his door
+    t.talk(m, smith.0, smith.1, &[]);
+    let who: usize = t.eval("return v.rogue_q2").parse().unwrap();
+    let doors = [("cmd_fild09", 106, 195, [2, 3, 2, 1], "in_rogue 244 24"), ("cmd_fild09", 335, 143, [1, 3, 2, 1], "in_rogue 168 34"), ("cmd_fild04", 304, 179, [3, 2, 5, 3], "in_rogue 165 104")];
+    let d = &doors[who - 1];
+    let other = &doors[who % 3];
+    t.talk(other.0, other.1, other.2, &other.3);
+    assert_eq!(t.eval("return player.map"), other.0, "another's door");
+    t.talk(d.0, d.1, d.2, &[1, 1, 1, 1]);
+    assert_eq!(t.eval("return player.map"), d.0, "a wrong password");
+    t.talk(d.0, d.1, d.2, &d.3);
+    assert_eq!(t.at(), d.4);
+
+    // the run: an ambush springs once; going back in clears it
+    let house = [(244, 39), (152, 27), (183, 105)][who - 1];
+    t.talk(m, house.0, house.1, &[1]);
+    assert_eq!(t.eval("return v.rogue_q .. ' ' .. player.map .. ' ' .. player.x .. ' ' .. player.y"), "4 in_rogue 15 105");
+    t.step(15, 185);
+    assert_eq!(t.eval("return mob_count('in_rogue', 'rogue_run::OnKilled')"), "6");
+    t.step(15, 185);
+    assert_eq!(t.eval("return mob_count('in_rogue', 'rogue_run::OnKilled')"), "6", "once a run");
+    t.talk(m, house.0, house.1, &[1]);
+    assert_eq!(t.eval("return mob_count('in_rogue', 'rogue_run::OnKilled')"), "0");
+    t.step(15, 185);
+    assert_eq!(t.eval("return mob_count('in_rogue', 'rogue_run::OnKilled')"), "6", "a new run");
+
+    // the end, then the job and a Gladius [2]
+    t.step(370, 320);
+    assert_eq!(t.eval("return v.rogue_q .. ' ' .. player.map .. ' ' .. player.x .. ' ' .. player.y .. ' ' .. mob_count('in_rogue', 'rogue_run::OnKilled')"), "5 in_rogue 378 113 0");
+    t.talk(m, markie.0, markie.1, &[]);
+    assert_eq!(t.eval("return player.class .. ' ' .. count_item(1219) .. ' ' .. v.rogue_q"), "17 1 0");
 }

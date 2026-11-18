@@ -206,9 +206,9 @@ Next, in order:
   lacks, now made by `setup`), and the Sage's on 2026-11-18 (jAthena's;
   its written test read against our data). The Crusader's on 2026-11-18
   too, from eAthena 1.0's of 2004-11-04 set right by Edge's account of
-  2004-03 and Tangowr's of 2004-07, played to the job change. jAthena's
-  Monk, Bard and Rogue are stubs; eAthena 1.0 has a Rogue test, and its
-  Monk test came on 2004-12-30 (THREADS.md #25);
+  2004-03 and Tangowr's of 2004-07, and the Rogue's from eAthena 1.0's,
+  both played to the job change. Left: the Monk's (eAthena's of
+  2004-12-30) and the Bard's (no script before 2006; THREADS.md #25);
 * later, once this game is complete: its own version for euRO's May-2004
   client (owner, 2026-11-11), which has the 2-2 jobs' packets and text.
   What it needs is collected in `research/notes/may2004-client.md`;

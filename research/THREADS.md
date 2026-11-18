@@ -1525,8 +1525,17 @@ eAthena's cells; the far side of the corridor is out of their reach.
 **Open:** which monsters stood in the corridor in iRO or euRO (Edge names
 none; Tangowr writes in July 2004); whether the item sets had a third (Edge:
 "currently only two"); whether the knight's questions were Tangowr's twRO
-kind, eAthena's yes-or-no kind, or both; what the hall held. Next: the
-Rogue's (eAthena 1.0) and the Monk's (eAthena of 2004-12-30).
+kind, eAthena's yes-or-no kind, or both; what the hall held.
+**The Rogue's built** the same day (`scripts/npc/rogue_test.lua`,
+DEVIATIONS.md, test `rogue_test`) from eAthena 1.0's (kobra_k88, "based off
+of official iRO Rogue quest") with its doors from the lighthouse field;
+played to the job change in the client (interview failed and passed, the
+errand, the password at Hollgrehen Junior's door, an ambush of Zombies on
+the run, Markie's Gladius). One answer changed to hold here: the Argos sees
+through Hiding, not the Worm Tail (a plant in our data). **Open:** any
+player's account of the Rogue test from 2004 (the questions, the errands,
+the passwords, how hard the run was). Next: the Monk's (eAthena of
+2004-12-30, `cfd39590d`); the Bard's has no script before 2006.
 
 **2026-11-16: the Bard's and Dancer's solo skills drafted** (DEVIATIONS.md,
 test `bard_dancer_songs`), from jAthena //0993-//1020 (2004-05-27 to 06-11,

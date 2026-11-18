@@ -509,6 +509,25 @@ eAthena 817 (2004-02-19), bugs included. The translator is
   eAthena's and ours, jAthena's master and guard in our English of their
   Japanese. Edge's account (March 2004, a server that had the 2-2 jobs)
   is the earliest; euRO had none before June 2004.
+* **The Rogue test** (`scripts/npc/rogue_test.lua`, behind `jobs2_2`;
+  test `rogue_test`). 817's Rogue's Lady near Morroc made a Thief of job
+  level 40 a Rogue at once; she now sends Thieves to the guild. The test
+  is eAthena 1.0's of 2004-11-04 (`npc/jobs/2-2/rogue.txt`, kobra_k88,
+  "based off of official iRO Rogue quest"), with its doors from the
+  Pharos lighthouse field (`npc/warps/other/jobquests.txt:123-128`;
+  jAthena //1046 has the same): Markie's interview (one of two sets of
+  ten, 90 to pass), Mr. Smith's errand (one of three lists of forty-odd
+  items) and 10,000 Zeny fee, a guildsman found by his house in Comodo's
+  fields who opens to the right password, and the run through the guild's
+  underground passage, thirteen ambushes of undead on the way, back to
+  Markie for a Gladius [2] (or [3] at job level 50). Ours: the first set's
+  monster that sees through Hiding is the Argos (an insect here; eAthena's
+  Worm Tail is a plant, and our monsters see through Hiding as mod0631's
+  do: insects, demons, bosses); an ambush springs once a run (eAthena:
+  each time its line is crossed, the map cleared every ten minutes); the
+  run's end passes only a candidate on the run; words cut to the window.
+  No player's account of the test is on disk; eAthena's says it follows
+  iRO's, where the 2-2 jobs came in 2004.
 * **Alberta's sailor** (`scripts/npc/alberta_sailor.lua`) no longer sells
   passage to Amatsu and Gonryun: the client has neither map (they are later
   additions 817 took from jAthena), so the fare went and the ship did not.
