@@ -10,9 +10,11 @@ cd "$(dirname "$0")/../.."
 CD="${1:-/data/iso}"
 OUT="${2:-/data/aio/RagnarokOffline-CD}"
 tools/fetch-third-party.sh
-cargo build -q --release -p ro-launcher --target x86_64-pc-windows-gnu
+# the 32-bit launcher that also runs on Windows XP (tools/xp, docs/WINDOWS-XP.md);
+# on Vista and later it uses the system's own functions
+tools/xp/build.sh -p ro-launcher
 python3 -I tools/aio/make_aio.py "$CD" "$OUT" \
-  target/x86_64-pc-windows-gnu/release/RagnarokOffline.exe \
+  target/xp/i686-win7-windows-gnu/release/RagnarokOffline.exe \
   third_party/ddrawcompat/ddraw.dll \
   crates/ro-launcher/assets/DDrawCompat.ini \
   third_party/ddrawcompat/LICENSE.txt

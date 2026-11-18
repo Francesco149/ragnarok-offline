@@ -169,7 +169,9 @@ def main():
 
         comp_t = export(msi, "Component", idt)
         comp_t.append("\t".join(["OfflineLauncher", COMPONENT_LAUNCHER, "INSTALLDIR", "0", "", "RagnarokOffline.exe"]))
-        comp_t.append("\t".join(["OfflineCompat", COMPONENT_COMPAT, "INSTALLDIR", "0", "", "DDrawCompat.ini"]))
+        # DDrawCompat only from Vista on (it does not support XP, and XP's own
+        # DirectDraw is the one the client was made for: docs/WINDOWS-XP.md)
+        comp_t.append("\t".join(["OfflineCompat", COMPONENT_COMPAT, "INSTALLDIR", "0", "VersionNT >= 600", "DDrawCompat.ini"]))
         write_idt(idt, "Component", comp_t)
 
         fc_t = export(msi, "FeatureComponents", idt)
