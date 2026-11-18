@@ -1286,6 +1286,17 @@ question as above). Taken (`CLIENT_PAIRS` in
 Choco's Stone Fling, with jAthena's rows. Left, no period table has a row:
 Baphomet's Adrenaline Rush, the Peco Peco's summoning, the Rocker's Lex
 Divina.
+**Round 37 (2026-11-18): the FAQ's list is Gravity's.** iRO's notice of
+2004-02-11, "Monster Skill Update" (the Turtle Island update on Sakray,
+`data:refs/web/iro-news-2004/updatedetail_147.html`), is the table
+unknown13's FAQ copied: 302 of its 325 pairs by name, the rest spellings,
+and the boss rule word for word (`research/notes/round37-review.md`). The
+rows `tools/import/mob_skills_faq.py` built from the FAQ now cite it. It
+also says "Monsters with attributes will use attacks of their attribute"
+(Skygor's rule, now Gravity's) and "The above content has not finalized";
+our tables keep RODataZone's observed set of elemental attacks (iRO's main
+server, the same month). Still open: what euRO's main server had in
+January 2004, a month before this Sakray notice.
 **Impact:** how every fight feels; `data/db/mob_skills.toml`,
 `data/db/mob_skills_faq.toml`.
 **Look:** kRO notices on monster skills (2003); period monster databases
@@ -2298,7 +2309,10 @@ text, RODataZone's iRO table and Ragu Memo's jRO pages of 2003-12-18 all
 show the rows from before it, so those are ours now, with five effects
 the witnesses name added (`research/notes/round35-review.md`). Open: when
 kRO or jRO did take the rework (a jRO page of 2004 with Muramasa at 155
-would date it), and whether euRO had it by May 2004.
+would date it), and whether euRO had it by May 2004. **Round 37:** Ragu
+Memo's jRO weapon pages captured 2005-03-09 still give Muramasa 170 with
+CRI + 20 and the Assassin Dagger 125 with MSP + 30: jRO did not have the
+rework by March 2005. Left: kRO and euRO.
 
 ### R7. Skill reach: mod0631 against 817 (2026-11-17)
 `skill_db.txt`'s range column differs between mod0631 (and jAthena until
