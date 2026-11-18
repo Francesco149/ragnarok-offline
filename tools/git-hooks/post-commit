@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+# post-commit hook: keep the rolling release no more than a day behind master
+# (tools/ci/daily_release.py). Runs detached so the commit returns at once;
+# log: .git/daily-release.log. Opt out for one commit: DAILY_RELEASE=0 git commit ...
+# Install once per clone: git config core.hooksPath tools/git-hooks
+
+[[ "${DAILY_RELEASE:-1}" == "0" ]] && exit 0
+root="$(git rev-parse --show-toplevel)"
+log="$(git rev-parse --git-dir)/daily-release.log"
+( cd "$root" && nohup python3 tools/ci/daily_release.py >>"$log" 2>&1 & ) >/dev/null 2>&1
+exit 0

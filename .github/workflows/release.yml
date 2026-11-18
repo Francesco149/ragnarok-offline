@@ -1,0 +1,133 @@
+# Rolling 'nightly' pre-release: the setup builder and the drop-in launcher.
+#
+# No cron: tools/ci/daily_release.py (run by the post-commit hook and at
+# session start) pushes master and dispatches this workflow when the release
+# is more than a day behind master, so the build is always of the current
+# master and nothing is built while nobody works on the project.
+#
+# Builds the 32-bit exes that run on Windows XP to 11 (tools/xp/build.sh):
+#   RagnarokOfflineSetupBuilder.exe  downloads the preserved CD from the
+#                                    Internet Archive and makes the
+#                                    all-in-one installer on the user's machine
+#   RagnarokOffline.exe              the launcher alone, for a folder the
+#                                    original CD installed
+# Neither contains anything of Gravity's: the builder fetches the disc at run
+# time and refuses any other.
+#
+# One rolling release, as openrecet does it: GitHub notifies watchers when a
+# release is created, not when its assets are replaced, so 'nightly' keeps
+# its tag name and its files are clobbered on each run. Prerelease and
+# make_latest false: real versions get their own tags, by hand.
+
+name: release
+
+on:
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # commit date for the cabinet, git log for the notes
+
+      # third_party/: llvm-mingw, the XP Rust toolchain, DDrawCompat and the
+      # euRO patch-server snapshot from the Wayback Machine. Cached so the
+      # Wayback Machine and GitHub are asked again only when the pinned list
+      # changes.
+      - uses: actions/cache@v4
+        with:
+          path: third_party
+          key: third-party-${{ hashFiles('tools/fetch-third-party.sh') }}
+
+      - uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry/index
+            ~/.cargo/registry/cache
+            ~/.cargo/git/db
+          key: cargo-${{ hashFiles('Cargo.lock') }}
+          restore-keys: cargo-
+
+      - name: Fetch pinned third-party files
+        run: tools/fetch-third-party.sh
+
+      - name: Tests (setup builder)
+        run: cargo test -q -p ro-setup-builder
+
+      - name: Build (Windows XP-compatible, 32-bit)
+        run: tools/xp/build.sh
+
+      - name: Collect
+        run: |
+          mkdir dist
+          r=target/xp/i686-win7-windows-gnu/release
+          cp $r/RagnarokOfflineSetupBuilder.exe $r/RagnarokOffline.exe dist/
+          (cd dist && sha256sum *.exe > SHA256SUMS)
+          cat dist/SHA256SUMS
+
+      - name: Compose release notes
+        run: |
+          {
+            echo "**Last updated: $(TZ=Europe/Rome date '+%Y-%m-%d %H:%M %Z')**, commit \`${GITHUB_SHA::8}\`."
+            echo "GitHub's \"released\" date above is when this rolling release was first created, not this build."
+            echo
+            echo "### RagnarokOfflineSetupBuilder.exe"
+            echo
+            echo "Makes the all-in-one installer on your computer: it downloads the preserved"
+            echo "December 2003 euRO CD from the [Internet Archive](https://archive.org/details/ragnarok-online-euro-cd-2003-12-ichipm01),"
+            echo "checks every file on it, adds Ragnarok Offline to its original setup and saves the"
+            echo "result as a disc image, a zip or a folder. Runs on Windows XP to 11. If you have the"
+            echo "disc or its image already, it uses that instead of downloading."
+            echo
+            echo "The disc is Gravity's copyrighted software, preserved as lost media; the builder asks"
+            echo "you to accept that before it starts, and what it makes is for your own use. Nothing of"
+            echo "Gravity's is in these files."
+            echo
+            echo "### RagnarokOffline.exe"
+            echo
+            echo "The launcher alone: drop it into a folder the original CD installed (the one with"
+            echo "\`Ragexe.exe\`) and double-click it. See [docs/WINDOWS.md](https://github.com/${GITHUB_REPOSITORY}/blob/${GITHUB_SHA}/docs/WINDOWS.md)."
+            echo
+            echo "Both are unsigned: Windows SmartScreen may warn the first time (More info, Run anyway)."
+            echo
+            echo "### SHA-256"
+            echo
+            echo '```'
+            cat dist/SHA256SUMS
+            echo '```'
+            echo
+            echo "### Recent changes"
+            echo
+            git log -20 --pretty='- %s (%h)'
+          } > release-notes.md
+
+      # Move 'nightly' onto the commit just built: softprops/action-gh-release
+      # attaches to an existing tag but never moves it.
+      - name: Repoint the nightly tag
+        run: |
+          git tag -f nightly "${GITHUB_SHA}"
+          git push -f origin refs/tags/nightly
+
+      - name: Publish
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: nightly
+          target_commitish: ${{ github.sha }}
+          name: Nightly build
+          prerelease: true
+          make_latest: false
+          body_path: release-notes.md
+          files: |
+            dist/RagnarokOfflineSetupBuilder.exe
+            dist/RagnarokOffline.exe
+            dist/SHA256SUMS
+          fail_on_unmatched_files: true
