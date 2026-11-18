@@ -195,3 +195,14 @@ Knuckle 100, Hellfire 195. So nothing to change for that version, with one
 exception: Light Epsilon's "Enchanted with Lv 1 [Heal]" has lost its "(Not
 Implemented yet)" (the Dec-2003 text has it; the 2003 game gives the Heal
 anyway, as mod0631 and RODataZone do).
+
+## The setup builder (2026-11-18)
+
+`crates/ro-setup-builder` makes the all-in-one installer from the December
+2003 disc on the Internet Archive and refuses anything else (pinned hashes
+in `src/ia.rs` and `src/job.rs`). The May-2004 build is on the Archive too
+(`il-mio-computer-108-luglio-2004-dvd`, the MICO07 DVD), where the installer
+is one folder among the magazine's (`Giochi/RAGSETUP_EU/`, above), not the
+disc's root. The builder's ISO reader only reads a root directory, so that
+version needs sub-directories in `src/iso.rs`, its own pinned file list, and
+its own MSI changes, not just another set of hashes.

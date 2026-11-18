@@ -19,6 +19,13 @@ all-in-one installer, with nothing else installed for it:
    training ground; windowed and native fullscreen 800×600×16.
 4. Three first runs in a row from an empty data folder, then uninstall.
 
+The setup builder (`RagnarokOfflineSetupBuilder.exe`, docs/WINDOWS.md) runs
+there too, tested the same day: its window on XP's Luna theme at 800×600, a
+download resumed over HTTPS (rustls: XP's own TLS stops at 1.0), a setup
+folder built from it, installed and started as above, and the whole flow
+through the window with `setup.exe` starting the 2003 wizard. On XP the
+builder offers a folder by default: XP cannot open a disc image by itself.
+
 ## How
 
 The same Rust code, built for 32-bit Windows with two additions
@@ -78,8 +85,8 @@ launcher skips it on XP too.
 - **Saves stay in the game folder after uninstall.** Program Files is
   writable on XP, so the launcher keeps `offline\` (saves, settings, logs)
   next to the game, and the uninstaller leaves it, as user data should be.
-- Not verified yet: the 32-bit launcher on Windows 10/11 (it takes the
-  system's functions there; the x64 build is what docs/WINDOWS.md tested),
+- Not verified yet: playing through the 32-bit launcher on Windows 10/11
+  (it loads and prepares the folder on Windows 11; docs/WINDOWS.md),
   sound, a period graphics card, XP SP2 or earlier.
 
 ## Driving the test machine
@@ -92,3 +99,10 @@ cabled to maximus's second port (`enp3s0`, NetworkManager connection
 programs on its console, `nircmd savescreenshotfull` takes screenshots, and
 WSH `SendKeys` types into the client (nircmd's mouse clicks reach dialogs but
 not always the game).
+
+The box has no route to the internet. To test the setup builder's download
+there, a small HTTP CONNECT proxy on maximus at 10.77.0.1:3128, allowing
+only `*.archive.org:443`, and `set HTTPS_PROXY=http://10.77.0.1:3128` in the
+batch file that runs the builder: no forwarding or NAT on the host. Seed
+the cache with all but the last half megabyte of our image (over SMB) and
+only that half megabyte comes from the Archive.

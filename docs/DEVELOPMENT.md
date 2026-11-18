@@ -149,6 +149,25 @@ runs the fetch. `tools/aio/build.sh` turns a CD (default `/data/iso`) into the
 all-in-one installer folder and ISO under `/data/aio/`: Gravity's files plus
 ours, never committed. See WINDOWS.md for what both do and why.
 
+`crates/ro-setup-builder` builds `RagnarokOfflineSetupBuilder.exe`, which
+makes that installer on a user's machine from the disc on the Internet
+Archive (WINDOWS.md, "The setup builder"). It embeds the 32-bit launcher,
+so `tools/xp/build.sh` builds it second, with `RO_SETUP_LAUNCHER` pointing at
+the launcher it just built. Its MSI changes (`src/aio.rs`) mirror
+`tools/aio/make_aio.py`: change both together, and compare their outputs
+table by table (`msiinfo export`, each table sorted; never pipe into `head`
+inside a `{ }` group, which swallows the rest of the pipe). On Linux it runs
+as a CLI:
+
+```sh
+tools/wb exec cargo run -p ro-setup-builder -- --accept --format folder \
+  --disc /data/RAGNAROK.iso --out /data/aio-test/out \
+  --launcher target/xp/i686-win7-windows-gnu/release/RagnarokOffline.exe
+```
+
+`assets/builder.ico` is drawn by `assets/make_icon.py` (BMP frames: XP
+cannot read PNG icons).
+
 ### The patcher under Wine
 
 The launcher's patcher path works in the headless rig too, with the Windows
@@ -161,6 +180,31 @@ podman exec -u 0 -d ro-wb socat TCP-LISTEN:21,bind=127.0.0.1,fork,reuseaddr TCP:
 ```
 
 The patch server logs every HTTP request and FTP transfer to `launcher.log`.
+
+## Releases
+
+One rolling pre-release, tag `nightly`, with `RagnarokOfflineSetupBuilder.exe`,
+`RagnarokOffline.exe` (both the 32-bit XP-to-11 builds) and `SHA256SUMS`.
+`.github/workflows/release.yml` builds it on GitHub from `master` (fetch
+the pinned third-party files, cached; the builder's tests; `tools/xp/build.sh`)
+and replaces the release's files. Replacing files notifies nobody; only the
+first creation of the release did. Nothing of Gravity's is in it.
+
+Nothing runs on a schedule. `tools/ci/daily_release.py` decides: when
+master has commits the release was not built from and the last build
+started more than 24 hours ago, it pushes master (fast-forward only) and
+dispatches the workflow. It runs from the post-commit hook (in the
+background, log `.git/daily-release.log`; `DAILY_RELEASE=0 git commit` skips
+it once) and at session start. Install the hook once per clone:
+
+```sh
+git config core.hooksPath tools/git-hooks
+python3 tools/ci/daily_release.py --dry-run    # what it would do now
+```
+
+A failed build is not retried for the same commit (`gh run view <id>
+--log-failed`). Since master is pushed as it is, work that leaves the game
+broken stays on a branch until it works (AGENTS.md).
 
 ## Reverse engineering
 

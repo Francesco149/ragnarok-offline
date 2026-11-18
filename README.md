@@ -201,38 +201,56 @@ date. Open an issue and say which thread it answers.
 
 ## Play
 
-There is no binary release yet. Build the packages from source
-([docs/DEVELOPMENT.md](docs/DEVELOPMENT.md): `tools/wb exec tools/package.sh`
-writes them to `dist/`). You need the client from the CD. It is Gravity's and
-is not in this repository. The server supports exactly one client, the one
-on this disc: [the CD image on the Internet Archive](https://archive.org/details/ragnarok-online-euro-cd-2003-12-ichipm01)
-(`RAGNAROK.iso`, sha256 `b5d579a4…19a6`). Mount it and run its `setup.exe`,
-or build the all-in-one installer from it (below).
+### Windows XP to 11: the setup builder
 
-### Windows 10/11
+Download **[RagnarokOfflineSetupBuilder.exe](https://github.com/Francesco149/ragnarok-offline/releases/download/nightly/RagnarokOfflineSetupBuilder.exe)**
+from the [nightly release](https://github.com/Francesco149/ragnarok-offline/releases/tag/nightly)
+and run it. It:
 
-1. Install the client from the CD (or copy an installed `RagnarokOnline` folder).
-2. Put **`RagnarokOffline.exe`** into that folder (next to `Ragexe.exe`) and
-   double-click it. That's all: the first start prepares the folder once
-   (UAC prompt only if it is under Program Files). Then, as in 2003, the
-   CD's patcher shows euRO's notice (an archived snapshot, served locally)
-   and you click **Start Game**.
-3. Log in with **any new ID and password** (4+ characters): the account is
-   created on first login. Add `_F` to the ID once to make a female account
-   (`myname_F`), `_M` for male (default).
+1. asks you to accept that the disc is Gravity's copyrighted software,
+   preserved as lost media, and that what it makes is for your own use;
+2. downloads the CD image from the Internet Archive
+   ([the item](https://archive.org/details/ragnarok-online-euro-cd-2003-12-ichipm01),
+   610 MB, once). If you have the CD in a drive, or `RAGNAROK.iso` next to
+   the builder, it uses that instead;
+3. checks every file on it, adds Ragnarok Offline to the CD's own installer,
+   and saves the result as a disc image, a zip or a folder.
+
+Then run its `setup.exe`. The original 2003 wizard installs the game with
+the server inside, and the desktop shortcut starts it the way the CD did:
+the patcher shows euRO's notice (an archived snapshot, served locally) and
+you click **Start Game**. Log in with **any new ID and password** (4+
+characters): the account is created on first login. Add `_F` to the ID once
+to make a female account (`myname_F`), `_M` for male (default).
+
+The release holds only this project's programs. The disc goes straight from
+the Internet Archive to your computer, so nobody redistributes a modified
+copy of Gravity's CD. Details: [docs/WINDOWS.md](docs/WINDOWS.md).
+
+<img src="docs/img/setup-builder-xp.png" alt="The setup builder on Windows XP" width="420">
+
+### Already installed the CD?
+
+1. Put **[RagnarokOffline.exe](https://github.com/Francesco149/ragnarok-offline/releases/download/nightly/RagnarokOffline.exe)**
+   (same release) into the game folder, next to `Ragexe.exe`.
+2. Double-click it. The first start prepares the folder once (UAC prompt
+   only if it is under Program Files), then the patcher and **Start Game**
+   as above.
 
 `RagnarokOffline.exe` contains the server, its scripts and database, and
 [DDrawCompat](https://github.com/narzoul/DDrawCompat) (DirectX 7 fixes for
-modern Windows, XP-style text). Fullscreen is emulated (no display mode
+Vista and later, XP-style text; not used on XP, whose own DirectDraw is the
+one the client was made for). Fullscreen is emulated (no display mode
 change, 4:3 with black bars); the client's own `Setup.exe` still changes
 resolution, sound and so on. Your saves, scripts and `ragnarok-offline.toml`
 end up in `<game>\offline\` (or `%LOCALAPPDATA%\Ragnarok Offline\` if the
-game folder is read-only).
+game folder is read-only). Running on XP: [docs/WINDOWS-XP.md](docs/WINDOWS-XP.md).
 
-Own the CD? `tools/aio/build.sh` turns it into an **all-in-one installer**:
-the original setup wizard, plus all of the above, prepared at install time.
-Details, and what the 2003 installer and client do on Windows 11:
-[docs/WINDOWS.md](docs/WINDOWS.md).
+The release is rebuilt from `master` when it falls more than a day behind.
+The server CLI packages below are not released yet: build them from source
+([docs/DEVELOPMENT.md](docs/DEVELOPMENT.md): `tools/wb exec tools/package.sh`
+writes them to `dist/`). The server supports exactly one client, the one on
+this disc (`RAGNAROK.iso`, sha256 `b5d579a4…19a6`).
 
 ### By hand (server CLI)
 

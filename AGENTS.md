@@ -35,6 +35,12 @@ Single-player server for the 2003-12-18 euRO client (see README.md).
   (docs/DEVELOPMENT.md; run `tools/strays.sh` at the start too). The owner
   plays it from the app launcher while work goes on: never touch
   `stable/saves`, `stable/wine` or a running `ro-play` container.
+- **Releases**: at session start run `python3 tools/ci/daily_release.py`
+  (the post-commit hook runs it too, once `git config core.hooksPath
+  tools/git-hooks` is set). When the rolling `nightly` release is more than
+  a day behind master it pushes master and rebuilds the release on GitHub
+  (docs/DEVELOPMENT.md "Releases"). The release must never contain
+  anything of Gravity's: the setup builder fetches the disc at run time.
 - Commits: small, logical, with `Co-Authored-By:` naming your model.
 - Work on `master`. Use a branch or worktree only for a good reason (several
   agents on different features at once), and merge it back before the

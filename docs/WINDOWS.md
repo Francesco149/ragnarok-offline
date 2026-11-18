@@ -7,7 +7,9 @@ experience as possible:
 1. **`RagnarokOffline.exe`**: drop it into an installed game folder and
    double-click it.
 2. **The all-in-one installer**: the original CD installer with our files
-   added, built from your own disc.
+   added. **`RagnarokOfflineSetupBuilder.exe`** makes it on the user's own
+   machine from the disc image on the Internet Archive (or the user's CD);
+   `tools/aio/build.sh` makes the same thing here from our copy of the disc.
 
 Both also run on Windows XP: see [WINDOWS-XP.md](WINDOWS-XP.md).
 
@@ -113,6 +115,97 @@ In VirtualStore the patcher leaves only its three small text files, as any
 2003 program would. `tools/aio/make_aio.py` documents each
 table change. Note: msitools appends rows unsorted, which Windows refuses
 (error 2211), so the script re-sorts the touched tables by primary key.
+
+### The setup builder (`RagnarokOfflineSetupBuilder.exe`)
+
+The all-in-one installer contains Gravity's files, so it is never published.
+The setup builder is what is published instead (the rolling `nightly`
+release, [DEVELOPMENT.md](DEVELOPMENT.md#releases)): it makes the installer
+on the user's computer, from the preserved disc. One window, Windows XP to
+11, with the launcher and DDrawCompat inside (`crates/ro-setup-builder`):
+
+1. **The disclaimer.** The disc is Gravity's copyrighted software, preserved
+   as lost media; what the builder makes is for the user's own use. Nothing
+   starts until the box is ticked.
+2. **The disc.** Downloaded from the Internet Archive item
+   [ragnarok-online-euro-cd-2003-12-ichipm01](https://archive.org/details/ragnarok-online-euro-cd-2003-12-ichipm01)
+   (`RAGNAROK.iso`, 610 MB), or the user's own copy: an `.iso`, or the CD in
+   a drive. A `RAGNAROK.iso` next to the builder or the CD in a drive is
+   picked automatically, so nothing is downloaded when it is not needed.
+3. **The checks.** A downloaded image must have the sha256 in
+   [PRESERVATION.md](PRESERVATION.md); every one of the 9 files read from
+   any source must have the hash in `iso-files.sha256`. Anything else is
+   refused: the builder knows one disc.
+4. **The patch.** The same rows `tools/aio/make_aio.py` adds, written with
+   the `msi` and `cab` crates instead of msitools (`src/aio.rs`; the two
+   are kept in step). Checked against make_aio.py on the same inputs: the
+   same PackageCode, every table, the summary information, the list of
+   streams and the icon identical (`msiinfo export` of each table,
+   sorted), the cabinet holding the same four files byte for byte.
+5. **The output**, written under a temporary name and renamed when complete:
+   - a **disc image**: ISO 9660 + Joliet, volume `RAGNAROK`, the 9 files in
+     the root (`src/iso.rs`). Windows 8 and later open it with a
+     double-click; it also fits a 700 MB CD-R. The default from Windows 8 on.
+   - a **zip** of a `RagnarokOffline-CD` folder (stored, not deflated:
+     `Data1.cab` is already compressed).
+   - a **folder**: run its `setup.exe`. The default on XP and 7, which
+     cannot open a disc image by themselves. At the end the builder offers
+     to start `setup.exe`.
+
+The disc files keep their dates from the disc; our files in the cabinet
+carry the date of the commit the builder was built from.
+
+**Asking the Internet Archive politely.** The download follows what the
+Archive's own `ia` tool does (internetarchive `files.py`, `session.py`), so
+the builder asks no more of archive.org than `ia download` would:
+
+- one request to `/metadata/<item>` first, which must list `RAGNAROK.iso`
+  with the expected size and sha1; then the file;
+- one connection, one file: no parallel or segmented downloads;
+- `/download/<item>/RAGNAROK.iso?cnt=0`, which redirects to the data node
+  holding the item; `cnt=0` keeps tool downloads out of the view count, as
+  `ia` does;
+- a User-Agent naming the builder and this repository;
+- retries only on connection errors, timeouts, 429 and 5xx, after 3, 6, 12,
+  24 and 48 s, or as long as `Retry-After` asks (up to 10 min); six
+  failures in a row and it stops and says to try later;
+- an interrupted download (closed window, lost connection, Cancel) resumes
+  with a `Range` request next time, then the whole file is checked;
+- the checked image stays in the cache (`%LOCALAPPDATA%\Ragnarok Offline\download`,
+  or `Local Settings\Application Data` on XP) for the next build, unless
+  the user unticks "keep"; it is never fetched twice.
+
+TLS is rustls with Mozilla's root certificates built in: XP's SChannel stops
+at TLS 1.0, which archive.org refuses. `HTTPS_PROXY` / `ALL_PROXY` are
+honoured.
+
+Without a window (any OS; on Linux it is how the builder is tested):
+
+```sh
+RagnarokOfflineSetupBuilder --accept --format iso|zip|folder --out PATH \
+    [--disc ISO_OR_CD_DIR] [--cache DIR] [--delete-download] \
+    [--launcher RagnarokOffline.exe] [--ddraw-dir third_party/ddrawcompat]
+```
+
+Tested 2026-11-18:
+
+- Linux (CLI): all three formats from our `RAGNAROK.iso`; the MSI against
+  make_aio.py's as above; the image read back by xorriso and 7-Zip, every
+  file matching; the zip by Python's `zipfile`. A download resumed from
+  byte 638,996,192 through the Archive's redirect, then the cached copy
+  reused with no request at all.
+- Windows XP SP3 (`timemachine`, through a CONNECT proxy: the box has no
+  route of its own): the same resume over HTTPS, a folder, `msiexec`
+  install from it (no DDrawCompat on XP, `data.grf` prepared), the desktop
+  shortcut's launcher showing the patcher's notice, uninstall. The window
+  on XP's Luna theme at 800×600, the whole flow through it with the image
+  picked up automatically, and its `setup.exe` starting the 2003 wizard.
+- Windows 11: the window (Segoe UI), a full download of the image through
+  it (single connection, at about 0.5 MB/s that evening), the ISO it made
+  mounted as `RAGNAROK`, a silent install from it (DDrawCompat included,
+  `data.grf` prepared by the 32-bit launcher's `--prepare`), uninstall
+  leaving nothing in Program Files. The game itself was not started there
+  (the owner was using that desktop): see "Not verified yet".
 
 ## The original installer on Windows 11
 
@@ -312,8 +405,10 @@ unaffected.
 - A side-by-side with real Windows XP. The game itself now runs on XP
   (docs/WINDOWS-XP.md); a comparison of the installer's look is still to do.
 - The all-in-one installer's launcher is now the 32-bit build that also runs
-  on XP (2026-11-18). On Windows 10/11 it uses the system's own functions,
-  but only the x64 build was tested there (above): install the new ISO on
-  the Windows 11 rig before relying on it.
+  on XP (2026-11-18). On Windows 11 it loads and prepares the folder
+  (`--prepare` during install, from the setup builder's ISO), but playing
+  through it (patcher, server, client) was only tested with the x64 build.
+  Its manifest still says `processorArchitecture="amd64"`; Windows accepted
+  that for the 32-bit exe, but it should say x86.
 - Port 21 or 6950 already in use on someone's machine: the launcher then
   skips the patcher, which is tested under Wine but not on Windows.
