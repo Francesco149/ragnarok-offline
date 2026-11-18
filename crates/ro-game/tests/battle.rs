@@ -3352,7 +3352,7 @@ fn ensembles() {
     stop(&mut t);
 
     // Eternal Chaos: a monster there has DEF 0, the one playing keeps hers
-    let pupa = t.spawn(27, 25, 1047); // a Peco Peco Egg, DEF 20, INT 0
+    let pupa = t.spawn(27, 25, 1048); // a Thief Bug Egg, DEF 20, INT 0 (a Peco Peco Egg can hatch mid-test)
     let def_mob = num(&mut t, &format!("battle.def(battle.get({pupa}))"));
     assert!(def_mob > 0);
     let def_me = t.st("def");
@@ -3365,10 +3365,15 @@ fn ensembles() {
     assert_eq!(num(&mut t, &format!("battle.def(battle.get({pupa}))")), def_mob, "gone with the song");
 
     // Loki's Veil: on the monster, not on a boss, not on the one playing (who may still stop)
-    let boss = t.spawn(23, 25, 1039); // Baphomet
     t.cast("BD_ROKISWEIL", me);
     t.run(300);
     assert!(t.has_sc(pupa, "ROKISWEIL"));
+    // the boss comes in once the song is up: a blow of his over 25% of the Dancer's HP cuts it
+    // short (failed ~1 run in 10 when he was there first)
+    let boss = t.spawn(23, 25, 1039); // Baphomet
+    let egg = t.spawn(24, 25, 1048); // arriving with him: the song reaches newcomers that soon
+    t.run(100);
+    assert!(t.has_sc(egg, "ROKISWEIL"));
     assert!(!t.has_sc(boss, "ROKISWEIL"), "bosses are not touched");
     assert!(!t.has_sc(me, "ROKISWEIL"));
     t.kill(boss);
