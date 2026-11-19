@@ -2,7 +2,8 @@
 //!   has fetched it (cfg `ddrawcompat`); without it the launcher still works
 //!   but cannot fix DirectX 7 on modern Windows.
 //! - Windows targets: compiles assets/launcher.rc (manifest + version info)
-//!   with mingw's windres and links it into the exe.
+//!   with mingw's windres and links it into the exe, and builds the
+//!   Ragnarok.exe stub (assets/stub, cfg `ragnarok_stub`) to embed.
 
 use std::path::PathBuf;
 use std::process::Command;
@@ -10,6 +11,7 @@ use std::process::Command;
 fn main() {
     println!("cargo::rustc-check-cfg=cfg(ddrawcompat)");
     println!("cargo::rustc-check-cfg=cfg(euro_patch)");
+    println!("cargo::rustc-check-cfg=cfg(ragnarok_stub)");
     let root = PathBuf::from(std::env::var("CARGO_MANIFEST_DIR").unwrap());
     let ddc = root.join("../../third_party/ddrawcompat/ddraw.dll");
     println!("cargo::rerun-if-changed={}", ddc.display());
@@ -59,4 +61,39 @@ fn main() {
         Ok(s) if s.success() => println!("cargo::rustc-link-arg-bins={}", out.display()),
         _ => println!("cargo::warning={windres} failed: no manifest/version resource in the exe"),
     }
+    build_stub(&root);
+}
+
+/// assets/stub: the Ragnarok.exe stub, always 32-bit (it runs on XP too), no
+/// C runtime. gcc where there is one, else llvm-mingw's clang (the XP build).
+fn build_stub(root: &std::path::Path) {
+    let dir = root.join("assets").join("stub");
+    let out = PathBuf::from(std::env::var("OUT_DIR").unwrap());
+    let (exe, res) = (out.join("ragnarok-stub.exe"), out.join("ragnarok-stub.res.o"));
+    let ok = |c: &mut Command| c.status().is_ok_and(|s| s.success());
+    if !ok(Command::new("i686-w64-mingw32-windres")
+        .current_dir(&dir)
+        .args(["--input", "stub.rc", "--output-format=coff", "--output"])
+        .arg(&res))
+    {
+        println!("cargo::warning=i686-w64-mingw32-windres failed: no Ragnarok.exe stub (the CD's patcher stays as it is)");
+        return;
+    }
+    for cc in ["i686-w64-mingw32-gcc", "i686-w64-mingw32-clang"] {
+        let built = ok(Command::new(cc)
+            .current_dir(&dir)
+            .args(["-Os", "-s", "-Wall", "-ffreestanding", "-fno-stack-protector", "-fno-asynchronous-unwind-tables"])
+            .args(["-nostdlib", "-nostartfiles", "-mwindows", "-Wl,--subsystem,windows:5.01"])
+            .args(["-Wl,--major-os-version,5", "-Wl,--minor-os-version,1", "-o"])
+            .arg(&exe)
+            .arg("stub.c")
+            .arg(&res)
+            .args(["-lkernel32", "-luser32"]));
+        if built {
+            println!("cargo::rustc-cfg=ragnarok_stub");
+            println!("cargo::rustc-env=RAGNAROK_STUB={}", exe.display());
+            return;
+        }
+    }
+    println!("cargo::warning=no i686 mingw C compiler: no Ragnarok.exe stub (the CD's patcher stays as it is)");
 }

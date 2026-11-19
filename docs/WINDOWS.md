@@ -34,6 +34,20 @@ First run, once:
   and `DDrawCompat.ini` next to `Ragexe.exe`. It never overwrites a
   `ddraw.dll` that isn't ours, and never overwrites the `.ini`. A small
   progress window shows while it works; on an SSD this takes about a second.
+- **Makes `Ragnarok.exe` start the launcher.** On the CD, `Ragnarok.exe`
+  (the patcher) was how you started the game, so players double-click it.
+  Started that way, it reaches the game without our server, and the game
+  says it cannot connect. That happened on the Windows 11 box (2026-11-18,
+  seen in Prefetch: `Ragnarok.exe` then `Ragexe.exe`, no launcher run). So
+  the launcher keeps the patcher as `Ragnarok.exe.original` (Explorer won't
+  open it on a double-click, but the launcher can still run it) and puts a
+  5 KB stub in its place (`crates/ro-launcher/assets/stub/stub.c`). The
+  stub starts `RagnarokOffline.exe` from its folder and waits for it. Its
+  icon is copied from your own patcher at this point, so the release
+  carries nothing of Gravity's. The stub is only written over the CD's
+  patcher (known sha256) or an older stub of ours. If a repair puts the
+  patcher back as `Ragnarok.exe`, the next launch swaps it again.
+  `--unprepare` puts the patcher back.
 - **Asks for administrator rights only if the folder is read-only** (for
   example under `C:\Program Files (x86)`). It relaunches itself through UAC
   with `--prepare`; the game itself never runs elevated.
@@ -62,7 +76,7 @@ Every run:
 
 Other switches: `--direct` skips the patcher and starts `Ragexe.exe 1rag1`
 itself; `--settings` runs the client's `Setup.exe`; `--prepare` /
-`--unprepare` prepare the folder or put the CD's `data.grf` back, and
+`--unprepare` prepare the folder or put the CD's `data.grf` and `Ragnarok.exe` back, and
 `--quiet` suppresses dialogs (exit code 0 means success).
 
 Under Wine the same exe works, patcher included, but skips DDrawCompat,
@@ -216,7 +230,7 @@ Tested 2026-11-18:
 | Wizard UI | MSI dialogs from `msiexec`: same bitmaps, text and layout | identical content and layout at 100% DPI. The window chrome follows the Win11 theme: title bar, rounded buttons, a smooth progress bar instead of XP's Luna (or Classic) blocks. Tahoma 8 is drawn with ClearType | tested |
 | Default folder | `C:\Program Files\Gravity\RagnarokOnline` | `C:\Program Files (x86)\...` (32-bit package on 64-bit Windows) | tested |
 | Files | 508 | all 508 byte-identical to `installed-files.sha256`, in about 12 s from a mounted ISO | tested |
-| Shortcuts | `Ragnarok.exe` (the patcher) | the patcher waits forever on "Attempt to connect patch server": `wpatch`/`fpatch.euro-ro.net` are NXDOMAIN and `euro-ro.net` has no A record. The domain is still registered (since 2003-12-10, at Cloudflare, expiring 2026-12-10). If its owner ever points those names somewhere, that patcher would download and merge whatever it is served. The launcher redirects it locally instead (below) | tested |
+| Shortcuts | `Ragnarok.exe` (the patcher) | on 2026-11-09 the patcher waited forever on "Attempt to connect patch server". On 2026-11-18, started by hand on the same box, it reached `Ragexe.exe` within 2 s (Prefetch), so it does not always wait: `wpatch`/`fpatch.euro-ro.net` are NXDOMAIN and `euro-ro.net` has no A record. The domain is still registered (since 2003-12-10, at Cloudflare, expiring 2026-12-10). If its owner ever points those names somewhere, that patcher would download and merge whatever it is served. The launcher redirects it locally instead (below) | tested |
 | Game folder writes | Users could write to Program Files | read-only for Users. The unmanifested client's writes (Chat\, ScreenShot\, its HKLM settings) are silently redirected to `%LOCALAPPDATA%\VirtualStore` and `HKCU\Software\Classes\VirtualStore` | tested |
 | Custom actions | – | none that run code (one property setter, one async "check for updates" that is allowed to fail) | MSI tables |
 | Uninstall | | clean | tested |
@@ -259,7 +273,8 @@ The CD's `patch.inf` is 303. In the earliest archived list, entry 303 is
 in the patcher's `.data` section, at `0x41d210` and `0x41d250`. The image
 base is fixed at 0x400000 and there are no relocations. The launcher:
 
-- starts `Ragnarok.exe` suspended, inside a job object;
+- starts the patcher (`Ragnarok.exe.original` once prepared, see above)
+  suspended, inside a job object;
 - checks that both fields still say `wpatch.euro-ro.net` / `fpatch.euro-ro.net`;
 - writes `127.0.0.1:6950` and `127.0.0.1` over them, then resumes it;
 - waits until the job is empty, which covers the game the patcher started.

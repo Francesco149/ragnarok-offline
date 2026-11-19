@@ -8,6 +8,9 @@
 //!   - Windows (not Wine): puts DDrawCompat's ddraw.dll + DDrawCompat.ini next
 //!     to Ragexe.exe (DirectX 7 fixes, XP-style text; docs/WINDOWS.md)
 //!   - writes the client's settings if its Setup.exe never ran
+//!   - Windows: keeps the CD's patcher as Ragnarok.exe.original and puts a
+//!     stub with its icon in its place, so that Ragnarok.exe, the way the CD
+//!     started the game, starts this launcher (assets/stub/stub.c)
 //!
 //! Every run: unpacks the server's scripts/database into a data folder
 //! (`<game>\offline` if the game folder is writable, else
@@ -21,7 +24,7 @@
 //!   RagnarokOffline.exe --direct      skip the patcher, start Ragexe.exe 1rag1
 //!   RagnarokOffline.exe --settings    the client's own Setup.exe
 //!   RagnarokOffline.exe --prepare     prepare only (elevated relaunch, installers)
-//!   RagnarokOffline.exe --unprepare   put the CD's data.grf back (uninstallers)
+//!   RagnarokOffline.exe --unprepare   put the CD's data.grf and Ragnarok.exe back (uninstallers)
 //!   ... --quiet                       no dialogs (exit code 0 = ok)
 
 #![cfg_attr(windows, windows_subsystem = "windows")]
@@ -74,6 +77,18 @@ static EURO_WEB_INDEX: Option<&[u8]> = None;
 
 /// The CD's patcher, Ragnarok.exe 2003-12-12 (installed-files.sha256).
 const KNOWN_PATCHER_SHA256: &str = "91eafb955fcbdf61a18bc1acfbd1e5aa2e127c25127072ddfe3f6e7b191c63c2";
+/// Where prepare keeps the patcher once the stub has its name: not
+/// double-clickable, still runnable by CreateProcess.
+const PATCHER_KEPT: &str = "Ragnarok.exe.original";
+/// The Ragnarok.exe stub (assets/stub/stub.c, built by build.rs): players
+/// who start the game the CD's way, with Ragnarok.exe, get the launcher.
+#[cfg(ragnarok_stub)]
+static STUB: Option<&[u8]> = Some(include_bytes!(env!("RAGNAROK_STUB")));
+#[cfg(not(ragnarok_stub))]
+static STUB: Option<&[u8]> = None;
+/// The stub's marker string starts with this; the whole string (up to its
+/// NUL) carries the stub's version.
+const STUB_MARKER: &[u8] = b"ragnarok-offline Ragnarok.exe stub ";
 /// Its host name slots in .data (64-byte fields; fixed image base 0x400000,
 /// no relocations), read by the HTTP ("http://%s%s/%s") and FTP
 /// (InternetConnectA, port 21) code.
@@ -140,7 +155,8 @@ fn run(args: &[String]) -> Result<i32> {
     if has("--unprepare") {
         log_to(&std::env::temp_dir().join("RagnarokOffline-prepare.log"));
         let restored = setup::unprepare(&dir)?;
-        info!("unprepare {}: restored data.grf = {restored}", dir.display());
+        let patcher = remove_stub(&dir)?;
+        info!("unprepare {}: restored data.grf = {restored}, Ragnarok.exe = {patcher}", dir.display());
         return Ok(0);
     }
     if has("--settings") {
@@ -180,6 +196,11 @@ fn play(dir: &Path, direct: bool) -> Result<i32> {
             }
         }
     }
+    // an older stub that was running when install_stub replaced it
+    let old_stub = dir.join("Ragnarok.exe.old");
+    if std::fs::read(&old_stub).is_ok_and(|b| stub_marker(&b).is_some()) {
+        let _ = std::fs::remove_file(&old_stub);
+    }
     if !plat::client_settings_exist() {
         let wher = plat::write_client_settings(&default_settings())?;
         info!("wrote first-run client settings ({wher})");
@@ -188,7 +209,8 @@ fn play(dir: &Path, direct: bool) -> Result<i32> {
     let cfg_path = data.join("ragnarok-offline.toml");
     let mut cfg = Config::load(&cfg_path)?;
     cfg.client_dir = dir.to_path_buf();
-    let use_patcher = cfg!(windows) && EURO_PATCH.is_some() && !direct && patcher_ok(dir);
+    let patcher = patcher_path(dir).filter(|_| cfg!(windows) && EURO_PATCH.is_some() && !direct);
+    let use_patcher = patcher.is_some();
     if use_patcher {
         cfg.patch_server.enabled = true;
         cfg.patch_server.dir = data.join("patchsrv");
@@ -207,7 +229,7 @@ fn play(dir: &Path, direct: bool) -> Result<i32> {
     let started = std::time::Instant::now();
     let via_patcher = use_patcher && handle.as_ref().is_some_and(|h| h.patch_server);
     let status = if via_patcher {
-        match run_patcher(dir, http_port) {
+        match run_patcher(patcher.as_deref().unwrap(), dir, http_port) {
             Ok(()) => Ok(()),
             Err(e) => {
                 warn!("patcher: {e:#}; starting the client directly");
@@ -232,9 +254,102 @@ fn run_client(dir: &Path) -> Result<()> {
     Ok(())
 }
 
-/// Is the CD's patcher there, unmodified?
-fn patcher_ok(dir: &Path) -> bool {
-    std::fs::read(dir.join("Ragnarok.exe")).is_ok_and(|b| setup::hex(&Sha256::digest(b)) == KNOWN_PATCHER_SHA256)
+fn is_patcher(p: &Path) -> bool {
+    std::fs::read(p).is_ok_and(|b| setup::hex(&Sha256::digest(b)) == KNOWN_PATCHER_SHA256)
+}
+
+/// The CD's patcher, unmodified: kept aside by prepare, or still Ragnarok.exe.
+fn patcher_path(dir: &Path) -> Option<PathBuf> {
+    [dir.join(PATCHER_KEPT), dir.join("Ragnarok.exe")].into_iter().find(|p| is_patcher(p))
+}
+
+/// The marker string inside a stub, up to its NUL.
+fn stub_marker(b: &[u8]) -> Option<&[u8]> {
+    let at = b.windows(STUB_MARKER.len()).position(|w| w == STUB_MARKER)?;
+    let len = b[at..].iter().position(|&c| c == 0)?;
+    Some(&b[at..at + len])
+}
+
+/// What the Ragnarok.exe in `dir` is.
+#[derive(Debug, PartialEq)]
+enum Front {
+    Missing,
+    Patcher,
+    /// our stub; true = the one this launcher carries
+    Stub(bool),
+    Other,
+}
+
+fn front(dir: &Path) -> Front {
+    let Ok(b) = std::fs::read(dir.join("Ragnarok.exe")) else { return Front::Missing };
+    if setup::hex(&Sha256::digest(&b)) == KNOWN_PATCHER_SHA256 {
+        return Front::Patcher;
+    }
+    match stub_marker(&b) {
+        Some(m) => Front::Stub(STUB.and_then(stub_marker) == Some(m)),
+        None => Front::Other,
+    }
+}
+
+/// Does Ragnarok.exe still have to become (or be updated to) our stub? Only
+/// ever over the CD's patcher or an older stub: anything else someone put
+/// there is left alone.
+fn needs_stub(dir: &Path) -> bool {
+    if STUB.is_none() || !cfg!(windows) {
+        return false;
+    }
+    let kept = dir.join(PATCHER_KEPT);
+    match front(dir) {
+        Front::Stub(current) => !current && is_patcher(&kept),
+        Front::Missing => is_patcher(&kept),
+        // the patcher (again: an MSI repair puts it back) with a copy kept, or not kept yet
+        Front::Patcher => is_patcher(&kept) || !kept.exists(),
+        Front::Other => false,
+    }
+}
+
+/// Keep the patcher as Ragnarok.exe.original and write the stub, with the
+/// patcher's icon, as Ragnarok.exe.
+fn install_stub(dir: &Path) -> Result<()> {
+    let (front_now, exe, kept) = (front(dir), dir.join("Ragnarok.exe"), dir.join(PATCHER_KEPT));
+    let tmp = dir.join("Ragnarok.exe.tmp");
+    std::fs::write(&tmp, STUB.unwrap()).with_context(|| format!("writing {}", tmp.display()))?;
+    let icon_from = if front_now == Front::Patcher { &exe } else { &kept };
+    match plat::copy_icons(icon_from, &tmp) {
+        Ok(n) => info!("Ragnarok.exe stub: {n} icon group(s) from {}", icon_from.display()),
+        Err(e) => warn!("Ragnarok.exe stub without the patcher's icon: {e:#}"),
+    }
+    if front_now == Front::Patcher && !kept.exists() {
+        std::fs::rename(&exe, &kept).with_context(|| format!("renaming {} to {PATCHER_KEPT}", exe.display()))?;
+    } else if exe.exists() {
+        // an older stub may be running (it started us): Windows renames a
+        // running exe but will not delete it
+        let old = dir.join("Ragnarok.exe.old");
+        let _ = std::fs::remove_file(&old);
+        std::fs::rename(&exe, &old).with_context(|| format!("replacing {}", exe.display()))?;
+        let _ = std::fs::remove_file(&old);
+    }
+    std::fs::rename(&tmp, &exe).with_context(|| format!("writing {}", exe.display()))?;
+    info!("Ragnarok.exe now starts RagnarokOffline.exe; the CD's patcher is {}", kept.display());
+    Ok(())
+}
+
+/// Undo [`install_stub`]: the patcher back as Ragnarok.exe.
+fn remove_stub(dir: &Path) -> Result<bool> {
+    let (exe, kept) = (dir.join("Ragnarok.exe"), dir.join(PATCHER_KEPT));
+    if !is_patcher(&kept) {
+        return Ok(false);
+    }
+    match front(dir) {
+        Front::Stub(_) | Front::Patcher => std::fs::remove_file(&exe).with_context(|| format!("removing {}", exe.display()))?,
+        Front::Missing => {}
+        Front::Other => {
+            warn!("{} is not our stub: left alone, the patcher stays {}", exe.display(), kept.display());
+            return Ok(false);
+        }
+    }
+    std::fs::rename(&kept, &exe).with_context(|| format!("renaming {} back to Ragnarok.exe", kept.display()))?;
+    Ok(true)
 }
 
 /// The CD's patcher, pointed at our patch server: its two host names are
@@ -242,11 +357,11 @@ fn patcher_ok(dir: &Path) -> bool {
 /// fetches euRO's notice and list from 127.0.0.1, finds nothing missing and
 /// starts Ragexe.exe 1rag1 when you click "Start Game". Returns when the
 /// patcher and the game it started have both exited.
-fn run_patcher(dir: &Path, http_port: u16) -> Result<()> {
+fn run_patcher(exe: &Path, dir: &Path, http_port: u16) -> Result<()> {
     let web = format!("127.0.0.1:{http_port}").into_bytes(); // the port rides in the URL
     let ftp = b"127.0.0.1".to_vec(); // InternetConnectA always uses port 21
-    info!("starting the CD's patcher (wpatch -> {}, fpatch -> 127.0.0.1:21)", String::from_utf8_lossy(&web));
-    plat::run_patched(&dir.join("Ragnarok.exe"), dir, &[(PATCHER_WPATCH.0, PATCHER_WPATCH.1, web), (PATCHER_FPATCH.0, PATCHER_FPATCH.1, ftp)])
+    info!("starting the CD's patcher {} (wpatch -> {}, fpatch -> 127.0.0.1:21)", exe.display(), String::from_utf8_lossy(&web));
+    plat::run_patched(exe, dir, &[(PATCHER_WPATCH.0, PATCHER_WPATCH.1, web), (PATCHER_FPATCH.0, PATCHER_FPATCH.1, ftp)])
 }
 
 fn spawn_client(dir: &Path) -> Result<std::process::Child> {
@@ -282,6 +397,7 @@ fn wants_ddrawcompat() -> bool {
 
 fn needs_prepare(dir: &Path) -> bool {
     !setup::is_prepared(dir, ADDRESS, LOGIN_PORT, "Offline")
+        || needs_stub(dir)
         || (wants_ddrawcompat() && (!dir.join("ddraw.dll").exists() || !dir.join("DDrawCompat.ini").exists()))
 }
 
@@ -313,6 +429,9 @@ fn prepare(dir: &Path) -> Result<()> {
         if !ini.exists() {
             std::fs::write(&ini, DDRAWCOMPAT_INI.replace('\n', "\r\n"))?;
         }
+    }
+    if needs_stub(dir) {
+        install_stub(dir)?;
     }
     // when we are elevated, HKLM is ours to fill (like Setup.exe run as admin on XP)
     if !plat::client_settings_exist()
@@ -473,4 +592,29 @@ fn log_to(path: &Path) {
         tracing::error!("panic: {p}");
         default(p);
     }));
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn stub_marker_reads_the_version() {
+        let exe = b"MZ...\0ragnarok-offline Ragnarok.exe stub 7\0more";
+        assert_eq!(stub_marker(exe), Some(&b"ragnarok-offline Ragnarok.exe stub 7"[..]));
+        assert_eq!(stub_marker(b"MZ plain exe"), None);
+    }
+
+    #[test]
+    fn front_tells_what_ragnarok_exe_is() {
+        let dir = std::env::temp_dir().join(format!("ro-launcher-front-{}", std::process::id()));
+        std::fs::create_dir_all(&dir).unwrap();
+        assert_eq!(front(&dir), Front::Missing);
+        std::fs::write(dir.join("Ragnarok.exe"), b"MZ\0ragnarok-offline Ragnarok.exe stub 0\0").unwrap();
+        assert_eq!(front(&dir), Front::Stub(false)); // not the stub this build carries
+        std::fs::write(dir.join("Ragnarok.exe"), b"something else").unwrap();
+        assert_eq!(front(&dir), Front::Other);
+        assert!(!needs_stub(&dir)); // never over someone else's file
+        std::fs::remove_dir_all(&dir).unwrap();
+    }
 }

@@ -21,6 +21,10 @@ pub fn starting<T: Send>(_text: &str, work: impl FnOnce() -> T + Send) -> T {
 
 pub fn allow_foreground(_pid: u32) {}
 
+pub fn copy_icons(_from: &std::path::Path, _to: &std::path::Path) -> Result<usize> {
+    Ok(0)
+}
+
 pub fn run_patched(_exe: &std::path::Path, _dir: &std::path::Path, _patches: &[(usize, &[u8], Vec<u8>)]) -> Result<()> {
     bail!("the patcher redirect needs the Windows build (run RagnarokOffline.exe in Wine)")
 }

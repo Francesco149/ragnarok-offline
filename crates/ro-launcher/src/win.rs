@@ -170,6 +170,101 @@ pub fn run_elevated(args: &str) -> Result<u32> {
     }
 }
 
+/// Copy every icon of the exe `from` onto the exe `to` (for the Ragnarok.exe
+/// stub: the patcher's icon, taken from the player's own copy so that we never
+/// ship Gravity's). Returns how many icon groups were copied.
+pub fn copy_icons(from: &Path, to: &Path) -> Result<usize> {
+    use windows_sys::Win32::Foundation::{FreeLibrary, HMODULE};
+    use windows_sys::Win32::System::LibraryLoader::{
+        BeginUpdateResourceW, EndUpdateResourceW, EnumResourceNamesW, FindResourceW, LOAD_LIBRARY_AS_DATAFILE, LoadLibraryExW,
+        LoadResource, LockResource, SizeofResource, UpdateResourceW,
+    };
+    use windows_sys::core::PCWSTR;
+
+    /// A resource name: an integer id or a string.
+    enum Name {
+        Id(u16),
+        Str(Vec<u16>),
+    }
+    impl Name {
+        fn ptr(&self) -> PCWSTR {
+            match self {
+                Name::Id(i) => *i as usize as PCWSTR,
+                Name::Str(s) => s.as_ptr(),
+            }
+        }
+    }
+    unsafe extern "system" fn collect(_: HMODULE, _: PCWSTR, name: PCWSTR, out: isize) -> i32 {
+        let out = unsafe { &mut *(out as *mut Vec<Name>) };
+        if (name as usize) >> 16 == 0 {
+            out.push(Name::Id(name as usize as u16));
+        } else {
+            let len = (0..).take_while(|&i| unsafe { *name.add(i) } != 0).count();
+            out.push(Name::Str(unsafe { std::slice::from_raw_parts(name, len + 1) }.to_vec()));
+        }
+        1
+    }
+    unsafe fn read(h: HMODULE, name: PCWSTR, kind: PCWSTR) -> Option<Vec<u8>> {
+        unsafe {
+            let r = FindResourceW(h, name, kind);
+            if r.is_null() {
+                return None;
+            }
+            let p = LockResource(LoadResource(h, r)) as *const u8;
+            (!p.is_null()).then(|| std::slice::from_raw_parts(p, SizeofResource(h, r) as usize).to_vec())
+        }
+    }
+
+    // read everything first, then let go of `from`
+    type Group = (Name, Vec<u8>, Vec<(u16, Vec<u8>)>); // name, GRPICONDIR, (RT_ICON id, image)
+    let mut groups: Vec<Group> = Vec::new();
+    unsafe {
+        let src = wide(&from.to_string_lossy());
+        let h = LoadLibraryExW(src.as_ptr(), std::ptr::null_mut(), LOAD_LIBRARY_AS_DATAFILE);
+        if h.is_null() {
+            bail!("reading {}: {}", from.display(), std::io::Error::last_os_error());
+        }
+        let mut names: Vec<Name> = Vec::new();
+        EnumResourceNamesW(h, RT_GROUP_ICON, Some(collect), &mut names as *mut Vec<Name> as isize);
+        for name in names {
+            let Some(dir) = read(h, name.ptr(), RT_GROUP_ICON) else { continue };
+            // GRPICONDIR: reserved, type, count; then 14-byte entries ending in the RT_ICON id
+            let count = dir.get(4..6).map_or(0, |b| u16::from_le_bytes([b[0], b[1]]) as usize);
+            let mut icons = Vec::new();
+            for e in dir.get(6..6 + 14 * count).unwrap_or(&[]).as_chunks::<14>().0 {
+                let id = u16::from_le_bytes([e[12], e[13]]);
+                if let Some(img) = read(h, id as usize as PCWSTR, RT_ICON) {
+                    icons.push((id, img));
+                }
+            }
+            groups.push((name, dir, icons));
+        }
+        FreeLibrary(h);
+
+        let dst = wide(&to.to_string_lossy());
+        let u = BeginUpdateResourceW(dst.as_ptr(), 0);
+        if u.is_null() {
+            bail!("opening {} for resources: {}", to.display(), std::io::Error::last_os_error());
+        }
+        let mut ok = true;
+        for (name, dir, icons) in &groups {
+            for (id, img) in icons {
+                ok &= UpdateResourceW(u, RT_ICON, *id as usize as PCWSTR, 0, img.as_ptr().cast(), img.len() as u32) != 0;
+            }
+            ok &= UpdateResourceW(u, RT_GROUP_ICON, name.ptr(), 0, dir.as_ptr().cast(), dir.len() as u32) != 0;
+        }
+        if !ok {
+            let e = std::io::Error::last_os_error();
+            EndUpdateResourceW(u, 1);
+            bail!("adding icons to {}: {e}", to.display());
+        }
+        if EndUpdateResourceW(u, 0) == 0 {
+            bail!("writing icons into {}: {}", to.display(), std::io::Error::last_os_error());
+        }
+    }
+    Ok(groups.len())
+}
+
 // ---- progress window -------------------------------------------------------
 
 const WM_PROGRESS: u32 = WM_APP + 1;
